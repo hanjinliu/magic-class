@@ -2,6 +2,7 @@ from __future__ import annotations
 from functools import wraps as functools_wraps
 import inspect
 from types import ModuleType
+import warnings
 from weakref import WeakValueDictionary
 from typing import Any, TYPE_CHECKING, Callable
 from macrokit import Symbol, Expr
@@ -562,7 +563,7 @@ def get_function_gui(
             )
     else:
         func = getattr(ui, name)
-    widget = ui[name]
+    widget: Clickable = ui[name]
 
     if not hasattr(widget, "mgui"):
         raise TypeError(f"Widget {widget} does not have FunctionGui inside it.")
@@ -589,6 +590,11 @@ def repeat(ui: MagicTemplate, index: int = -1) -> None:
         Which execution will be repeated. Any object that support list slicing can be used.
         By default the last operation will be repeated.
     """
+    warnings.warn(
+        "repeat() is deprecated and will be removed soon. Use `ui.macro.repeat_method()` "
+        "to specify call options in more detail.",
+        DeprecationWarning,
+    )
     line = ui.macro[index]
     try:
         line.eval({"ui": ui})

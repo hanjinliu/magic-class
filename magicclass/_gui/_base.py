@@ -907,10 +907,13 @@ class ContainerLikeGui(BaseGui[Action], mguiLike):
         return out
 
     def __setitem__(self, key, value):
-        raise NotImplementedError()
+        raise AttributeError("Can't set item to widgets. Use append or insert instead.")
 
     def __delitem__(self, key: int | str) -> None:
+        if isinstance(key, str):
+            key = self.index(key)
         self.native.removeAction(self[key].native)
+        del self._list[key]
 
     def __iter__(self) -> Iterator[ContainerLikeGui | AbstractAction]:
         return iter(self._list)
@@ -920,6 +923,12 @@ class ContainerLikeGui(BaseGui[Action], mguiLike):
 
     def append(self, obj: Callable | ContainerLikeGui | AbstractAction) -> None:
         return self.insert(len(self._list), obj)
+
+    def index(self, value: Any, start: int = 0, stop: int = 9223372036854775807) -> int:
+        """Return index of a specific widget instance (or widget name)."""
+        if isinstance(value, str):
+            value = self[value]
+        return super().index(value, start, stop)
 
     def _unify_label_widths(self):
         _hide_labels = (
