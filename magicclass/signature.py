@@ -215,9 +215,14 @@ class MagicMethodSignature(MagicSignature):
         )
 
 
+def is_annotated(annotation: Any) -> bool:
+    """Check if a type hint is an Annotated type."""
+    return isinstance(annotation, _AnnotatedAlias)
+
+
 def split_annotated_type(annotation: _AnnotatedAlias) -> tuple[Any, dict]:
     """Split an Annotated type into its base type and options dict."""
-    if not isinstance(annotation, _AnnotatedAlias):
+    if not is_annotated(annotation):
         raise TypeError("Type hint must be an 'Annotated' type.")
 
     typ, *meta = get_args(annotation)
