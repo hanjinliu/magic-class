@@ -15,7 +15,9 @@ and it's ready to use like matplotlib.
 from __future__ import annotations
 
 from functools import wraps
+from matplotlib.axes import Axes
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure as mpl_Figure
 from magicclass.widgets import Figure
 
 CURRENT_WIDGET: Figure | None = None
@@ -60,13 +62,13 @@ def subplots(
 
 
 @wraps(plt.gcf)
-def gcf():
+def gcf() -> mpl_Figure:
     """Get current figure."""
     return CURRENT_WIDGET.figure
 
 
 @wraps(plt.gca)
-def gca():
+def gca() -> Axes:
     """Get current axis."""
     return CURRENT_WIDGET.axes[-1]
 

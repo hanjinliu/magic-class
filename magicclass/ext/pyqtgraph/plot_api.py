@@ -18,7 +18,7 @@ def gca() -> QtPlotCanvas:
     return CURRENT_CANVAS
 
 
-def _set_current_canvas(canvas):
+def _set_current_canvas(canvas: HasViewBox) -> HasViewBox:
     global CURRENT_CANVAS
     CURRENT_CANVAS = canvas
     return canvas
@@ -30,7 +30,7 @@ def _set_current_multi_canvas(multi):
     return multi
 
 
-def gcf():
+def gcf() -> _MultiPlot | QtPlotCanvas:
     if CURRENT_MULTI_CANVAS is None:
         return gca()
     return CURRENT_MULTI_CANVAS
@@ -39,18 +39,18 @@ def gcf():
 gcw = gcf
 
 
-def figure():
+def figure() -> QtPlotCanvas:
     _set_current_canvas(QtPlotCanvas())
     return CURRENT_CANVAS
 
 
 @overload
-def subplot(pos: int):
+def subplot(pos: int) -> HasViewBox:
     ...
 
 
 @overload
-def subplot(row: int, col: int, idx: int):
+def subplot(row: int, col: int, idx: int) -> HasViewBox:
     ...
 
 
@@ -143,7 +143,7 @@ def hist(
     )
 
 
-def show():
+def show() -> None:
     if CURRENT_MULTI_CANVAS is not None:
         CURRENT_MULTI_CANVAS.show()
     else:
