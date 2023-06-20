@@ -246,6 +246,8 @@ class QCodeEditor(QtW.QPlainTextEdit):
                     return self._select_word_event()
                 elif _key == Qt.Key.Key_L and _mod & Mod.Ctrl:
                     return self._select_line_event()
+                elif _key == Qt.Key.Key_Home and _mod == Mod.No:
+                    return self._home_event()
 
         except Exception:
             pass
@@ -605,12 +607,25 @@ class QCodeEditor(QtW.QPlainTextEdit):
             for _ in range(ndel):
                 cursor.deletePreviousChar()
             cursor.insertText("\n" + indent + _TAB)
-            if _close := {"(": ")", "{": "}", "[": "]"}.get(last_char):
-                cursor.insertText("\n" + indent + _close)
-                cursor.movePosition(QtGui.QTextCursor.MoveOperation.Up)
-                cursor.movePosition(QtGui.QTextCursor.MoveOperation.EndOfLine)
+            self.setTextCursor(cursor)
+            cursor = self.textCursor()
+            # TODO: not working...
+            # if _close := {"(": ")", "{": "}", "[": "]"}.get(last_char):
+            #     cursor.movePosition(
+            #         QtGui.QTextCursor.MoveOperation.EndOfLine,
+            #         QtGui.QTextCursor.MoveMode.KeepAnchor,
+            #     )
+            #     if (idx := cursor.selectedText().find(_close)) >= 0:
+            #         cursor.clearSelection()
+            #         for _ in range(idx):
+            #             cursor.movePosition(
+            #                 QtGui.QTextCursor.MoveOperation.NextCharacter,
+            #             )
+            #         cursor.insertText("\n" + indent)
+            #     cursor.clearSelection()
         else:
             cursor.insertText("\n" + indent)
+            self.setTextCursor(cursor)
 
         line_lstripped = line.lstrip()
         if (
@@ -622,6 +637,26 @@ class QCodeEditor(QtW.QPlainTextEdit):
                 for _ in range(4):
                     cursor.deletePreviousChar()
         self.setTextCursor(cursor)
+
+    def _home_event(self):
+        # fn + left
+        cursor = self.textCursor()
+        cursor.movePosition(
+            QtGui.QTextCursor.MoveOperation.StartOfLine,
+            QtGui.QTextCursor.MoveMode.KeepAnchor,
+        )
+        text = cursor.selectedText()
+        if all(c == " " for c in text):
+            cursor.clearSelection()
+        else:
+            text_lstrip = text.lstrip()
+            nmove = len(text) - len(text_lstrip)
+            cursor.clearSelection()
+            for _ in range(nmove):
+                cursor.movePosition(QtGui.QTextCursor.MoveOperation.Right)
+
+        self.setTextCursor(cursor)
+        return True
 
 
 def _get_indents(text: str) -> int:
