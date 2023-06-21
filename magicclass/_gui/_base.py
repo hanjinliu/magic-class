@@ -11,7 +11,6 @@ from typing import (
     MutableSequence,
 )
 from types import MethodType
-from functools import wraps as functools_wraps
 from abc import ABCMeta
 from typing_extensions import _AnnotatedAlias
 import inspect
@@ -1204,7 +1203,7 @@ def convert_function(obj: Callable, default: str | None = None, is_method: bool 
         else:
             sig = get_signature(obj)
 
-            @functools_wraps(obj)
+            @functools.wraps(obj)
             def _func(self, *args, **kwargs):
                 return obj(*args, **kwargs)
 
@@ -1378,7 +1377,7 @@ def _implement_confirmation(
     """Implement confirmation callback to a method."""
     sig = inspect.signature(method)
 
-    @wraps(method)
+    @functools.wraps(method)
     def _method(*args, **kwargs):
         if self[method.__name__].running:
             arguments = sig.bind(*args, **kwargs)
