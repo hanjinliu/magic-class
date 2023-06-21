@@ -424,9 +424,7 @@ class _QEditableComboBox(QtW.QComboBox):
     def __init__(self, parent: QtW.QWidget | None = None) -> None:
         super().__init__(parent)
         self.setEditable(True)
-        self.setSizePolicy(
-            QtW.QSizePolicy.Policy.Expanding, QtW.QSizePolicy.Policy.Fixed
-        )
+        self.setSizePolicy(QtW.QSizePolicy.Policy.Ignored, QtW.QSizePolicy.Policy.Fixed)
 
     def keyPressEvent(self, event: QtGui.QKeyEvent):
         if event.key() in (Qt.Key.Key_Down, Qt.Key.Key_Up):
@@ -518,6 +516,7 @@ class HistoryFileEdit(FileEdit):
         self.choose_btn.changed.disconnect()
         self.line_edit.changed.disconnect()
         self.choose_btn.changed.connect(self._on_choose_clicked)
+        self.choose_btn.max_width = 60
         self.line_edit.changed.connect(lambda: self.changed.emit(self.value))
         self._append_history_of_current()
 
