@@ -242,6 +242,9 @@ class MagicTemplate(MutableSequence[Widget], metaclass=_MagicTemplateMeta):
     def __len__(self) -> int:
         raise NotImplementedError()
 
+    def __dir__(self) -> list[str]:
+        return super().__dir__()
+
     if TYPE_CHECKING:
 
         def index(self, value: Any, start: int, stop: int) -> int:

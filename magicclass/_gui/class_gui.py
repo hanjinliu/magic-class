@@ -621,6 +621,7 @@ def make_gui(
         cls.__delitem__ = container.__delitem__
         cls.__iter__ = container.__iter__
         cls.__len__ = container.__len__
+        cls.__dir__ = ClassGuiBase.__dir__
         cls._unify_label_widths = ClassGuiBase._unify_label_widths
         cls.__setattr__ = ClassGuiBase.__setattr__
         cls.insert = ClassGuiBase.insert
