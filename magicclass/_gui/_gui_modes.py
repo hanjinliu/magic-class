@@ -5,7 +5,7 @@ from contextlib import contextmanager
 from typing import Callable
 from enum import Enum
 import functools
-from magicgui.widgets import FunctionGui, Widget
+from magicgui.widgets import Widget
 from .mgui_ext import FunctionGuiPlus
 from magicclass._exceptions import Canceled
 
@@ -31,7 +31,7 @@ class PopUpMode(Enum):
             PopUpMode.dialog,
         }
 
-    def activate_magicgui(self, mgui: FunctionGuiPlus):
+    def activate_magicgui(self, mgui: FunctionGuiPlus, parent: Widget):
         if self not in (
             PopUpMode.dock,
             PopUpMode.dialog,
@@ -43,19 +43,19 @@ class PopUpMode(Enum):
         elif self is PopUpMode.parentsub:
             mgui.native.parent().setVisible(True)
         else:
-            mgui.exec_as_dialog(parent=self)
+            mgui.exec_as_dialog(parent=parent)
         try:
             mgui[0].native.setFocus()
         except Exception:
             pass
 
-    def connect_close_callback(self, mgui: FunctionGui):
+    def connect_close_callback(self, mgui: FunctionGuiPlus):
         if self not in {PopUpMode.dock, PopUpMode.parentsub, PopUpMode.dialog}:
-            mgui.called.connect(mgui.hide)
+            mgui.calling.connect(mgui.hide)
         elif self in {PopUpMode.dock, PopUpMode.parentsub}:
             # If FunctioGui is docked or in a subwindow, we should close
             # the parent QDockWidget/QMdiSubwindow.
-            mgui.called.connect(lambda: mgui.parent.hide())
+            mgui.calling.connect(lambda: mgui.parent.hide())
 
 
 def _msgbox_raising(e: Exception, parent: Widget):

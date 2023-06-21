@@ -787,7 +787,7 @@ class MagicTemplate(MutableSequence[Widget], metaclass=_MagicTemplateMeta):
                     else:
                         return None
 
-                self._popup_mode.activate_magicgui(mgui)
+                self._popup_mode.activate_magicgui(mgui, self)
                 return None
 
         widget.changed.connect(run_function)
@@ -1151,7 +1151,7 @@ def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGu
 
 def _connect_functiongui_event(
     mgui: FunctionGuiPlus, opt: dict[str, Any]
-) -> FunctionGui:
+) -> FunctionGuiPlus:
     _on_calling = opt.get("on_calling", [])
     for cb in _on_calling:
         mgui.calling.connect(cb)
