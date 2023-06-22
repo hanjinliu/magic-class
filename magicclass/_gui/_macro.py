@@ -148,7 +148,7 @@ class MacroEdit(TabbedContainer):
         new = self.new_tab("script")
         new.value = self.native_macro.value
 
-    def new_tab(self, name: str | None = None) -> CodeEdit:
+    def new_tab(self, name: str | None = None, text: str | None = None) -> CodeEdit:
         if name is None:
             name = "script"
         # find unique name
@@ -160,9 +160,13 @@ class MacroEdit(TabbedContainer):
             suffix += 1
         new = self._add_code_edit(tab_name)
         self.current_index = len(self) - 1
+        if text is not None:
+            new.value = text
         return new
 
-    def new_window(self, name: str = None) -> MacroEdit:
+    def new_window(
+        self, name: str | None = None, tabname: str | None = None
+    ) -> MacroEdit:
         """
         Create a new window with same parent magic class widget.
 
@@ -170,6 +174,8 @@ class MacroEdit(TabbedContainer):
         ----------
         name : str, optional
             Widget name. This name will be the title.
+        tabname : str, optional
+            Tab name. If not given, the tab name will be "script".
 
         Returns
         -------
@@ -182,7 +188,9 @@ class MacroEdit(TabbedContainer):
         new = self.__class__(name=name)
         new.__magicclass_parent__ = self.__magicclass_parent__
         new.native.setParent(self.native.parent(), new.native.windowFlags())
-        new._add_code_edit()
+        if tabname is None:
+            tabname = "macro"
+        new._add_code_edit(name=tabname)
         new.show()
         geometry = self.native.geometry()
         geometry.moveTopLeft(geometry.topLeft() + QtCore.QPoint(20, 20))
