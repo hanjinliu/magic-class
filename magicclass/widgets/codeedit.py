@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     from magicclass import MagicTemplate
 
 _TAB = " " * 4
+_PAIRS = {"(": ")", "[": "]", "{": "}", "'": "'", '"': '"', "`": "`"}
 
 
 class QLineNumberArea(QtW.QWidget):
@@ -248,6 +249,15 @@ class QCodeEditor(QtW.QPlainTextEdit):
                     return self._select_line_event()
                 elif _key == Qt.Key.Key_Home and _mod == Mod.No:
                     return self._home_event()
+                elif _key in (
+                    Qt.Key.Key_QuoteDbl,
+                    Qt.Key.Key_Apostrophe,
+                    Qt.Key.Key_ParenLeft,
+                    Qt.Key.Key_BracketLeft,
+                    Qt.Key.Key_BraceLeft,
+                ):
+                    _str = QtGui.QKeySequence(_key).toString()
+                    return self._put_selection_in(_str, _PAIRS[_str])
 
         except Exception:
             pass
@@ -609,20 +619,24 @@ class QCodeEditor(QtW.QPlainTextEdit):
             cursor.insertText("\n" + indent + _TAB)
             self.setTextCursor(cursor)
             cursor = self.textCursor()
-            # TODO: not working...
-            # if _close := {"(": ")", "{": "}", "[": "]"}.get(last_char):
-            #     cursor.movePosition(
-            #         QtGui.QTextCursor.MoveOperation.EndOfLine,
-            #         QtGui.QTextCursor.MoveMode.KeepAnchor,
-            #     )
-            #     if (idx := cursor.selectedText().find(_close)) >= 0:
-            #         cursor.clearSelection()
-            #         for _ in range(idx):
-            #             cursor.movePosition(
-            #                 QtGui.QTextCursor.MoveOperation.NextCharacter,
-            #             )
-            #         cursor.insertText("\n" + indent)
-            #     cursor.clearSelection()
+            if _close := {"(": ")", "{": "}", "[": "]"}.get(last_char):
+                cursor.movePosition(
+                    QtGui.QTextCursor.MoveOperation.EndOfLine,
+                    QtGui.QTextCursor.MoveMode.KeepAnchor,
+                )
+                if (idx := cursor.selectedText().find(_close)) >= 0:
+                    cursor.clearSelection()
+                    for _ in range(idx):
+                        cursor.movePosition(
+                            QtGui.QTextCursor.MoveOperation.NextCharacter,
+                        )
+                    cursor.movePosition(QtGui.QTextCursor.MoveOperation.Left)
+                    cursor.insertText("\n" + indent)
+                    cursor.movePosition(QtGui.QTextCursor.MoveOperation.Up)
+                    cursor.movePosition(QtGui.QTextCursor.MoveOperation.StartOfLine)
+                    cursor.movePosition(QtGui.QTextCursor.MoveOperation.NextWord)
+                cursor.clearSelection()
+            self.setTextCursor(cursor)
         else:
             cursor.insertText("\n" + indent)
             self.setTextCursor(cursor)
@@ -657,6 +671,19 @@ class QCodeEditor(QtW.QPlainTextEdit):
 
         self.setTextCursor(cursor)
         return True
+
+    def _put_selection_in(self, left: str, right: str) -> None:
+        cursor = self.textCursor()
+        start = cursor.selectionStart()
+        end = cursor.selectionEnd()
+        cursor.setPosition(end)
+        cursor.insertText(right)
+        cursor.setPosition(start)
+        cursor.insertText(left)
+        cursor.setPosition(start + 1)
+        cursor.setPosition(end + 1, QtGui.QTextCursor.MoveMode.KeepAnchor)
+        self.setTextCursor(cursor)
+        return None
 
 
 def _get_indents(text: str) -> int:
@@ -831,22 +858,22 @@ class CodeEdit(TextEdit):
         return self._widget._qwidget
 
     @property
-    def tab_size(self):
+    def tab_size(self) -> int:
         return self._qcode_edit().tabSize()
 
     @tab_size.setter
-    def tab_size(self, size: int):
+    def tab_size(self, size: int) -> None:
         return self._qcode_edit().setTabSize(size)
 
-    def erase_last(self):
+    def erase_last(self) -> None:
         """Erase the last line."""
         self._qcode_edit().eraseLast()
 
-    def erase_first(self):
+    def erase_first(self) -> None:
         """Erase the first line."""
         self._qcode_edit().eraseFirst()
 
-    def append(self, text: str):
+    def append(self, text: str) -> None:
         """Append text to the end of the document."""
         self._qcode_edit().appendPlainText(text)
 
@@ -860,17 +887,17 @@ class CodeEdit(TextEdit):
         self._qcode_edit().syntaxHighlight(lang, theme)
 
     @property
-    def __magicclass_parent__(self):
+    def __magicclass_parent__(self) -> MagicTemplate | None:
         return self._qcode_edit()._magicclass_parent()
 
     @__magicclass_parent__.setter
-    def __magicclass_parent__(self, val):
+    def __magicclass_parent__(self, val) -> None:
         self._qcode_edit()._magicclass_parent_ref = weakref.ref(val)
 
-    def zoom_in(self):
+    def zoom_in(self) -> None:
         """Zoom in."""
         self._qcode_edit().zoomIn()
 
-    def zoom_out(self):
+    def zoom_out(self) -> None:
         """Zoom out."""
         self._qcode_edit().zoomOut()
