@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Callable, Iterable
 from typing_extensions import Literal
 from qt_command_palette import get_palette
 from magicclass._gui import BaseGui
+from magicclass._gui.class_gui import ClassGuiBase
 from magicclass._gui.mgui_ext import Clickable, is_clickable
 
 if TYPE_CHECKING:
@@ -55,7 +56,7 @@ def exec_command_palette(
             _define_command(wdt.changed.emit),
             title=_qualname,
             desc=wdt.text,
-            when=_define_when(wdt),
+            when=_define_when(wdt, parent),
         )
         processed.add(_id)
     palette.sort(rule=lambda cmd: str(cmd.title.count(".")) + cmd.title + cmd.desc)
@@ -68,7 +69,7 @@ def _define_command(fn: Callable) -> Callable:
     return lambda: fn()
 
 
-def _define_when(wdt: Clickable) -> Callable[[], bool]:
+def _define_when(wdt: Clickable, parent: BaseGui) -> Callable[[], bool]:
     return lambda: wdt.enabled
 
 

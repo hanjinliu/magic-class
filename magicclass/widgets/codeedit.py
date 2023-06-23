@@ -102,15 +102,15 @@ class QCodeEditor(QtW.QPlainTextEdit):
         self._magicclass_parent_ref: weakref.ReferenceType[MagicTemplate] = None
         self._highlight = None
 
-    def tabSize(self):
+    def tabSize(self) -> int:
         metrics = self.fontMetrics()
         return self.tabStopWidth() // metrics.width(" ")
 
-    def setTabSize(self, size: int):
+    def setTabSize(self, size: int) -> None:
         metrics = self.fontMetrics()
         self.setTabStopWidth(size * metrics.width(" "))
 
-    def lineNumberAreaWidth(self):
+    def lineNumberAreaWidth(self) -> int:
         count = max(1, self.blockCount())
         digits = len(str(count))
         space = 8 + self.fontMetrics().width("9") * digits
@@ -431,7 +431,7 @@ class QCodeEditor(QtW.QPlainTextEdit):
             )
             cursor.removeSelectedText()
 
-    def syntaxHighlight(self, lang: str = "python", theme: str = "default"):
+    def syntaxHighlight(self, lang: str = "python", theme: str = "native"):
         """Highlight syntax."""
         from superqt.utils import CodeSyntaxHighlight
 
@@ -660,12 +660,14 @@ class QCodeEditor(QtW.QPlainTextEdit):
 
 
 def _get_indents(text: str) -> int:
-    prefixes = {" ", "\t"}
     chars = []
     for c in text:
-        if c not in prefixes:
+        if c == " ":
+            chars.append(" ")
+        elif c == "\t":
+            chars.append(_TAB)
+        else:
             break
-        chars.append(c)
     return "".join(chars)
 
 
@@ -853,7 +855,7 @@ class CodeEdit(TextEdit):
         """Return selected string."""
         return self._qcode_edit().selectedText()
 
-    def syntax_highlight(self, lang: str = "python", theme: str = "default"):
+    def syntax_highlight(self, lang: str = "python", theme: str = "native"):
         """Highlight syntax."""
         self._qcode_edit().syntaxHighlight(lang, theme)
 
