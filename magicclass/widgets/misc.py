@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from pathlib import Path
+import os
 import sys
 from typing import (
     Iterable,
@@ -297,7 +299,7 @@ class _QtSpreadSheet(QtW.QTabWidget):
         self.setMovable(True)
         self._n_table = 0
         self.tabBar().tabBarDoubleClicked.connect(self.editTabBarLabel)
-        self.tabBar().setContextMenuPolicy(Qt.CustomContextMenu)
+        self.tabBar().setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.tabBar().customContextMenuRequested.connect(self.showContextMenu)
         self._line_edit = None
 
@@ -535,8 +537,21 @@ class HistoryFileEdit(FileEdit):
             self.line_edit.append_history("; ".join(map(str, val)))
 
     def _on_choose_clicked(self):
-        super()._on_choose_clicked()
-        self._append_history_of_current()
+        _p = self.value
+        if _p:
+            start_path: Path = _p[0] if isinstance(_p, tuple) else _p
+            _start_path: str | None = os.fspath(start_path.expanduser().absolute())
+        else:
+            _start_path = None
+        result = self._show_file_dialog(
+            self.mode,
+            caption=self._btn_text,
+            start_path=_start_path,
+            filter=self.filter,
+        )
+        if result:
+            self.value = result
+            self._append_history_of_current()
 
     def append_history(self, path: str | Path):
         """Append new history to the line edit""" ""
