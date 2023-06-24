@@ -263,7 +263,7 @@ def test_undo_in_worker():
             old_value = self._x
             self._x = x
 
-            @thread_worker.to_callback
+            @thread_worker.callback
             def yielded():
                 self._yielded_cb = True
 
@@ -273,7 +273,7 @@ def test_undo_in_worker():
             def undo():
                 self._x = old_value
 
-            @thread_worker.to_callback
+            @thread_worker.callback
             def out():
                 self._returned_cb = True
                 return undo

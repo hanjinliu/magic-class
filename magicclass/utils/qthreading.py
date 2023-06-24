@@ -18,6 +18,7 @@ from typing import (
     runtime_checkable,
 )
 from typing_extensions import TypedDict, ParamSpec
+import warnings
 
 from superqt.utils import create_worker, GeneratorWorker, FunctionWorker
 from qtpy.QtCore import Qt, QThread, QCoreApplication
@@ -198,7 +199,9 @@ class Timer:
     """A timer class with intuitive API."""
 
     def __init__(self):
-        self.reset()
+        self._t0 = default_timer()
+        self._t_total = 0.0
+        self._running = False
 
     def __repr__(self) -> str:
         """Return string in format hh:mm:ss"""
@@ -230,10 +233,7 @@ class Timer:
 
     def reset(self):
         """Reset timer."""
-        self._t0 = default_timer()
-        self._t_total = 0.0
-        self._running = False
-        return None
+        return self.__init__()
 
     def format_time(self, fmt: str = "{hour:0>2}:{min:0>2}:{sec:0>2}") -> str:
         """Format current time."""
@@ -273,6 +273,9 @@ class DefaultProgressBar(FrameContainer, _SupportProgress):
         self._timer = Timer()
         self._time_signal = QtSignal()
         self._time_signal.connect(self._on_timer_updated)
+
+        self._running = False
+        self._thread_timer: threading.Thread | None = None
 
         super().__init__(widgets=[self.progress_label, self.pbar, cnt], labels=False)
 
@@ -547,11 +550,20 @@ class thread_worker(Generic[_P]):
 
     @staticmethod
     def to_callback(callback: Callable, *args, **kwargs) -> Callback:
-        """Convert a callback to a callback object."""
-        cb = Callback(callback)
+        warnings.warn(
+            "Defining callback with to_callback is deprecated because its "
+            "behavior is confusing. Use thread_worker.callback instead.",
+            DeprecationWarning,
+        )
+        cb = _CallbackDeprecated(callback)
         if args or kwargs:
             cb = cb(*args, **kwargs)
         return cb
+
+    @staticmethod
+    def callback(callback: Callable) -> Callback:
+        """Convert a callback function to a callback object."""
+        return Callback(callback)
 
     @property
     def is_generator(self) -> bool:
@@ -978,10 +990,11 @@ def _is_main_thread() -> bool:
 class Callback:
     """Callback object that can be recognized by thread_worker."""
 
-    def __init__(self, f: Callable[[], Any]):
+    def __init__(self, f: Callable[..., Any]):
         if not callable(f):
             raise TypeError(f"{f} is not callable.")
         self._func = f
+        wraps(f)(self)
 
     @staticmethod
     def catch(out, gui: BaseGui, tw: thread_worker, args, kwargs, record=True):
@@ -992,13 +1005,22 @@ class Callback:
             tw._recorder(gui, out, *args, **kwargs)
 
     def __call__(self, *args, **kwargs) -> Callback:
+        return self._func(*args, **kwargs)
+
+    def with_args(self, *args, **kwargs):
         """Return a partial callback."""
         return self.__class__(partial(self._func, *args, **kwargs))
 
     def __get__(self, obj, type=None) -> Callback:
         if obj is None:
             return self
-        return self(obj)
+        return self.with_args(obj)
+
+
+class _CallbackDeprecated(Callback):
+    def __call__(self, *args, **kwargs) -> Callback:
+        """Return a partial callback."""
+        return self.__class__(partial(self._func, *args, **kwargs))
 
 
 to_callback = thread_worker.to_callback  # function version

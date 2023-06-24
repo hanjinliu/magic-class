@@ -31,7 +31,6 @@ class MacroEdit(TabbedContainer):
         self.__magicclass_parent__: BaseGui | None = None
         self.native.setWindowTitle("Macro")
         self.native_tab_widget.setTabBarAutoHide(True)
-        # self.native_tab_widget.setTabsClosable(True)
         self._native_macro: CodeEdit | None = None
         self._recorded_macro: CodeEdit | None = None
         self._set_menubar(is_main=is_main)

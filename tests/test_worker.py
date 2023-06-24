@@ -247,7 +247,7 @@ def test_callback():
         def func(self):
             local = 0
 
-            @thread_worker.to_callback
+            @thread_worker.callback
             def _returned():
                 self._func_returned.append(local)
                 self.dummy()
@@ -255,7 +255,7 @@ def test_callback():
 
         @thread_worker
         def gen(self):
-            @thread_worker.to_callback
+            @thread_worker.callback
             def _yielded():
                 self._gen_yielded.append(t)
                 self.dummy()
@@ -285,10 +285,10 @@ def test_callback_partial():
         def gen(self):
             t = 0
             for _ in range(10):
-                yield self._callback(t)
+                yield self._callback.with_args(t)
                 t += 1
 
-        @thread_worker.to_callback
+        @thread_worker.callback
         def _callback(self, x):
             self._gen_yielded.append(x)
 
