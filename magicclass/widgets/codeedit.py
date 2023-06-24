@@ -441,7 +441,7 @@ class QCodeEditor(QtW.QPlainTextEdit):
             )
             cursor.removeSelectedText()
 
-    def syntaxHighlight(self, lang: str = "python", theme: str = "native"):
+    def syntaxHighlight(self, lang: str = "python", theme: str = "default"):
         """Highlight syntax."""
         from superqt.utils import CodeSyntaxHighlight
 
@@ -882,7 +882,7 @@ class CodeEdit(TextEdit):
         """Return selected string."""
         return self._qcode_edit().selectedText()
 
-    def syntax_highlight(self, lang: str = "python", theme: str = "native"):
+    def syntax_highlight(self, lang: str = "python", theme: str = "default"):
         """Highlight syntax."""
         self._qcode_edit().syntaxHighlight(lang, theme)
 

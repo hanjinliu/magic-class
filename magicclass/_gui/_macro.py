@@ -25,21 +25,22 @@ class MacroEdit(TabbedContainer):
 
     window_count = 0
 
-    def __init__(self, **kwargs):
+    def __init__(self, is_main: bool = True, **kwargs):
         super().__init__(labels=False, **kwargs)
         self.native: QtW.QWidget
         self.__magicclass_parent__: BaseGui | None = None
         self.native.setWindowTitle("Macro")
         self.native_tab_widget.setTabBarAutoHide(True)
+        # self.native_tab_widget.setTabsClosable(True)
         self._native_macro: CodeEdit | None = None
         self._recorded_macro: CodeEdit | None = None
-        self._set_menubar()
+        self._set_menubar(is_main=is_main)
         self._attribute_check = True
         self._signature_check = True
         self._name_check = True
         self._syntax_highlight = True
 
-    def _add_code_edit(self, name: str = "macro", native: bool = False) -> CodeEdit:
+    def _add_code_edit(self, name: str = "script", native: bool = False) -> CodeEdit:
         """Add a new code edit widget as a new tab."""
 
         textedit = CodeEdit(name=name)
@@ -51,7 +52,13 @@ class MacroEdit(TabbedContainer):
 
         self.append(textedit)
         if self._syntax_highlight:
-            textedit.syntax_highlight()
+            qtextedit: QtW.QTextEdit = textedit.native
+            # get background color
+            bg = qtextedit.palette().color(qtextedit.backgroundRole())
+            if sum(bg.getRgb()[:3]) > 255 * 3 / 2:
+                textedit.syntax_highlight(theme="default")
+            else:
+                textedit.syntax_highlight(theme="native")
         textedit.__magicclass_parent__ = self.__magicclass_parent__
         textedit.executing.connect(self._on_executing)
         return textedit
@@ -244,8 +251,10 @@ class MacroEdit(TabbedContainer):
         if self.parent is None:
             ui = self.__magicclass_parent__
             self.native.setParent(ui.native, self.native.windowFlags())
+        was_visible = self.visible
         super().show()
-        move_to_screen_center(self.native)
+        if not was_visible:
+            move_to_screen_center(self.native)
         self.textedit.native.setFocus()
 
     def _execute(self, code: Expr):
@@ -278,6 +287,7 @@ class MacroEdit(TabbedContainer):
         self._execute(self.get_selected_expr())
 
     def execute_lines(self, indices: int | slice | Iterable[int]):
+        """Execute given lines"""
         all_text: str = self.textedit.value
         lines = all_text.split("\n")
         if isinstance(indices, int):
@@ -331,7 +341,7 @@ class MacroEdit(TabbedContainer):
     def _finish_recording(self):
         self._recorded_macro = None
 
-    def _set_menubar(self):
+    def _set_menubar(self, is_main: bool):
         self._menubar = QtW.QMenuBar(self.native)
         self.native.layout().setMenuBar(self._menubar)
 
@@ -367,13 +377,14 @@ class MacroEdit(TabbedContainer):
         _macro_menu.addAction(_action("Execute", self.execute, "Ctrl+F5", tooltip="Execute the entire script of the current tab", parent=_macro_menu))
         _macro_menu.addAction(_action("Execute selected lines", self._execute_selected, "Ctrl+Shift+F5", tooltip="Execute the selected lines of the current tab", parent=_macro_menu))
         _macro_menu.addSeparator()
-        _action_start = _action("Start recording", self._start_recording, tooltip="Open a new tab and start recording GUI operations in it", parent=_macro_menu)
-        _macro_menu.addAction(_action_start)
-        _action_finish = _action("Finish recording", self._finish_recording, tooltip="Finish the recording task started by 'Start recording' menu", parent=_macro_menu)
-        _macro_menu.addAction(_action_finish)
-        _action_finish.setEnabled(False)
-        _action_start.triggered.connect(lambda: _action_finish.setEnabled(True))
-        _action_finish.triggered.connect(lambda: _action_finish.setEnabled(False))
+        if is_main:
+            _action_start = _action("Start recording", self._start_recording, tooltip="Open a new tab and start recording GUI operations in it", parent=_macro_menu)
+            _macro_menu.addAction(_action_start)
+            _action_finish = _action("Finish recording", self._finish_recording, tooltip="Finish the recording task started by 'Start recording' menu", parent=_macro_menu)
+            _macro_menu.addAction(_action_finish)
+            _action_finish.setEnabled(False)
+            _action_start.triggered.connect(lambda: _action_finish.setEnabled(True))
+            _action_finish.triggered.connect(lambda: _action_finish.setEnabled(False))
 
         self._command_menu = CommandRunnerMenu(
             "Command",
