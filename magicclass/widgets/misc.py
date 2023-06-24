@@ -426,6 +426,11 @@ class _QEditableComboBox(QtW.QComboBox):
         self.setEditable(True)
         self.setSizePolicy(QtW.QSizePolicy.Policy.Ignored, QtW.QSizePolicy.Policy.Fixed)
 
+    def showPopup(self):
+        """Do not abbreviate the text."""
+        self.view().setMinimumWidth(self.view().sizeHintForColumn(0))
+        return super().showPopup()
+
     def keyPressEvent(self, event: QtGui.QKeyEvent):
         if event.key() in (Qt.Key.Key_Down, Qt.Key.Key_Up):
             self.showPopup()
