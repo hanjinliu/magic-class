@@ -499,6 +499,7 @@ class GuiMacro(BaseMacro):
     options = PropertyGroup()
 
     def __init__(self, ui: BaseGui = None, options: dict[str, Any] = {}):
+        self._blocking_sources = []
         super().__init__()
         self.on_appended.append(self._on_macro_added)
         self.on_popped.append(self._on_macro_popped)
@@ -517,8 +518,6 @@ class GuiMacro(BaseMacro):
         self.options.attribute_check = options.get("macro-attribute-check", True)
         self.options.signature_check = options.get("macro-signature-check", True)
         self.options.name_check = options.get("macro-name-check", True)
-
-        self._blocking_sources = []
 
     @property
     def widget(self) -> MacroEdit:
