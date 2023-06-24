@@ -717,7 +717,6 @@ class thread_worker(Generic[_P]):
                     # NOTE: Exceptions are raised in other thread so context manager
                     # cannot catch them. Macro has to be reactived here.
                     gui._error_mode.get_handler()(err, parent=gui)
-                    gui.macro.active = True
                     if not self._ignore_errors:
                         raise err  # reraise
 

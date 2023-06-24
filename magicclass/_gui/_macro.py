@@ -1,4 +1,5 @@
 from __future__ import annotations
+from contextlib import contextmanager
 from pathlib import Path
 
 from typing import TYPE_CHECKING, Any, Callable, Iterable, overload
@@ -517,6 +518,8 @@ class GuiMacro(BaseMacro):
         self.options.signature_check = options.get("macro-signature-check", True)
         self.options.name_check = options.get("macro-name-check", True)
 
+        self._blocking_sources = []
+
     @property
     def widget(self) -> MacroEdit:
         """Returns the macro editor."""
@@ -629,6 +632,31 @@ class GuiMacro(BaseMacro):
         if isinstance(key, slice):
             return BaseMacro(self._args)[key]
         return super().__getitem__(key)
+
+    @contextmanager
+    def blocked(self, source: Any | None = None):
+        """Block macro recording in this context."""
+        self._blocking_sources.append(source)
+        try:
+            yield
+        finally:
+            try:
+                # `source` should be considered in the future
+                self._blocking_sources.pop()
+            except IndexError:
+                pass
+
+    @property
+    def active(self) -> bool:
+        """Macro is active if it is not blocked."""
+        return len(self._blocking_sources) == 0
+
+    @active.setter
+    def active(self, value: bool):
+        if value:
+            self._blocking_sources.clear()
+        else:
+            raise NotImplementedError("Cannot set active=False")
 
     def subset(self, indices: Iterable[int]) -> BaseMacro:
         """Generate a subset of macro."""
