@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from magicclass import MagicTemplate
 
 _TAB = " " * 4
-_PAIRS = {"(": ")", "[": "]", "{": "}", "'": "'", '"': '"', "`": "`"}
+_PAIRS = {"(": ")", "[": "]", "{": "}"}
 
 
 class QLineNumberArea(QtW.QWidget):
@@ -250,14 +250,26 @@ class QCodeEditor(QtW.QPlainTextEdit):
                 elif _key == Qt.Key.Key_Home and _mod == Mod.No:
                     return self._home_event()
                 elif _key in (
-                    Qt.Key.Key_QuoteDbl,
-                    Qt.Key.Key_Apostrophe,
                     Qt.Key.Key_ParenLeft,
                     Qt.Key.Key_BracketLeft,
                     Qt.Key.Key_BraceLeft,
                 ):
-                    _str = QtGui.QKeySequence(_key).toString()
-                    return self._put_selection_in(_str, _PAIRS[_str])
+                    _char = QtGui.QKeySequence(_key).toString()
+                    return self._put_selection_in(_char, _PAIRS[_char])
+                elif _key in (
+                    Qt.Key.Key_ParenRight,
+                    Qt.Key.Key_BracketRight,
+                    Qt.Key.Key_BraceRight,
+                ):
+                    _char = QtGui.QKeySequence(_key).toString()
+                    return self._key_no_duplicate(_char)
+                elif _key in (
+                    Qt.Key.Key_QuoteDbl,
+                    Qt.Key.Key_Apostrophe,
+                    Qt.Key.Key_QuoteLeft,
+                ):
+                    _char = QtGui.QKeySequence(_key).toString()
+                    return self._quote_selection(_char)
 
         except Exception:
             pass
@@ -672,18 +684,62 @@ class QCodeEditor(QtW.QPlainTextEdit):
         self.setTextCursor(cursor)
         return True
 
-    def _put_selection_in(self, left: str, right: str) -> None:
+    def _put_selection_in(self, left: str, right: str) -> bool:
         cursor = self.textCursor()
         start = cursor.selectionStart()
         end = cursor.selectionEnd()
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.EndOfLine)
+        pos_line_end = cursor.position()
         cursor.setPosition(end)
-        cursor.insertText(right)
+        if start != end or pos_line_end == end:
+            cursor.insertText(right)
         cursor.setPosition(start)
         cursor.insertText(left)
         cursor.setPosition(start + 1)
         cursor.setPosition(end + 1, QtGui.QTextCursor.MoveMode.KeepAnchor)
         self.setTextCursor(cursor)
-        return None
+        return True
+
+    def _quote_selection(self, quot: str) -> bool:
+        cursor = self.textCursor()
+        start = cursor.selectionStart()
+        end = cursor.selectionEnd()
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.EndOfLine)
+        pos_line_end = cursor.position()
+        cursor.movePosition(
+            QtGui.QTextCursor.MoveOperation.StartOfLine,
+            QtGui.QTextCursor.MoveMode.KeepAnchor,
+        )
+        line = cursor.selectedText()
+        nquot = line.count(quot)
+        cursor.clearSelection()
+        cursor.setPosition(end)
+        if nquot % 2 == 0:
+            print(start, pos_line_end, end)
+            if start != end or pos_line_end == end:
+                cursor.insertText(quot)
+        cursor.setPosition(start)
+        cursor.insertText(quot)
+        cursor.setPosition(start + 1)
+        cursor.setPosition(end + 1, QtGui.QTextCursor.MoveMode.KeepAnchor)
+        self.setTextCursor(cursor)
+        return True
+
+    def _key_no_duplicate(self, char: str) -> bool:
+        cursor = self.textCursor()
+        pos = cursor.position()
+        cursor.movePosition(
+            QtGui.QTextCursor.MoveOperation.EndOfLine,
+            QtGui.QTextCursor.MoveMode.KeepAnchor,
+        )
+        line = cursor.selectedText()
+        if line.startswith(char):
+            cursor.setPosition(pos + 1)
+        else:
+            cursor.setPosition(pos)
+            cursor.insertText(char)
+        self.setTextCursor(cursor)
+        return True
 
 
 def _get_indents(text: str) -> int:
