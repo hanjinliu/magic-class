@@ -2,6 +2,7 @@ from __future__ import annotations
 import functools
 from typing import (
     Any,
+    Union,
     Callable,
     TYPE_CHECKING,
     Iterable,
@@ -180,9 +181,10 @@ class _MagicTemplateMeta(ABCMeta):
 
 
 _W = TypeVar("_W", bound=Widget)
+_Comp = TypeVar("_Comp", Widget, AbstractAction)
 
 
-class MagicTemplate(MutableSequence[Widget], metaclass=_MagicTemplateMeta):
+class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
     __doc__ = ""
     __magicclass_parent__: None | MagicTemplate
     __magicclass_children__: list[MagicTemplate]
@@ -222,11 +224,11 @@ class MagicTemplate(MutableSequence[Widget], metaclass=_MagicTemplateMeta):
     __init_subclass__ = check_override
 
     @overload
-    def __getitem__(self, key: int | str) -> Widget:
+    def __getitem__(self, key: int | str) -> _Comp:
         ...
 
     @overload
-    def __getitem__(self, key: slice) -> Self[Widget]:
+    def __getitem__(self, key: slice) -> list[_Comp]:
         ...
 
     def __getitem__(self, key):
@@ -249,7 +251,7 @@ class MagicTemplate(MutableSequence[Widget], metaclass=_MagicTemplateMeta):
         def index(self, value: Any, start: int, stop: int) -> int:
             raise NotImplementedError()
 
-        def remove(self, value: Widget | str):
+        def remove(self, value: _Comp | str):
             raise NotImplementedError()
 
     def show(self, run: bool = True) -> None:
@@ -261,10 +263,10 @@ class MagicTemplate(MutableSequence[Widget], metaclass=_MagicTemplateMeta):
     def close(self) -> None:
         raise NotImplementedError()
 
-    def _fast_insert(self, key: int, widget: Widget | Callable) -> None:
+    def _fast_insert(self, key: int, widget: _Comp | Callable) -> None:
         raise NotImplementedError()
 
-    def insert(self, key: int, widget: Widget | Callable) -> None:
+    def insert(self, key: int, widget: _Comp | Callable) -> None:
         self._fast_insert(key, widget)
         self._unify_label_widths()
 
@@ -825,7 +827,7 @@ class MagicTemplate(MutableSequence[Widget], metaclass=_MagicTemplateMeta):
         return None
 
 
-class BaseGui(MagicTemplate[_W]):
+class BaseGui(MagicTemplate[_Comp]):
     def __init__(
         self, close_on_run=True, popup_mode=PopUpMode.popup, error_mode=ErrorMode.msgbox
     ):
@@ -856,7 +858,7 @@ class BaseGui(MagicTemplate[_W]):
             self.native.setIconSize(self.native.size())
 
 
-class ContainerLikeGui(BaseGui[Action], mguiLike):
+class ContainerLikeGui(BaseGui[Union[Action, Widget]], mguiLike):
     # This class enables similar API between magicgui widgets and additional widgets
     # in magicclass such as menu and toolbar.
     _component_class = Action
