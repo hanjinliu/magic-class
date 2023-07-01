@@ -192,11 +192,11 @@ class MacroEdit(TabbedContainer):
         if name is None:
             name = f"Macro-{self.__class__.window_count}"
             self.__class__.window_count += 1
-        new = self.__class__(name=name)
+        new = self.__class__(name=name, is_main=False)
         new.__magicclass_parent__ = self.__magicclass_parent__
         new.native.setParent(self.native.parent(), new.native.windowFlags())
         if tabname is None:
-            tabname = "macro"
+            tabname = "script"
         new._add_code_edit(name=tabname)
         new.show()
         geometry = self.native.geometry()
@@ -248,10 +248,10 @@ class MacroEdit(TabbedContainer):
         self.textedit.zoom_out()
 
     def show(self):
+        was_visible = self.visible
         if self.parent is None:
             ui = self.__magicclass_parent__
             self.native.setParent(ui.native, self.native.windowFlags())
-        was_visible = self.visible
         super().show()
         if not was_visible:
             move_to_screen_center(self.native)

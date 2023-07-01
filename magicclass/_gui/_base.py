@@ -168,7 +168,7 @@ class _MagicTemplateMeta(ABCMeta):
     """This metaclass enables type checking of nested magicclasses."""
 
     @overload
-    def __get__(self: type[_T], obj: MagicTemplate, objtype=None) -> _T:
+    def __get__(self: type[_T], obj: Any, objtype=None) -> _T:
         ...
 
     @overload
