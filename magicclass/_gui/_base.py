@@ -2,6 +2,7 @@ from __future__ import annotations
 import functools
 from typing import (
     Any,
+    Union,
     Callable,
     TYPE_CHECKING,
     Iterable,
@@ -857,7 +858,7 @@ class BaseGui(MagicTemplate[_Comp]):
             self.native.setIconSize(self.native.size())
 
 
-class ContainerLikeGui(BaseGui[Action | Widget], mguiLike):
+class ContainerLikeGui(BaseGui[Union[Action, Widget]], mguiLike):
     # This class enables similar API between magicgui widgets and additional widgets
     # in magicclass such as menu and toolbar.
     _component_class = Action
