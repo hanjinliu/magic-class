@@ -35,6 +35,7 @@ from .logger import Logger
 from .codeedit import CodeEdit
 from .toggle_switch import ToggleSwitch
 from .eval import EvalLineEdit
+from .line_runner import OneLineRunner
 from ._union import UnionWidget
 
 __all__ = [
@@ -59,6 +60,7 @@ __all__ = [
     "ListContainer",
     "ListWidget",
     "Logger",
+    "OneLineRunner",
     "OptionalWidget",
     "SeabornFigure",
     "Separator",

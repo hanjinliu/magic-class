@@ -729,6 +729,7 @@ class thread_worker(Generic[_P]):
             return None
 
         _create_worker.__self__ = gui
+        _create_worker.__thread_worker__ = self
         return _create_worker
 
     def _run_blocked(

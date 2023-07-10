@@ -1,7 +1,6 @@
 from __future__ import annotations
 from contextlib import contextmanager
 import inspect
-import sys
 from typing import Any, Iterator, NamedTuple, TYPE_CHECKING
 import weakref
 from qtpy import QtWidgets as QtW, QtGui, QtCore
@@ -17,6 +16,7 @@ from magicgui.types import Undefined
 from macrokit import parse, Symbol, Expr, Head
 from magicclass._gui.utils import show_dialog_from_mgui
 from magicclass.signature import split_annotated_type, is_annotated
+from magicclass.widgets._const import FONT
 
 if TYPE_CHECKING:
     from magicclass import MagicTemplate
@@ -78,14 +78,8 @@ class QCodeEditor(QtW.QPlainTextEdit):
 
     def __init__(self, parent: QtW.QWidget | None = None):
         super().__init__(parent)
-        if sys.platform == "win32":
-            _font = "Consolas"
-        elif sys.platform == "darwin":
-            _font = "Menlo"
-        else:
-            _font = "Monospace"
-        self.setStyleSheet("QToolTip { font-family: FONT; }".replace("FONT", _font))
-        font = QtGui.QFont(_font, self.font().pointSize())
+        self.setStyleSheet("QToolTip { font-family: FONT; }".replace("FONT", FONT))
+        font = QtGui.QFont(FONT, self.font().pointSize())
         font.setStyleHint(QtGui.QFont.StyleHint.Monospace)
         font.setFixedPitch(True)
         self.setFont(font)

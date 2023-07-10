@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from types import MappingProxyType
 from typing import Any, Mapping
 from collections import Counter
@@ -11,6 +10,7 @@ from qtpy.QtCore import Qt
 
 from magicgui.backends._qtpy.widgets import QBaseStringWidget
 from magicgui.widgets.bases import ValueWidget
+from magicclass.widgets._const import FONT
 
 
 def _get_last_group(text: str) -> str | None:
@@ -101,13 +101,7 @@ class QEvalLineEdit(QtW.QLineEdit):
         super().__init__(parent)
         self.textChanged.connect(self._on_text_changed)
         self._namespace: Mapping[str, Any] = {}
-        if sys.platform == "win32":
-            _font = "Consolas"
-        elif sys.platform == "darwin":
-            _font = "Menlo"
-        else:
-            _font = "Monospace"
-        self.setFont(QtGui.QFont(_font))
+        self.setFont(QtGui.QFont(FONT))
         self._current_completion_state: tuple[str, list[str]] = None
         self._list_widget = None
         self._auto_suggest = True

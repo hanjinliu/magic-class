@@ -1,13 +1,8 @@
 from __future__ import annotations
-import sys
 import re
 from typing import Callable, Generator
 from qtpy.QtWidgets import QMessageBox, QTextEdit, QDialog, QVBoxLayout
-
-if sys.platform == "win32":
-    _FONT = "Consolas"
-else:
-    _FONT = "Menlo"
+from magicclass.widgets._const import FONT
 
 
 class QtTracebackDialog(QDialog):
@@ -22,7 +17,7 @@ class QtTracebackDialog(QDialog):
         # prepare text edit
         self._text = QTextEdit(self)
         self._text.setReadOnly(True)
-        self._text.setFontFamily(_FONT)
+        self._text.setFontFamily(FONT)
         self._text.setLineWrapMode(QTextEdit.LineWrapMode.NoWrap)
         layout.addWidget(self._text)
 
@@ -139,7 +134,7 @@ def get_tb_formatter() -> Callable[[Exception, bool, str], str]:
                 )
                 html = "".join(ansi2html(ansi_string)).replace("\n", "<br>")
                 html = (
-                    f"<span style='font-family: monaco,{_FONT},monospace;'>"
+                    f"<span style='font-family: monaco,{FONT},monospace;'>"
                     + html
                     + "</span>"
                 )
@@ -219,7 +214,7 @@ def get_tb_formatter() -> Callable[[Exception, bool, str], str]:
                 # remove hardcoded fonts
                 html = html.replace("\n", "<br>")
                 html = (
-                    f"<span style='font-family: monaco,{_FONT},monospace;'>"
+                    f"<span style='font-family: monaco,{FONT},monospace;'>"
                     + html
                     + "</span>"
                 )

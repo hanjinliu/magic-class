@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 import os
-import sys
 from typing import (
     Iterable,
     MutableSequence,
@@ -31,15 +30,9 @@ from magicgui.backends._qtpy.widgets import (
 )
 from .utils import FreeWidget, merge_super_sigs
 from magicclass.signature import split_annotated_type
+from magicclass.widgets._const import FONT
 
 _W = TypeVar("_W", bound=ValueWidget)
-
-if sys.platform == "win32":
-    _FONT = "Consolas"
-elif sys.platform == "darwin":
-    _FONT = "Menlo"
-else:
-    _FONT = "Monospace"
 
 
 @merge_super_sigs
@@ -178,7 +171,7 @@ class ConsoleTextEdit(TextEdit):
         from qtpy.QtGui import QFont, QTextOption
 
         self.native: QtW.QTextEdit
-        font = QFont(_FONT)
+        font = QFont(FONT)
         font.setStyleHint(QFont.StyleHint.Monospace)
         font.setFixedPitch(True)
         self.native.setFont(font)
