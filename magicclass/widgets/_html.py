@@ -34,7 +34,7 @@ class HtmlExporter:
     This class is designed for convenient user interaction.
     """
 
-    def __init__(self, control):
+    def __init__(self, control: QtW.QPlainTextEdit | QtW.QTextEdit):
         """Creates an HtmlExporter for the given Q(Plain)TextEdit."""
         assert isinstance(control, (QtW.QPlainTextEdit, QtW.QTextEdit))
         self.control = control

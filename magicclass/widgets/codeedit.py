@@ -84,6 +84,7 @@ class QCodeEditor(QtW.QPlainTextEdit):
             _font = "Menlo"
         else:
             _font = "Monospace"
+        self.setStyleSheet("QToolTip { font-family: FONT; }".replace("FONT", _font))
         font = QtGui.QFont(_font, self.font().pointSize())
         font.setStyleHint(QtGui.QFont.StyleHint.Monospace)
         font.setFixedPitch(True)
@@ -288,6 +289,8 @@ class QCodeEditor(QtW.QPlainTextEdit):
         return None
 
     def wordAt(self, pos: QtCore.QPoint) -> WordInfo | None:
+        if not self.isVisible():
+            return None
         cursor = self.cursorForPosition(pos)
         cursor.select(QtGui.QTextCursor.SelectionType.WordUnderCursor)
         block = cursor.block()
@@ -715,7 +718,6 @@ class QCodeEditor(QtW.QPlainTextEdit):
         cursor.clearSelection()
         cursor.setPosition(end)
         if nquot % 2 == 0:
-            print(start, pos_line_end, end)
             if start != end or pos_line_end == end:
                 cursor.insertText(quot)
         cursor.setPosition(start)
@@ -837,6 +839,8 @@ def eval_under_cursor(
                 pos_start = _length
                 break
             first = next_first
+        if len(str(first)) < clicked_pos:
+            return None
 
         if isinstance(first, Expr):
             left, right = first.args
@@ -874,7 +878,8 @@ def eval_under_cursor(
             words = first
     else:
         return None
-    return WordInfo(widget, words, str(words).split(".")[-1], obj)
+    info = WordInfo(widget, words, str(words).split(".")[-1], obj)
+    return info
 
 
 # ##############################################################################
