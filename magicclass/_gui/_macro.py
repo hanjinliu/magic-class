@@ -534,13 +534,20 @@ class GuiMacro(BaseMacro):
         self._stack_undo.clear()
         self._stack_redo.clear()
 
-    def append_with_undo(self, expr: Expr, undo: UndoCallback) -> None:
+    def append_with_undo(
+        self,
+        expr: Expr,
+        undo: UndoCallback,
+        redo: Callable[[], Any] | None = None,
+    ) -> None:
         """Append an expression with its undo action."""
         if not isinstance(undo, UndoCallback):
             if callable(undo):
                 undo = UndoCallback(undo)
             else:
                 raise TypeError(f"undo must be callable, not {type(undo)}")
+        if redo is not None:
+            undo = undo.with_redo(redo)
         self.append(expr)
         self._append_undo(undo)
         return None
