@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Any, Callable, Union
 from psygnal import Signal
 
-from qtpy import QtCore, QtGui, QtWidgets as QtW
+from qtpy import QtGui, QtWidgets as QtW
 from qtpy.QtCore import Qt
 
 from macrokit import Expr, Symbol, parse, Head
@@ -11,6 +11,7 @@ from magicgui.widgets.bases import ValueWidget
 from magicclass.widgets._const import FONT
 
 InjectorType = Union[Callable[[], dict[str, Any]], dict[str, Any]]
+TranslatorType = Callable[[str, dict[str, Any]], tuple[str, dict[str, Any]]]
 
 
 class HistoryStack:
@@ -42,10 +43,10 @@ class HistoryStack:
             return self._history[self._index]
 
 
-class QOneLineRunner(QtW.QPlainTextEdit):
+class QRunnerLine(QtW.QTextEdit):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setLineWrapMode(QtW.QPlainTextEdit.LineWrapMode.NoWrap)
+        self.setLineWrapMode(QtW.QTextEdit.LineWrapMode.NoWrap)
         self.setFixedHeight(24)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
@@ -59,6 +60,11 @@ class QOneLineRunner(QtW.QPlainTextEdit):
             self._injector = obj
         else:
             self._injector = lambda: obj
+
+    def setTranslator(self, obj: TranslatorType):
+        if not callable(obj):
+            raise TypeError("Translator must be callable.")
+        self._translator = obj
 
     def execute(self):
         text = self.toPlainText()
@@ -138,6 +144,29 @@ def default_translator(text: str, ns: dict[str, Any]) -> tuple[str, dict[str, An
     return text, ns
 
 
+class QOneLineRunner(QtW.QWidget):
+    def __init__(
+        self,
+        parent: QtW.QWidget | None = ...,
+    ) -> None:
+        super().__init__(parent)
+        label = QtW.QLabel(">>", self)
+        self._line = QRunnerLine(self)
+        _layout = QtW.QHBoxLayout(self)
+        _layout.addWidget(label)
+        _layout.addWidget(self._line)
+        self.setLayout(_layout)
+
+    def setInjector(self, obj: InjectorType):
+        self._line.setInjector(obj)
+
+    def setTranslator(self, obj: TranslatorType):
+        self._line.setTranslator(obj)
+
+    def execute(self):
+        return self._line.execute()
+
+
 class _OneLineRunner(QBaseStringWidget):
     _qwidget: QOneLineRunner
 
@@ -166,3 +195,7 @@ class OneLineRunner(ValueWidget):
     def set_injector(self, injector: InjectorType):
         """Set injector."""
         self.native.setInjector(injector)
+
+    def set_translator(self, translator: TranslatorType):
+        """Set translator."""
+        self.native.setTranslator(translator)
