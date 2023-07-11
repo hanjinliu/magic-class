@@ -1,5 +1,4 @@
-from enum import auto
-from typing import Annotated
+from typing_extensions import Annotated
 from unittest.mock import MagicMock
 from magicclass import magicclass, abstractapi, field, vfield, confirm, impl_preview
 from magicclass.types import Bound

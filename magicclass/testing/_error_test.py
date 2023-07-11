@@ -11,7 +11,7 @@ class GuiErrorMonitor(Sequence[Exception]):
     _instances: dict[BaseGui, GuiErrorMonitor] = {}
 
     def __init__(self, gui: BaseGui):
-        self._errors = list[Exception]()
+        self._errors: list[Exception] = []
 
     @classmethod
     def get_instance(cls, gui: BaseGui) -> GuiErrorMonitor:
