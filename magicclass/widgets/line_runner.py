@@ -3,7 +3,7 @@ from typing import Any, Callable, Union
 from psygnal import Signal
 
 from qtpy import QtGui, QtWidgets as QtW
-from qtpy.QtCore import Qt
+from qtpy.QtCore import Qt, Signal as pyqtSignal
 
 from macrokit import Expr, Symbol, parse, Head
 from magicgui.backends._qtpy.widgets import QBaseStringWidget
@@ -44,6 +44,8 @@ class HistoryStack:
 
 
 class QRunnerLine(QtW.QTextEdit):
+    executed = pyqtSignal(object)
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setLineWrapMode(QtW.QTextEdit.LineWrapMode.NoWrap)
@@ -69,6 +71,7 @@ class QRunnerLine(QtW.QTextEdit):
     def execute(self):
         text = self.toPlainText()
         ns = self._injector()
+        ns.setdefault("__builtins__", _DEFAULT_BUILTINS)
         text, ns = self._translator(text, ns)
         expr = parse(text)
         return self._execute(expr, ns)
@@ -156,6 +159,7 @@ class QOneLineRunner(QtW.QWidget):
         _layout.addWidget(label)
         _layout.addWidget(self._line)
         self.setLayout(_layout)
+        self.textChanged = self._line.textChanged
 
     def setInjector(self, obj: InjectorType):
         self._line.setInjector(obj)
@@ -166,14 +170,18 @@ class QOneLineRunner(QtW.QWidget):
     def execute(self):
         return self._line.execute()
 
+    def text(self) -> str:
+        return self._line.toPlainText()
+
+    def setText(self, text: str):
+        self._line.setPlainText(text)
+
 
 class _OneLineRunner(QBaseStringWidget):
     _qwidget: QOneLineRunner
 
     def __init__(self, **kwargs):
-        super().__init__(
-            QOneLineRunner, "toPlainText", "setPlainText", "textChanged", **kwargs
-        )
+        super().__init__(QOneLineRunner, "text", "setText", "textChanged", **kwargs)
 
 
 class OneLineRunner(ValueWidget):
@@ -185,15 +193,23 @@ class OneLineRunner(ValueWidget):
         self.native: QOneLineRunner
         if injector is not None:
             self.native.setInjector(injector)
+        self.native._line.executed.connect(self.executed)
 
-    def eval(self):
-        """Evaluate current text."""
-        out = self.native.execute()
-        self.executed.emit(out)
-        return out
+    def execute(self):
+        """Execute current text."""
+        return self.native.execute()
 
     def set_injector(self, injector: InjectorType):
-        """Set injector."""
+        """
+        Set injector.
+
+        Examples
+        --------
+        >>> runner = OneLineRunner()
+        >>> runner.set_injector({"a": 1})
+        >>> runner.value = "print(a)"
+        >>> runner.execute()
+        """
         self.native.setInjector(injector)
 
     def set_translator(self, translator: TranslatorType):
