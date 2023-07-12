@@ -217,7 +217,7 @@ You'll have to return all the values required for updating the widgets. In terms
 readability, the this code is awful. You also have to annotate the second argument
 of ``_on_return`` with a very long ``tuple[...]`` type.
 
-Here, you can use ``thread_worker.to_callback`` static method. This method converts
+Here, you can use ``thread_worker.callback`` static method. This method converts
 a function into a ``Callback`` object, which will be called if a thread worker detected
 it as a returned/yielded value.
 
@@ -240,7 +240,7 @@ it as a returned/yielded value.
             r3 = very_heavy_computation_3(a, b)
 
             # write things in a function
-            @thread_worker.to_callback
+            @thread_worker.callback
             def _return_callback():
                 self.result_1 = r1
                 self.result_2 = r2
@@ -249,7 +249,7 @@ it as a returned/yielded value.
 
         @thread_worker
         def gen(self):
-            @thread_worker.to_callback
+            @thread_worker.callback
             def _yield_callback():
                 # r1, r2, r3 are non-local variables
                 self.result_1 = r1

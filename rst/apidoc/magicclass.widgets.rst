@@ -53,6 +53,14 @@ magicclass.widgets.eval module
    :undoc-members:
    :show-inheritance:
 
+magicclass.widgets.line\_runner module
+--------------------------------------
+
+.. automodule:: magicclass.widgets.line_runner
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 magicclass.widgets.logger module
 --------------------------------
 

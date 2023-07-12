@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.core &mdash; magic-class 0.7.0 documentation</title>
+  <title>magicclass.core &mdash; magic-class 0.7.4 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -32,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.0
+                0.7.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -84,6 +84,7 @@
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span> <span class="k">as</span> <span class="n">functools_wraps</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">ModuleType</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">weakref</span> <span class="kn">import</span> <span class="n">WeakValueDictionary</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Callable</span>
 <span class="kn">from</span> <span class="nn">macrokit</span> <span class="kn">import</span> <span class="n">Symbol</span><span class="p">,</span> <span class="n">Expr</span>
@@ -644,7 +645,7 @@
             <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ui</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-    <span class="n">widget</span> <span class="o">=</span> <span class="n">ui</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="n">widget</span><span class="p">:</span> <span class="n">Clickable</span> <span class="o">=</span> <span class="n">ui</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;mgui&quot;</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Widget </span><span class="si">{</span><span class="n">widget</span><span class="si">}</span><span class="s2"> does not have FunctionGui inside it.&quot;</span><span class="p">)</span>
@@ -671,6 +672,11 @@
 <span class="sd">        Which execution will be repeated. Any object that support list slicing can be used.</span>
 <span class="sd">        By default the last operation will be repeated.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+        <span class="s2">&quot;repeat() is deprecated and will be removed soon. Use `ui.macro.repeat_method()` &quot;</span>
+        <span class="s2">&quot;to specify call options in more detail.&quot;</span><span class="p">,</span>
+        <span class="ne">DeprecationWarning</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">line</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">macro</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">line</span><span class="o">.</span><span class="n">eval</span><span class="p">({</span><span class="s2">&quot;ui&quot;</span><span class="p">:</span> <span class="n">ui</span><span class="p">})</span>

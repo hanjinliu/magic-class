@@ -107,7 +107,7 @@ from the returned-callback.
                 #   reverse function   #
                 ########################
 
-            @thread_worker.to_callback
+            @thread_worker.callback
             def out():
                 ########################
                 #   returned-callback  #

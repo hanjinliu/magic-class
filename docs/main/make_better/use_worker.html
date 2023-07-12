@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Multi-threading &mdash; magic-class 0.7.1 documentation</title>
+  <title>Multi-threading &mdash; magic-class 0.7.4 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -35,7 +35,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.1
+                0.7.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -310,7 +310,7 @@ you send a lot of information to the callback funcition.</p>
 <p>You'll have to return all the values required for updating the widgets. In terms of
 readability, the this code is awful. You also have to annotate the second argument
 of <code class="docutils literal notranslate"><span class="pre">_on_return</span></code> with a very long <code class="docutils literal notranslate"><span class="pre">tuple[...]</span></code> type.</p>
-<p>Here, you can use <code class="docutils literal notranslate"><span class="pre">thread_worker.to_callback</span></code> static method. This method converts
+<p>Here, you can use <code class="docutils literal notranslate"><span class="pre">thread_worker.callback</span></code> static method. This method converts
 a function into a <code class="docutils literal notranslate"><span class="pre">Callback</span></code> object, which will be called if a thread worker detected
 it as a returned/yielded value.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
@@ -330,7 +330,7 @@ it as a returned/yielded value.</p>
         <span class="n">r3</span> <span class="o">=</span> <span class="n">very_heavy_computation_3</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 
         <span class="c1"># write things in a function</span>
-        <span class="nd">@thread_worker</span><span class="o">.</span><span class="n">to_callback</span>
+        <span class="nd">@thread_worker</span><span class="o">.</span><span class="n">callback</span>
         <span class="k">def</span> <span class="nf">_return_callback</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">result_1</span> <span class="o">=</span> <span class="n">r1</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">result_2</span> <span class="o">=</span> <span class="n">r2</span>
@@ -339,7 +339,7 @@ it as a returned/yielded value.</p>
 
     <span class="nd">@thread_worker</span>
     <span class="k">def</span> <span class="nf">gen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nd">@thread_worker</span><span class="o">.</span><span class="n">to_callback</span>
+        <span class="nd">@thread_worker</span><span class="o">.</span><span class="n">callback</span>
         <span class="k">def</span> <span class="nf">_yield_callback</span><span class="p">():</span>
             <span class="c1"># r1, r2, r3 are non-local variables</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">result_1</span> <span class="o">=</span> <span class="n">r1</span>

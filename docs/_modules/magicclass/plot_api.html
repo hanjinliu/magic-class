@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.plot_api &mdash; magic-class 0.7.0rc0 documentation</title>
+  <title>magicclass.plot_api &mdash; magic-class 0.7.4 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -32,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.0rc0
+                0.7.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -97,10 +97,12 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span> <span class="nn">matplotlib.axes</span> <span class="kn">import</span> <span class="n">Axes</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib.figure</span> <span class="kn">import</span> <span class="n">Figure</span> <span class="k">as</span> <span class="n">mpl_Figure</span>
 <span class="kn">from</span> <span class="nn">magicclass.widgets</span> <span class="kn">import</span> <span class="n">Figure</span>
 
-<span class="n">CURRENT_WIDGET</span><span class="p">:</span> <span class="n">Figure</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">CURRENT_WIDGET</span><span class="p">:</span> <span class="n">Figure</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
 
 <span class="nd">@wraps</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">)</span>
@@ -142,13 +144,13 @@
 
 
 <span class="nd">@wraps</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">gcf</span><span class="p">():</span>
+<span class="k">def</span> <span class="nf">gcf</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">mpl_Figure</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get current figure.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">CURRENT_WIDGET</span><span class="o">.</span><span class="n">figure</span>
 
 
 <span class="nd">@wraps</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">gca</span><span class="p">():</span>
+<span class="k">def</span> <span class="nf">gca</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Axes</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get current axis.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">CURRENT_WIDGET</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 

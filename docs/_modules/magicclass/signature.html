@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.signature &mdash; magic-class 0.7.1 documentation</title>
+  <title>magicclass.signature &mdash; magic-class 0.7.4 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -32,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.1
+                0.7.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -297,9 +297,14 @@
         <span class="p">)</span></div></div>
 
 
+<div class="viewcode-block" id="is_annotated"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.signature.is_annotated">[docs]</a><span class="k">def</span> <span class="nf">is_annotated</span><span class="p">(</span><span class="n">annotation</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a type hint is an Annotated type.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annotation</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="split_annotated_type"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.signature.split_annotated_type">[docs]</a><span class="k">def</span> <span class="nf">split_annotated_type</span><span class="p">(</span><span class="n">annotation</span><span class="p">:</span> <span class="n">_AnnotatedAlias</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Split an Annotated type into its base type and options dict.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annotation</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_annotated</span><span class="p">(</span><span class="n">annotation</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Type hint must be an &#39;Annotated&#39; type.&quot;</span><span class="p">)</span>
 
     <span class="n">typ</span><span class="p">,</span> <span class="o">*</span><span class="n">meta</span> <span class="o">=</span> <span class="n">get_args</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>

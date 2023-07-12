@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.pyqtgraph.plot_api &mdash; magic-class 0.7.0rc0 documentation</title>
+  <title>magicclass.ext.pyqtgraph.plot_api &mdash; magic-class 0.7.4 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -32,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.0rc0
+                0.7.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -100,7 +100,7 @@
     <span class="k">return</span> <span class="n">CURRENT_CANVAS</span></div>
 
 
-<span class="k">def</span> <span class="nf">_set_current_canvas</span><span class="p">(</span><span class="n">canvas</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_set_current_canvas</span><span class="p">(</span><span class="n">canvas</span><span class="p">:</span> <span class="n">HasViewBox</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HasViewBox</span><span class="p">:</span>
     <span class="k">global</span> <span class="n">CURRENT_CANVAS</span>
     <span class="n">CURRENT_CANVAS</span> <span class="o">=</span> <span class="n">canvas</span>
     <span class="k">return</span> <span class="n">canvas</span>
@@ -112,7 +112,7 @@
     <span class="k">return</span> <span class="n">multi</span>
 
 
-<div class="viewcode-block" id="gcf"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.plot_api.gcf">[docs]</a><span class="k">def</span> <span class="nf">gcf</span><span class="p">():</span>
+<div class="viewcode-block" id="gcf"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.plot_api.gcf">[docs]</a><span class="k">def</span> <span class="nf">gcf</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">_MultiPlot</span> <span class="o">|</span> <span class="n">QtPlotCanvas</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">CURRENT_MULTI_CANVAS</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">gca</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">CURRENT_MULTI_CANVAS</span></div>
@@ -121,18 +121,18 @@
 <span class="n">gcw</span> <span class="o">=</span> <span class="n">gcf</span>
 
 
-<div class="viewcode-block" id="figure"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.plot_api.figure">[docs]</a><span class="k">def</span> <span class="nf">figure</span><span class="p">():</span>
+<div class="viewcode-block" id="figure"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.plot_api.figure">[docs]</a><span class="k">def</span> <span class="nf">figure</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">QtPlotCanvas</span><span class="p">:</span>
     <span class="n">_set_current_canvas</span><span class="p">(</span><span class="n">QtPlotCanvas</span><span class="p">())</span>
     <span class="k">return</span> <span class="n">CURRENT_CANVAS</span></div>
 
 
 <span class="nd">@overload</span>
-<span class="k">def</span> <span class="nf">subplot</span><span class="p">(</span><span class="n">pos</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">subplot</span><span class="p">(</span><span class="n">pos</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HasViewBox</span><span class="p">:</span>
     <span class="o">...</span>
 
 
 <span class="nd">@overload</span>
-<span class="k">def</span> <span class="nf">subplot</span><span class="p">(</span><span class="n">row</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">col</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">subplot</span><span class="p">(</span><span class="n">row</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">col</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HasViewBox</span><span class="p">:</span>
     <span class="o">...</span>
 
 
@@ -225,7 +225,7 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="show"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.plot_api.show">[docs]</a><span class="k">def</span> <span class="nf">show</span><span class="p">():</span>
+<div class="viewcode-block" id="show"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.plot_api.show">[docs]</a><span class="k">def</span> <span class="nf">show</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">CURRENT_MULTI_CANVAS</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">CURRENT_MULTI_CANVAS</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
