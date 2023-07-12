@@ -178,7 +178,7 @@ def test_choices_type():
             def _get_choices(self, w=None):
                 return [1, 2]
 
-            def _get_choices_with_name(self, w=None) -> list[tuple[str, int]]:
+            def _get_choices_with_name(self, w=None):
                 return [("a", 1), ("b", 2)]
 
         def f(self, c: OneOf[B._get_choices], d: OneOf[B._get_choices_with_name]):
@@ -204,7 +204,7 @@ def test_someof_type():
             def _get_choices(self, w=None):
                 return [1, 2]
 
-            def _get_choices_with_name(self, w=None) -> list[tuple[str, int]]:
+            def _get_choices_with_name(self, w=None):
                 return [("a", 1), ("b", 2)]
 
         def f(self, c: SomeOf[B._get_choices], d: SomeOf[B._get_choices_with_name]):

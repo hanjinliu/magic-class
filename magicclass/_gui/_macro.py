@@ -418,7 +418,7 @@ def _action(
 
 class PropertyGroup:
     def __init__(self, parent: GuiMacro | None = None):
-        self._instances = dict[int, PropertyGroup]()
+        self._instances: dict[int, PropertyGroup] = {}
         self._parent = parent
         self._max_lines = 10000
         self._max_undo = 100
