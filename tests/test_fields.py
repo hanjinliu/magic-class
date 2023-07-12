@@ -328,7 +328,7 @@ def test_get_value_field_widget():
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason="requires python3.9+")
 def test_generic_and_annotated():
-    w0 = field(Tuple[int, str]).to_widget()
+    w0 = field(tuple[int, str]).to_widget()
     w1 = field(Optional[int], options={"text": "XXX", "options": {"max": 10}}).to_widget()
     w2 = field(Optional[tuple[int, str]]).to_widget()
 
