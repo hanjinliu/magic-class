@@ -12,6 +12,7 @@ from magicclass.types import Optional
 from magicgui import widgets
 import sys
 from unittest.mock import MagicMock
+import pytest
 
 def test_field_types():
     @magicclass
@@ -325,14 +326,11 @@ def test_get_value_field_widget():
     assert type(ui["x_1"]) is widgets.SpinBox
     assert type(ui["y_1"]) is widgets.SpinBox
 
+@pytest.mark.skipif(sys.version_info < (3, 9), reason="requires python3.9+")
 def test_generic_and_annotated():
-    if sys.version_info < (3, 9):
-        from typing import Tuple
-    else:
-        Tuple = tuple
     w0 = field(Tuple[int, str]).to_widget()
     w1 = field(Optional[int], options={"text": "XXX", "options": {"max": 10}}).to_widget()
-    w2 = field(Optional[Tuple[int, str]]).to_widget()
+    w2 = field(Optional[tuple[int, str]]).to_widget()
 
     assert w0.widget_type == "TupleEdit"
     assert w1.widget_type == "OptionalWidget"
