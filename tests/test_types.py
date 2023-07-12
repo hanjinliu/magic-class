@@ -1,5 +1,5 @@
 from typing_extensions import Annotated
-
+import sys
 import pytest
 from magicclass import magicclass, set_options, get_function_gui
 from magicclass.types import Optional, Union, Path
@@ -69,6 +69,7 @@ def test_annotated_in_optional():
     assert not opt[1].visible
     assert opt[1].min == -1
 
+@pytest.mark.skipif(sys.version_info < (3, 9), reason="requires python3.9+")
 def test_nested_annotated_in_optional():
     @magicclass
     class A:

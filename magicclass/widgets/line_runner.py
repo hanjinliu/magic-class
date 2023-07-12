@@ -10,8 +10,8 @@ from magicgui.backends._qtpy.widgets import QBaseStringWidget
 from magicgui.widgets.bases import ValueWidget
 from magicclass.widgets._const import FONT
 
-InjectorType = Union[Callable[[], dict[str, Any]], dict[str, Any]]
-TranslatorType = Callable[[str, dict[str, Any]], tuple[str, dict[str, Any]]]
+InjectorType = Union[Callable[[], "dict[str, Any]"], "dict[str, Any]"]
+TranslatorType = Callable[[str, "dict[str, Any]"], "tuple[str, dict[str, Any]]"]
 
 
 class HistoryStack:
