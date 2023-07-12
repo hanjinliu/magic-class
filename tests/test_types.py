@@ -69,13 +69,16 @@ def test_annotated_in_optional():
     assert not opt[1].visible
     assert opt[1].min == -1
 
-@pytest.mark.skipif(sys.version_info < (3, 9), reason="requires python3.9+")
 def test_nested_annotated_in_optional():
+    if sys.version_info < (3, 9):
+        from typing import List
+    else:
+        List = list
     @magicclass
     class A:
         def f(
             self,
-            x: Optional[list[Annotated[int, {"text": "T", "options": {"min": -1}}]]] = None,
+            x: Optional[List[Annotated[int, {"text": "T", "options": {"min": -1}}]]] = None,
         ):
             x.sort()
 
