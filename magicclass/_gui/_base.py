@@ -1,7 +1,9 @@
 from __future__ import annotations
+from contextlib import contextmanager
 import functools
 from typing import (
     Any,
+    ContextManager,
     Union,
     Callable,
     TYPE_CHECKING,
@@ -671,6 +673,49 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
         )
         fld.set_destination(cls)
         return fld
+
+    @contextmanager
+    def config_context(
+        self,
+        error_mode=None,
+        close_on_run=None,
+        recursive: bool = True,
+    ):
+        """
+        Context manager to temporarily change the configuration of the widget.
+
+        Parameters
+        ----------
+        error_mode : ErrorMode, optional
+            Error mode to use.
+        """
+        if error_mode is not None:
+            old_error_mode = self._error_mode
+            self._error_mode = ErrorMode(error_mode)
+        else:
+            old_error_mode = self._popup_mode
+        if close_on_run is not None:
+            old_close_on_run = self._close_on_run
+        else:
+            old_close_on_run = self._close_on_run
+
+        child_contexts: list[ContextManager] = []
+        try:
+            if recursive:
+                for child in self.__magicclass_children__:
+                    ctx = child.config_context(
+                        error_mode=error_mode,
+                        close_on_run=close_on_run,
+                        recursive=True,
+                    )
+                    ctx.__enter__()
+                    child_contexts.append(ctx)
+            yield
+        finally:
+            for ctx in child_contexts:
+                ctx.__exit__(None, None, None)
+            self._error_mode = old_error_mode
+            self._close_on_run = old_close_on_run
 
     def _convert_attributes_into_widgets(self):
         """

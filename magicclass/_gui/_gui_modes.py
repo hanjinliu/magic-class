@@ -2,12 +2,15 @@ from __future__ import annotations
 
 from types import TracebackType
 from contextlib import contextmanager
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
 from enum import Enum
 import functools
 from magicgui.widgets import Widget
 from .mgui_ext import FunctionGuiPlus
 from magicclass._exceptions import Canceled
+
+if TYPE_CHECKING:
+    from ._base import BaseGui
 
 
 class PopUpMode(Enum):
@@ -65,11 +68,7 @@ def _msgbox_raising(e: Exception, parent: Widget):
 
 
 def _stderr_raising(e: Exception, parent: Widget):
-    pass
-
-
-def _stdout_raising(e: Exception, parent: Widget):
-    print(f"{e.__class__.__name__}: {e}")
+    raise e
 
 
 def _napari_notification_raising(e: Exception, parent: Widget):
@@ -94,17 +93,19 @@ class ErrorMode(Enum):
     stdout = "stdout"
     napari = "napari"
     debug = "debug"
+    ignore = "ignore"
 
     def get_handler(self):
         """Get error handler."""
         return ErrorModeHandlers[self]
 
-    def wrap_handler(self, func: Callable, parent):
+    @classmethod
+    def wrap_handler(cls, func: Callable, parent: BaseGui):
         """Wrap function with the error handler."""
-        handler = self.get_handler()
 
         @functools.wraps(func)
         def wrapped_func(*args, **kwargs):
+            handler = parent._error_mode.get_handler()
             try:
                 out = func(*args, **kwargs)
             except Canceled as e:
@@ -117,21 +118,23 @@ class ErrorMode(Enum):
 
         return wrapped_func
 
+    @classmethod
     @contextmanager
-    def raise_with_handler(self, parent):
+    def raise_with_handler(cls, parent: BaseGui):
         """Raise error with the error handler in this context."""
         try:
             yield
         except Exception as e:
-            self.get_handler()(e, parent=parent)
+            parent._error_mode.get_handler()(e, parent=parent)
 
 
 ErrorModeHandlers = {
     ErrorMode.msgbox: _msgbox_raising,
     ErrorMode.stderr: _stderr_raising,
-    ErrorMode.stdout: _stdout_raising,
+    ErrorMode.stdout: lambda e, parent: print(f"{e.__class__.__name__}: {e}"),
     ErrorMode.napari: _napari_notification_raising,
     ErrorMode.debug: _debug_raising,
+    ErrorMode.ignore: lambda e, parent: None,
 }
 
 
