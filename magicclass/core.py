@@ -23,6 +23,7 @@ from magicclass._gui.class_gui import (
     TabbedClassGui,
     StackedClassGui,
     ToolBoxClassGui,
+    ResizableClassGui,
     ListClassGui,
 )
 from magicclass._gui._base import (
@@ -67,6 +68,7 @@ _TYPE_MAP: dict[WidgetType, type[ClassGuiBase]] = {
     WidgetType.list: ListClassGui,
     WidgetType.groupbox: GroupBoxClassGui,
     WidgetType.frame: FrameClassGui,
+    WidgetType.resizable: ResizableClassGui,
     WidgetType.subwindows: SubWindowsClassGui,
     WidgetType.mainwindow: MainWindowClassGui,
 }

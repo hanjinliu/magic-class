@@ -21,6 +21,7 @@ class WidgetType(Enum):
     subwindows = "subwindows"
     groupbox = "groupbox"
     frame = "frame"
+    resizable = "resizable"
     mainwindow = "mainwindow"
 
 
@@ -38,6 +39,7 @@ WidgetTypeStr = Literal[
     "subwindows",
     "groupbox",
     "frame",
+    "resizable",
     "mainwindow",
     "hcollapsible",
 ]
@@ -55,7 +57,7 @@ PopUpModeStr = Literal[
 ]
 
 
-ErrorModeStr = Literal["msgbox", "stderr", "stdout", "napari", "debug"]
+ErrorModeStr = Literal["msgbox", "stderr", "stdout", "napari", "debug", "ignore"]
 
 Color = Union[Iterable[float], str]
 Colormap = Dict[float, Color]

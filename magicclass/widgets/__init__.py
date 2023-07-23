@@ -16,6 +16,7 @@ from .containers import (
     StackedContainer,
     TabbedContainer,
     ToolBoxContainer,
+    ResizableContainer,
 )
 from .pywidgets import ListWidget, DictWidget
 from .color import ColorEdit, ColorSlider
@@ -62,6 +63,7 @@ __all__ = [
     "Logger",
     "OneLineRunner",
     "OptionalWidget",
+    "ResizableContainer",
     "SeabornFigure",
     "Separator",
     "ScrollableContainer",
