@@ -27,6 +27,9 @@ dependencies = [
     "magicgui>=0.7.0",
     "qtpy>=1.10.0",
     "superqt>=0.4.0",
+    "docstring_parser>=0.15",
+    "psygnal>=0.9.0",
+    "typing-extensions>=4.5.0",
 ]
 
 [project.optional-dependencies]
