@@ -278,3 +278,15 @@ def test_check_preview_autocall():
     assert hist == [0, 1, 0, 1]
     testf.update_parameters(x=4)
     assert hist == [0, 1, 0, 1]
+
+def test_error_detectable():
+    @magicclass
+    class A:
+        def f(self, raises=True):
+            if raises:
+                raise ValueError("error")
+
+    ui = A()
+    testf = FunctionGuiTester(ui.f)
+    with pytest.raises(ValueError):
+        testf.call()

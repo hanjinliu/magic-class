@@ -50,6 +50,7 @@ class FunctionGuiTester(Generic[_P]):
         self._fgui = get_function_gui(method)
         # NOTE: if the widget is in napari etc., choices depend on the parent.
         ui: BaseGui = method.__self__
+        self._magicclass_gui = ui
         self._fgui.native.setParent(ui.native, self._fgui.native.windowFlags())
         self._fgui.reset_choices()
         self._method = method
@@ -66,13 +67,16 @@ class FunctionGuiTester(Generic[_P]):
 
     @property
     def has_preview(self) -> bool:
+        """True if the method has preview function."""
         return self._prev_func is not None
 
     @property
     def has_confirmation(self) -> bool:
+        """True if the method has confirmation function."""
         return self._conf_dict is not None
 
     def click_preview(self):
+        """Emulate the preview button click."""
         if not self.has_preview:
             raise RuntimeError("No preview function found.")
         if self._fgui._auto_call:
@@ -88,25 +92,30 @@ class FunctionGuiTester(Generic[_P]):
             prev_widget.changed.emit(True)
 
     def update_parameters(self, **kwargs):
+        """Update the parameters of the function GUI."""
         self._fgui.update(**kwargs)
 
     def call(self, *args: _P.args, **kwargs: _P.kwargs):
-        if not self.has_confirmation:
-            return self._fgui(*args, **kwargs)
-        cb = self._conf_dict["callback"]
-        self._conf_dict["callback"] = self._mock_confirmation
-        try:
-            out = self._fgui(*args, **kwargs)
-        finally:
-            self._conf_dict["callback"] = cb
-        return out
+        """Call the method as if it is called from the GUI."""
+        with self._magicclass_gui.config_context(error_mode="stderr"):
+            if not self.has_confirmation:
+                return self._fgui(*args, **kwargs)
+            cb = self._conf_dict["callback"]
+            self._conf_dict["callback"] = self._mock_confirmation
+            try:
+                out = self._fgui(*args, **kwargs)
+            finally:
+                self._conf_dict["callback"] = cb
+            return out
 
     @property
     def confirm_count(self) -> int:
+        """Number of times the confirmation is called."""
         return self._n_confirm
 
     @property
     def call_count(self) -> int:
+        """Number of times the method is called."""
         return self._fgui.call_count
 
     def _mock_confirmation(self, *_, **__):
