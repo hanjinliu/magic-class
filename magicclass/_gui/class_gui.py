@@ -94,6 +94,13 @@ class ClassGuiBase(BaseGui[Widget]):
             self.__magicclass_children__.append(widget)
             widget._my_symbol = Symbol(name)
 
+        elif isinstance(fld, BoxMagicField):
+            for wdt in widget:
+                if isinstance(wdt, BaseGui):
+                    wdt.__magicclass_parent__ = self
+                    self.__magicclass_children__.append(wdt)
+                    wdt._my_symbol = Symbol(name)
+
         if isinstance(widget, (ValueWidget, ContainerWidget)):
             # If the field has callbacks, connect it to the newly generated widget.
             if fld.record:

@@ -11,12 +11,12 @@ from typing import (
 )
 
 from magicgui.widgets.bases import Widget, ValueWidget, ContainerWidget
-from magicclass.fields import MagicField, MagicValueField
+from magicclass.fields import MagicField, MagicValueField, field
 from magicclass.fields._define import define_callback, define_callback_gui
 
 if TYPE_CHECKING:
     from magicclass._gui import MagicTemplate
-    from magicclass.widgets._box import Box
+    from magicclass.widgets._box import Box, SingleWidgetBox
 
 _W = TypeVar("_W", bound=Widget)
 _V = TypeVar("_V")
@@ -24,8 +24,8 @@ _V = TypeVar("_V")
 
 def make_constructor(
     fld: MagicField[_W],
-    box_cls: type[Box],
-) -> Callable[[Any], Box[_W]]:
+    box_cls: type[SingleWidgetBox],
+) -> Callable[[Any], SingleWidgetBox[_W]]:
     def construct_widget(obj: Any) -> Widget:
         widget = fld.construct(obj)
         return box_cls.from_widget(widget)
@@ -35,7 +35,9 @@ def make_constructor(
 
 class BoxMagicField(MagicField["Box[_W]"], Generic[_W]):
     @classmethod
-    def from_field(cls, fld: MagicField[_W], box_cls: type[Box]) -> BoxMagicField[_W]:
+    def from_field(
+        cls, fld: MagicField[_W], box_cls: type[SingleWidgetBox]
+    ) -> BoxMagicField[_W]:
         """Create a field object from another field."""
         constructor = make_constructor(fld, box_cls)
         return cls(
@@ -56,7 +58,7 @@ class BoxMagicField(MagicField["Box[_W]"], Generic[_W]):
         box_cls: type[Box],
     ) -> BoxMagicField[_W]:
         """Create a field object from a widget type."""
-        fld = MagicField(widget_type=widget_type)
+        fld = field(widget_type)
         return cls.from_field(fld, box_cls)
 
     @classmethod
@@ -76,15 +78,15 @@ class BoxMagicField(MagicField["Box[_W]"], Generic[_W]):
         if (widget := self._guis.get(obj_id, None)) is None:
             self._guis[obj_id] = widget = self.construct(obj)
             widget.name = self.name
-            inner = widget.widget
-            if isinstance(inner, (ValueWidget, ContainerWidget)):
-                if isinstance(obj, MagicTemplate):
-                    _def = define_callback_gui
-                else:
-                    _def = define_callback
-                for callback in self._callbacks:
-                    # funcname = callback.__name__
-                    inner.changed.connect(_def(obj, callback))
+            for inner in widget:
+                if isinstance(inner, (ValueWidget, ContainerWidget)):
+                    if isinstance(obj, MagicTemplate):
+                        _def = define_callback_gui
+                    else:
+                        _def = define_callback
+                    for callback in self._callbacks:
+                        # funcname = callback.__name__
+                        inner.changed.connect(_def(obj, callback))
         return widget
 
     def as_getter(self, obj: Any) -> Callable[[Any], Any]:

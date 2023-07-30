@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import TypeVar
-import weakref
 from magicgui.widgets import Widget
 from magicgui.widgets.bases import ContainerWidget
 from magicclass.widgets.containers import (
@@ -16,22 +15,6 @@ _W = TypeVar("_W", bound=Widget)
 
 
 class Box(ContainerWidget[_W]):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self._magicclass_parent_ref = None
-
-    @property
-    def __magicclass_parent__(self):
-        if self._magicclass_parent_ref is None:
-            return None
-        return self._magicclass_parent_ref()
-
-    @__magicclass_parent__.setter
-    def __magicclass_parent__(self, value):
-        if value is None:
-            self._magicclass_parent_ref = None
-        self._magicclass_parent_ref = weakref.ref(value)
-
     @property
     def labels(self) -> bool:
         """Always not labeled."""
@@ -46,8 +29,7 @@ class SingleWidgetBox(Box):
             label=widget.label or widget.name or "",
             name=widget.name,
         )
-        if hasattr(type(widget), "__magicclass_parent__"):
-            widget.__magicclass_parent__ = out
+        out.margins = (0, 0, 0, 0)
         return out
 
     @property
