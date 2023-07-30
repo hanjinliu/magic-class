@@ -1,4 +1,4 @@
-from ._box import resizable, draggable, scrollable, collapsible
+from ._fields import resizable, draggable, scrollable, collapsible
 
 __all__ = [
     "resizable",

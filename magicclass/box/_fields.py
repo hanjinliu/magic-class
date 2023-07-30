@@ -1,8 +1,18 @@
 from __future__ import annotations
-from typing import Any, Callable, TYPE_CHECKING, Literal, Protocol, TypeVar, overload
+from typing import (
+    Any,
+    Callable,
+    TYPE_CHECKING,
+    Generic,
+    Literal,
+    Protocol,
+    TypeVar,
+    overload,
+)
 
-from magicgui.widgets.bases import Widget, ValueWidget
+from magicgui.widgets.bases import Widget, ValueWidget, ContainerWidget
 from magicclass.fields import MagicField, MagicValueField
+from magicclass.fields._define import define_callback, define_callback_gui
 
 if TYPE_CHECKING:
     from magicclass._gui import MagicTemplate
@@ -23,9 +33,10 @@ def make_constructor(
     return construct_widget
 
 
-class BoxMagicField(MagicField[_W]):
+class BoxMagicField(MagicField["Box[_W]"], Generic[_W]):
     @classmethod
     def from_field(cls, fld: MagicField[_W], box_cls: type[Box]) -> BoxMagicField[_W]:
+        """Create a field object from another field."""
         constructor = make_constructor(fld, box_cls)
         return cls(
             value=fld.value,
@@ -34,6 +45,7 @@ class BoxMagicField(MagicField[_W]):
             annotation=fld.annotation,
             widget_type=box_cls,
             options=fld.options,
+            record=fld.record,
             constructor=constructor,
         )
 
@@ -43,11 +55,13 @@ class BoxMagicField(MagicField[_W]):
         widget_type: type[_W],
         box_cls: type[Box],
     ) -> BoxMagicField[_W]:
+        """Create a field object from a widget type."""
         fld = MagicField(widget_type=widget_type)
         return cls.from_field(fld, box_cls)
 
     @classmethod
     def from_any(cls, obj: Any, box_cls: type[Box]) -> BoxMagicField[_W]:
+        """Create a field object from any types."""
         if isinstance(obj, MagicField):
             return cls.from_field(obj, box_cls)
         elif isinstance(obj, type):
@@ -56,7 +70,22 @@ class BoxMagicField(MagicField[_W]):
             raise TypeError(f"Cannot make BoxMagicField from {obj!r}")
 
     def get_widget(self, obj: Any) -> Box[_W]:
-        return super().get_widget(obj)
+        from magicclass._gui import MagicTemplate
+
+        obj_id = id(obj)
+        if (widget := self._guis.get(obj_id, None)) is None:
+            self._guis[obj_id] = widget = self.construct(obj)
+            widget.name = self.name
+            inner = widget.widget
+            if isinstance(inner, (ValueWidget, ContainerWidget)):
+                if isinstance(obj, MagicTemplate):
+                    _def = define_callback_gui
+                else:
+                    _def = define_callback
+                for callback in self._callbacks:
+                    # funcname = callback.__name__
+                    inner.changed.connect(_def(obj, callback))
+        return widget
 
     def as_getter(self, obj: Any) -> Callable[[Any], Any]:
         """Make a function that get the value of Widget or Action."""
@@ -146,8 +175,10 @@ def scrollable(obj):
 
 
 @_boxifier
-def collapsible(obj):
+def collapsible(obj, orientation: Literal["horizontal", "vertical"] = "vertical"):
     """Convert a widget or a field to a collapsible one."""
-    from magicclass.widgets._box import CollapsibleBox
+    from magicclass.widgets._box import CollapsibleBox, HCollapsibleBox
 
+    if orientation == "horizontal":
+        return BoxMagicField.from_any(obj, HCollapsibleBox)
     return BoxMagicField.from_any(obj, CollapsibleBox)

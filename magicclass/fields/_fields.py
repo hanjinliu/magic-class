@@ -83,8 +83,8 @@ class MagicField(_FieldObject, Generic[_W]):
             def _create_widget(obj):
                 return create_widget(
                     self.value,
-                    name=self.name,
-                    label=self.label,
+                    name=self.name or "",
+                    label=self.label or "",
                     annotation=self.annotation,
                     widget_type=self.widget_type,
                     options=self.options,
@@ -93,8 +93,8 @@ class MagicField(_FieldObject, Generic[_W]):
             constructor = _create_widget
 
         self.value = value
-        self.name = name or ""
-        self.label = label or ""
+        self.name = name
+        self.label = label
         self.annotation = annotation
         self.options = options
         self._widget_type = widget_type
@@ -270,15 +270,17 @@ class MagicField(_FieldObject, Generic[_W]):
 
     def get_widget(self, obj: Any) -> _W:
         """
-        Get a widget from ``obj``. This function will be called every time MagicField is referred
-        by ``obj.field``.
+        Get a widget from ``obj``.
+
+        This function will be called every time MagicField is referred by
+        ``obj.field``.
         """
         from magicclass._gui import MagicTemplate
 
         obj_id = id(obj)
         if (widget := self._guis.get(obj_id, None)) is None:
             self._guis[obj_id] = widget = self.construct(obj)
-            widget.name = self.name
+            widget.name = self.name or ""
 
             if isinstance(widget, (ValueWidget, ContainerWidget)):
                 if isinstance(obj, MagicTemplate):

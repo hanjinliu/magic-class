@@ -54,6 +54,7 @@ from magicclass.widgets import (
     FreeWidget,
 )
 from magicclass.widgets._box import Box
+from magicclass.box._fields import BoxMagicField
 
 from magicclass.utils import iter_members, Tooltips
 from magicclass.fields import MagicField
@@ -96,7 +97,7 @@ class ClassGuiBase(BaseGui[Widget]):
         if isinstance(widget, (ValueWidget, ContainerWidget)):
             # If the field has callbacks, connect it to the newly generated widget.
             if fld.record:
-                getvalue = type(fld) is MagicField
+                getvalue = type(fld) in (MagicField, BoxMagicField)
                 if isinstance(widget, ValueWidget):
                     if widget._bound_value is Undefined:
                         f = value_widget_callback(self, widget, name, getvalue=getvalue)
