@@ -157,6 +157,8 @@ def resizable(obj):
     """Convert a widget or a field to a resizable one."""
     from magicclass.widgets._box import ResizableBox
 
+    if isinstance(obj, MagicValueField):
+        return BoxMagicValueField.from_field(obj, ResizableBox)
     return BoxMagicField.from_any(obj, ResizableBox)
 
 
@@ -165,6 +167,8 @@ def draggable(obj):
     """Convert a widget or a field to a draggable one."""
     from magicclass.widgets._box import DraggableBox
 
+    if isinstance(obj, MagicValueField):
+        return BoxMagicValueField.from_field(obj, DraggableBox)
     return BoxMagicField.from_any(obj, DraggableBox)
 
 
@@ -173,6 +177,8 @@ def scrollable(obj):
     """Convert a widget or a field to a scrollable one."""
     from magicclass.widgets._box import ScrollableBox
 
+    if isinstance(obj, MagicValueField):
+        return BoxMagicValueField.from_field(obj, ScrollableBox)
     return BoxMagicField.from_any(obj, ScrollableBox)
 
 
@@ -181,6 +187,13 @@ def collapsible(obj, orientation: Literal["horizontal", "vertical"] = "vertical"
     """Convert a widget or a field to a collapsible one."""
     from magicclass.widgets._box import CollapsibleBox, HCollapsibleBox
 
-    if orientation == "horizontal":
-        return BoxMagicField.from_any(obj, HCollapsibleBox)
-    return BoxMagicField.from_any(obj, CollapsibleBox)
+    if orientation == "vertical":
+        box_cls = CollapsibleBox
+    elif orientation == "horizontal":
+        box_cls = HCollapsibleBox
+    else:
+        raise ValueError(f"Invalid orientation: {orientation!r}")
+
+    if isinstance(obj, MagicValueField):
+        return BoxMagicValueField.from_field(obj, box_cls)
+    return BoxMagicField.from_any(obj, box_cls)

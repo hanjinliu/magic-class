@@ -21,7 +21,7 @@ class Box(ContainerWidget[_W]):
         return False
 
 
-class SingleWidgetBox(Box):
+class SingleWidgetBox(Box[_W]):
     @classmethod
     def from_widget(cls, widget: _W):
         out = cls(
@@ -41,21 +41,21 @@ class SingleWidgetBox(Box):
         return self.widget.value
 
 
-class ResizableBox(SingleWidgetBox, ResizableContainer):
+class ResizableBox(SingleWidgetBox[_W], ResizableContainer):
     pass
 
 
-class ScrollableBox(SingleWidgetBox, ScrollableContainer):
+class ScrollableBox(SingleWidgetBox[_W], ScrollableContainer):
     pass
 
 
-class DraggableBox(SingleWidgetBox, DraggableContainer):
+class DraggableBox(SingleWidgetBox[_W], DraggableContainer):
     pass
 
 
-class CollapsibleBox(SingleWidgetBox, CollapsibleContainer):
+class CollapsibleBox(SingleWidgetBox[_W], CollapsibleContainer):
     pass
 
 
-class HCollapsibleBox(SingleWidgetBox, HCollapsibleContainer):
+class HCollapsibleBox(SingleWidgetBox[_W], HCollapsibleContainer):
     pass

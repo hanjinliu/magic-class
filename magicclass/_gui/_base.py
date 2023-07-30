@@ -75,6 +75,7 @@ from magicclass.signature import (
 from magicclass.wrappers import abstractapi
 from magicclass.types import BoundLiteral, MGUI_SIMPLE_TYPES
 from magicclass.functools import wraps
+from magicclass.box._fields import BoxMagicField
 
 if TYPE_CHECKING:
     import numpy as np
@@ -891,7 +892,7 @@ class ContainerLikeGui(BaseGui[Union[Action, Widget]], mguiLike):
 
         if action.support_value and fld.record:
             # By default, set value function will be connected to the widget.
-            getvalue = type(fld) is MagicField
+            getvalue = type(fld) in (MagicField, BoxMagicField)
             f = value_widget_callback(self, action, name, getvalue=getvalue)
             action.changed.connect(f)
 
