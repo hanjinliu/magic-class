@@ -49,9 +49,12 @@ from magicclass.widgets import (
     SplitterContainer,
     StackedContainer,
     TabbedContainer,
+    ResizableContainer,
     ToolBoxContainer,
     FreeWidget,
 )
+from magicclass.widgets._box import Box
+from magicclass.box._fields import BoxMagicField
 
 from magicclass.utils import iter_members, Tooltips
 from magicclass.fields import MagicField
@@ -91,10 +94,17 @@ class ClassGuiBase(BaseGui[Widget]):
             self.__magicclass_children__.append(widget)
             widget._my_symbol = Symbol(name)
 
+        elif isinstance(fld, BoxMagicField):
+            for wdt in widget:
+                if isinstance(wdt, BaseGui):
+                    wdt.__magicclass_parent__ = self
+                    self.__magicclass_children__.append(wdt)
+                    wdt._my_symbol = Symbol(name)
+
         if isinstance(widget, (ValueWidget, ContainerWidget)):
             # If the field has callbacks, connect it to the newly generated widget.
             if fld.record:
-                getvalue = type(fld) is MagicField
+                getvalue = type(fld) in (MagicField, BoxMagicField)
                 if isinstance(widget, ValueWidget):
                     if widget._bound_value is Undefined:
                         f = value_widget_callback(self, widget, name, getvalue=getvalue)
@@ -328,11 +338,13 @@ class ClassGuiBase(BaseGui[Widget]):
                     widget._my_symbol = Symbol(widget.name)
 
         _widget = widget
+        if isinstance(widget, Box):
+            widget = widget.widget
 
         if self.labels:
             # no labels for button widgets (push buttons, checkboxes, have their own)
             if not isinstance(widget, _HIDE_LABELS) and not remove_label:
-                _widget = _LabeledWidget(widget)
+                _widget = _LabeledWidget(_widget)
                 widget.label_changed.connect(self._unify_label_widths)
 
         if key < 0:
@@ -664,6 +676,8 @@ class SubWindowsClassGui: pass
 class GroupBoxClassGui: pass
 @make_gui(FrameContainer, no_margin=False)
 class FrameClassGui: pass
+@make_gui(ResizableContainer, no_margin=False)
+class ResizableClassGui: pass
 @make_gui(MainWindow)
 class MainWindowClassGui: pass
 # fmt: on
