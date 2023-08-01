@@ -71,7 +71,7 @@ class MagicField(_FieldObject, Generic[_W]):
         widget_type: type | str | None = None,
         options: dict[str, Any] | None = None,
         record: bool = True,
-        constructor: Callable[..., Widget] | None = None,
+        constructor: Callable[[Any], Widget] | None = None,
     ):
         if options is None:
             options = {}
@@ -83,8 +83,8 @@ class MagicField(_FieldObject, Generic[_W]):
             def _create_widget(obj):
                 return create_widget(
                     self.value,
-                    name=self.name,
-                    label=self.label,
+                    name=self.name or "",
+                    label=self.label or "",
                     annotation=self.annotation,
                     widget_type=self.widget_type,
                     options=self.options,
@@ -196,6 +196,12 @@ class MagicField(_FieldObject, Generic[_W]):
         self.options["choices"] = choices
         return self
 
+    def with_widget_type(self, widget_type: type[Widget]):
+        """Method to add widget type to the field."""
+        new = self.copy()
+        new._widget_type = widget_type
+        return new
+
     @property
     def __signature__(self):
         """This property is necessary to hack _unwrap_method."""
@@ -205,7 +211,7 @@ class MagicField(_FieldObject, Generic[_W]):
         return MagicMethodSignature([], additional_options=additional_options)
 
     @property
-    def constructor(self) -> Callable[..., Widget]:
+    def constructor(self) -> Callable[[Any], Widget]:
         """Get widget constructor."""
         return self._constructor
 
@@ -264,15 +270,17 @@ class MagicField(_FieldObject, Generic[_W]):
 
     def get_widget(self, obj: Any) -> _W:
         """
-        Get a widget from ``obj``. This function will be called every time MagicField is referred
-        by ``obj.field``.
+        Get a widget from ``obj``.
+
+        This function will be called every time MagicField is referred by
+        ``obj.field``.
         """
         from magicclass._gui import MagicTemplate
 
         obj_id = id(obj)
         if (widget := self._guis.get(obj_id, None)) is None:
             self._guis[obj_id] = widget = self.construct(obj)
-            widget.name = self.name
+            widget.name = self.name or ""
 
             if isinstance(widget, (ValueWidget, ContainerWidget)):
                 if isinstance(obj, MagicTemplate):

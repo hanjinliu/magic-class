@@ -490,6 +490,28 @@ class _FrameContainer(_GroupBoxContainer):
         self._groupbox.setTitle("")
 
 
+class _ResizableContainer(ContainerBase):
+    def __init__(self, layout="vertical", scrollable: bool = False, **kwargs):
+        QBaseWidget.__init__(self, QtW.QWidget)
+        if layout == "horizontal":
+            self._layout: QtW.QLayout = QtW.QHBoxLayout()
+            self._layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        else:
+            self._layout = QtW.QVBoxLayout()
+            self._layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        self._inner_qwidget = QtW.QWidget(self._qwidget)
+        self._inner_qwidget.setLayout(self._layout)
+
+        self._qwidget.setLayout(QtW.QVBoxLayout())
+        _size_grip = QtW.QSizeGrip(self._qwidget)
+        self._qwidget.layout().addWidget(self._inner_qwidget)
+        self._qwidget.layout().addWidget(
+            _size_grip, 1, Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignRight
+        )
+        self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
+
+
 # Container Widgets
 
 
@@ -683,3 +705,8 @@ class GroupBoxContainer(ContainerWidget):
 @wrap_container(base=_FrameContainer)
 class FrameContainer(ContainerWidget):
     """A QGroupBox like container without title."""
+
+
+@wrap_container(base=_ResizableContainer)
+class ResizableContainer(ContainerWidget):
+    """A resizable Container Widget."""

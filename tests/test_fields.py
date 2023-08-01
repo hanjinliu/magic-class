@@ -4,6 +4,7 @@ from magicclass import (
     magictoolbar,
     field,
     vfield,
+    abstractapi,
     FieldGroup,
     HasFields,
 )
@@ -685,3 +686,92 @@ def test_with_choices():
     assert ui["b_int1"].widget_type == "ComboBox"
     assert ui["a_int2"].widget_type == "ComboBox"
     assert ui["b_int2"].widget_type == "ComboBox"
+
+def test_box():
+    from magicclass import box
+
+    @magicclass
+    class A:
+        x0 = box.resizable(field(int))
+        x1 = box.resizable(vfield(int))
+        y0 = box.scrollable(field(int))
+        y1 = box.scrollable(vfield(int))
+        z0 = box.draggable(field(int))
+        z1 = box.draggable(vfield(int))
+        w0 = box.collapsible(field(int))
+        w1 = box.collapsible(vfield(int))
+
+    ui = A()
+    ui.x0.value = 1
+    ui.x1 = 2
+    ui.y0.value = 3
+    ui.y1 = 4
+    ui.z0.value = 5
+    ui.z1 = 6
+    ui.w0.value = 7
+    ui.w1 = 8
+
+    assert ui.x0.value == 1
+    assert ui.x1 == 2
+    assert ui.y0.value == 3
+    assert ui.y1 == 4
+    assert ui.z0.value == 5
+    assert ui.z1 == 6
+    assert ui.w0.value == 7
+    assert ui.w1 == 8
+
+    assert str(ui.macro[1]) == "ui.x0.value = 1"
+    assert str(ui.macro[2]) == "ui.x1 = 2"
+    assert str(ui.macro[3]) == "ui.y0.value = 3"
+    assert str(ui.macro[4]) == "ui.y1 = 4"
+    assert str(ui.macro[5]) == "ui.z0.value = 5"
+    assert str(ui.macro[6]) == "ui.z1 = 6"
+    assert str(ui.macro[7]) == "ui.w0.value = 7"
+    assert str(ui.macro[8]) == "ui.w1 = 8"
+
+def test_magicclass_in_box():
+    from magicclass.box import resizable
+
+    @magicclass
+    class A:
+        def f(self):
+            pass
+        x = field(int)
+
+    @magicclass
+    class B:
+        xx = field(A)
+        a = resizable(field(A))
+
+    ui = B()
+    ui.a.f()
+    ui.a.x.value = 123
+
+    assert str(ui.macro[1]) == "ui.a.f()"
+    assert str(ui.macro[2]) == "ui.a.x.value = 123"
+
+def test_box_with_wraps():
+    from magicclass.box import resizable
+
+    @magicclass
+    class A:
+        x = abstractapi()
+
+    @magicclass
+    class B0:
+        a0 = resizable(field(A))
+
+        @a0.wraps
+        def x(self):
+            pass
+
+    @magicclass
+    class B1:
+        a0 = resizable(A)
+
+        @a0.wraps
+        def x(self):
+            pass
+
+    B0().x()
+    B1().x()
