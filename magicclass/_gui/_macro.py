@@ -35,10 +35,10 @@ class MacroEdit(TabbedContainer):
         self._native_macro: CodeEdit | None = None
         self._recorded_macro: CodeEdit | None = None
         self._set_menubar(is_main=is_main)
-        self._attribute_check = True
-        self._signature_check = True
-        self._name_check = True
-        self._syntax_highlight = True
+        self._attribute_check = False
+        self._signature_check = False
+        self._name_check = False
+        self._syntax_highlight = False
 
     def _add_code_edit(self, name: str = "script", native: bool = False) -> CodeEdit:
         """Add a new code edit widget as a new tab."""
@@ -195,6 +195,10 @@ class MacroEdit(TabbedContainer):
         new = self.__class__(name=name, is_main=False)
         new.__magicclass_parent__ = self.__magicclass_parent__
         new.native.setParent(self.native.parent(), new.native.windowFlags())
+        new._attribute_check = self._attribute_check
+        new._signature_check = self._signature_check
+        new._name_check = self._name_check
+        new._syntax_highlight = self._syntax_highlight
         if tabname is None:
             tabname = "script"
         new._add_code_edit(name=tabname)
