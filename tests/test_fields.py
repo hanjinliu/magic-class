@@ -4,6 +4,7 @@ from magicclass import (
     magictoolbar,
     field,
     vfield,
+    abstractapi,
     FieldGroup,
     HasFields,
 )
@@ -748,3 +749,29 @@ def test_magicclass_in_box():
 
     assert str(ui.macro[1]) == "ui.a.f()"
     assert str(ui.macro[2]) == "ui.a.x.value = 123"
+
+def test_box_with_wraps():
+    from magicclass.box import resizable
+
+    @magicclass
+    class A:
+        x = abstractapi()
+
+    @magicclass
+    class B0:
+        a0 = resizable(field(A))
+
+        @a0.wraps
+        def x(self):
+            pass
+
+    @magicclass
+    class B1:
+        a0 = resizable(A)
+
+        @a0.wraps
+        def x(self):
+            pass
+
+    B0().x()
+    B1().x()

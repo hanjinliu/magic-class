@@ -20,17 +20,25 @@ if TYPE_CHECKING:
 
 _W = TypeVar("_W", bound=Widget)
 _V = TypeVar("_V")
+_F = TypeVar("_F", bound=Callable)
 
 
-def make_constructor(
-    fld: MagicField[_W],
-    box_cls: type[SingleWidgetBox],
-) -> Callable[[Any], SingleWidgetBox[_W]]:
-    def construct_widget(obj: Any) -> Widget:
-        widget = fld.construct(obj)
-        return box_cls.from_widget(widget)
+class _FieldConstructor(Generic[_W]):
+    def __init__(
+        self,
+        fld: MagicField[_W],
+        box_cls: type[SingleWidgetBox],
+    ):
+        self._field = fld
+        self._box_cls = box_cls
 
-    return construct_widget
+    @property
+    def field(self) -> MagicField[_W]:
+        return self._field
+
+    def __call__(self, obj: Any) -> SingleWidgetBox[_W]:
+        widget = self._field.construct(obj)
+        return self._box_cls.from_widget(widget)
 
 
 class BoxMagicField(MagicField["Box[_W]"], Generic[_W]):
@@ -39,7 +47,7 @@ class BoxMagicField(MagicField["Box[_W]"], Generic[_W]):
         cls, fld: MagicField[_W], box_cls: type[SingleWidgetBox]
     ) -> BoxMagicField[_W]:
         """Create a field object from another field."""
-        constructor = make_constructor(fld, box_cls)
+        constructor = _FieldConstructor(fld, box_cls)
         return cls(
             value=fld.value,
             name=fld.name,
@@ -106,6 +114,40 @@ class BoxMagicField(MagicField["Box[_W]"], Generic[_W]):
         if obj is None:
             return self
         return self.get_widget(obj).widget
+
+    # fmt: off
+    @overload
+    def wraps(self, method: _F, *, template: Callable | None = None, copy: bool = False) -> _F: ...
+    @overload
+    def wraps(self, method: None = ..., *, template: Callable | None = None, copy: bool = False) -> Callable[[_F], _F]: ...
+    # fmt: on
+
+    def wraps(self, method, *, template=None, copy=False):
+        """
+        Parameters
+        ----------
+        method : Callable, optional
+            Method of parent class.
+        template : Callable, optional
+            Function template for signature.
+        copy: bool, default is False
+            If true, wrapped method is still enabled.
+
+        Returns
+        -------
+        Callable
+            Same method as input, but has updated signature.
+        """
+        from magicclass._gui import BaseGui
+
+        cst = self.constructor
+        if isinstance(cst, _FieldConstructor):
+            return cst.field.wraps(method=method, template=template, copy=copy)
+        elif not (isinstance(cst, type) and issubclass(cst, BaseGui)):
+            raise TypeError(
+                "The wraps method cannot be used for any objects but magic class."
+            )
+        return cst.wraps(method=method, template=template, copy=copy)
 
 
 class BoxMagicValueField(BoxMagicField[ValueWidget[_V]]):
