@@ -152,42 +152,30 @@ class QCodeEditor(QtW.QPlainTextEdit):
                 elif _key == Qt.Key.Key_Slash and _mod & Mod.Ctrl:
                     return self._ctrl_slash_event()
                 # move selected lines up or down
-                elif (
-                    _key in (Qt.Key.Key_Up, Qt.Key.Key_Down)
-                    and _mod & Qt.KeyboardModifier.AltModifier
-                ):
+                elif _key in (Qt.Key.Key_Up, Qt.Key.Key_Down) and _mod & Mod.Alt:
                     cursor = self.textCursor()
                     cursor0 = self.textCursor()
                     start = cursor.selectionStart()
                     end = cursor.selectionEnd()
+                    Op = QtGui.QTextCursor.MoveOperation
+                    _keep = QtGui.QTextCursor.MoveMode.KeepAnchor
                     if _key == Qt.Key.Key_Up and min(start, end) > 0:
                         cursor0.setPosition(start)
-                        cursor0.movePosition(
-                            QtGui.QTextCursor.MoveOperation.PreviousBlock
-                        )
-                        cursor0.movePosition(
-                            QtGui.QTextCursor.MoveOperation.StartOfLine
-                        )
-                        cursor0.movePosition(
-                            QtGui.QTextCursor.MoveOperation.EndOfLine,
-                            QtGui.QTextCursor.MoveMode.KeepAnchor,
-                        )
-                        cursor0.movePosition(
-                            QtGui.QTextCursor.MoveOperation.NextCharacter,
-                            QtGui.QTextCursor.MoveMode.KeepAnchor,
-                        )
+                        cursor0.movePosition(Op.PreviousBlock)
+                        cursor0.movePosition(Op.StartOfLine)
+                        cursor0.movePosition(Op.EndOfLine, _keep)
+                        cursor0.movePosition(Op.NextCharacter, _keep)
                         txt = cursor0.selectedText()
                         cursor0.removeSelectedText()
-                        cursor0.setPosition(
-                            cursor.selectionEnd()
-                        )  # NOTE: cursor position changed!
-                        cursor0.movePosition(QtGui.QTextCursor.MoveOperation.EndOfLine)
+                        # NOTE: cursor position changed!
+                        cursor0.setPosition(cursor.selectionEnd())
+                        cursor0.movePosition(Op.EndOfLine)
                         if cursor0.position() == self.document().characterCount() - 1:
                             cursor0.insertText("\n")
                             txt = txt.rstrip("\u2029")
-                        cursor0.movePosition(
-                            QtGui.QTextCursor.MoveOperation.NextCharacter
-                        )
+                        if cursor.position() == self.document().characterCount() - 1:
+                            cursor.movePosition(Op.Up)
+                        cursor0.movePosition(Op.NextCharacter)
                         cursor0.insertText(txt)
                         self.setTextCursor(cursor)
                     elif (
@@ -195,29 +183,18 @@ class QCodeEditor(QtW.QPlainTextEdit):
                         and max(start, end) < self.document().characterCount() - 1
                     ):
                         cursor0.setPosition(end)
-                        cursor0.movePosition(QtGui.QTextCursor.MoveOperation.EndOfLine)
-                        cursor0.movePosition(
-                            QtGui.QTextCursor.MoveOperation.NextCharacter,
-                            QtGui.QTextCursor.MoveMode.KeepAnchor,
-                        )
-                        cursor0.movePosition(
-                            QtGui.QTextCursor.MoveOperation.EndOfLine,
-                            QtGui.QTextCursor.MoveMode.KeepAnchor,
-                        )
+                        cursor0.movePosition(Op.EndOfLine)
+                        cursor0.movePosition(Op.NextCharacter, _keep)
+                        cursor0.movePosition(Op.EndOfLine, _keep)
                         txt = cursor0.selectedText()
                         cursor0.removeSelectedText()
-                        cursor0.setPosition(
-                            cursor.selectionStart()
-                        )  # NOTE: cursor position changed!
-                        cursor0.movePosition(
-                            QtGui.QTextCursor.MoveOperation.StartOfLine
-                        )
+                        # NOTE: cursor position changed!
+                        cursor0.setPosition(cursor.selectionStart())
+                        cursor0.movePosition(Op.StartOfLine)
                         if cursor0.position() == 0:
                             cursor0.insertText("\n")
                             txt = txt.lstrip("\u2029")
-                        cursor0.movePosition(
-                            QtGui.QTextCursor.MoveOperation.PreviousCharacter
-                        )
+                        cursor0.movePosition(Op.PreviousCharacter)
                         cursor0.insertText(txt)
                         self.setTextCursor(cursor)
                     return True
