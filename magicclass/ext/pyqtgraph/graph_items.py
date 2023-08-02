@@ -1,8 +1,8 @@
 from __future__ import annotations
-from typing import Sequence
+from typing import Callable, Sequence
 import pyqtgraph as pg
 from qtpy import QtGui
-from qtpy.QtCore import Qt
+from qtpy.QtCore import Qt, Signal
 import numpy as np
 from numpy.typing import NDArray
 
@@ -69,6 +69,15 @@ class PlotDataLayer(LayerItem):
     @ydata.setter
     def ydata(self, value: Sequence[float]):
         self.native.setData(self.xdata, value)
+
+    @property
+    def data(self):
+        return self.native.getData()
+
+    @data.setter
+    def data(self, value: tuple[Sequence[float], Sequence[float]]):
+        x, y = value
+        self.native.setData(x, y)
 
     @property
     def ndata(self) -> int:
@@ -503,6 +512,102 @@ class InfLine(LayerItem):
     def ls(self, value: str):
         _ls = _LINE_STYLE[value]
         self.native.pen.setStyle(_ls)
+
+    linestyle = ls  # alias
+
+
+class NativeInfCurve(pg.PlotDataItem):
+    sigViewRangeChanged = Signal(object)
+
+    def viewRangeChanged(self, vb=None, ranges=None, changed=None):
+        super().viewRangeChanged(vb, ranges, changed)
+        if ranges is None:
+            return
+        self.sigViewRangeChanged.emit(ranges)
+
+
+class InfCurve(LayerItem):
+    native: NativeInfCurve
+
+    def __init__(
+        self,
+        func: Callable[[np.ndarray], np.ndarray],
+        face_color=None,
+        edge_color=None,
+        size: float = 7,
+        name: str | None = None,
+        lw: float = 1,
+        ls: str = "-",
+        symbol=None,
+    ):
+        face_color, edge_color = _set_default_colors(
+            face_color, edge_color, "white", "white"
+        )
+        pen = pg.mkPen(edge_color, width=lw, style=_LINE_STYLE[ls])
+        brush = pg.mkBrush(face_color)
+        symbol = _SYMBOL_MAP.get(symbol, symbol)
+        self.native = NativeInfCurve(
+            x=[],
+            y=[],
+            pen=pen,
+            brush=brush,
+            symbolSize=size,
+            symbol=symbol,
+            symbolPen=pen,
+            symbolBrush=brush,
+        )
+        self.name = name
+        self._func = func
+        self.native.sigViewRangeChanged.connect(self._create_data)
+
+    def _create_data(self, ranges: tuple[tuple[float, float], tuple[float, float]]):
+        (xmin, xmax), _ = ranges
+        x = np.linspace(xmin, xmax, 256)
+        y = self._func(x)
+        isval = ~np.isnan(y)
+        self.native.setData(x[isval], y[isval])
+
+    @property
+    def func(self) -> Callable[[np.ndarray], np.ndarray]:
+        return self._func
+
+    @property
+    def name(self) -> str:
+        return self.native.opts["name"]
+
+    @name.setter
+    def name(self, value: str):
+        value = str(value)
+        self.native.opts["name"] = value
+
+    color = property()
+
+    @color.setter
+    def color(self, value: str | Sequence):
+        """Set face color and edge color at the same time."""
+        self.face_color = value
+        self.edge_color = value
+
+    @property
+    def lw(self):
+        """Line width."""
+        return self.native.opts["pen"].width()
+
+    @lw.setter
+    def lw(self, value: float):
+        self.native.opts["pen"].setWidth(value)
+
+    linewidth = lw  # alias
+
+    @property
+    def ls(self):
+        """Line style."""
+        return self.native.opts["pen"].style()
+
+    @ls.setter
+    def ls(self, value: str):
+        _ls = _LINE_STYLE[value]
+        self.native.opts["pen"].setStyle(_ls)
 
     linestyle = ls  # alias
 

@@ -41,6 +41,15 @@ class PlotDataLayer(LayerItem):
         self._visual.set_data(np.concatenate([x, y], axis=1))
 
     @property
+    def data(self):
+        return (self._data[:, 0], self._data[:, 1])
+
+    @data.setter
+    def data(self, value: tuple[Sequence[float], Sequence[float]]):
+        x, y = value
+        self._visual.set_data(np.concatenate([x, y], axis=1))
+
+    @property
     def ndata(self) -> int:
         return self.xdata.size
 

@@ -2,7 +2,15 @@ from __future__ import annotations
 import warnings
 import pyqtgraph as pg
 from pyqtgraph import colormap as cmap
-from typing import Generic, Iterator, Sequence, TypeVar, overload, MutableSequence
+from typing import (
+    Callable,
+    Generic,
+    Iterator,
+    Sequence,
+    TypeVar,
+    overload,
+    MutableSequence,
+)
 import numpy as np
 
 from .components import Grid, Legend, Region, ScaleBar, TextItem
@@ -11,6 +19,7 @@ from .graph_items import (
     Curve,
     FillBetween,
     InfLine,
+    InfCurve,
     LayerItem,
     Scatter,
     Histogram,
@@ -397,6 +406,53 @@ class HasDataItems:
 
         item = InfLine(pos, angle, edge_color=color, name=name, lw=lw, ls=ls)
         self._add_item(item)
+        return item
+
+    @write_docs
+    def add_infcurve(
+        self,
+        func: Callable[[np.ndarray], np.ndarray],
+        face_color=None,
+        edge_color=None,
+        color=None,
+        size: float = 7,
+        name: str | None = None,
+        lw: float = 1,
+        ls: str = "-",
+        symbol: str = None,
+    ) -> Curve:
+        """
+        Add a function and plot it.
+
+        Parameters
+        ----------
+        func : callable
+            A function that takes a 1-D array and returns a 1-D array.
+        {face_color}{edge_color}{color}
+        size: float, default is 7
+            Symbol size.
+        {name}{lw}{ls}{symbol}
+
+        Returns
+        -------
+        Curve
+            A plot item of a curve.
+        """
+        name = self._find_unique_name(name or "InfCurve")
+        face_color, edge_color = _check_colors(face_color, edge_color, color)
+        item = InfCurve(
+            func,
+            face_color=face_color,
+            edge_color=edge_color,
+            size=size,
+            name=name,
+            lw=lw,
+            ls=ls,
+            symbol=symbol,
+        )
+        self._add_item(item)
+        if xlim := getattr(self, "xlim", None):
+            self.xlim = xlim
         return item
 
     @overload
