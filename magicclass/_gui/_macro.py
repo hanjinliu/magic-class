@@ -156,6 +156,16 @@ class MacroEdit(TabbedContainer):
         new.value = self.native_macro.value
 
     def new_tab(self, name: str | None = None, text: str | None = None) -> CodeEdit:
+        """
+        Create a new tab.
+
+        Parameters
+        ----------
+        name : str, optional
+            Name of the tab.
+        text : str, optional
+            Initial content.
+        """
         if name is None:
             name = "script"
         # find unique name
@@ -203,9 +213,10 @@ class MacroEdit(TabbedContainer):
             tabname = "script"
         new._add_code_edit(name=tabname)
         new.show()
-        geometry = self.native.geometry()
-        geometry.moveTopLeft(geometry.topLeft() + QtCore.QPoint(20, 20))
-        new.native.setGeometry(geometry)
+        if self.visible:  # avoid overlapping
+            geometry = self.native.geometry()
+            geometry.moveTopLeft(geometry.topLeft() + QtCore.QPoint(20, 20))
+            new.native.setGeometry(geometry)
         return new
 
     def duplicate(self, name: str = None):
@@ -432,6 +443,16 @@ class PropertyGroup:
             return self
         return self._instances.setdefault(id(instance), self.__class__(parent=instance))
 
+    def __repr__(self) -> str:
+        c = type(self).__name__
+        return (
+            f"{c}(max_lines={self.max_lines}, max_undo={self.max_undo}, "
+            f"syntax_highlight={self.syntax_highlight}, "
+            f"attribute_check={self.attribute_check}, "
+            f"signature_check={self.signature_check}, "
+            f"name_check={self.name_check})"
+        )
+
     @property
     def macro(self) -> GuiMacro:
         if self._parent is None:
@@ -466,6 +487,7 @@ class PropertyGroup:
 
     @property
     def syntax_highlight(self) -> bool:
+        """Whether to syntax highlight the macro editor."""
         return self.macro.widget._syntax_highlight
 
     @syntax_highlight.setter
@@ -474,6 +496,7 @@ class PropertyGroup:
 
     @property
     def attribute_check(self) -> bool:
+        """Whether to check attribute access before macro execution."""
         return self.macro.widget._attribute_check
 
     @attribute_check.setter
@@ -482,6 +505,7 @@ class PropertyGroup:
 
     @property
     def signature_check(self) -> bool:
+        """Whether to check function signature before macro execution."""
         return self.macro.widget._signature_check
 
     @signature_check.setter
