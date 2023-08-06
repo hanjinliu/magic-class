@@ -6,8 +6,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Callable, Iterable
 from typing_extensions import Literal
 from qt_command_palette import get_palette
+from magicgui.widgets import Widget
 from magicclass._gui import BaseGui
-from magicclass._gui.class_gui import ClassGuiBase
 from magicclass._gui.mgui_ext import Clickable, is_clickable
 
 if TYPE_CHECKING:
@@ -19,6 +19,9 @@ _PALETTES: dict[int, CommandPalette] = {}
 def exec_command_palette(
     gui: BaseGui,
     alignment: Literal["parent", "screen"] = "parent",
+    title: Callable[[Widget, Clickable], str] | None = None,
+    desc: Callable[[Widget, Clickable], str] | None = None,
+    filter: Callable[[Widget, Clickable], str] | None = None,
 ):
     """
     Register all the methods available from GUI to the command palette.
@@ -39,6 +42,18 @@ def exec_command_palette(
         Magic-class instance.
     alignment : "parent" or "screen", default is "parent"
         How to align the command palette.
+    title : callable, optional
+        Formatter function for the title of each command. The function should
+        take two arguments. For a command corresponding to a button, the first
+        argument is the parent magic-class instance, and the second argument
+        is the button widget itself.
+    desc : callable, optional
+        Formatter function for the description of each command. The function
+        takes the same arguments as `title`.
+    filter : callable, optional
+        Filter function for the commands. The function should take the same
+        arguments as `title`. If the function returns False, the command will
+        not be registered.
     """
     _id = id(gui)
     if _id in _PALETTES:
@@ -46,16 +61,24 @@ def exec_command_palette(
     name = f"magicclass-{id(gui)}"
     palette = get_palette(name, alignment=alignment)
 
+    if title is None:
+        title = lambda mcls, btn: type(mcls).__qualname__
+    if desc is None:
+        desc = lambda mcls, btn: btn.text
+    if filter is None:
+        filter = lambda mcls, btn: True
+
     processed: set[int] = set()
     for parent, wdt in _iter_executable(gui):
         _id = id(wdt)
         if _id in processed:
             continue
-        _qualname = type(parent).__qualname__
+        if not filter(parent, wdt):
+            continue
         palette.register(
             _define_command(wdt.changed.emit),
-            title=_qualname,
-            desc=wdt.text,
+            title=title(parent, wdt),
+            desc=desc(parent, wdt),
             when=_define_when(wdt, parent),
         )
         processed.add(_id)
