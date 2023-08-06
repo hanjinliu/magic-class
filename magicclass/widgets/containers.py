@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import Any, Callable, TypeVar
+from typing import Any, Callable, Sequence, TypeVar
 import warnings
-from qtpy import QtWidgets as QtW, QtCore
+from qtpy import QtWidgets as QtW, QtCore, QtGui
 from qtpy.QtCore import Qt, QEvent, QSize
 
 from magicgui.application import use_app
@@ -22,28 +22,32 @@ from .utils import merge_super_sigs
 C = TypeVar("C", bound=ContainerWidget)
 
 
-def wrap_container(cls: type[C] = None, base: type = None) -> Callable | type[C]:
-    """
-    Provide a wrapper for a new container widget with a new protocol.
-    """
+def wrap_container(
+    cls: type[C] | None = None,
+    base: type | None = None,
+    *,
+    additionals: Sequence[str] = (),
+) -> Callable | type[C]:
+    """Provide a wrapper for containers widget with a new protocol."""
 
     def wrapper(cls) -> type[Widget]:
         def __init__(self, **kwargs):
             app = use_app()
             assert app.native
             kwargs["widget_type"] = base
+            _container_kwargs = {}
+            for key in additionals:
+                if key in kwargs:
+                    _container_kwargs[key] = kwargs.pop(key)
             super(cls, self).__init__(**kwargs)
+            for key, value in _container_kwargs.items():
+                setattr(self, key, value)
 
         cls.__init__ = __init__
         cls = merge_super_sigs(cls)
         return cls
 
     return wrapper(cls) if cls else wrapper
-
-
-def _btn_text_warning():
-    msg = "'btn_text' is deprecated and will be removed soon. Please use 'text'."
-    warnings.warn(msg, DeprecationWarning)
 
 
 class _Splitter(ContainerBase):
@@ -180,6 +184,27 @@ class _ScrollableContainer(ContainerBase):
         self._qwidget.setLayout(QtW.QVBoxLayout())
         self._qwidget.layout().addWidget(self._scroll_area)
         self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
+
+    def _policy(self, value):
+        if value:
+            policy = Qt.ScrollBarPolicy.ScrollBarAsNeeded
+        else:
+            policy = Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+        return policy
+
+    def x_scrollable(self):
+        xpolicy = self._scroll_area.horizontalScrollBarPolicy()
+        return xpolicy != Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+
+    def set_x_scrollable(self, value: bool):
+        self._scroll_area.setHorizontalScrollBarPolicy(self._policy(value))
+
+    def y_scrollable(self):
+        ypolicy = self._scroll_area.verticalScrollBarPolicy()
+        return ypolicy != Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+
+    def set_y_scrollable(self, value: bool):
+        self._scroll_area.setVerticalScrollBarPolicy(self._policy(value))
 
 
 class _WheelDisabledScrollArea(QtW.QScrollArea):
@@ -490,6 +515,38 @@ class _FrameContainer(_GroupBoxContainer):
         self._groupbox.setTitle("")
 
 
+class _SizeGrip(QtW.QSizeGrip):
+    def __init__(self, parent: QtW.QWidget) -> None:
+        super().__init__(parent)
+        self._last_pos: QtCore.QPoint | None = None
+        self._y_resizable = True
+        self._x_resizable = True
+
+    def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
+        if a0.button() == Qt.MouseButton.LeftButton:
+            self._last_pos = a0.globalPos()
+
+    def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
+        self._last_pos = None
+
+    def mouseMoveEvent(self, a0: QtGui.QMouseEvent) -> None:
+        if self._last_pos is not None:
+            pos = a0.globalPos()
+            dx = pos.x() - self._last_pos.x()
+            dy = pos.y() - self._last_pos.y()
+            parent = self.parentWidget()
+            width = parent.width()
+            height = parent.height()
+            if self._x_resizable:
+                width += dx
+            if self._y_resizable:
+                height += dy
+            parent.setFixedSize(width, height)
+            self._last_pos = pos
+
+        return None
+
+
 class _ResizableContainer(ContainerBase):
     def __init__(self, layout="vertical", scrollable: bool = False, **kwargs):
         QBaseWidget.__init__(self, QtW.QWidget)
@@ -504,12 +561,13 @@ class _ResizableContainer(ContainerBase):
         self._inner_qwidget.setLayout(self._layout)
 
         self._qwidget.setLayout(QtW.QVBoxLayout())
-        _size_grip = QtW.QSizeGrip(self._qwidget)
+        _size_grip = _SizeGrip(self._qwidget)
         self._qwidget.layout().addWidget(self._inner_qwidget)
         self._qwidget.layout().addWidget(
             _size_grip, 1, Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignRight
         )
         self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
+        self._size_grip = _size_grip
 
 
 # Container Widgets
@@ -567,9 +625,27 @@ class StackedContainer(ContainerWidget):
         self.native_stacked_widget.setCurrentIndex(index)
 
 
-@wrap_container(base=_ScrollableContainer)
+@wrap_container(base=_ScrollableContainer, additionals=["x_enabled", "y_enabled"])
 class ScrollableContainer(ContainerWidget):
     """A scrollable Container Widget."""
+
+    @property
+    def x_enabled(self):
+        """Whether the widget is scrollable in x direction."""
+        return self._widget.x_scrollable()
+
+    @x_enabled.setter
+    def x_enabled(self, value: bool):
+        self._widget.set_x_scrollable(value)
+
+    @property
+    def y_enabled(self):
+        """Whether the widget is scrollable in y direction."""
+        return self._widget.y_scrollable()
+
+    @y_enabled.setter
+    def y_enabled(self, value: bool):
+        self._widget.set_y_scrollable(value)
 
 
 @wrap_container(base=_DraggableContainer)
@@ -577,22 +653,13 @@ class DraggableContainer(ContainerWidget):
     """A draggable Container Widget."""
 
 
-@wrap_container(base=_ButtonContainer)
+@wrap_container(base=_ButtonContainer, additionals=["text"])
 class ButtonContainer(ContainerWidget):
     """A Container Widget hidden in a button."""
 
     @property
-    def btn_text(self):
-        _btn_text_warning()
-        return self._widget._qwidget.text()
-
-    @btn_text.setter
-    def btn_text(self, text: str):
-        _btn_text_warning()
-        self._widget._qwidget.setText(text)
-
-    @property
     def text(self):
+        """The text of the button."""
         return self._widget._qwidget.text()
 
     @text.setter
@@ -600,19 +667,9 @@ class ButtonContainer(ContainerWidget):
         self._widget._qwidget.setText(text)
 
 
-@wrap_container(base=_VCollapsibleContainer)
+@wrap_container(base=_VCollapsibleContainer, additionals=["text", "collapsed"])
 class CollapsibleContainer(ContainerWidget):
     """A collapsible Container Widget."""
-
-    @property
-    def btn_text(self):
-        _btn_text_warning()
-        return self._widget._expand_btn.text()
-
-    @btn_text.setter
-    def btn_text(self, text: str):
-        _btn_text_warning()
-        self._widget._expand_btn.setText(text)
 
     @property
     def text(self):
@@ -634,7 +691,7 @@ class CollapsibleContainer(ContainerWidget):
             self._widget._expand()
 
 
-@wrap_container(base=_HCollapsibleContainer)
+@wrap_container(base=_HCollapsibleContainer, additionals=["collapsed"])
 class HCollapsibleContainer(ContainerWidget):
     """A collapsible Container Widget."""
 
@@ -707,6 +764,24 @@ class FrameContainer(ContainerWidget):
     """A QGroupBox like container without title."""
 
 
-@wrap_container(base=_ResizableContainer)
+@wrap_container(base=_ResizableContainer, additionals=["x_enabled", "y_enabled"])
 class ResizableContainer(ContainerWidget):
     """A resizable Container Widget."""
+
+    @property
+    def x_enabled(self):
+        """Whether the widget is resizable in x direction."""
+        return self._widget._size_grip._x_resizable
+
+    @x_enabled.setter
+    def x_enabled(self, value: bool):
+        self._widget._size_grip._x_resizable = value
+
+    @property
+    def y_enabled(self):
+        """Whether the widget is resizable in y direction."""
+        return self._widget._size_grip._y_resizable
+
+    @y_enabled.setter
+    def y_enabled(self, value: bool):
+        self._widget._size_grip._y_resizable = value

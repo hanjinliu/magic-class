@@ -23,11 +23,12 @@ class Box(ContainerWidget[_W]):
 
 class SingleWidgetBox(Box[_W]):
     @classmethod
-    def from_widget(cls, widget: _W):
+    def from_widget(cls, widget: _W, **kwargs):
         out = cls(
             widgets=[widget],
             label=widget.label or widget.name or "",
             name=widget.name,
+            **kwargs,
         )
         out.margins = (0, 0, 0, 0)
         return out

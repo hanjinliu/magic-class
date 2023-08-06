@@ -9,7 +9,7 @@ from typing import (
     TypeVar,
     overload,
 )
-
+from typing_extensions import Concatenate, ParamSpec
 from magicgui.widgets.bases import Widget, ValueWidget, ContainerWidget
 from magicclass.fields import MagicField, MagicValueField, field
 from magicclass.fields._define import define_callback, define_callback_gui
@@ -21,6 +21,7 @@ if TYPE_CHECKING:
 _W = TypeVar("_W", bound=Widget)
 _V = TypeVar("_V")
 _F = TypeVar("_F", bound=Callable)
+_P = ParamSpec("_P")
 
 
 class _FieldConstructor(Generic[_W]):
@@ -28,9 +29,11 @@ class _FieldConstructor(Generic[_W]):
         self,
         fld: MagicField[_W],
         box_cls: type[SingleWidgetBox],
+        **kwargs,
     ):
         self._field = fld
         self._box_cls = box_cls
+        self._box_cls_kwargs = kwargs
 
     @property
     def field(self) -> MagicField[_W]:
@@ -38,16 +41,19 @@ class _FieldConstructor(Generic[_W]):
 
     def __call__(self, obj: Any) -> SingleWidgetBox[_W]:
         widget = self._field.construct(obj)
-        return self._box_cls.from_widget(widget)
+        return self._box_cls.from_widget(widget, **self._box_cls_kwargs)
 
 
 class BoxMagicField(MagicField["Box[_W]"], Generic[_W]):
     @classmethod
     def from_field(
-        cls, fld: MagicField[_W], box_cls: type[SingleWidgetBox]
+        cls,
+        fld: MagicField[_W],
+        box_cls: type[SingleWidgetBox],
+        **kwargs,
     ) -> BoxMagicField[_W]:
         """Create a field object from another field."""
-        constructor = _FieldConstructor(fld, box_cls)
+        constructor = _FieldConstructor(fld, box_cls, **kwargs)
         return cls(
             value=fld.value,
             name=fld.name,
@@ -64,18 +70,19 @@ class BoxMagicField(MagicField["Box[_W]"], Generic[_W]):
         cls,
         widget_type: type[_W],
         box_cls: type[Box],
+        **kwargs,
     ) -> BoxMagicField[_W]:
         """Create a field object from a widget type."""
         fld = field(widget_type)
-        return cls.from_field(fld, box_cls)
+        return cls.from_field(fld, box_cls, **kwargs)
 
     @classmethod
-    def from_any(cls, obj: Any, box_cls: type[Box]) -> BoxMagicField[_W]:
+    def from_any(cls, obj: Any, box_cls: type[Box], **kwargs) -> BoxMagicField[_W]:
         """Create a field object from any types."""
         if isinstance(obj, MagicField):
-            return cls.from_field(obj, box_cls)
+            return cls.from_field(obj, box_cls, **kwargs)
         elif isinstance(obj, type):
-            return cls.from_widget_type(obj, box_cls)
+            return cls.from_widget_type(obj, box_cls, **kwargs)
         else:
             raise TypeError(f"Cannot make BoxMagicField from {obj!r}")
 
@@ -171,23 +178,29 @@ class BoxMagicValueField(BoxMagicField[ValueWidget[_V]]):
         self.get_widget(obj).widget.value = value
 
 
-class BoxProtocol(Protocol):
+class BoxProtocol(Protocol[_P]):
     @overload
-    def __call__(self, fld: MagicField[_W]) -> BoxMagicField[_W]:
+    def __call__(
+        self, fld: MagicField[_W], *args: _P.args, **kwargs: _P.kwargs
+    ) -> BoxMagicField[_W]:
         ...
 
     @overload
-    def __call__(self, widget_type: type[_W]) -> BoxMagicField[_W]:
+    def __call__(
+        self, widget_type: type[_W], *args: _P.args, **kwargs: _P.kwargs
+    ) -> BoxMagicField[_W]:
         ...
 
     @overload
-    def __call__(self, fld: MagicValueField[_V]) -> BoxMagicValueField[_V]:
+    def __call__(
+        self, fld: MagicValueField[_V], *args: _P.args, **kwargs: _P.kwargs
+    ) -> BoxMagicValueField[_V]:
         ...
 
 
 if TYPE_CHECKING:
 
-    def _boxifier(f) -> BoxProtocol:
+    def _boxifier(f: Callable[Concatenate[Any, _P], Any]) -> BoxProtocol[_P]:
         ...  # fmt: skip
 
 else:
@@ -195,13 +208,19 @@ else:
 
 
 @_boxifier
-def resizable(obj):
+def resizable(
+    obj,
+    x_enabled: bool = True,
+    y_enabled: bool = True,
+):
     """Convert a widget or a field to a resizable one."""
     from magicclass.widgets._box import ResizableBox
 
+    kwargs = {"x_enabled": x_enabled, "y_enabled": y_enabled}
     if isinstance(obj, MagicValueField):
-        return BoxMagicValueField.from_field(obj, ResizableBox)
-    return BoxMagicField.from_any(obj, ResizableBox)
+        return BoxMagicValueField.from_field(obj, ResizableBox, **kwargs)
+    else:
+        return BoxMagicField.from_any(obj, ResizableBox, **kwargs)
 
 
 @_boxifier
@@ -215,17 +234,27 @@ def draggable(obj):
 
 
 @_boxifier
-def scrollable(obj):
+def scrollable(
+    obj,
+    x_enabled: bool = True,
+    y_enabled: bool = True,
+):
     """Convert a widget or a field to a scrollable one."""
     from magicclass.widgets._box import ScrollableBox
 
+    kwargs = {"x_enabled": x_enabled, "y_enabled": y_enabled}
     if isinstance(obj, MagicValueField):
-        return BoxMagicValueField.from_field(obj, ScrollableBox)
-    return BoxMagicField.from_any(obj, ScrollableBox)
+        return BoxMagicValueField.from_field(obj, ScrollableBox, **kwargs)
+    else:
+        return BoxMagicField.from_any(obj, ScrollableBox, **kwargs)
 
 
 @_boxifier
-def collapsible(obj, orientation: Literal["horizontal", "vertical"] = "vertical"):
+def collapsible(
+    obj,
+    orientation: Literal["horizontal", "vertical"] = "vertical",
+    text: str | None = None,
+):
     """Convert a widget or a field to a collapsible one."""
     from magicclass.widgets._box import CollapsibleBox, HCollapsibleBox
 
@@ -235,7 +264,8 @@ def collapsible(obj, orientation: Literal["horizontal", "vertical"] = "vertical"
         box_cls = HCollapsibleBox
     else:
         raise ValueError(f"Invalid orientation: {orientation!r}")
-
+    kwargs = {"text": text} if text is not None else {}
     if isinstance(obj, MagicValueField):
-        return BoxMagicValueField.from_field(obj, box_cls)
-    return BoxMagicField.from_any(obj, box_cls)
+        return BoxMagicValueField.from_field(obj, box_cls, **kwargs)
+    else:
+        return BoxMagicField.from_any(obj, box_cls, **kwargs)
