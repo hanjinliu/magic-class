@@ -518,6 +518,7 @@ class _FrameContainer(_GroupBoxContainer):
 class _SizeGrip(QtW.QSizeGrip):
     def __init__(self, parent: QtW.QWidget) -> None:
         super().__init__(parent)
+        self.setFixedHeight(12)
         self._last_pos: QtCore.QPoint | None = None
         self._y_resizable = True
         self._x_resizable = True
@@ -538,12 +539,14 @@ class _SizeGrip(QtW.QSizeGrip):
             width = parent.width()
             height = parent.height()
             if self._x_resizable:
-                width += dx
+                if width + dx > 20:
+                    width += dx
             if self._y_resizable:
-                height += dy
+                if height + dy > 20:
+                    height += dy
             parent.setFixedSize(width, height)
             self._last_pos = pos
-
+        self.setCursor(Qt.CursorShape.SizeFDiagCursor)
         return None
 
 
@@ -564,9 +567,10 @@ class _ResizableContainer(ContainerBase):
         _size_grip = _SizeGrip(self._qwidget)
         self._qwidget.layout().addWidget(self._inner_qwidget)
         self._qwidget.layout().addWidget(
-            _size_grip, 1, Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignRight
+            _size_grip, 0, Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignRight
         )
         self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
+        self._qwidget.layout().setSpacing(0)
         self._size_grip = _size_grip
 
 

@@ -658,6 +658,7 @@ class HasViewBox(HasDataItems):
         self._viewbox.setBorder(value)
 
     def auto_range(self):
+        """Auto range the viewbox."""
         self._viewbox.autoRange()
 
 
@@ -967,6 +968,12 @@ class HasBackground(FreeWidget):
         value = convert_color_code(value)
         self.layoutwidget.setBackground(value)
 
+    def to_clipboard(self):
+        """Copy the image to clipboard."""
+        app = get_app()
+        img = self.native.grab().toImage()
+        app.clipboard().setImage(img)
+
 
 class QtPlotCanvas(HasBackground, PlotItem):
     """A 1-D data viewer that have similar API as napari Viewer."""
@@ -1131,6 +1138,10 @@ class _MultiPlot(HasBackground, Generic[_C]):
 
     def __iter__(self) -> Iterator[_C]:
         return iter(self._axes)
+
+    def __len__(self) -> int:
+        """Number of axes."""
+        return len(self._axes)
 
 
 class QtMultiPlotCanvas(_MultiPlot[PlotItem]):
