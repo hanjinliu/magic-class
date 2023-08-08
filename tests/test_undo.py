@@ -349,3 +349,52 @@ def test_custom_redo():
     ui.macro.redo()
     assert ui._x == 1
     assert ui._custom_redo
+
+def test_undo_with_return_values():
+    @magicclass
+    class A:
+        def __init__(self):
+            self._x = 0
+
+        def f(self, x: int):
+            old_value = self._x
+            self._x = x
+            @undo_callback
+            def undo():
+                self._x = old_value
+
+            return undo.with_return(-x)
+
+    ui = A()
+    out1 = ui.f(1)
+    out2 = ui.f(2)
+    assert out1 == -1
+    assert out2 == -2
+    assert ui._x == 2
+    assert len(ui.macro) == 3 and str(ui.macro[-1]) == "ui.f(x=2)"
+
+    ui.macro.undo()
+    assert ui._x == 1
+    assert len(ui.macro) == 2 and str(ui.macro[-1]) == "ui.f(x=1)"
+    ui.macro.undo()
+    assert ui._x == 0
+    assert len(ui.macro) == 1 and str(ui.macro[-1])
+    ui.macro.redo()
+    assert ui._x == 1
+    assert len(ui.macro) == 2 and str(ui.macro[-1]) == "ui.f(x=1)"
+    ui.macro.redo()
+    assert ui._x == 2
+    assert len(ui.macro) == 3 and str(ui.macro[-1]) == "ui.f(x=2)"
+
+    ui.macro.undo()
+    assert ui._x == 1
+    assert len(ui.macro) == 2 and str(ui.macro[-1]) == "ui.f(x=1)"
+    ui.macro.undo()
+    assert ui._x == 0
+    assert len(ui.macro) == 1 and str(ui.macro[-1])
+    ui.macro.redo()
+    assert ui._x == 1
+    assert len(ui.macro) == 2 and str(ui.macro[-1]) == "ui.f(x=1)"
+    ui.macro.redo()
+    assert ui._x == 2
+    assert len(ui.macro) == 3 and str(ui.macro[-1]) == "ui.f(x=2)"

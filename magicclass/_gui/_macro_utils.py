@@ -165,6 +165,8 @@ def inject_recorder(func: Callable, is_method: bool = True) -> Callable:
                 out = _func.__get__(bgui)(*args, **kwargs)
             if bgui.macro.active:
                 _record_macro(bgui, out, *args, **kwargs)
+            if isinstance(out, UndoCallback):
+                return out.return_value
             return out
 
         if hasattr(_func, "__signature__"):

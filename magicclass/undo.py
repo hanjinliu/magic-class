@@ -6,6 +6,7 @@ from abc import ABC, abstractmethod, abstractproperty
 __all__ = ["undo_callback"]
 
 _R = TypeVar("_R")
+_R1 = TypeVar("_R1")
 
 
 class ImplementsUndo(ABC):
@@ -27,6 +28,7 @@ class UndoCallback(Generic[_R], ImplementsUndo):
         self._kwargs = kwargs
         self._name = getattr(func, "__qualname__", repr(func))
         self._redo_action = RedoAction.Default
+        self._return_value: Any | None = None
 
     def __repr__(self) -> str:
         return f"UndoCallback<{self._name}>"
@@ -38,6 +40,11 @@ class UndoCallback(Generic[_R], ImplementsUndo):
     @property
     def redo_action(self) -> RedoAction:
         return self._redo_action
+
+    @property
+    def return_value(self) -> Any | None:
+        """The actual return value."""
+        return self._return_value
 
     def copy(self) -> UndoCallback[_R]:
         """Return a copy of this undo operation."""
@@ -81,6 +88,12 @@ class UndoCallback(Generic[_R], ImplementsUndo):
             raise TypeError("action must be callable or a boolean value.")
         new = self.copy()
         new._redo_action = _action
+        return new
+
+    def with_return(self, value: _R1) -> _R1 | UndoCallback[_R]:
+        """Return a new callback with a return value."""
+        new = self.copy()
+        new._return_value = value
         return new
 
     def to_function(self) -> Callable[[], _R]:
