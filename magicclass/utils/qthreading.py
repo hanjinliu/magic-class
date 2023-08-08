@@ -720,13 +720,11 @@ class thread_worker(Generic[_P]):
                     if not self._ignore_errors:
                         raise err  # reraise
 
-                worker.start()
+                return worker.start()
             else:
                 # If function is called from script, some events must get processed by
                 # the application while keep script stopping at each line of code.
-                self._run_blocked(gui, worker, pbar)
-
-            return None
+                return self._run_blocked(gui, worker, pbar)
 
         _create_worker.__self__ = gui
         _create_worker.__thread_worker__ = self
@@ -781,6 +779,7 @@ class thread_worker(Generic[_P]):
 
         if result is _empty and err is not _empty:
             raise err
+        return result
 
     def _get_method_signature(self) -> inspect.Signature:
         sig = self.__signature__
