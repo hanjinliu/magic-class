@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, Callable, Sequence, TypeVar
 import warnings
 from qtpy import QtWidgets as QtW, QtCore, QtGui
-from qtpy.QtCore import Qt, QEvent, QSize
+from qtpy.QtCore import Qt, QSize
 
 from magicgui.application import use_app
 from magicgui.widgets import Widget
@@ -208,8 +208,8 @@ class _ScrollableContainer(ContainerBase):
 
 
 class _WheelDisabledScrollArea(QtW.QScrollArea):
-    def eventFilter(self, source, event: QEvent):
-        if event.type() == QEvent.Type.Wheel:
+    def eventFilter(self, source, event: QtCore.QEvent):
+        if event.type() == QtCore.QEvent.Type.Wheel:
             return True
         return super().eventFilter(source, event)
 
@@ -541,13 +541,18 @@ class _SizeGrip(QtW.QSizeGrip):
             if self._x_resizable:
                 if width + dx > 20:
                     width += dx
+                parent.setFixedWidth(width)
             if self._y_resizable:
                 if height + dy > 20:
                     height += dy
-            parent.setFixedSize(width, height)
+                parent.setFixedHeight(height)
             self._last_pos = pos
         self.setCursor(Qt.CursorShape.SizeFDiagCursor)
         return None
+
+    def moveEvent(self, moveEvent: QtGui.QMoveEvent) -> None:
+        # to avoid changing the size grip icon
+        return QtW.QWidget.moveEvent(self, moveEvent)
 
 
 class _ResizableContainer(ContainerBase):
