@@ -692,16 +692,26 @@ def test_box():
 
     @magicclass
     class A:
-        x0 = box.resizable(field(int))
-        x1 = box.resizable(vfield(int))
-        y0 = box.scrollable(field(int))
-        y1 = box.scrollable(vfield(int))
-        z0 = box.draggable(field(int))
-        z1 = box.draggable(vfield(int))
-        w0 = box.collapsible(field(int))
-        w1 = box.collapsible(vfield(int))
+        x0 = box.resizable(field(0))
+        x1 = box.resizable(vfield(1))
+        y0 = box.scrollable(field(2))
+        y1 = box.scrollable(vfield(3))
+        z0 = box.draggable(field(4))
+        z1 = box.draggable(vfield(5))
+        w0 = box.collapsible(field(6))
+        w1 = box.collapsible(vfield(7))
 
     ui = A()
+
+    assert ui.x0.widget_type == "SpinBox" and ui.x0.value == 0
+    assert ui.x1 == 1
+    assert ui.y0.widget_type == "SpinBox" and ui.y0.value == 2
+    assert ui.y1 == 3
+    assert ui.z0.widget_type == "SpinBox" and ui.z0.value == 4
+    assert ui.z1 == 5
+    assert ui.w0.widget_type == "SpinBox" and ui.w0.value == 6
+    assert ui.w1 == 7
+
     ui.x0.value = 1
     ui.x1 = 2
     ui.y0.value = 3
@@ -775,3 +785,20 @@ def test_box_with_wraps():
 
     B0().x()
     B1().x()
+
+def test_nested_boxes():
+    from magicclass.box import resizable, collapsible
+
+    @magicclass
+    class A:
+        x = collapsible(resizable(field(2)))
+        y = resizable(collapsible(vfield(3)))
+
+    ui = A()
+    assert ui.x.widget_type == "SpinBox"
+    assert ui.x.value == 2
+    ui.x.value = 5
+    assert ui.x.value == 5
+    assert ui.y == 3
+    ui.y = 10
+    assert ui.y == 10

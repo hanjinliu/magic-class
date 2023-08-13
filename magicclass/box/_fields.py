@@ -16,7 +16,7 @@ from magicclass.fields._define import define_callback, define_callback_gui
 
 if TYPE_CHECKING:
     from magicclass._gui import MagicTemplate
-    from magicclass.widgets._box import Box, SingleWidgetBox
+    from magicclass.widgets._box import SingleWidgetBox
 
 _W = TypeVar("_W", bound=Widget)
 _V = TypeVar("_V")
@@ -44,7 +44,7 @@ class _FieldConstructor(Generic[_W]):
         return self._box_cls.from_widget(widget, **self._box_cls_kwargs)
 
 
-class BoxMagicField(MagicField["Box[_W]"], Generic[_W]):
+class BoxMagicField(MagicField["SingleWidgetBox[_W]"], Generic[_W]):
     @classmethod
     def from_field(
         cls,
@@ -69,7 +69,7 @@ class BoxMagicField(MagicField["Box[_W]"], Generic[_W]):
     def from_widget_type(
         cls,
         widget_type: type[_W],
-        box_cls: type[Box],
+        box_cls: type[SingleWidgetBox],
         **kwargs,
     ) -> BoxMagicField[_W]:
         """Create a field object from a widget type."""
@@ -77,7 +77,12 @@ class BoxMagicField(MagicField["Box[_W]"], Generic[_W]):
         return cls.from_field(fld, box_cls, **kwargs)
 
     @classmethod
-    def from_any(cls, obj: Any, box_cls: type[Box], **kwargs) -> BoxMagicField[_W]:
+    def from_any(
+        cls,
+        obj: Any,
+        box_cls: type[SingleWidgetBox],
+        **kwargs,
+    ) -> BoxMagicField[_W]:
         """Create a field object from any types."""
         if isinstance(obj, MagicField):
             return cls.from_field(obj, box_cls, **kwargs)
@@ -86,23 +91,23 @@ class BoxMagicField(MagicField["Box[_W]"], Generic[_W]):
         else:
             raise TypeError(f"Cannot make BoxMagicField from {obj!r}")
 
-    def get_widget(self, obj: Any) -> Box[_W]:
+    def get_widget(self, obj: Any) -> SingleWidgetBox[_W]:
         from magicclass._gui import MagicTemplate
 
         obj_id = id(obj)
-        if (widget := self._guis.get(obj_id, None)) is None:
-            self._guis[obj_id] = widget = self.construct(obj)
-            widget.name = self.name
-            for inner in widget:
-                if isinstance(inner, (ValueWidget, ContainerWidget)):
-                    if isinstance(obj, MagicTemplate):
-                        _def = define_callback_gui
-                    else:
-                        _def = define_callback
-                    for callback in self._callbacks:
-                        # funcname = callback.__name__
-                        inner.changed.connect(_def(obj, callback))
-        return widget
+        if (box := self._guis.get(obj_id, None)) is None:
+            self._guis[obj_id] = box = self.construct(obj)
+            box.name = self.name
+            inner = box.widget
+            if isinstance(inner, (ValueWidget, ContainerWidget)):
+                if isinstance(obj, MagicTemplate):
+                    _def = define_callback_gui
+                else:
+                    _def = define_callback
+                for callback in self._callbacks:
+                    # funcname = callback.__name__
+                    inner.changed.connect(_def(obj, callback))
+        return box
 
     def as_getter(self, obj: Any) -> Callable[[Any], Any]:
         """Make a function that get the value of Widget or Action."""
@@ -120,7 +125,7 @@ class BoxMagicField(MagicField["Box[_W]"], Generic[_W]):
         """Get widget for the object."""
         if obj is None:
             return self
-        return self.get_widget(obj).widget
+        return _unbox(self.get_widget(obj))
 
     # fmt: off
     @overload
@@ -170,15 +175,41 @@ class BoxMagicValueField(BoxMagicField[ValueWidget[_V]]):
         """Get widget for the object."""
         if obj is None:
             return self
-        return self.get_widget(obj).widget.value
+        return _unbox(self.get_widget(obj)).value
 
     def __set__(self, obj: MagicTemplate, value: _V) -> None:
         if obj is None:
             raise AttributeError(f"Cannot set {self.__class__.__name__}.")
-        self.get_widget(obj).widget.value = value
+        _unbox(self.get_widget(obj)).value = value
+
+
+def _unbox(w: SingleWidgetBox[_W]) -> _W:
+    from magicclass.widgets._box import SingleWidgetBox
+
+    while isinstance(w, SingleWidgetBox):
+        w = w.widget
+    return w
 
 
 class BoxProtocol(Protocol[_P]):
+    @overload
+    def __call__(
+        self, fld: BoxMagicValueField[_V], *args: _P.args, **kwargs: _P.kwargs
+    ) -> BoxMagicValueField[_V]:
+        ...
+
+    @overload
+    def __call__(
+        self, fld: BoxMagicField[_W], *args: _P.args, **kwargs: _P.kwargs
+    ) -> BoxMagicField[_W]:
+        ...
+
+    @overload
+    def __call__(
+        self, fld: MagicValueField[_V], *args: _P.args, **kwargs: _P.kwargs
+    ) -> BoxMagicValueField[_V]:
+        ...
+
     @overload
     def __call__(
         self, fld: MagicField[_W], *args: _P.args, **kwargs: _P.kwargs
@@ -191,20 +222,13 @@ class BoxProtocol(Protocol[_P]):
     ) -> BoxMagicField[_W]:
         ...
 
-    @overload
-    def __call__(
-        self, fld: MagicValueField[_V], *args: _P.args, **kwargs: _P.kwargs
-    ) -> BoxMagicValueField[_V]:
-        ...
 
-
+# fmt: off
 if TYPE_CHECKING:
-
-    def _boxifier(f: Callable[Concatenate[Any, _P], Any]) -> BoxProtocol[_P]:
-        ...  # fmt: skip
-
+    def _boxifier(f: Callable[Concatenate[Any, _P], Any]) -> BoxProtocol[_P]: ...
 else:
     _boxifier = lambda x: x
+# fmt: on
 
 
 @_boxifier
@@ -217,7 +241,7 @@ def resizable(
     from magicclass.widgets._box import ResizableBox
 
     kwargs = {"x_enabled": x_enabled, "y_enabled": y_enabled}
-    if isinstance(obj, MagicValueField):
+    if isinstance(obj, (MagicValueField, BoxMagicValueField)):
         return BoxMagicValueField.from_field(obj, ResizableBox, **kwargs)
     else:
         return BoxMagicField.from_any(obj, ResizableBox, **kwargs)
@@ -228,7 +252,7 @@ def draggable(obj):
     """Convert a widget or a field to a draggable one."""
     from magicclass.widgets._box import DraggableBox
 
-    if isinstance(obj, MagicValueField):
+    if isinstance(obj, (MagicValueField, BoxMagicValueField)):
         return BoxMagicValueField.from_field(obj, DraggableBox)
     return BoxMagicField.from_any(obj, DraggableBox)
 
@@ -243,7 +267,7 @@ def scrollable(
     from magicclass.widgets._box import ScrollableBox
 
     kwargs = {"x_enabled": x_enabled, "y_enabled": y_enabled}
-    if isinstance(obj, MagicValueField):
+    if isinstance(obj, (MagicValueField, BoxMagicValueField)):
         return BoxMagicValueField.from_field(obj, ScrollableBox, **kwargs)
     else:
         return BoxMagicField.from_any(obj, ScrollableBox, **kwargs)
@@ -265,7 +289,7 @@ def collapsible(
     else:
         raise ValueError(f"Invalid orientation: {orientation!r}")
     kwargs = {"text": text} if text is not None else {}
-    if isinstance(obj, MagicValueField):
+    if isinstance(obj, (MagicValueField, BoxMagicValueField)):
         return BoxMagicValueField.from_field(obj, box_cls, **kwargs)
     else:
         return BoxMagicField.from_any(obj, box_cls, **kwargs)
