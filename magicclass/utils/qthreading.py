@@ -986,10 +986,10 @@ def _is_main_thread() -> bool:
     return QThread.currentThread() is QCoreApplication.instance().thread()
 
 
-class Callback:
+class Callback(Generic[_P, _R1]):
     """Callback object that can be recognized by thread_worker."""
 
-    def __init__(self, f: Callable[..., Any]):
+    def __init__(self, f: Callable[_P, _R1]):
         if not callable(f):
             raise TypeError(f"{f} is not callable.")
         self._func = f
@@ -1003,14 +1003,14 @@ class Callback:
         if record and gui.macro.active and tw._recorder is not None:
             tw._recorder(gui, out, *args, **kwargs)
 
-    def __call__(self, *args, **kwargs) -> Callback:
+    def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _R1:
         return self._func(*args, **kwargs)
 
     def with_args(self, *args, **kwargs):
         """Return a partial callback."""
         return self.__class__(partial(self._func, *args, **kwargs))
 
-    def __get__(self, obj, type=None) -> Callback:
+    def __get__(self, obj, type=None) -> Callback[_P, _R1]:
         if obj is None:
             return self
         return self.with_args(obj)

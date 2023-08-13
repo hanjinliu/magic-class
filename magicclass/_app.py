@@ -1,16 +1,22 @@
+import sys
 from qtpy.QtWidgets import QApplication
 
 APPLICATION: QApplication = None
 
 
+def get_shell():
+    """Get ipython shell if available."""
+    if "IPython" in sys.modules:
+        from IPython import get_ipython
+
+        return get_ipython()
+    else:
+        return None
+
+
 def gui_qt():
     """Call "%gui qt" magic."""
-    try:
-        from IPython import get_ipython
-    except ImportError:
-        get_ipython = lambda: False
-
-    shell = get_ipython()
+    shell = get_shell()
 
     if shell and shell.active_eventloop != "qt":
         shell.enable_gui("qt")
@@ -19,13 +25,7 @@ def gui_qt():
 
 def gui_qt_is_active() -> bool:
     """True only if "%gui qt" magic is called in ipython kernel."""
-    try:
-        from IPython import get_ipython
-    except ImportError:
-        get_ipython = lambda: False
-
-    shell = get_ipython()
-
+    shell = get_shell()
     return shell and shell.active_eventloop == "qt"
 
 
@@ -44,11 +44,3 @@ def run_app():
     """Start the event loop."""
     if not gui_qt_is_active():
         return get_app().exec_()
-
-
-# def consistent_dpi():
-#     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
-#     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
-
-# def menubar_in_widget():
-#     QApplication.setAttribute(Qt.AA_DontUseNativeMenuBar)
