@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import inspect
 from typing import Any, Callable, TYPE_CHECKING, TypeVar, overload
 import warnings
@@ -10,9 +11,9 @@ from magicclass.signature import get_additional_option, upgrade_signature
 if TYPE_CHECKING:
     from magicclass._gui import BaseGui
 
-R = TypeVar("R")
-T = TypeVar("T")
-F = TypeVar("F", bound=Callable)
+    _T = TypeVar("T", bound=BaseGui)
+
+_F = TypeVar("F", bound=Callable)
 
 
 def set_options(
@@ -21,7 +22,7 @@ def set_options(
     call_button: bool | str | None = None,
     auto_call: bool = False,
     **options,
-) -> Callable[[F], F]:
+) -> Callable[[_F], _F]:
     """
     Set MagicSignature to functions.
 
@@ -60,7 +61,7 @@ def set_options(
         Parameter options.
     """
 
-    def wrapper(func: F) -> F:
+    def wrapper(func: _F) -> _F:
         sig = inspect.signature(func)
         rem = options.keys() - sig.parameters.keys()
         if rem:
@@ -99,7 +100,7 @@ def set_design(
     font_color: Color | None = None,
     background_color: Color | None = None,
     visible: bool | None = None,
-) -> Callable[[type[T]], type[T]] | Callable[[F], F]:
+) -> Callable[[_F], _F]:
     """
     Change button/action design by calling setter when the widget is created.
 
@@ -148,12 +149,12 @@ def set_design(
 
 
 @overload
-def do_not_record(method: None = None, recursive: bool = True) -> Callable[[F], F]:
+def do_not_record(method: None = None, recursive: bool = True) -> Callable[[_F], _F]:
     ...
 
 
 @overload
-def do_not_record(method: F, recursive: bool = True) -> F:
+def do_not_record(method: _F, recursive: bool = True) -> _F:
     ...
 
 
@@ -179,7 +180,7 @@ def do_not_record(method=None, recursive=False):
     return wrapper if method is None else wrapper(method)
 
 
-def bind_key(*key) -> Callable[[F], F]:
+def bind_key(*key) -> Callable[[_F], _F]:
     """
     Define a keybinding to a button or an action.
     This function accepts several styles of shortcut expression.
@@ -207,14 +208,14 @@ def bind_key(*key) -> Callable[[F], F]:
         if isinstance(key[0], tuple):
             key = key[0]
 
-    def wrapper(method: F) -> F:
+    def wrapper(method: _F) -> _F:
         upgrade_signature(method, additional_options={"keybinding": key})
         return method
 
     return wrapper
 
 
-def nogui(method: F) -> F:
+def nogui(method: _F) -> _F:
     """Wrapped method will not be converted into a widget."""
     upgrade_signature(method, additional_options={"gui": False})
     return method

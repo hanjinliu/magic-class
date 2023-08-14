@@ -227,6 +227,7 @@ class Curve(PlotDataLayer):
         lw: float = 1,
         ls: str = "-",
         symbol=None,
+        antialias: bool = False,
     ):
         face_color, edge_color = _set_default_colors(
             face_color, edge_color, "white", "white"
@@ -241,6 +242,7 @@ class Curve(PlotDataLayer):
             brush=brush,
             symbolSize=size,
             symbol=symbol,
+            antialias=antialias,
             symbolPen=pen,
             symbolBrush=brush,
         )
@@ -284,6 +286,15 @@ class Curve(PlotDataLayer):
         value = convert_color_code(value)
         self.native.setBrush(value)
         self.native.setSymbolBrush(value)
+
+    @property
+    def antialias(self) -> bool:
+        return self.native.opts["antialias"]
+
+    @antialias.setter
+    def antialias(self, value: bool):
+        self.native.opts["antialias"] = bool(value)
+        self.native.updateItems(value)
 
 
 class Histogram(PlotDataLayer):
@@ -539,6 +550,7 @@ class InfCurve(LayerItem):
         lw: float = 1,
         ls: str = "-",
         symbol=None,
+        antialias: bool = False,
     ):
         face_color, edge_color = _set_default_colors(
             face_color, edge_color, "white", "white"
@@ -553,6 +565,7 @@ class InfCurve(LayerItem):
             brush=brush,
             symbolSize=size,
             symbol=symbol,
+            antialias=antialias,
             symbolPen=pen,
             symbolBrush=brush,
         )
@@ -610,6 +623,15 @@ class InfCurve(LayerItem):
         self.native.opts["pen"].setStyle(_ls)
 
     linestyle = ls  # alias
+
+    @property
+    def antialias(self) -> bool:
+        return self.native.opts["antialias"]
+
+    @antialias.setter
+    def antialias(self, value: bool):
+        self.native.opts["antialias"] = bool(value)
+        self.native.updateItems(value)
 
 
 class FillBetween(PlotDataLayer):

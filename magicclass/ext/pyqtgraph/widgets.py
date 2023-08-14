@@ -120,6 +120,7 @@ class HasDataItems:
         lw: float = 1,
         ls: str = "-",
         symbol: str = None,
+        antialias: bool = False,
     ) -> Curve:
         """
         Add a line plot like ``plt.plot(x, y)``.
@@ -149,6 +150,7 @@ class HasDataItems:
             lw=lw,
             ls=ls,
             symbol=symbol,
+            antialias=antialias,
         )
         self._add_item(item)
         return item
@@ -419,7 +421,8 @@ class HasDataItems:
         name: str | None = None,
         lw: float = 1,
         ls: str = "-",
-        symbol: str = None,
+        symbol: str | None = None,
+        antialias: bool = False,
     ) -> Curve:
         """
         Add a function and plot it.
@@ -449,6 +452,7 @@ class HasDataItems:
             lw=lw,
             ls=ls,
             symbol=symbol,
+            antialias=antialias,
         )
         self._add_item(item)
         if xlim := getattr(self, "xlim", None):
