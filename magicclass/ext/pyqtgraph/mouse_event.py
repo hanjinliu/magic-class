@@ -44,22 +44,22 @@ class MouseClickEvent(_MouseClickEvent):
         self._time = event._time
         self.acceptedItem = event.acceptedItem
 
-    def pos(self):
+    def pos(self) -> tuple[float, float]:
         pos = super().pos()
         return (pos.x(), pos.y())
 
-    def lastPos(self):
+    def lastPos(self) -> tuple[float, float]:
         pos = super().lastPos()
         return (pos.x(), pos.y())
 
-    def modifiers(self):
+    def modifiers(self) -> tuple[Modifier, ...]:
         modifiers = super().modifiers()
         return _factorize_modifiers(modifiers)
 
-    def buttons(self):
+    def buttons(self) -> tuple[Button, ...]:
         buttons = super().buttons()
         return _factorize_buttons(buttons)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         cls = type(self).__name__
         return f"{cls}(pos={self.pos()}, buttons={self.buttons()}, modifiers={self.modifiers()})"

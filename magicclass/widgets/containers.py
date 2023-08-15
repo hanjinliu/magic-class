@@ -550,9 +550,9 @@ class _SizeGrip(QtW.QSizeGrip):
         self.setCursor(Qt.CursorShape.SizeFDiagCursor)
         return None
 
-    def moveEvent(self, moveEvent: QtGui.QMoveEvent) -> None:
+    def moveEvent(self, ev: QtGui.QMoveEvent) -> None:
         # to avoid changing the size grip icon
-        return QtW.QWidget.moveEvent(self, moveEvent)
+        return QtW.QWidget.moveEvent(self, ev)
 
 
 class _ResizableContainer(ContainerBase):

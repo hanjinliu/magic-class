@@ -4,7 +4,9 @@ from types import TracebackType
 from contextlib import contextmanager
 from typing import Callable, TYPE_CHECKING
 from enum import Enum
+from pathlib import Path
 import functools
+
 from magicgui.widgets import Widget
 from .mgui_ext import FunctionGuiPlus
 from magicclass._exceptions import Canceled
@@ -111,12 +113,18 @@ class ErrorMode(Enum):
             except Canceled as e:
                 out = e  # Do not raise "Canceled" message box
             except Exception as e:
-                e.__traceback__ = _cleanup_tb(e.__traceback__)
+                cls.cleanup_tb(e)
                 handler(e, parent=parent)
                 out = e
             return out
 
         return wrapped_func
+
+    @classmethod
+    def cleanup_tb(cls, e: Exception) -> Exception:
+        """Cleanup traceback."""
+        e.__traceback__ = _cleanup_tb(e.__traceback__)
+        return e
 
     @classmethod
     @contextmanager
@@ -138,7 +146,7 @@ ErrorModeHandlers = {
 }
 
 
-def _cleanup_tb(tb: TracebackType):
+def _cleanup_tb(tb: TracebackType) -> TracebackType:
     """Remove useless info from a traceback object."""
     current_tb = tb
     while current_tb is not None:
@@ -146,4 +154,27 @@ def _cleanup_tb(tb: TracebackType):
             tb = current_tb.tb_next
             break
         current_tb = current_tb.tb_next
+
+    # cleanup exceptions from qthreading
+    current_tb = tb
+    tb_list: list[TracebackType] = []
+    while current_tb is not None:
+        path = Path(current_tb.tb_frame.f_code.co_filename).as_posix()
+        if path.endswith(
+            (
+                "magic-class/magicclass/utils/qthreading.py",
+                "superqt/utils/_qthreading.py",
+            )
+        ):
+            pass
+        else:
+            tb_list.append(current_tb)
+        current_tb = current_tb.tb_next
+    nlist = len(tb_list)
+
+    if nlist > 1:
+        tb = tb_list[0]
+        for i in range(nlist - 1):
+            path = Path(tb_list[i].tb_frame.f_code.co_filename).as_posix()
+            tb_list[i].tb_next = tb_list[i + 1]
     return tb

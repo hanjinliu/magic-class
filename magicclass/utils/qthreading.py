@@ -30,6 +30,7 @@ from .qtsignal import QtSignal
 from ._functions import get_signature
 
 from magicclass.widgets.containers import FrameContainer
+from magicclass.undo import UndoCallback
 
 if TYPE_CHECKING:
     from magicclass._gui import BaseGui
@@ -716,6 +717,7 @@ class thread_worker(Generic[_P]):
                 def _on_error(err: Exception):
                     # NOTE: Exceptions are raised in other thread so context manager
                     # cannot catch them. Macro has to be reactived here.
+                    gui._error_mode.cleanup_tb(err)
                     gui._error_mode.get_handler()(err, parent=gui)
                     if not self._ignore_errors:
                         raise err  # reraise
@@ -754,7 +756,7 @@ class thread_worker(Generic[_P]):
         @worker.errored.connect
         def _(exc):
             nonlocal err
-            err = exc
+            err = gui._error_mode.cleanup_tb(exc)
 
         if isinstance(worker, GeneratorWorker):
 
@@ -779,6 +781,8 @@ class thread_worker(Generic[_P]):
 
         if result is _empty and err is not _empty:
             raise err
+        if isinstance(result, UndoCallback):
+            return result.return_value
         return result
 
     def _get_method_signature(self) -> inspect.Signature:
