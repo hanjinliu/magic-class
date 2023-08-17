@@ -60,15 +60,37 @@ class CallbackList(Generic[_R1]):
         self._callbacks.remove(callback)
         return callback
 
-    def _iter_as_method(self, obj: BaseGui) -> Iterable[Callable]:
+    def _iter_as_method(
+        self, obj: BaseGui, filtered: bool = False
+    ) -> Iterable[Callable]:
         for ref in self._callbacks:
-            yield _make_method(ref, obj)
+            if not filtered:
+                yield _make_method(ref, obj)
+            else:
+                yield _make_filtered_method(ref, obj)
+
+    def _iter_as_nested_cb(
+        self, gui: BaseGui, *args, filtered: bool = False
+    ) -> Iterable[NestedCallback]:
+        for c in self._iter_as_method(gui, filtered=filtered):
+            yield NestedCallback(c, *args)
 
 
 def _make_method(func, obj: BaseGui):
     def f(*args, **kwargs):
         with obj.macro.blocked():
             out = func.__get__(obj)(*args, **kwargs)
+        return out
+
+    return f
+
+
+def _make_filtered_method(func, obj: BaseGui):
+    def f(yielded):
+        if isinstance(yielded, NestedCallback):
+            return None
+        with obj.macro.blocked():
+            out = func.__get__(obj)(yielded)
         return out
 
     return f
@@ -102,3 +124,14 @@ class Callback(Generic[_P, _R1]):
         if obj is None:
             return self
         return self.with_args(obj)
+
+
+class NestedCallback:
+    def __init__(self, cb: Callable[..., Any], gui: BaseGui, *args):
+        self._cb = cb
+        self._args = args
+        self._gui = gui
+
+    def call(self):
+        with self._gui.macro.blocked():
+            return self._cb(*self._args)

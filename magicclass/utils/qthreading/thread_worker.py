@@ -16,7 +16,7 @@ from typing_extensions import ParamSpec
 import warnings
 
 from superqt.utils import create_worker, GeneratorWorker, FunctionWorker
-from qtpy.QtCore import Qt, QThread, QCoreApplication
+from qtpy.QtCore import Qt, QThread, QCoreApplication, QTimer
 from magicgui.widgets import ProgressBar, Widget
 from magicgui.application import use_app
 
@@ -31,7 +31,7 @@ from ._progressbar import (
     ProgressDict,
     ProgressBarLike,
 )
-from ._callback import CallbackList, Callback
+from ._callback import CallbackList, Callback, NestedCallback
 
 if TYPE_CHECKING:
     from magicclass._gui import BaseGui
@@ -63,12 +63,12 @@ class AsyncMethod(Protocol[_P, _R]):
 
     __thread_worker__: thread_worker[_P]
 
-
-if TYPE_CHECKING:
-
-    def _async_method(func: Callable[_P, _R]) -> AsyncMethod[_P, _R]:
+    def arun(self, *args: _P.args, **kwargs: _P.kwargs) -> _R:
         ...
 
+
+if TYPE_CHECKING:
+    _async_method: Callable[[Callable[_P, _R]], AsyncMethod[_P, _R]]
 else:
     _async_method = lambda f: f
 
@@ -364,6 +364,7 @@ class thread_worker(Generic[_P]):
 
         _create_worker.__self__ = gui
         _create_worker.__thread_worker__ = self
+        _create_worker.arun = self._create_generator(gui)
         return _create_worker
 
     def _run_blocked(
@@ -418,6 +419,65 @@ class thread_worker(Generic[_P]):
         if isinstance(result, UndoCallback):
             return result.return_value
         return result
+
+    def _create_generator(self, gui: BaseGui):
+        def _gen(*args, **kwargs):
+            pbar: _SupportProgress | None = None
+            with gui.macro.blocked():
+                # started
+                if self._progress:
+
+                    def _init_and_show():
+                        nonlocal pbar
+                        pbar = self._init_pbar_for_args(gui, args, kwargs)
+                        init_pbar(pbar)
+                        if hasattr(pbar, "set_title"):
+                            pbar.set_title(self._func.__name__.replace("_", " "))
+
+                    yield NestedCallback(_init_and_show, gui=gui)
+                yield from self.started._iter_as_nested_cb(gui)
+                # run
+                try:
+                    if self.is_generator:
+                        gen = self._func.__get__(gui)(*args, **kwargs)
+                        while True:
+                            try:
+                                _val = next(gen)
+                            except StopIteration as exc:
+                                out = exc.value
+                                break
+                            else:
+                                # yielded
+                                yield from self.yielded._iter_as_nested_cb(
+                                    gui, _val, filtered=True
+                                )
+                                cb_yielded = self._create_callback_yielded(
+                                    gui, args, kwargs
+                                )
+                                yield NestedCallback(cb_yielded, gui, _val)
+                                if pbar and pbar.max != 0:
+                                    yield NestedCallback(increment.__get__(pbar), gui)
+                    else:
+                        out = self._func.__get__(gui)(*args, **kwargs)
+                except Exception as exc:
+                    yield from self.errored._iter_as_nested_cb(gui, exc)
+                else:
+                    # returned
+                    yield from self.returned._iter_as_nested_cb(gui, out)
+                    cb_returned = partial(
+                        Callback.catch,
+                        gui=gui,
+                        tw=self,
+                        args=args,
+                        kwargs=kwargs,
+                    )
+                    yield NestedCallback(cb_returned, gui, out)
+                # finished
+                yield from self.finished._iter_as_nested_cb(gui)
+                if pbar:
+                    yield NestedCallback(close_pbar.__get__(pbar), gui=gui)
+
+        return _gen
 
     def _get_method_signature(self) -> inspect.Signature:
         sig = self.__signature__
@@ -488,7 +548,7 @@ class thread_worker(Generic[_P]):
         if is_generator:
             for c in self.aborted._iter_as_method(gui):
                 worker.aborted.connect(c)
-            for c in self.yielded._iter_as_method(gui):
+            for c in self.yielded._iter_as_method(gui, filtered=True):
                 worker.yielded.connect(c)
             cb_yielded = self._create_callback_yielded(gui, args, kwargs)
             worker.yielded.connect(cb_yielded)
@@ -618,6 +678,8 @@ class thread_worker(Generic[_P]):
 
     def _create_callback_yielded(self, gui: BaseGui, args, kwargs):
         def cb(out: Any | None):
+            if isinstance(out, NestedCallback):
+                return out.call()
             return Callback.catch(
                 out, gui=gui, tw=self, args=args, kwargs=kwargs, record=False
             )
@@ -642,8 +704,10 @@ def close_pbar(pbar: ProgressBarLike):
     return None
 
 
-def increment(pbar: ProgressBarLike):
+def increment(pbar: ProgressBarLike, yielded=None):
     """Increment progressbar."""
+    if isinstance(yielded, NestedCallback):
+        return None
     with suppress(RuntimeError):
         if pbar.value == pbar.max:
             pbar.max = 0

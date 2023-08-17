@@ -12,7 +12,7 @@ from typing import (
     TypedDict,
 )
 
-from qtpy.QtCore import QThread, QCoreApplication, Qt
+from qtpy.QtCore import QThread, QCoreApplication, Qt, QTimer
 from superqt.utils import GeneratorWorker, FunctionWorker
 from magicgui.widgets import ProgressBar, Container, PushButton, Label
 
@@ -261,6 +261,9 @@ class DefaultProgressBar(FrameContainer, _SupportProgress):
 
         super().__init__(widgets=[self.progress_label, self.pbar, cnt], labels=False)
 
+        self.hide_footer()
+        self.time_label.visible = False
+
     def _on_timer_updated(self, _=None):
         with suppress(RuntimeError):
             if self._timer.sec < 3600:
@@ -335,6 +338,7 @@ class DefaultProgressBar(FrameContainer, _SupportProgress):
         for i, wdt in enumerate(self._CONTAINER):
             if wdt is self:
                 break
+        super().close()
         if i < 0:
             return None
         with suppress(RuntimeError):
@@ -347,6 +351,9 @@ class DefaultProgressBar(FrameContainer, _SupportProgress):
 
     def hide_footer(self):
         self.footer[1].visible = self.footer[2].visible = False
+
+    def show_footer(self):
+        self.footer[1].visible = self.footer[2].visible = True
 
     def set_description(self, desc: str):
         """Set description as the label of the progressbar."""
@@ -367,6 +374,9 @@ class DefaultProgressBar(FrameContainer, _SupportProgress):
             # FunctionWorker does not have yielded/aborted signals.
             self.hide_footer()
             return None
+        self.show_footer()
+        self.time_label.visible = True
+
         # initialize abort_button
         self.abort_button.text = "Abort"
         self.abort_button.changed.connect(self._abort_worker)
