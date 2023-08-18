@@ -12,7 +12,7 @@ from typing import (
     TypedDict,
 )
 
-from qtpy.QtCore import QThread, QCoreApplication, Qt, QTimer
+from qtpy.QtCore import QThread, QCoreApplication, Qt
 from superqt.utils import GeneratorWorker, FunctionWorker
 from magicgui.widgets import ProgressBar, Container, PushButton, Label
 

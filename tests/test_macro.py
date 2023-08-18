@@ -222,3 +222,40 @@ def test_validator():
     assert str(ui.macro[1]) == "ui.f(x=5, y=5)"
     assert str(ui.macro[2]) == "ui.f(x=3, y=3)"
     assert str(ui.macro[3]) == "ui.f(x=1, y=-1)"
+
+
+def test_validator_with_worker():
+    from magicclass.utils import thread_worker
+
+    @magicclass
+    class A:
+        def __init__(self) -> None:
+            self._default = 1
+
+        def _set_default(self, value):
+            if value is None:
+                value = self._default
+            return value
+
+        def _copy_value(self, value, args):
+            if value is None:
+                value = args["x"]
+                if value is None:
+                    value = -1
+            return value
+
+        @thread_worker
+        def f(
+            self,
+            x: Annotated[int, {"validator": _set_default}] = None,
+            y: Annotated[int, {"validator": _copy_value}] = None,
+        ):
+            return x, y
+
+    ui = A()
+    assert (5, 5) == ui.f(5, 5)
+    assert (3, 3) == ui.f(3)
+    assert (1, -1) == ui.f()
+    assert str(ui.macro[1]) == "ui.f(x=5, y=5)"
+    assert str(ui.macro[2]) == "ui.f(x=3, y=3)"
+    assert str(ui.macro[3]) == "ui.f(x=1, y=-1)"
