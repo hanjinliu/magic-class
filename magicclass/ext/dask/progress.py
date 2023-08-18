@@ -224,7 +224,7 @@ class dask_thread_worker(thread_worker):
             @wraps(self._func)
             def _wrapped(*args, **kwargs):
                 with pbar:
-                    with gui.macro.blocked():
+                    with self._call_context(gui):
                         out = yield from self._func(*args, **kwargs)
                 return out
 
@@ -233,7 +233,7 @@ class dask_thread_worker(thread_worker):
             @wraps(self._func)
             def _wrapped(*args, **kwargs):
                 with pbar:
-                    with gui.macro.blocked():
+                    with self._call_context(gui):
                         out = self._func(*args, **kwargs)
                 return out
 

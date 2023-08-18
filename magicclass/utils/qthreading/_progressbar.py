@@ -264,12 +264,17 @@ class DefaultProgressBar(FrameContainer, _SupportProgress):
         self.hide_footer()
         self.time_label.visible = False
 
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(title={self.name!r})"
+
     def _on_timer_updated(self, _=None):
         with suppress(RuntimeError):
             if self._timer.sec < 3600:
                 self.time_label.value = self._timer.format_time("{min:0>2}:{sec:0>2}")
             else:
                 self.time_label.value = self._timer.format_time()
+            if not self.time_label.visible:
+                self.time_label.visible = True
         return None
 
     def _start_thread(self):

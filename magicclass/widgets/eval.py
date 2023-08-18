@@ -250,7 +250,6 @@ class QEvalLineEdit(QtW.QLineEdit):
                     return True
         elif event.type() == QtCore.QEvent.Type.Move:
             if self._list_widget is not None:
-                print("moved")
                 self._list_widget.close()
                 self._list_widget = None
         return super().event(event)

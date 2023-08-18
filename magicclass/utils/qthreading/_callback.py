@@ -105,14 +105,6 @@ class Callback(Generic[_P, _R1]):
         self._func = f
         wraps(f)(self)
 
-    @staticmethod
-    def catch(out, gui: BaseGui, tw: thread_worker, args, kwargs, record=True):
-        if isinstance(out, Callback):
-            with gui.macro.blocked():
-                out = out._func()
-        if record and gui.macro.active and tw._recorder is not None:
-            tw._recorder(gui, out, *args, **kwargs)
-
     def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _R1:
         return self._func(*args, **kwargs)
 
@@ -127,11 +119,9 @@ class Callback(Generic[_P, _R1]):
 
 
 class NestedCallback:
-    def __init__(self, cb: Callable[..., Any], gui: BaseGui, *args):
+    def __init__(self, cb: Callable[..., Any], *args):
         self._cb = cb
         self._args = args
-        self._gui = gui
 
     def call(self):
-        with self._gui.macro.blocked():
-            return self._cb(*self._args)
+        return self._cb(*self._args)

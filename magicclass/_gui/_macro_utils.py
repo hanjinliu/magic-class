@@ -234,7 +234,7 @@ def inject_silencer(func: Callable, is_method: bool = True) -> Callable:
         return _silent
 
     else:
-        _func._set_recorder(None)
+        _func._set_silencer()
         return _func
 
 

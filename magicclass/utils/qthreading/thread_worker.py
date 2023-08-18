@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from contextlib import suppress, contextmanager
+from contextlib import suppress, contextmanager, nullcontext
 import inspect
 from functools import partial, wraps
+import time
 from typing import (
     Any,
     Callable,
     TYPE_CHECKING,
+    Literal,
     overload,
     TypeVar,
     Generic,
@@ -16,7 +18,7 @@ from typing_extensions import ParamSpec
 import warnings
 
 from superqt.utils import create_worker, GeneratorWorker, FunctionWorker
-from qtpy.QtCore import Qt, QThread, QCoreApplication, QTimer
+from qtpy.QtCore import Qt, QThread, QCoreApplication
 from magicgui.widgets import ProgressBar, Widget
 from magicgui.application import use_app
 
@@ -71,6 +73,10 @@ if TYPE_CHECKING:
     _async_method: Callable[[Callable[_P, _R]], AsyncMethod[_P, _R]]
 else:
     _async_method = lambda f: f
+
+
+def _silent(*args, **kwargs):
+    return None
 
 
 class thread_worker(Generic[_P]):
@@ -130,7 +136,7 @@ class thread_worker(Generic[_P]):
         total: str | Callable | int | None = None,
         pbar: ProgressBar | _SupportProgress | MagicField | None = None,
         **kwargs,
-    ) -> Self:
+    ) -> Callable[[Callable[_P, _R]], thread_worker[_P]]:
         """
         Configure the progressbar.
 
@@ -200,6 +206,10 @@ class thread_worker(Generic[_P]):
         """Convert a callback function to a callback object."""
         return Callback(callback)
 
+    @staticmethod
+    def run(meth: AsyncMethod[_P, _R]) -> Callable[_P, _R]:
+        return meth.arun
+
     @classmethod
     @contextmanager
     def blocking_mode(cls):
@@ -216,7 +226,7 @@ class thread_worker(Generic[_P]):
 
     @property
     def __is_recordable__(self) -> bool:
-        return self._recorder is not None
+        return self._recorder is not None and self._recorder is not _silent
 
     @property
     def __doc__(self) -> str:
@@ -233,6 +243,10 @@ class thread_worker(Generic[_P]):
         Must accept ``recorder(bgui, *args, **kwargs)``.
         """
         self._recorder = recorder
+        return None
+
+    def _set_silencer(self):
+        self._recorder = _silent
         return None
 
     def _set_validators(self, validators: dict[str, Callable]):
@@ -257,7 +271,15 @@ class thread_worker(Generic[_P]):
         else:
             return self._func(*args, **kwargs)
 
-    def __get__(self, gui: BaseGui, objtype=None) -> Callable[_P, Any]:
+    @overload
+    def __get__(self, gui: Literal[None], objtype=None) -> thread_worker[_P]:
+        ...
+
+    @overload
+    def __get__(self, gui: Any, objtype=None) -> AsyncMethod[_P, Any]:
+        ...
+
+    def __get__(self, gui, objtype=None):
         if gui is None:
             return self
 
@@ -287,6 +309,12 @@ class thread_worker(Generic[_P]):
             bound.arguments[name] = validator(gui, value, bound_args)
         return bound.args, bound.kwargs
 
+    def _call_context(self, gui: BaseGui):
+        if self._recorder is not None:
+            return gui.macro.blocked()
+        else:
+            return nullcontext()  # record is false or all-false
+
     def _create_qt_worker(
         self, gui: BaseGui, *args, **kwargs
     ) -> FunctionWorker | GeneratorWorker:
@@ -294,37 +322,16 @@ class thread_worker(Generic[_P]):
         if self.is_generator:
 
             def _run(*args, **kwargs):
-                with gui.macro.blocked():
+                with self._call_context(gui):
                     out = yield from self._func.__get__(gui)(*args, **kwargs)
                 return out
 
         else:
 
             def _run(*args, **kwargs):
-                with gui.macro.blocked():
+                with self._call_context(gui):
                     out = self._func.__get__(gui)(*args, **kwargs)
                 return out
-
-        worker = create_worker(
-            _run,
-            _ignore_errors=True,  # NOTE: reraising is processed in _create_method
-            _start_thread=False,
-            *args,
-            **kwargs,
-        )
-
-        return worker
-
-    def _create_qt_generator_worker(
-        self, gui: BaseGui, *args, **kwargs
-    ) -> GeneratorWorker:
-        def _run():
-            with gui.macro.blocked():
-                if self.is_generator:
-                    out = yield from self._func.__get__(gui)(*args, **kwargs)
-                else:
-                    out = self._func.__get__(gui)(*args, **kwargs)
-                yield out
 
         worker = create_worker(
             _run,
@@ -445,60 +452,59 @@ class thread_worker(Generic[_P]):
     def _create_generator(self, gui: BaseGui):
         def _gen(*args, **kwargs):
             pbar: _SupportProgress | None = None
-            with gui.macro.blocked():
-                # started
-                if self._progress:
+            has_pbar = self._progress
 
-                    def _init_and_show():
-                        nonlocal pbar
-                        pbar = self._init_pbar_for_args(gui, args, kwargs)
-                        init_pbar(pbar)
-                        if hasattr(pbar, "set_title"):
-                            pbar.set_title(self._func.__name__.replace("_", " "))
+            # started
+            if has_pbar:
 
-                    yield NestedCallback(_init_and_show, gui=gui)
-                yield from self.started._iter_as_nested_cb(gui)
-                # run
-                args, kwargs = self._validate_args(args, kwargs)
-                try:
-                    if self.is_generator:
-                        gen = self._func.__get__(gui)(*args, **kwargs)
-                        while True:
-                            try:
-                                _val = next(gen)
-                            except StopIteration as exc:
-                                out = exc.value
-                                break
-                            else:
-                                # yielded
-                                yield from self.yielded._iter_as_nested_cb(
-                                    gui, _val, filtered=True
-                                )
-                                cb_yielded = self._create_callback_yielded(
-                                    gui, args, kwargs
-                                )
-                                yield NestedCallback(cb_yielded, gui, _val)
-                                if pbar and pbar.max != 0:
-                                    yield NestedCallback(increment.__get__(pbar), gui)
-                    else:
-                        out = self._func.__get__(gui)(*args, **kwargs)
-                except Exception as exc:
-                    yield from self.errored._iter_as_nested_cb(gui, exc)
+                def _init_pbar_and_show():
+                    nonlocal pbar
+                    pbar = self._init_pbar_for_args(gui, args, kwargs)
+                    init_pbar(pbar)
+                    if hasattr(pbar, "set_title"):
+                        pbar.set_title(self._func.__name__.replace("_", " "))
+
+                yield NestedCallback(_init_pbar_and_show)
+            yield from self.started._iter_as_nested_cb(gui)
+            # run
+            args, kwargs = self._validate_args(gui, args, kwargs)
+            try:
+                if self.is_generator:
+                    gen = self._func.__get__(gui)(*args, **kwargs)
+                    while True:
+                        try:
+                            _val = next(gen)
+                        except StopIteration as exc:
+                            out = exc.value
+                            break
+                        else:
+                            # yielded
+                            yield from self.yielded._iter_as_nested_cb(
+                                gui, _val, filtered=True
+                            )
+                            cb_yielded = self._create_cb_yielded(gui)
+                            yield NestedCallback(cb_yielded, _val)
+                            if pbar and pbar.max != 0:
+                                yield NestedCallback(increment.__get__(pbar))
                 else:
-                    # returned
-                    yield from self.returned._iter_as_nested_cb(gui, out)
-                    cb_returned = partial(
-                        Callback.catch,
-                        gui=gui,
-                        tw=self,
-                        args=args,
-                        kwargs=kwargs,
-                    )
-                    yield NestedCallback(cb_returned, gui, out)
-                # finished
-                yield from self.finished._iter_as_nested_cb(gui)
-                if pbar:
-                    yield NestedCallback(close_pbar.__get__(pbar), gui=gui)
+                    out = self._func.__get__(gui)(*args, **kwargs)
+            except Exception as exc:
+                yield from self.errored._iter_as_nested_cb(gui, exc)
+            else:
+                # returned
+                yield from self.returned._iter_as_nested_cb(gui, out)
+                cb_returned = self._create_cb_returned(gui, args, kwargs)
+                yield NestedCallback(cb_returned, out)
+            # finished
+            yield from self.finished._iter_as_nested_cb(gui)
+            if has_pbar:
+                count = 0
+                while pbar is None:
+                    time.sleep(0.05)
+                    count += 1
+                    if count > 20:
+                        raise RuntimeError("Cannot find progressbar.")
+                yield NestedCallback(close_pbar.__get__(pbar))
 
         return _gen
 
@@ -555,13 +561,7 @@ class thread_worker(Generic[_P]):
             worker.started.connect(c)
         for c in self.returned._iter_as_method(gui):
             worker.returned.connect(c)
-        cb_returned = partial(
-            Callback.catch,
-            gui=gui,
-            tw=self,
-            args=args,
-            kwargs=kwargs,
-        )
+        cb_returned = self._create_cb_returned(gui, args, kwargs)
         worker.returned.connect(cb_returned)
         for c in self.errored._iter_as_method(gui):
             worker.errored.connect(c)
@@ -573,7 +573,7 @@ class thread_worker(Generic[_P]):
                 worker.aborted.connect(c)
             for c in self.yielded._iter_as_method(gui, filtered=True):
                 worker.yielded.connect(c)
-            cb_yielded = self._create_callback_yielded(gui, args, kwargs)
+            cb_yielded = self._create_cb_yielded(gui)
             worker.yielded.connect(cb_yielded)
 
     @property
@@ -702,13 +702,25 @@ class thread_worker(Generic[_P]):
             )
         return self._callback_dict_["aborted"]
 
-    def _create_callback_yielded(self, gui: BaseGui, args, kwargs):
+    def _create_cb_yielded(self, gui: BaseGui):
         def cb(out: Any | None):
-            if isinstance(out, NestedCallback):
-                return out.call()
-            return Callback.catch(
-                out, gui=gui, tw=self, args=args, kwargs=kwargs, record=False
-            )
+            with self._call_context(gui):
+                if isinstance(out, NestedCallback):
+                    return out.call()
+                if isinstance(out, Callback):
+                    out = out._func()
+            return out
+
+        return cb
+
+    def _create_cb_returned(self, gui: BaseGui, args, kwargs):
+        def cb(out: Any | None):
+            if isinstance(out, Callback):
+                with self._call_context(gui):
+                    out = out._func()
+            if gui.macro.active and self._recorder is not None:
+                self._recorder(gui, out, *args, **kwargs)
+            return out
 
         return cb
 
