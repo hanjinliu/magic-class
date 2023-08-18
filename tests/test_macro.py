@@ -1,3 +1,4 @@
+from typing import Annotated
 from magicclass import magicclass, magicmenu, set_options, defaults, repeat
 from enum import Enum
 from pathlib import Path
@@ -188,3 +189,36 @@ def test_mcls_record_arg():
 
     assert len(ui.macro) == 2
     assert str(ui.macro[1]) == "ui.g()"
+
+def test_validator():
+    @magicclass
+    class A:
+        def __init__(self) -> None:
+            self._default = 1
+
+        def _set_default(self, value):
+            if value is None:
+                value = self._default
+            return value
+
+        def _copy_value(self, value, args):
+            if value is None:
+                value = args["x"]
+                if value is None:
+                    value = -1
+            return value
+
+        def f(
+            self,
+            x: Annotated[int, {"validator": _set_default}] = None,
+            y: Annotated[int, {"validator": _copy_value}] = None,
+        ):
+            return x, y
+
+    ui = A()
+    assert (5, 5) == ui.f(5, 5)
+    assert (3, 3) == ui.f(3)
+    assert (1, -1) == ui.f()
+    assert str(ui.macro[1]) == "ui.f(x=5, y=5)"
+    assert str(ui.macro[2]) == "ui.f(x=3, y=3)"
+    assert str(ui.macro[3]) == "ui.f(x=1, y=-1)"
