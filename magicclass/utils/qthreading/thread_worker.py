@@ -457,6 +457,7 @@ class thread_worker(Generic[_P]):
                     yield NestedCallback(_init_and_show, gui=gui)
                 yield from self.started._iter_as_nested_cb(gui)
                 # run
+                args, kwargs = self._validate_args(args, kwargs)
                 try:
                     if self.is_generator:
                         gen = self._func.__get__(gui)(*args, **kwargs)
