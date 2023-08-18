@@ -634,16 +634,17 @@ class thread_worker(Generic[_P]):
         """The corresponding button object."""
         return gui[self._func.__name__]
 
-    def _validate_args(self, args, kwargs):
+    def _validate_args(self, gui: BaseGui, args, kwargs):
         if self._validators is None:
             return args, kwargs
-        sig = self.__signature__
+        sig: inspect.Signature = self.__get__(gui).__signature__
         bound = sig.bind_partial(*args, **kwargs)
         bound.apply_defaults()
+        bound_args = bound.arguments.copy()
         for name, validator in self._validators.items():
             value = bound.arguments[name]
-            bound.arguments[name] = validator(value)
-        return args, kwargs
+            bound.arguments[name] = validator(gui, value, bound_args)
+        return bound.args, bound.kwargs
 
     def _create_qt_worker(
         self, gui: BaseGui, *args, **kwargs
@@ -653,7 +654,6 @@ class thread_worker(Generic[_P]):
 
             def _run(*args, **kwargs):
                 with gui.macro.blocked():
-                    args, kwargs = self._validate_args(args, kwargs)
                     out = yield from self._func.__get__(gui)(*args, **kwargs)
                 return out
 
@@ -661,7 +661,6 @@ class thread_worker(Generic[_P]):
 
             def _run(*args, **kwargs):
                 with gui.macro.blocked():
-                    args, kwargs = self._validate_args(args, kwargs)
                     out = self._func.__get__(gui)(*args, **kwargs)
                 return out
 
@@ -681,6 +680,8 @@ class thread_worker(Generic[_P]):
         @wraps(self)
         def _create_worker(*args, **kwargs):
             _is_non_blocking = self.button(gui).running
+            with gui.macro.blocked():
+                args, kwargs = self._validate_args(gui, args, kwargs)
             # create a worker object
             worker = self._create_qt_worker(gui, *args, **kwargs)
             is_generator = isinstance(worker, GeneratorWorker)
