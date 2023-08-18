@@ -471,6 +471,8 @@ class thread_worker(Generic[_P]):
         self._objects: dict[int, BaseGui] = {}
         self._progressbars: dict[int, ProgressBarLike | None] = {}
         self._recorder: Callable[_P, Any] | None = None
+        self._validators: dict[str, Callable] | None = None
+        self._signature_cache = None
 
         if f is not None:
             self(f)
@@ -592,6 +594,11 @@ class thread_worker(Generic[_P]):
         self._recorder = recorder
         return None
 
+    def _set_validators(self, validators: dict[str, Callable]):
+        """Set validator functions."""
+        self._validators = validators
+        return None
+
     @overload
     def __call__(self, f: Callable[_P, _R1]) -> thread_worker[_P]:
         ...
@@ -627,6 +634,17 @@ class thread_worker(Generic[_P]):
         """The corresponding button object."""
         return gui[self._func.__name__]
 
+    def _validate_args(self, args, kwargs):
+        if self._validators is None:
+            return args, kwargs
+        sig = self.__signature__
+        bound = sig.bind_partial(*args, **kwargs)
+        bound.apply_defaults()
+        for name, validator in self._validators.items():
+            value = bound.arguments[name]
+            bound.arguments[name] = validator(value)
+        return args, kwargs
+
     def _create_qt_worker(
         self, gui: BaseGui, *args, **kwargs
     ) -> FunctionWorker | GeneratorWorker:
@@ -635,6 +653,7 @@ class thread_worker(Generic[_P]):
 
             def _run(*args, **kwargs):
                 with gui.macro.blocked():
+                    args, kwargs = self._validate_args(args, kwargs)
                     out = yield from self._func.__get__(gui)(*args, **kwargs)
                 return out
 
@@ -642,6 +661,7 @@ class thread_worker(Generic[_P]):
 
             def _run(*args, **kwargs):
                 with gui.macro.blocked():
+                    args, kwargs = self._validate_args(args, kwargs)
                     out = self._func.__get__(gui)(*args, **kwargs)
                 return out
 
@@ -825,7 +845,9 @@ class thread_worker(Generic[_P]):
     @property
     def __signature__(self) -> inspect.Signature:
         """Get the signature of the bound function."""
-        return get_signature(self._func)
+        if self._signature_cache is None:
+            self._signature_cache = get_signature(self._func)
+        return self._signature_cache
 
     @__signature__.setter
     def __signature__(self, sig: inspect.Signature) -> None:
@@ -833,6 +855,7 @@ class thread_worker(Generic[_P]):
         if not isinstance(sig, inspect.Signature):
             raise TypeError(f"Cannot set type {type(sig)}.")
         self._func.__signature__ = sig
+        self._signature_cache = sig
         return None
 
     def _find_progressbar(self, gui: BaseGui, desc: str | None = None, total: int = 0):

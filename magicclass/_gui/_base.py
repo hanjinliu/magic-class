@@ -15,7 +15,6 @@ from typing import (
 )
 from types import MethodType
 from abc import ABCMeta
-from typing_extensions import _AnnotatedAlias
 import inspect
 import warnings
 from qtpy import QtWidgets as QtW
@@ -70,6 +69,7 @@ from magicclass.fields import MagicField, MagicValueField, field, vfield
 from magicclass.signature import (
     ConfirmDict,
     MagicMethodSignature,
+    is_annotated,
     get_additional_option,
     split_annotated_type,
     upgrade_signature,
@@ -1078,7 +1078,7 @@ def _create_gui_method(self: BaseGui, obj: MethodType):
     # This block enables instance methods in "bind" or "choices" of ValueWidget.
     all_params: list[inspect.Parameter] = []
     for param in func.__signature__.parameters.values():
-        if isinstance(param.annotation, _AnnotatedAlias):
+        if is_annotated(param.annotation):
             annot, opt = split_annotated_type(param.annotation)
             param = MagicParameter(
                 param.name,
@@ -1241,7 +1241,7 @@ def _child_that_has_widget(
 
 
 def convert_function(obj: Callable, default: str | None = None, is_method: bool = True):
-    """Convert function for macro recording."""
+    """Convert function for macro recording and validation."""
     _record_policy = get_additional_option(obj, "record", default)
     if _record_policy is None:
         new_attr = inject_recorder(obj, is_method)

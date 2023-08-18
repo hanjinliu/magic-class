@@ -9,7 +9,7 @@ from magicgui.widgets.bases import ValueWidget
 
 from .utils import get_parameters
 from magicclass.utils import get_signature, thread_worker
-from magicclass.signature import MagicMethodSignature
+from magicclass.signature import MagicMethodSignature, create_validators
 from magicclass.undo import UndoCallback
 
 if TYPE_CHECKING:
@@ -157,10 +157,21 @@ def inject_recorder(func: Callable, is_method: bool = True) -> Callable:
     else:
         _record_macro = _define_macro_recorder(sig, _func)
 
+    validators = create_validators(sig)
+
     if not isinstance(_func, thread_worker):
 
         @functools_wraps(_func)
         def _recordable(bgui: MagicTemplate, *args, **kwargs):
+            if validators:
+                bound = sig.bind_partial(*args, **kwargs)
+                bound.apply_defaults()
+                arguments = bound.arguments.copy()
+                for name, validator in validators.items():
+                    val = arguments[name]
+                    bound.arguments[name] = validator(bgui, val, arguments)
+                args, kwargs = bound.args, bound.kwargs
+
             with bgui.macro.blocked():
                 out = _func.__get__(bgui)(*args, **kwargs)
             if bgui.macro.active:
@@ -176,6 +187,8 @@ def inject_recorder(func: Callable, is_method: bool = True) -> Callable:
 
     else:
         _func._set_recorder(_record_macro)
+        if validators:
+            _func._set_validators(validators)
         return _func
 
 
