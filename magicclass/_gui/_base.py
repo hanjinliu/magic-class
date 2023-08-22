@@ -166,7 +166,7 @@ def check_override(cls: type):
 _ANCESTORS: dict[tuple[int, int], MagicTemplate] = {}
 
 _T = TypeVar("_T", bound="MagicTemplate")
-_T1 = TypeVar("_T")
+_T1 = TypeVar("_T1")
 _F = TypeVar("_F", bound=Callable)
 
 
@@ -1309,7 +1309,7 @@ def convert_attributes(
         for name, obj in subcls.__dict__.items():
             _isfunc = callable(obj)
             if isinstance(obj, _MagicTemplateMeta):
-                new_attr = copy_class(obj, cls, name=name)
+                new_attr = copy_class(obj, cls.__qualname__, name=name)
             elif name.startswith("_") or isinstance(obj, _pass) or not _isfunc:
                 # private method, non-action-like object, not-callable object are passed.
                 new_attr = obj

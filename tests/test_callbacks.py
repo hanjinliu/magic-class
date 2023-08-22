@@ -175,3 +175,24 @@ def test_parametric_callback():
     ui = A()
     ui.a.value = 1
     assert ui._v == 1
+
+def test_callback_outside_class():
+    def _cb0():
+        _cb0.x = 1
+    def _cb1(val):
+        _cb1.x = val
+    def _cb2(self, val):
+        _cb2.x = val
+
+    @magicclass
+    class A:
+        a = field(int)
+        a.connect(_cb0)
+        a.connect(_cb1)
+        a.connect(_cb2)
+
+    ui = A()
+    ui.a.value = 4
+    assert _cb0.x == 1
+    assert _cb1.x == 4
+    assert _cb2.x == 4
