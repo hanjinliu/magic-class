@@ -4,6 +4,7 @@ import functools
 from typing import (
     Any,
     ContextManager,
+    Literal,
     Union,
     Callable,
     TYPE_CHECKING,
@@ -165,6 +166,7 @@ def check_override(cls: type):
 _ANCESTORS: dict[tuple[int, int], MagicTemplate] = {}
 
 _T = TypeVar("_T", bound="MagicTemplate")
+_T1 = TypeVar("_T")
 _F = TypeVar("_F", bound=Callable)
 
 
@@ -176,7 +178,7 @@ class _MagicTemplateMeta(ABCMeta):
         ...
 
     @overload
-    def __get__(self: type[_T], obj: None, objtype=None) -> type[_T]:
+    def __get__(self: _T1, obj: Literal[None], objtype=None) -> _T1:
         ...
 
     def __get__(self, obj, objtype=None):
