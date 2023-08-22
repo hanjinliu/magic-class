@@ -108,7 +108,7 @@ class Callback(Generic[_P, _R1]):
     def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _R1:
         return self._func(*args, **kwargs)
 
-    def with_args(self, *args, **kwargs):
+    def with_args(self, *args: _P.args, **kwargs: _P.kwargs) -> Callback[[], _R1]:
         """Return a partial callback."""
         return self.__class__(partial(self._func, *args, **kwargs))
 
@@ -124,4 +124,5 @@ class NestedCallback:
         self._args = args
 
     def call(self):
+        """Call the callback function."""
         return self._cb(*self._args)

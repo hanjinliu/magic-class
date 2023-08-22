@@ -39,7 +39,6 @@ if TYPE_CHECKING:
     from magicclass._gui import BaseGui
     from magicclass._gui.mgui_ext import Clickable
     from magicclass.fields import MagicField
-    from typing_extensions import Self
 
 
 _P = ParamSpec("_P")
@@ -66,7 +65,12 @@ class AsyncMethod(Protocol[_P, _R]):
     __thread_worker__: thread_worker[_P]
 
     def arun(self, *args: _P.args, **kwargs: _P.kwargs) -> _R:
-        ...
+        """
+        Asynchronously run the method.
+
+        Must be used with ``yield from``.
+        >>> yield from ui.method.arun(...)
+        """
 
 
 if TYPE_CHECKING:
@@ -297,7 +301,7 @@ class thread_worker(Generic[_P]):
         """The corresponding button object."""
         return gui[self._func.__name__]
 
-    def _validate_args(self, gui: BaseGui, args, kwargs):
+    def _validate_args(self, gui: BaseGui, args, kwargs) -> tuple[tuple, dict]:
         if self._validators is None:
             return args, kwargs
         sig: inspect.Signature = self.__get__(gui).__signature__
@@ -358,7 +362,8 @@ class thread_worker(Generic[_P]):
             is_generator = isinstance(worker, GeneratorWorker)
             pbar: _SupportProgress | None = None
             if self._progress:
-                pbar = self._init_pbar_for_args(gui, args, kwargs)
+                _desc, _total = self._normalize_pbar_config(gui, args, kwargs)
+                pbar = self._create_pbar(gui, _desc, _total)
                 worker.started.connect(init_pbar.__get__(pbar))
 
             self._bind_callbacks(worker, gui, args, kwargs)
@@ -456,10 +461,11 @@ class thread_worker(Generic[_P]):
 
             # started
             if has_pbar:
+                _desc, _total = self._normalize_pbar_config(gui, args, kwargs)
 
                 def _init_pbar_and_show():
                     nonlocal pbar
-                    pbar = self._init_pbar_for_args(gui, args, kwargs)
+                    pbar = self._create_pbar(gui, _desc, _total)
                     init_pbar(pbar)
                     if hasattr(pbar, "set_title"):
                         pbar.set_title(self._func.__name__.replace("_", " "))
@@ -502,8 +508,10 @@ class thread_worker(Generic[_P]):
                 while pbar is None:
                     time.sleep(0.05)
                     count += 1
-                    if count > 20:
-                        raise RuntimeError("Cannot find progressbar.")
+                    if count > 40:
+                        raise RuntimeError(
+                            f"Timeout: cannot find progressbar on calling {self.func.__name__}."
+                        )
                 yield NestedCallback(close_pbar.__get__(pbar))
 
         return _gen
@@ -513,12 +521,45 @@ class thread_worker(Generic[_P]):
         params = list(sig.parameters.values())[1:]
         return sig.replace(parameters=params)
 
-    def _init_pbar_for_args(self, gui, args, kwargs) -> _SupportProgress:
-        # prepare progress bar
-        _pbar = self._progress["pbar"]
-        desc, total = self._normalize_desc_and_total(gui, *args, **kwargs)
+    def _normalize_pbar_config(self, gui, args, kwargs) -> tuple[str, int]:
+        """Normalize `desc` and `total`."""
+        _desc = self._progress["desc"]
+        _total = self._progress["total"]
+
+        all_args = None  # all the argument of the function
+        # progress bar description
+        if callable(_desc):
+            arguments = self.__signature__.bind(gui, *args, **kwargs)
+            arguments.apply_defaults()
+            all_args = arguments.arguments
+            desc = _desc(**_filter_args(_desc, all_args))
+        else:
+            desc = str(_desc or self._func.__name__)
+
+        # total number of steps
+        if isinstance(_total, str) or callable(_total):
+            if all_args is None:
+                arguments = self.__signature__.bind(gui, *args, **kwargs)
+                arguments.apply_defaults()
+                all_args = arguments.arguments
+            if isinstance(_total, str):
+                total = eval(_total, {}, all_args)
+            elif callable(_total):
+                total = _total(**_filter_args(_total, all_args))
+            else:
+                raise RuntimeError("Unreachable.")
+        elif isinstance(_total, int):
+            total = _total
+        else:
+            raise TypeError("'total' must be int, callable or evaluatable string.")
+
         if not self.is_generator:
             total = self._DEFAULT_TOTAL
+        return desc, total
+
+    def _create_pbar(self, gui: BaseGui, desc: str, total: int) -> _SupportProgress:
+        # prepare progress bar
+        _pbar = self._progress["pbar"]
 
         # create progressbar widget (or any proper widget)
         if _pbar is None:
