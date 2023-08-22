@@ -1,5 +1,5 @@
-from typing import Annotated
-from magicclass import magicclass, magicmenu, set_options, defaults, repeat
+from typing_extensions import Annotated
+from magicclass import magicclass, magicmenu, set_options, defaults
 from enum import Enum
 from pathlib import Path
 from datetime import datetime, date, time

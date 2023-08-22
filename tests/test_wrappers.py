@@ -674,3 +674,31 @@ def test_setup_function_from_parent():
     mock.assert_not_called()
     get_function_gui(ui.B.f)
     mock.assert_called_with(ui, 20)
+
+def test_do_not_record_worker():
+    from magicclass.utils import thread_worker
+
+    @magicclass
+    class A:
+        @thread_worker
+        @do_not_record(recursive=True)
+        def f0(self):
+            self.inner()
+
+        @thread_worker
+        @do_not_record(recursive=False)
+        def f1(self):
+            self.inner()
+
+        def inner(self):
+            self.inner_inner()
+
+        def inner_inner(self):
+            pass
+
+    ui = A()
+    ui.f0()
+    assert len(ui.macro) == 1
+    ui.f1()
+    assert len(ui.macro) == 2
+    assert str(ui.macro[-1]) == "ui.inner()"

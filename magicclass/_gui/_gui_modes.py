@@ -162,7 +162,7 @@ def _cleanup_tb(tb: TracebackType) -> TracebackType:
         path = Path(current_tb.tb_frame.f_code.co_filename).as_posix()
         if path.endswith(
             (
-                "magic-class/magicclass/utils/qthreading.py",
+                "magic-class/magicclass/utils/qthreading/thread_worker.py",
                 "superqt/utils/_qthreading.py",
             )
         ):
