@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import Any, TYPE_CHECKING, Callable, TypeVar
 from types import FunctionType
-
 from magicgui.widgets import FunctionGui, Widget
 from magicgui.types import Undefined
 from magicgui.type_map import get_widget_class
@@ -22,7 +21,7 @@ def get_parameters(fgui: FunctionGui):
 _C = TypeVar("_C", bound=type)
 
 
-def copy_class(cls: _C, ns: type, name: str | None = None) -> _C:
+def copy_class(cls: _C, ns: str, name: str) -> _C:
     """
     Copy a class in a new namespace.
 
@@ -34,32 +33,30 @@ def copy_class(cls: _C, ns: type, name: str | None = None) -> _C:
     cls : type
         Class to be copied.
     ns : type
-        New namespace of ``cls``.
-    name : str, optional
-        New name of ``cls``. If not given, the original name will be used.
+        New namespace (the qualname of parent class) of ``cls``.
+    name : str
+        New name of ``cls``.
 
     Returns
     -------
     type
         Copied class object.
     """
-    out = type(cls.__name__, cls.__bases__, dict(cls.__dict__))
-    if name is None:
-        name = out.__name__
-    _update_qualnames(out, f"{ns.__qualname__}.{name}")
-    return out
-
-
-def _update_qualnames(cls: type, cls_qualname: str) -> None:
-    cls.__qualname__ = cls_qualname
-    # NOTE: updating cls.__name__ will make `wraps` incompatible.
+    namespace = {}
+    qualname = f"{ns}.{name}"
     for key, attr in cls.__dict__.items():
         if isinstance(attr, FunctionType):
-            attr.__qualname__ = f"{cls_qualname}.{key}"
+            if attr.__qualname__.split("<locals>.")[-1].count(".") == 0:
+                pass
+            else:
+                attr.__qualname__ = f"{qualname}.{key}"
         elif isinstance(attr, type):
-            _update_qualnames(attr, f"{cls_qualname}.{key}")
+            attr = copy_class(attr, qualname, attr.__name__)
+        namespace[key] = attr
 
-    return None
+    out = type(cls.__name__, cls.__bases__, namespace)
+    out.__qualname__ = qualname
+    return out
 
 
 class MagicClassConstructionError(Exception):

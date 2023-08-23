@@ -6,14 +6,15 @@ from typing import (
     Callable,
     TYPE_CHECKING,
     Iterable,
+    Literal,
     TypeVar,
     Generic,
+    overload,
 )
 from typing_extensions import ParamSpec
 
 if TYPE_CHECKING:
     from magicclass._gui import BaseGui
-    from .thread_worker import thread_worker
 
 _P = ParamSpec("_P")
 _R1 = TypeVar("_R1")
@@ -112,10 +113,18 @@ class Callback(Generic[_P, _R1]):
         """Return a partial callback."""
         return self.__class__(partial(self._func, *args, **kwargs))
 
-    def __get__(self, obj, type=None) -> Callback[_P, _R1]:
+    @overload
+    def __get__(self, obj, type=None) -> Callback[..., _R1]:
+        ...
+
+    @overload
+    def __get__(self, obj: Literal[None], type=None) -> Callback[_P, _R1]:
+        ...
+
+    def __get__(self, obj, type=None):
         if obj is None:
             return self
-        return self.with_args(obj)
+        return self.__class__(partial(self._func, obj))
 
 
 class NestedCallback:

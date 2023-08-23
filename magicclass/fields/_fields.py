@@ -275,20 +275,14 @@ class MagicField(_FieldObject, Generic[_W]):
         This function will be called every time MagicField is referred by
         ``obj.field``.
         """
-        from magicclass._gui import MagicTemplate
-
         obj_id = id(obj)
         if (widget := self._guis.get(obj_id, None)) is None:
             self._guis[obj_id] = widget = self.construct(obj)
             widget.name = self.name or ""
 
             if isinstance(widget, (ValueWidget, ContainerWidget)):
-                if isinstance(obj, MagicTemplate):
-                    _def = define_callback_gui
-                else:
-                    _def = define_callback
+                _def = self._get_define_callback(obj)
                 for callback in self._callbacks:
-                    # funcname = callback.__name__
                     widget.changed.connect(_def(obj, callback))
 
         return widget
@@ -298,8 +292,6 @@ class MagicField(_FieldObject, Generic[_W]):
         Get an action from ``obj``. This function will be called every time MagicField is referred
         by ``obj.field``.
         """
-        from magicclass._gui import MagicTemplate
-
         obj_id = id(obj)
         if obj_id in self._guis.keys():
             action = self._guis[obj_id]
@@ -324,15 +316,24 @@ class MagicField(_FieldObject, Generic[_W]):
             self._guis[obj_id] = action
 
             if action.support_value:
-                if isinstance(obj, MagicTemplate):
-                    _def = define_callback_gui
-                else:
-                    _def = define_callback
+                _def = self._get_define_callback(obj)
                 for callback in self._callbacks:
                     # funcname = callback.__name__
                     action.changed.connect(_def(obj, callback))
 
         return action
+
+    def _get_define_callback(
+        self,
+        obj: Any,
+    ) -> Callable[[MagicTemplate, Any], Callable[[Any], None]]:
+        from magicclass._gui import MagicTemplate
+
+        if isinstance(obj, MagicTemplate):
+            _def = define_callback_gui
+        else:
+            _def = define_callback
+        return _def
 
     def as_getter(self, obj: Any) -> Callable[[Any], Any]:
         """Make a function that get the value of Widget or Action."""

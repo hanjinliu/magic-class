@@ -1,5 +1,7 @@
-from magicclass import magicclass, field
-from magicclass.types import Bound, OneOf
+from typing_extensions import Annotated
+from unittest.mock import MagicMock
+from magicclass import magicclass, field, MagicTemplate, abstractapi
+from magicclass.types import OneOf
 
 @magicclass
 class B:
@@ -12,11 +14,11 @@ def test_getter_of_same_name():
     class A:
         B = B
         out = None
-        def f(self, x: Bound[B.f]):
+        def f(self, x: Annotated[int, {"bind": B.f}]):
             x.as_integer_ratio()
             self.out = x
 
-        def g(self, x: Bound[B._get_value]):
+        def g(self, x: Annotated[int, {"bind": B._get_value}]):
             x.capitalize()
             self.out = x
 
@@ -32,11 +34,11 @@ def test_getter_of_different_name():
     class A:
         b = B
         out = None
-        def f(self, x: Bound[b.f]):
+        def f(self, x: Annotated[int, {"bind": b.f}]):
             x.as_integer_ratio()
             self.out = x
 
-        def g(self, x: Bound[b._get_value]):
+        def g(self, x: Annotated[str, {"bind": b._get_value}]):
             x.capitalize()
             self.out = x
 
@@ -51,11 +53,11 @@ def test_getter_of_private_name():
     class A:
         _b = B
         out = None
-        def f(self, x: Bound[_b.f]):
+        def f(self, x: Annotated[int, {"bind": _b.f}]):
             x.as_integer_ratio()
             self.out = x
 
-        def g(self, x: Bound[_b._get_value]):
+        def g(self, x: Annotated[str, {"bind": _b._get_value}]):
             x.capitalize()
             self.out = x
 
@@ -81,7 +83,7 @@ def test_getter_and_wraps():
         _c = C
         out = None
         @_c.wraps
-        def run(self, x: Bound[_c.f]):
+        def run(self, x: Annotated[int, {"bind": _c.f}]):
             x.as_integer_ratio()
             self.out = x
 
@@ -107,7 +109,7 @@ def test_field():
         _c = C
         out = None
 
-        def f(self, x: Bound[_c.f]):
+        def f(self, x: Annotated[int, {"bind": _c.f}]):
             x.as_integer_ratio()
             self.out = x
 
@@ -119,3 +121,43 @@ def test_field():
     # check value-changed event
     ui._c.f.value = 2
     assert ui._c._value == 2
+
+def test_reuse_class():
+    mock = MagicMock()
+
+    @magicclass
+    class Parent(MagicTemplate):
+        top = field(int)
+
+        @top.connect
+        def _top_changed(self, v) -> None:
+            mock(self, v)
+
+        bottom = abstractapi()
+
+    @magicclass
+    class A(MagicTemplate):
+        p = Parent
+        @p.wraps
+        def bottom(self):
+            self.p.top.value = 100
+
+    @magicclass
+    class B(MagicTemplate):
+        p = Parent
+        @p.wraps
+        def bottom(self):
+            self.p.top.value = 200
+
+    a = A()
+    b = B()
+
+    a.p.top.value = 1
+    mock.assert_called_once_with(a.p, 1)
+    assert b.p.top.value == 0
+    a["bottom"].changed()
+    assert a.p.top.value == 100
+    assert b.p.top.value == 0
+    b["bottom"].changed()
+    assert a.p.top.value == 100
+    assert b.p.top.value == 200
