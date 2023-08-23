@@ -181,7 +181,7 @@ def init_sub_magicclass(cls: type):
     check_override(cls)
     if cls.__mro__[1] is not MagicTemplate:
         return
-    for name, attr in cls.__dict__.items():
+    for attr in cls.__dict__.values():
         if isinstance(attr, MagicField):
             for cb in attr.callbacks:
                 cb_ns = cb.__qualname__.rsplit(".", maxsplit=1)[0]

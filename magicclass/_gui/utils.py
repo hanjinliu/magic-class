@@ -46,7 +46,10 @@ def copy_class(cls: _C, ns: str, name: str) -> _C:
     qualname = f"{ns}.{name}"
     for key, attr in cls.__dict__.items():
         if isinstance(attr, FunctionType):
-            attr.__qualname__ = f"{qualname}.{key}"
+            if attr.__qualname__.split("<locals>.")[-1].count(".") == 0:
+                pass
+            else:
+                attr.__qualname__ = f"{qualname}.{key}"
         elif isinstance(attr, type):
             attr = copy_class(attr, qualname, attr.__name__)
         namespace[key] = attr
