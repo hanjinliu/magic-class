@@ -163,6 +163,35 @@ def check_override(cls: type):
         )
 
 
+def count_callback_levels(cls: type):
+    if cls.__mro__[1] is not MagicTemplate:
+        return
+    for name, attr in cls.__dict__.items():
+        if isinstance(attr, MagicField):
+            for cb in attr.callbacks:
+                cb_ns = cb.__qualname__.rsplit(".", maxsplit=1)[0]
+                if not hasattr(cb, "__qualname__"):
+                    continue
+                if cls.__qualname__.startswith(cb_ns):
+                    level = cls.__qualname__[len(cb_ns) :].count(".")
+                    cb.__magicclass_callback_level__ = level
+
+
+def init_sub_magicclass(cls: type):
+    check_override(cls)
+    if cls.__mro__[1] is not MagicTemplate:
+        return
+    for name, attr in cls.__dict__.items():
+        if isinstance(attr, MagicField):
+            for cb in attr.callbacks:
+                cb_ns = cb.__qualname__.rsplit(".", maxsplit=1)[0]
+                if not hasattr(cb, "__qualname__"):
+                    continue
+                if cls.__qualname__.startswith(cb_ns):
+                    level = cls.__qualname__[len(cb_ns) :].count(".")
+                    cb.__magicclass_callback_level__ = level
+
+
 _ANCESTORS: dict[tuple[int, int], MagicTemplate] = {}
 
 _T = TypeVar("_T", bound="MagicTemplate")
@@ -226,7 +255,8 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
     widget_type: str
     width: int
 
-    __init_subclass__ = check_override
+    def __init_subclass__(cls, **kwargs):
+        init_sub_magicclass(cls)
 
     @overload
     def __getitem__(self, key: int | str) -> _Comp:
@@ -888,6 +918,9 @@ class BaseGui(MagicTemplate[_Comp]):
         self._my_symbol = Symbol.var("ui")
         self._icon = None
 
+    def __init_subclass__(cls, **kwargs):
+        pass
+
     @property
     def icon(self):
         """Icon of this GUI."""
@@ -1324,6 +1357,8 @@ def convert_attributes(
         _dict["macro"] = macro
     return _dict
 
+
+# def _find_callback_level()
 
 _dummy_macro = DummyMacro()
 

@@ -31,7 +31,7 @@ from magicclass._gui._base import (
     ErrorMode,
     defaults,
     MagicTemplate,
-    check_override,
+    init_sub_magicclass,
     convert_attributes,
 )
 from magicclass._gui import ContextMenuGui, MenuGui, ToolBarGui
@@ -156,7 +156,7 @@ def magicclass(
         class_gui = _TYPE_MAP[widget_type]
 
         if not issubclass(cls, MagicTemplate):
-            check_override(cls)
+            init_sub_magicclass(cls)
 
         # get class attributes first
         doc = cls.__doc__
@@ -282,7 +282,7 @@ def magiccontext(
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
 
         if not issubclass(cls, MagicTemplate):
-            check_override(cls)
+            init_sub_magicclass(cls)
 
         # get class attributes first
         doc = cls.__doc__
@@ -407,7 +407,7 @@ def _call_magicmenu(
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
 
         if not issubclass(cls, MagicTemplate):
-            check_override(cls)
+            init_sub_magicclass(cls)
 
         # get class attributes first
         doc = cls.__doc__

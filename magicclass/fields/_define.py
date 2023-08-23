@@ -35,6 +35,8 @@ def define_callback_gui(self: MagicTemplate, callback: Callable):
     for base in mro:
         if base.__module__ in ("collections.abc", "abc", "typing", "builtins"):
             continue
+        if base.__module__.startswith(("magicclass.widgets", "magicgui.widgets")):
+            continue
         if base.__name__ == clsname:
             _func: Callable = getattr(base, funcname).__get__(self)
             _func = _normalize_argcount(_func)
@@ -44,7 +46,23 @@ def define_callback_gui(self: MagicTemplate, callback: Callable):
                     _func(v)
                 return None
 
-            break
+            return _callback
+
+    if hasattr(callback, "__magicclass_callback_level__"):
+        level = callback.__magicclass_callback_level__
+        assert isinstance(level, int) and level >= 0
+
+        def _callback(v):
+            # search for parent instances that have the same name.
+            current_self = self
+            for _ in range(level):
+                current_self = current_self.__magicclass_parent__
+            _func = _normalize_argcount(getattr(current_self, funcname))
+
+            with self.macro.blocked():
+                _func(v)
+            return None
+
     else:
 
         def _callback(v):
