@@ -119,7 +119,7 @@ class Callback(Generic[_P, _R1]):
         return self.__class__(partial(self._func, *args, **kwargs))
 
     @overload
-    def __get__(self, obj, type=None) -> Callback[..., _R1]:
+    def __get__(self, obj: Any, type=None) -> Callback[..., _R1]:
         ...
 
     @overload

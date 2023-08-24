@@ -210,10 +210,10 @@ class thread_worker(Generic[_P]):
         return cb
 
     @staticmethod
-    def callback(callback: Callable | None = None) -> Callback:
+    def callback(callback: Callable[_P, _R] = lambda: None) -> Callback[_P, _R]:
         """Convert a callback function to a callback object."""
-        if callback is None:
-            return Callback(lambda: None)
+        if not callable(callback):
+            raise TypeError(f"{callback} is not callable.")
         return Callback(callback)
 
     @staticmethod

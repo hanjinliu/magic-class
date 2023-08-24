@@ -1,3 +1,4 @@
+from concurrent.futures import thread
 from magicclass import magicclass, magicmenu, MagicTemplate, field, vfield, abstractapi
 from magicclass.utils import thread_worker
 import time
@@ -292,3 +293,25 @@ def test_async_callback_generator():
     with thread_worker.blocking_mode():
         ui.x.value = 1
         assert z == [0, 1]
+
+def test_async_callback_macro_blocked():
+    z = []
+    @magicclass
+    class A(MagicTemplate):
+        x = field(int)
+
+        @x.connect_async
+        def _callback_x(self):
+            time.sleep(0.01)
+            z.append(self.macro.active)
+            yield self._check_active
+            return self._check_active
+
+        @thread_worker.callback
+        def _check_active(self):
+            z.append(self.macro.active)
+
+    ui = A()
+    with thread_worker.blocking_mode():
+        ui.x.value = 1
+        assert not any(z)

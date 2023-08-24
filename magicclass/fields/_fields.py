@@ -520,7 +520,7 @@ class MagicField(_FieldObject, Generic[_W]):
             _last_run = 0.0
 
             @wraps(fn)
-            def _func(self, *args, **kwargs):
+            def _func(self: MagicTemplate, *args, **kwargs):
                 nonlocal _running, _last_run
                 with threading.Lock():
                     f = _afunc.__get__(self)
@@ -531,9 +531,10 @@ class MagicField(_FieldObject, Generic[_W]):
                     _last_run = default_timer()
                 # call the original function
                 try:
-                    out = fn(self, *args, **kwargs)
-                    if isinstance(out, GeneratorType):
-                        out = yield from out
+                    with self.macro.blocked():
+                        out = fn(self, *args, **kwargs)
+                        if isinstance(out, GeneratorType):
+                            out = yield from out
                 except Exception as exc:
                     if _running is not None:
                         _running.quit()
