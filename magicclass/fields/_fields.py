@@ -31,6 +31,7 @@ from magicclass.utils import (
     method_as_getter,
     eval_attribute,
     is_type_like,
+    argcount,
 )
 from magicclass.signature import MagicMethodSignature
 from magicclass._gui.mgui_ext import Action, WidgetAction
@@ -518,6 +519,7 @@ class MagicField(_FieldObject, Generic[_W]):
             _running = None
             _last_run = 0.0
 
+            @wraps(fn)
             def _func(self, *args, **kwargs):
                 nonlocal _running, _last_run
                 with threading.Lock():
@@ -527,9 +529,15 @@ class MagicField(_FieldObject, Generic[_W]):
                             _running.quit()
                         _running = f._worker()
                     _last_run = default_timer()
-                out = fn(self, *args, **kwargs)
-                if isinstance(out, GeneratorType):
-                    out = yield from out
+                # call the original function
+                try:
+                    out = fn(self, *args, **kwargs)
+                    if isinstance(out, GeneratorType):
+                        out = yield from out
+                except Exception as exc:
+                    if _running is not None:
+                        _running.quit()
+                    raise exc
                 yield
                 return out
 
@@ -538,7 +546,6 @@ class MagicField(_FieldObject, Generic[_W]):
                 force_async=True,
                 ignore_errors=ignore_errors,
             )
-            wraps(fn)(_afunc)
             return self.connect(_afunc)
 
         return _wrapper if func is None else _wrapper(func)

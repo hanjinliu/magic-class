@@ -86,6 +86,7 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
     _X = TypeVar("_X", bound=MGUI_SIMPLE_TYPES)
+    _V = TypeVar("_V")
     _M = TypeVar("_M", bound="MagicTemplate")
 
 defaults = {
@@ -666,23 +667,23 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
     # fmt: off
     @overload
     @classmethod
-    def vfield(cls, widget_type: type[_W], *, name: str | None = None, label: str | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[_W, Any]: ...  # noqa
+    def vfield(cls, widget_type: type[ValueWidget[_V]], *, name: str | None = None, label: str | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[_V]: ...  # noqa
 
     @overload
     @classmethod
-    def vfield(cls, annotation: type[_X], *, name: str | None = None, label: str | None = None, widget_type: str | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[ValueWidget, _X]: ...  # noqa
+    def vfield(cls, annotation: type[_X], *, name: str | None = None, label: str | None = None, widget_type: str | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[_X]: ...  # noqa
 
     @overload
     @classmethod
-    def vfield(cls, obj: _X, *, name: str | None = None, label: str | None = None, widget_type: str | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[ValueWidget, _X]: ...  # noqa
+    def vfield(cls, obj: _X, *, name: str | None = None, label: str | None = None, widget_type: str | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[_X]: ...  # noqa
 
     @overload
     @classmethod
-    def vfield(cls, obj: Any, *, name: str | None = None, label: str | None = None, widget_type: type[_W] = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[_W, Any]: ...  # noqa
+    def vfield(cls, obj: Any, *, name: str | None = None, label: str | None = None, widget_type: type[_W] = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[Any]: ...  # noqa
 
     @overload
     @classmethod
-    def vfield(cls, obj: Any, *, name: str | None = None, label: str | None = None, widget_type: str | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[Widget, Any]: ...  # noqa
+    def vfield(cls, obj: Any, *, name: str | None = None, label: str | None = None, widget_type: str | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[Any]: ...  # noqa
     # fmt: on
 
     @classmethod

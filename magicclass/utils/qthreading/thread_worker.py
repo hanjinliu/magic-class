@@ -272,12 +272,15 @@ class thread_worker(Generic[_P]):
 
     def __call__(self, *args, **kwargs):
         if self._func is None:
-            f = args[0]
-            self._func = f
-            wraps(f)(self)  # NOTE: __name__ etc. are updated here.
-            return self
+            return self.with_func(args[0])
         else:
             return self._func(*args, **kwargs)
+
+    def with_func(self, func: Callable[_P, _R]) -> thread_worker[_P]:
+        """Set the function."""
+        self._func = func
+        wraps(func)(self)  # NOTE: __name__ etc. are updated here.
+        return self
 
     @overload
     def __get__(self, gui: Literal[None], objtype=None) -> thread_worker[_P]:
