@@ -10,7 +10,7 @@ Multi-threading is an important idea in GUI development. If you want to
 implement background execution or progress bar, you'll usually have to
 rely on multi-threading.
 
-``thread_worker`` makes multi-threaded implementation much easier, without
+:class:`thread_worker` makes multi-threaded implementation much easier, without
 rewriting the existing single-threaded code. It is available in:
 
 .. code-block:: python
@@ -19,7 +19,7 @@ rewriting the existing single-threaded code. It is available in:
 
 .. note::
 
-    It is named after the ``thread_worker`` function originally defined in
+    It is named after the :class:`thread_worker` function originally defined in
     ``superqt`` and ``napari``, which create a new function that will return
     a "worker" of the original function.
 
@@ -34,9 +34,9 @@ rewriting the existing single-threaded code. It is available in:
         worker = func()  # worker is ready to run the original "func"
         worker.start()  # the original "func" actually get called
 
-    On the other hand, ``magic-class``'s ``thread_worker`` is a class. It
-    returns a ``thread_worker`` object instead of a new function. A
-    ``thread_worker`` object will create a function that will start a worker
+    On the other hand, ``magic-class``'s :class:`thread_worker` is a class. It
+    returns a :class:`thread_worker` object instead of a new function. A
+    :class:`thread_worker` object will create a function that will start a worker
     every time it is accessed via ``self.func``. Although they are designed
     differently, they share very similar API.
 
@@ -71,8 +71,24 @@ function is running in another thread.
     If you are running functions programatically, GUI window will be disabled as
     usual. This is because the ``run`` method of ``QRunnable`` is called in the
     main thread, otherwise the second line of code will be executed *before* the
-    first line of code actually finishes. This behavior is important to keep
-    manual and programatical execution consistent.
+    first line of code actually finishes.
+
+    .. code-block:: python
+
+        @magicclass
+        class Main:
+            @thread_worker
+            def f0(self):
+                ...
+            @thread_worker
+            def f1(self):
+                ...
+
+        ui = Main()
+        ui.f0()
+        ui.f1()  # this function will be called before f0 finishes
+
+    This behavior is important to keep manual and programatical execution consistent.
 
 If decorated method is a generator, worker will iterate over it until it ends.
 In the following example:
@@ -105,7 +121,7 @@ after you click the "func" button you'll get output like this.
 Connect Callbacks
 -----------------
 
-If you update widgets in a ``thread_worker``, GUI crashes.
+If you update widgets in a :class:`thread_worker`, GUI crashes.
 
 .. code-block:: python
 
@@ -123,16 +139,16 @@ If you update widgets in a ``thread_worker``, GUI crashes.
             for i in range(n):
                 self.yielded_value = str(i)
                 time.sleep(0.3)
-            self.returned_value = "finished"
+            self.returned_value = "finished"  # updates the widget
 
     ui = Main()
     ui.show()
 
 This is because updating widgets must be done in the main thread but
-``thread_worker`` is executed in a separate thread.
+:class:`thread_worker` is executed in a separate thread.
 
 Just like ``superqt`` and ``napari``, you can connect callback functions to
-``thread_worker`` objects. These callback functions are called in the main
+:class:`thread_worker` objects. These callback functions are called in the main
 thread so that you can update widgets safely.
 
 There are six types of callbacks.
@@ -214,10 +230,10 @@ you send a lot of information to the callback funcition.
     ui.show()
 
 You'll have to return all the values required for updating the widgets. In terms of
-readability, the this code is awful. You also have to annotate the second argument
+readability, this code is awful. You also have to annotate the second argument
 of ``_on_return`` with a very long ``tuple[...]`` type.
 
-Here, you can use ``thread_worker.callback`` static method. This method converts
+Here, you can use :meth:`thread_worker.callback` static method. This method converts
 a function into a ``Callback`` object, which will be called if a thread worker detected
 it as a returned/yielded value.
 
@@ -370,10 +386,10 @@ to the "total" argument.
 Better way to pass progress bar parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. versionadded:: 0.6.13.
+.. versionadded:: 0.6.13
 
 Parameteres for the progress bar should be passed as a dictionary. This is not good for
-many reasons such as readability and type hinting. You can use ``with_progress`` method
+many reasons such as readability and type hinting. You can use :meth:`with_progress` method
 for the progress bar configuration.
 
 .. code-block:: python
@@ -385,3 +401,136 @@ for the progress bar configuration.
         def func(self):
         for i in range(10):
             time.sleep(0.1)
+
+Nesting ``thread_worker``
+-------------------------
+
+To reuse thread worker functions, you would want to nest them. However, this should be
+done carefully. If the nested thread worker updates the widget, the outer thread worker
+crashes the GUI.
+
+.. code-block:: python
+
+    @magicclass
+    class Main:
+        @thread_worker
+        def outside(self):
+            self.inside()  # This line will crash the GUI, even though
+            # the function that update the widget is in the callback of
+            # `self.inside`.
+            # When a thread worker is called programatically, the function
+            # body and the callbacks are all called in the main thread.
+            # This means that even `self.function_that_update_widget` is
+            # called inside this method.
+
+        @thread_worker
+        def inside(self):
+            self.very_heavy_computation()
+            return thread_worker.callback(self.function_that_update_widget)
+
+A naive solution
+^^^^^^^^^^^^^^^^
+
+One way to avoid this is to use :meth:`thread_worker.callback`.
+
+.. code-block:: python
+
+    @magicclass
+    class Main:
+        @thread_worker
+        def outside(self):
+            # self.inside() will be called as as callback so it won't crash the GUI
+            return thread_worker.callback(self.inside)
+
+        @thread_worker
+        def inside(self):
+            self.very_heavy_computation()
+            return thread_worker.callback(self.function_that_update_widget)
+
+Better but advanced solution
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 0.7.5
+
+Methods decorated with :class:`thread_worker` have a :meth:`arun` attribute, which will
+run the function in a non-blocking way (asynchronously). More precisely, :meth:`arun`
+will return a generator that convert all the yielded and returned value into yielded
+values. This means that you can use ``yield from`` to send all the callbacks of the
+nested thread worker to the outer thread worker.
+
+.. code-block:: python
+
+    @magicclass
+    class Main:
+        @thread_worker
+        def outside(self):
+            # `arun` takes the same arguments as the original function.
+            yield from self.inside.arun(1)
+
+        @thread_worker
+        def inside(self, i: int):
+            self.function_that_update_widget()
+
+Asynchronous ValueWidget Callbacks
+----------------------------------
+
+:doc:`MagicField <../basics/use_field>` is used to create widgets and connect callbacks to them.
+
+.. code-block:: python
+
+    @magicclass
+    class Main:
+        x = field(int)
+
+        @x.connect
+        def _x_changed(self, value):
+            print(value)  # print the new value every time it changes
+
+Then, what if the callback function is computationally expensive? The GUI will freeze
+during the execution, which makes user experience very bad. This problem is prominent
+when you want to implement functions like below.
+
+* Image sweeping ... images are large collections of data. Updating the image while
+  moving a slider widget will be very slow.
+* Data fetching ... Fetching data from the internet is slower compared to updating
+  widgets locally.
+
+:meth:`connect_async` is a method that connects a callback function as a
+:class:`thread_worker` with proper configurations. All the rules follows the standard
+:class:`thread_worker` method.
+
+.. code-block:: python
+
+    @magicclass
+    class Main:
+        x = field(int)
+        display = field(str)
+
+        @x.connect_async
+        def _x_changed(self, value):
+            # If you want to update the widget, you have to use yield/return
+            # callbacks.
+            yield f"updating ..."
+            time.sleep(1)
+            return f"changed to {value}"
+
+        @_x_changed.yielded.connect
+        @_x_changed.returned.connect
+        def _update(self, text: str):
+            self.display.value = text
+
+To avoid running widget callback functions multiple times, you can pass ``timeout``
+argument to :meth:`connect_async`. If the previous run is still ongoing, it will be
+aborted if the new run is started within the timeout period. ``timeout=0`` means
+that the previous run will never be aborted, and ``timeout=float("inf")`` means that
+the previous run will be always aborted if not finished.
+
+.. code-block:: python
+
+    @magicclass
+    class Main:
+        ...
+
+        @x.connect_async(timeout=0.1)
+        def _x_changed(self, value):
+            ...

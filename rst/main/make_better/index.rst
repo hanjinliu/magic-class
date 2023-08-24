@@ -13,6 +13,7 @@ and tidiness of the source code.
    undo
    use_bind
    use_choices
+   use_validator
    use_setup
    use_preview
    use_confirm
