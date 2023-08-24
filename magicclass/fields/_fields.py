@@ -12,6 +12,7 @@ from typing import (
 )
 from typing_extensions import Literal, _AnnotatedAlias
 import threading
+from timeit import default_timer
 from functools import wraps
 import warnings
 from magicgui.widgets import create_widget, Widget
@@ -468,7 +469,9 @@ class MagicField(_FieldObject, Generic[_W]):
     def connect_async(
         self,
         func: Callable[_P, Any],
-        abort_prev: bool = False,
+        *,
+        timeout: float = 0.0,
+        ignore_errors: bool = False,
     ) -> thread_worker[_P]:
         ...
 
@@ -476,11 +479,13 @@ class MagicField(_FieldObject, Generic[_W]):
     def connect_async(
         self,
         func: Literal[None],
-        abort_prev: bool = False,
+        *,
+        timeout: float = 0.0,
+        ignore_errors: bool = False,
     ) -> Callable[[Callable[_P, Any]], thread_worker[_P]]:
         ...
 
-    def connect_async(self, func=None, abort_prev=False):
+    def connect_async(self, func=None, *, timeout=0.0, ignore_errors=False):
         """
         Connect a callback function to be called asynchronously.
 
@@ -502,29 +507,37 @@ class MagicField(_FieldObject, Generic[_W]):
         ----------
         func : callable
             The callback function
-        abort_prev : bool, default is False
-            If true, abort the previous call if it is still running.
+        timeout : float, default is 0.0
+            Timeout second. All the callback called within this time will be
+            aborted. In other words, callback will only be called every
+            ``timeout`` seconds.
         """
         from magicclass.utils import thread_worker
 
         def _wrapper(fn):
             _running = None
+            _last_run = 0.0
 
             def _func(self, *args, **kwargs):
-                nonlocal _running
+                nonlocal _running, _last_run
                 with threading.Lock():
                     f = _afunc.__get__(self)
-                    if abort_prev:
+                    if timeout >= default_timer() - _last_run:
                         if _running is not None:
                             _running.quit()
                         _running = f._worker()
+                    _last_run = default_timer()
                 out = fn(self, *args, **kwargs)
                 if isinstance(out, GeneratorType):
                     out = yield from out
                 yield
                 return out
 
-            _afunc = thread_worker(_func, force_async=True)
+            _afunc = thread_worker(
+                _func,
+                force_async=True,
+                ignore_errors=ignore_errors,
+            )
             wraps(fn)(_afunc)
             return self.connect(_afunc)
 
@@ -544,19 +557,16 @@ class MagicField(_FieldObject, Generic[_W]):
         This method is needed when a child magic class is defined outside the main magic
         class, and integrated into the main magic class by ``field`` function, like below
 
-        .. code-block:: python
+        >>> @magicclass
+        >>> class B:
+        ...     def func(self): ...  # pre-definition
 
-            @magicclass
-            class B:
-                def func(self): ...  # pre-definition
-
-            @magicclass
-            class A:
-                b = field(B)
-
-                @b.wraps
-                def func(self):
-                    # do something
+        >>> @magicclass
+        >>> class A:
+        ...     b = field(B)
+        ...     @b.wraps
+        ...     def func(self):
+        ...         # do something
 
         Parameters
         ----------

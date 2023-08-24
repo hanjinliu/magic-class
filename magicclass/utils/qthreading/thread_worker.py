@@ -384,14 +384,14 @@ class thread_worker(Generic[_P]):
                     Aborted.raise_()
 
             if _is_non_blocking:
+                if not self._ignore_errors:
 
-                @worker.errored.connect
-                def _on_error(err: Exception):
-                    # NOTE: Exceptions are raised in other thread so context manager
-                    # cannot catch them. Macro has to be reactived here.
-                    gui._error_mode.cleanup_tb(err)
-                    gui._error_mode.get_handler()(err, parent=gui)
-                    if not self._ignore_errors:
+                    @worker.errored.connect
+                    def _on_error(err: Exception):
+                        # NOTE: Exceptions are raised in other thread so context manager
+                        # cannot catch them. Macro has to be reactived here.
+                        gui._error_mode.cleanup_tb(err)
+                        gui._error_mode.get_handler()(err, parent=gui)
                         raise err  # reraise
 
                 worker.start()
