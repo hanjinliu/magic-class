@@ -538,7 +538,7 @@ class MagicField(_FieldObject, Generic[_W]):
                     if _running is not None:
                         _running.quit()
                     raise exc
-                yield
+                yield thread_worker.callback()  # empty callback
                 return out
 
             _afunc = thread_worker(

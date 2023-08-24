@@ -273,3 +273,22 @@ def test_async_callback_wrapped():
     with thread_worker.blocking_mode():
         ui.x = 1
         assert ui._val == (ui, 1)
+
+def test_async_callback_generator():
+    z = []
+    @magicclass
+    class A(MagicTemplate):
+        x = field(int)
+
+        @x.connect_async
+        def _callback_x(self):
+            time.sleep(0.05)
+            yield
+            z.append(0)
+            yield
+            z.append(1)
+            return
+    ui = A()
+    with thread_worker.blocking_mode():
+        ui.x.value = 1
+        assert z == [0, 1]

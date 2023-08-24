@@ -81,9 +81,11 @@ class CallbackList(Generic[_R1]):
 
 
 def _make_method(func, obj: BaseGui):
-    def f(*args, **kwargs):
+    def f(*args):
+        if args and isinstance(args[0], Callback):
+            return None
         with obj.macro.blocked():
-            out = func.__get__(obj)(*args, **kwargs)
+            out = func.__get__(obj)(*args)
         return out
 
     return f
@@ -91,7 +93,7 @@ def _make_method(func, obj: BaseGui):
 
 def _make_filtered_method(func, obj: BaseGui):
     def f(yielded):
-        if isinstance(yielded, NestedCallback):
+        if isinstance(yielded, (Callback, NestedCallback)):
             return None
         with obj.macro.blocked():
             out = func.__get__(obj)(yielded)
