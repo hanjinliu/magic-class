@@ -1,4 +1,6 @@
 from __future__ import annotations
+import inspect
+from types import GeneratorType
 from typing import (
     Any,
     TYPE_CHECKING,
@@ -9,6 +11,9 @@ from typing import (
     Generic,
 )
 from typing_extensions import Literal, _AnnotatedAlias
+import threading
+from functools import wraps
+import warnings
 from magicgui.widgets import create_widget, Widget
 from magicgui.widgets.bases import (
     ValueWidget,
@@ -30,12 +35,14 @@ from magicclass.signature import MagicMethodSignature
 from magicclass._gui.mgui_ext import Action, WidgetAction
 
 if TYPE_CHECKING:
-    from typing_extensions import Self
+    from typing_extensions import Self, ParamSpec
+    from magicclass.utils import thread_worker
     from magicclass._gui._base import MagicTemplate
     from magicclass._gui.mgui_ext import AbstractAction
 
     _M = TypeVar("_M", bound=MagicTemplate)
     _X = TypeVar("_X", bound=MGUI_SIMPLE_TYPES)
+    _P = ParamSpec("_P")
 
 
 class _FieldObject:
@@ -437,18 +444,91 @@ class MagicField(_FieldObject, Generic[_W]):
         """Set callback function to "ready to connect" state."""
         if not callable(func):
             raise TypeError("Cannot connect non-callable object")
+        elif inspect.isgeneratorfunction(func):
+            warnings.warn(
+                "Generator function is connected, which will not complete "
+                "as a callback.",
+                UserWarning,
+            )
         self._callbacks.append(func)
         return func
 
     def disconnect(self, func: Callable) -> None:
         """
         Disconnect callback from the field.
+
         This method does NOT disconnect callbacks from widgets that are
         already created.
         """
         i = self._callbacks.index(func)
         self._callbacks.pop(i)
         return None
+
+    @overload
+    def connect_async(
+        self,
+        func: Callable[_P, Any],
+        abort_prev: bool = False,
+    ) -> thread_worker[_P]:
+        ...
+
+    @overload
+    def connect_async(
+        self,
+        func: Literal[None],
+        abort_prev: bool = False,
+    ) -> Callable[[Callable[_P, Any]], thread_worker[_P]]:
+        ...
+
+    def connect_async(self, func=None, abort_prev=False):
+        """
+        Connect a callback function to be called asynchronously.
+
+        This method can be used similarly as ``connect`` but returns
+        a ``thread_worder`` object.
+
+        >>> @magicclass
+        >>> class A:
+        ...     x = field(int)
+        ...     @x.connect_async
+        ...     def _x_changed(self, v):
+        ...         time.sleep(1)
+        ...         return v
+        ...     @_x_changed.returned.connect
+        ...     def _x_returned(self, v):
+        ...         print(v)
+
+        Parameters
+        ----------
+        func : callable
+            The callback function
+        abort_prev : bool, default is False
+            If true, abort the previous call if it is still running.
+        """
+        from magicclass.utils import thread_worker
+
+        def _wrapper(fn):
+            _running = None
+
+            def _func(self, *args, **kwargs):
+                nonlocal _running
+                with threading.Lock():
+                    f = _afunc.__get__(self)
+                    if abort_prev:
+                        if _running is not None:
+                            _running.quit()
+                        _running = f._worker()
+                out = fn(self, *args, **kwargs)
+                if isinstance(out, GeneratorType):
+                    out = yield from out
+                yield
+                return out
+
+            _afunc = thread_worker(_func, force_async=True)
+            wraps(fn)(_afunc)
+            return self.connect(_afunc)
+
+        return _wrapper if func is None else _wrapper(func)
 
     # fmt: off
     @overload

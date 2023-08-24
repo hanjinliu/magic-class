@@ -48,7 +48,7 @@ class CallbackList(Generic[_R1]):
         return callback
 
     def disconnect(
-        self, callback: Callable[[Any, _R1], _R2] | Callable[[Any], _R2]
+        self, callback: Callable[[Any, _R1], _R2] | Callable[[Any], _R2] | None = None
     ) -> Callable[[Any, _R1], _R2] | Callable[[Any], _R2]:
         """
         Remove callback function from the callback list.
@@ -58,6 +58,9 @@ class CallbackList(Generic[_R1]):
         callback : Callable
             Callback function to be removed.
         """
+        if callback is None:
+            self._callbacks.clear()
+            return None
         self._callbacks.remove(callback)
         return callback
 
