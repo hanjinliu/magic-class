@@ -48,7 +48,7 @@ class CallbackList(Generic[_R1]):
         return callback
 
     def disconnect(
-        self, callback: Callable[[Any, _R1], _R2] | Callable[[Any], _R2]
+        self, callback: Callable[[Any, _R1], _R2] | Callable[[Any], _R2] | None = None
     ) -> Callable[[Any, _R1], _R2] | Callable[[Any], _R2]:
         """
         Remove callback function from the callback list.
@@ -58,6 +58,9 @@ class CallbackList(Generic[_R1]):
         callback : Callable
             Callback function to be removed.
         """
+        if callback is None:
+            self._callbacks.clear()
+            return None
         self._callbacks.remove(callback)
         return callback
 
@@ -78,9 +81,11 @@ class CallbackList(Generic[_R1]):
 
 
 def _make_method(func, obj: BaseGui):
-    def f(*args, **kwargs):
+    def f(*args):
+        if args and isinstance(args[0], Callback):
+            return None
         with obj.macro.blocked():
-            out = func.__get__(obj)(*args, **kwargs)
+            out = func.__get__(obj)(*args)
         return out
 
     return f
@@ -88,7 +93,7 @@ def _make_method(func, obj: BaseGui):
 
 def _make_filtered_method(func, obj: BaseGui):
     def f(yielded):
-        if isinstance(yielded, NestedCallback):
+        if isinstance(yielded, (Callback, NestedCallback)):
             return None
         with obj.macro.blocked():
             out = func.__get__(obj)(yielded)
@@ -114,7 +119,7 @@ class Callback(Generic[_P, _R1]):
         return self.__class__(partial(self._func, *args, **kwargs))
 
     @overload
-    def __get__(self, obj, type=None) -> Callback[..., _R1]:
+    def __get__(self, obj: Any, type=None) -> Callback[..., _R1]:
         ...
 
     @overload

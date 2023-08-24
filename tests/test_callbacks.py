@@ -1,4 +1,7 @@
-from magicclass import magicclass, magicmenu, MagicTemplate, field, vfield
+from concurrent.futures import thread
+from magicclass import magicclass, magicmenu, MagicTemplate, field, vfield, abstractapi
+from magicclass.utils import thread_worker
+import time
 from unittest.mock import MagicMock
 import pytest
 
@@ -196,3 +199,119 @@ def test_callback_outside_class():
     assert _cb0.x == 1
     assert _cb1.x == 4
     assert _cb2.x == 4
+
+def test_async_callback():
+    mock_x = MagicMock()
+    mock_y = MagicMock()
+    z = []
+
+    @magicclass
+    class A(MagicTemplate):
+        x = field(int)
+        y = vfield(str)
+
+        @x.connect_async
+        def _callback_x(self):
+            time.sleep(0.05)
+            mock_x()
+            return "x"
+
+        @y.connect_async
+        def _callback_y(self):
+            time.sleep(0.05)
+            mock_y()
+            return "y"
+
+        @_callback_x.returned.connect
+        @_callback_y.returned.connect
+        def _on_returned(self, v: str):
+            z.append(v)
+
+    ui = A()
+    with thread_worker.blocking_mode():
+        ui.x.value = 1
+        mock_x.assert_called_once()
+        assert z == ["x"]
+        ui.y = "zxcv"
+        mock_y.assert_called_once()
+        assert z == ["x", "y"]
+
+def test_async_callback_nested():
+    @magicclass
+    class A(MagicTemplate):
+        def __init__(self):
+            self._val = None
+
+        @magicclass
+        class B(MagicTemplate):
+            x = field(int)
+
+        @B.x.connect_async
+        def _x(self, v):
+            self._val = self, v
+
+    ui = A()
+    with thread_worker.blocking_mode():
+        ui.B.x.value = 1
+        assert ui._val == (ui, 1)
+
+def test_async_callback_wrapped():
+    @magicclass
+    class A(MagicTemplate):
+        def __init__(self):
+            self._val = None
+
+        @magicclass
+        class B(MagicTemplate):
+            x = abstractapi()
+
+        x = B.vfield(int)
+        @x.connect_async
+        def _x(self, v):
+            self._val = self, v
+
+    ui = A()
+    with thread_worker.blocking_mode():
+        ui.x = 1
+        assert ui._val == (ui, 1)
+
+def test_async_callback_generator():
+    z = []
+    @magicclass
+    class A(MagicTemplate):
+        x = field(int)
+
+        @x.connect_async
+        def _callback_x(self):
+            time.sleep(0.05)
+            yield
+            z.append(0)
+            yield
+            z.append(1)
+            return
+    ui = A()
+    with thread_worker.blocking_mode():
+        ui.x.value = 1
+        assert z == [0, 1]
+
+def test_async_callback_macro_blocked():
+    z = []
+    @magicclass
+    class A(MagicTemplate):
+        x = field(int)
+
+        @x.connect_async
+        def _callback_x(self):
+            time.sleep(0.01)
+            z.append(self.macro.active)
+            yield self._check_active
+            return self._check_active
+
+        @thread_worker.callback
+        def _check_active(self):
+            z.append(self.macro.active)
+
+    ui = A()
+    with thread_worker.blocking_mode():
+        ui.x.value = 1
+        assert not any(z)

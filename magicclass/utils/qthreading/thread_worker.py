@@ -16,6 +16,7 @@ from typing import (
 )
 from typing_extensions import ParamSpec
 import warnings
+import weakref
 
 from superqt.utils import create_worker, GeneratorWorker, FunctionWorker
 from qtpy.QtCore import Qt, QThread, QCoreApplication
@@ -63,6 +64,7 @@ class AsyncMethod(Protocol[_P, _R]):
         ...
 
     __thread_worker__: thread_worker[_P]
+    _worker: weakref.ReferenceType[FunctionWorker | GeneratorWorker]
 
     def arun(self, *args: _P.args, **kwargs: _P.kwargs) -> _R:
         """
@@ -97,6 +99,7 @@ class thread_worker(Generic[_P]):
         *,
         ignore_errors: bool = False,
         progress: ProgressDict | bool | None = None,
+        force_async: bool = False,
     ) -> None:
         self._func: Callable[_P, _R] | None = None
         self._callback_dict_ = {
@@ -127,6 +130,7 @@ class thread_worker(Generic[_P]):
             progress.setdefault("pbar", None)
 
         self._progress: ProgressDict | None = progress
+        self._force_async = force_async
 
     @property
     def func(self) -> Callable[_P, _R]:
@@ -206,8 +210,10 @@ class thread_worker(Generic[_P]):
         return cb
 
     @staticmethod
-    def callback(callback: Callable) -> Callback:
+    def callback(callback: Callable[_P, _R] = lambda: None) -> Callback[_P, _R]:
         """Convert a callback function to a callback object."""
+        if not callable(callback):
+            raise TypeError(f"{callback} is not callable.")
         return Callback(callback)
 
     @staticmethod
@@ -268,12 +274,15 @@ class thread_worker(Generic[_P]):
 
     def __call__(self, *args, **kwargs):
         if self._func is None:
-            f = args[0]
-            self._func = f
-            wraps(f)(self)  # NOTE: __name__ etc. are updated here.
-            return self
+            return self.with_func(args[0])
         else:
             return self._func(*args, **kwargs)
+
+    def with_func(self, func: Callable[_P, _R]) -> thread_worker[_P]:
+        """Set the function."""
+        self._func = func
+        wraps(func)(self)  # NOTE: __name__ etc. are updated here.
+        return self
 
     @overload
     def __get__(self, gui: Literal[None], objtype=None) -> thread_worker[_P]:
@@ -351,9 +360,9 @@ class thread_worker(Generic[_P]):
         @_async_method
         @wraps(self)
         def _create_worker(*args, **kwargs):
-            _is_non_blocking = (
-                self.button(gui).running and len(self._BLOCKING_SOURCES) == 0
-            )
+            _is_non_blocking = (self._force_async or self.button(gui).running) and len(
+                self._BLOCKING_SOURCES
+            ) == 0
             with gui.macro.blocked():
                 args, kwargs = self._validate_args(gui, args, kwargs)
 
@@ -371,7 +380,7 @@ class thread_worker(Generic[_P]):
             if self._progress:
                 self._init_pbar_post(pbar, worker)
 
-            if is_generator:
+            if is_generator and not self._force_async:
 
                 @worker.aborted.connect
                 def _on_abort():
@@ -380,17 +389,19 @@ class thread_worker(Generic[_P]):
                     Aborted.raise_()
 
             if _is_non_blocking:
+                if not self._ignore_errors:
 
-                @worker.errored.connect
-                def _on_error(err: Exception):
-                    # NOTE: Exceptions are raised in other thread so context manager
-                    # cannot catch them. Macro has to be reactived here.
-                    gui._error_mode.cleanup_tb(err)
-                    gui._error_mode.get_handler()(err, parent=gui)
-                    if not self._ignore_errors:
+                    @worker.errored.connect
+                    def _on_error(err: Exception):
+                        # NOTE: Exceptions are raised in other thread so context manager
+                        # cannot catch them. Macro has to be reactived here.
+                        gui._error_mode.cleanup_tb(err)
+                        gui._error_mode.get_handler()(err, parent=gui)
                         raise err  # reraise
 
-                return worker.start()
+                worker.start()
+                _create_worker._worker = weakref.ref(worker)
+                return None
             else:
                 # If function is called from script, some events must get processed by
                 # the application while keep script stopping at each line of code.
