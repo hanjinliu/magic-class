@@ -516,6 +516,8 @@ class MagicField(_FieldObject, Generic[_W]):
         from magicclass.utils import thread_worker
 
         def _wrapper(fn):
+            if isinstance(fn, thread_worker):
+                return self.connect(fn)
             _running = None
             _last_run = 0.0
 

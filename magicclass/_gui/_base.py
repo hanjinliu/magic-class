@@ -1359,8 +1359,6 @@ def convert_attributes(
     return _dict
 
 
-# def _find_callback_level()
-
 _dummy_macro = DummyMacro()
 
 

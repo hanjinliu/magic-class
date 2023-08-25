@@ -84,13 +84,6 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         self._thread_timer.join()
         return None
 
-    def _on_timer_updated(self, _=None):
-        if self._timer.sec < 3600:
-            self.time_label.value = self._timer.format_time("{min:0>2}:{sec:0>2}")
-        else:
-            self.time_label.value = self._timer.format_time()
-        return None
-
     def set_worker(self, worker: GeneratorWorker | FunctionWorker):
         """Set currently running worker."""
         self._worker = worker

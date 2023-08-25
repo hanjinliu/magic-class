@@ -224,7 +224,7 @@ def inject_silencer(func: Callable, is_method: bool = True) -> Callable:
 
         @functools_wraps(_func)
         def _silent(bgui: MagicTemplate, *args, **kwargs):
-            with bgui._search_parent_magicclass().macro.blocked():
+            with bgui.macro.blocked():
                 out = _func.__get__(bgui)(*args, **kwargs)
             return out
 

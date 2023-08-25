@@ -114,6 +114,9 @@ class thread_worker(Generic[_P]):
         self._ignore_errors = ignore_errors
         self._objects: dict[int, BaseGui] = {}
         self._progressbars: dict[int, ProgressBarLike | None] = {}
+        # recordable -> _recorder is a recording function
+        # not recordable, recursive=True -> _recorder is _silent
+        # not recordable, recursive=False -> _recorder is None
         self._recorder: Callable[_P, Any] | None = None
         self._validators: dict[str, Callable] | None = None
         self._signature_cache = None
@@ -216,13 +219,10 @@ class thread_worker(Generic[_P]):
             raise TypeError(f"{callback} is not callable.")
         return Callback(callback)
 
-    @staticmethod
-    def run(meth: AsyncMethod[_P, _R]) -> Callable[_P, _R]:
-        return meth.arun
-
     @classmethod
     @contextmanager
     def blocking_mode(cls):
+        """Always run thread workers in the blocking mode."""
         cls._BLOCKING_SOURCES.append(None)
         try:
             yield
@@ -306,9 +306,9 @@ class thread_worker(Generic[_P]):
         self._objects[gui_id] = _create_worker  # cache
         return _create_worker
 
-    def button(self, gui: BaseGui) -> Clickable:
-        """The corresponding button object."""
-        return gui[self._func.__name__]
+    def _is_running(self, gui: BaseGui) -> bool:
+        btn = gui[self._func.__name__]
+        return getattr(btn, "running", False)
 
     def _validate_args(self, gui: BaseGui, args, kwargs) -> tuple[tuple, dict]:
         if self._validators is None:
@@ -356,13 +356,16 @@ class thread_worker(Generic[_P]):
 
         return worker
 
+    def _is_non_blocking(self, gui: BaseGui) -> bool:
+        async_ok = self._force_async or self._is_running(gui)
+        not_blocking_mode = len(self._BLOCKING_SOURCES) == 0
+        return async_ok and not_blocking_mode
+
     def _create_method(self, gui: BaseGui) -> Callable[_P, None]:
         @_async_method
         @wraps(self)
         def _create_worker(*args, **kwargs):
-            _is_non_blocking = (self._force_async or self.button(gui).running) and len(
-                self._BLOCKING_SOURCES
-            ) == 0
+            _is_non_blocking = self._is_non_blocking(gui)
             with gui.macro.blocked():
                 args, kwargs = self._validate_args(gui, args, kwargs)
 
