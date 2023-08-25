@@ -38,6 +38,7 @@ from magicclass._gui.mgui_ext import Action, WidgetAction
 
 if TYPE_CHECKING:
     from typing_extensions import Self, ParamSpec
+    from superqt.utils import WorkerBase
     from magicclass.utils import thread_worker
     from magicclass._gui._base import MagicTemplate
     from magicclass._gui.mgui_ext import AbstractAction
@@ -512,43 +513,59 @@ class MagicField(_FieldObject, Generic[_W]):
             Timeout second. All the callback called within this time will be
             aborted. In other words, callback will only be called every
             ``timeout`` seconds.
+        ignore_errors : bool, default is False
+            If true, error will be ignored so that it does not disturb users.
         """
         from magicclass.utils import thread_worker
 
         def _wrapper(fn):
             if isinstance(fn, thread_worker):
+                # this case is needed when multiple @connect_async are used
+                # for the same function.
                 return self.connect(fn)
-            _running = None
-            _last_run = 0.0
-            _last_run_id = 0.0
+            # non-local variables
+            _running: WorkerBase | None = None  # the running worker
+            _last_run = 0.0  # last time the worker was started
+            _last_run_id = 0.0  # last starting time (= worker ID) that ended
 
             @wraps(fn)
             def _func(self: MagicTemplate, *args, **kwargs):
                 nonlocal _running, _last_run, _last_run_id
                 with threading.Lock():
-                    _this_run = default_timer()
+                    _this_id = default_timer()
                     f = _afunc.__get__(self)
-                    if timeout >= _this_run - _last_run:
+                    if timeout >= _this_id - _last_run:
                         if _running is not None:
                             _running.quit()
                         _running = f._worker()
                     _last_run = default_timer()
+                    _last_run_copy = _last_run
                 # call the original function
                 try:
                     with self.macro.blocked():
                         out = fn(self, *args, **kwargs)
                         if isinstance(out, GeneratorType):
-                            out = yield from out
+                            while True:
+                                try:
+                                    next(out)
+                                except StopIteration as exc:
+                                    out = exc.value
+                                    break
+                                if (
+                                    _last_run_copy < _last_run
+                                    or _this_id < _last_run_id
+                                ):
+                                    return thread_worker.callback()
                 except Exception as exc:
                     if _running is not None:
                         _running.quit()
                     raise exc
+                if _this_id < _last_run_id:
+                    # if j-th call finished after i-th call (i < j),
+                    # don't run returned callback.
+                    return thread_worker.callback()
                 with threading.Lock():
-                    if _this_run < _last_run_id:
-                        # if j-th call finished after i-th call (i < j),
-                        # don't run returned callback.
-                        return thread_worker.callback()
-                    _last_run_id = _this_run
+                    _last_run_id = _this_id
                     yield thread_worker.callback()  # empty callback
                     return out
 

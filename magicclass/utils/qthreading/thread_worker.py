@@ -472,6 +472,7 @@ class thread_worker(Generic[_P]):
         def _gen(*args, **kwargs):
             pbar: _SupportProgress | None = None
             has_pbar = self._progress
+            _calc_finished = False
 
             # started
             if has_pbar:
@@ -480,9 +481,10 @@ class thread_worker(Generic[_P]):
                 def _init_pbar_and_show():
                     nonlocal pbar
                     pbar = self._create_pbar(gui, _desc, _total)
-                    init_pbar(pbar)
                     if hasattr(pbar, "set_title"):
                         pbar.set_title(self._func.__name__.replace("_", " "))
+                    if not _calc_finished:
+                        init_pbar(pbar)
 
                 yield NestedCallback(_init_pbar_and_show)
             yield from self.started._iter_as_nested_cb(gui)
@@ -517,7 +519,12 @@ class thread_worker(Generic[_P]):
                 yield NestedCallback(cb_returned, out)
             # finished
             yield from self.finished._iter_as_nested_cb(gui)
+            _calc_finished = True
             if has_pbar:
+                if _calc_finished:
+                    if pbar is not None:
+                        yield NestedCallback(close_pbar.__get__(pbar))
+                    return
                 count = 0
                 while pbar is None:
                     time.sleep(0.05)
