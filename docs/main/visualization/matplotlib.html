@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="English" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Matplotlib Figure &mdash; magic-class 0.7.4 documentation</title>
+  <title>Matplotlib Figure &mdash; magic-class 0.7.5 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -13,9 +13,8 @@
   <![endif]-->
 
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -35,7 +34,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.4
+                0.7.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -96,8 +95,8 @@
            <div itemprop="articleBody">
 
   <section id="matplotlib-figure">
-<h1>Matplotlib Figure<a class="headerlink" href="#matplotlib-figure" title="Permalink to this headline">¶</a></h1>
-<div class="contents local topic" id="contents">
+<h1>Matplotlib Figure<a class="headerlink" href="#matplotlib-figure" title="Permalink to this heading">¶</a></h1>
+<nav class="contents local" id="contents">
 <p class="topic-title">Contents</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#basic-usage" id="id1">Basic Usage</a></p></li>
@@ -105,7 +104,7 @@
 <li><p><a class="reference internal" href="#use-multiple-axes" id="id3">Use Multiple Axes</a></p></li>
 <li><p><a class="reference internal" href="#plot-api" id="id4">Plot API</a></p></li>
 </ul>
-</div>
+</nav>
 <p><code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> is one of the most widely used data visualization libraries. I
 guess most of the Python users know the basics of the library.</p>
 <p>For data visualization of simple data set, your can use the <code class="docutils literal notranslate"><span class="pre">Figure</span></code> widget.</p>
@@ -115,7 +114,7 @@ guess most of the Python users know the basics of the library.</p>
 <p>It has very simple API inherited from the original functions, such as
 <code class="docutils literal notranslate"><span class="pre">plt.plot(x,</span> <span class="pre">y)</span></code> or <code class="docutils literal notranslate"><span class="pre">plt.xlim(0,</span> <span class="pre">100)</span></code>. It also support interactive plot.</p>
 <section id="basic-usage">
-<h2><a class="toc-backref" href="#id1">Basic Usage</a><a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Basic Usage</a><a class="headerlink" href="#basic-usage" title="Permalink to this heading">¶</a></h2>
 <p>If you are using <code class="docutils literal notranslate"><span class="pre">Figure</span></code> widget independent of <code class="docutils literal notranslate"><span class="pre">magic-class</span></code>, it's just
 like the usual <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> way.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># run &quot;%gui qt&quot; if needed</span>
@@ -139,7 +138,7 @@ like the usual <code class="docutils literal notranslate"><span class="pre">matp
 </div>
 </section>
 <section id="use-figure-widget-in-magic-class">
-<h2><a class="toc-backref" href="#id2">Use Figure Widget in Magic Class</a><a class="headerlink" href="#use-figure-widget-in-magic-class" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Use Figure Widget in Magic Class</a><a class="headerlink" href="#use-figure-widget-in-magic-class" title="Permalink to this heading">¶</a></h2>
 <p>In most cases, you'll use <code class="docutils literal notranslate"><span class="pre">field</span></code> to create a <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> figure widget
 in your GUI.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
@@ -154,7 +153,7 @@ in your GUI.</p>
 </div>
 </section>
 <section id="use-multiple-axes">
-<h2><a class="toc-backref" href="#id3">Use Multiple Axes</a><a class="headerlink" href="#use-multiple-axes" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Use Multiple Axes</a><a class="headerlink" href="#use-multiple-axes" title="Permalink to this heading">¶</a></h2>
 <p>Sometimes we have to prepare multiple axes and plot different sets of data
 separately by using <code class="docutils literal notranslate"><span class="pre">fig,</span> <span class="pre">ax</span> <span class="pre">=</span> <span class="pre">plt.subplots(2,</span> <span class="pre">1)</span></code> or other similar methods.
 The <code class="docutils literal notranslate"><span class="pre">Figure</span></code> widget also support multi-axes plotting. You can create a
@@ -175,7 +174,7 @@ you'll have to call <code class="docutils literal notranslate"><span class="pre"
 </div>
 </section>
 <section id="plot-api">
-<h2><a class="toc-backref" href="#id4">Plot API</a><a class="headerlink" href="#plot-api" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Plot API</a><a class="headerlink" href="#plot-api" title="Permalink to this heading">¶</a></h2>
 <p>For the simplest usage, you can use <code class="docutils literal notranslate"><span class="pre">plot_api</span></code> submodule. Its API is almost
 identical to those in <code class="docutils literal notranslate"><span class="pre">matplotlib.pyplot</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># instead of import matplotlib.pyplot as plt</span>

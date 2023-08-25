@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.utils.qt &mdash; magic-class 0.7.0rc0 documentation</title>
+  <title>magicclass.utils.qt &mdash; magic-class 0.7.5 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -12,9 +12,8 @@
   <![endif]-->
 
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -32,7 +31,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.0rc0
+                0.7.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -192,13 +191,23 @@
         <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot copy an array of dtype </span><span class="si">{</span><span class="n">obj</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> to clipboard.&quot;</span><span class="p">)</span>
         <span class="c1"># See https://gist.github.com/smex/5287589</span>
-        <span class="n">qimg_format</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">QImage</span><span class="o">.</span><span class="n">Format</span><span class="o">.</span><span class="n">Format_RGB888</span>
-            <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span>
-            <span class="k">else</span> <span class="n">QImage</span><span class="o">.</span><span class="n">Format</span><span class="o">.</span><span class="n">Format_Indexed8</span>
-        <span class="p">)</span>
-        <span class="o">*</span><span class="n">_</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">shape</span>
-        <span class="n">qimg</span> <span class="o">=</span> <span class="n">QImage</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">strides</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">qimg_format</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">qimg_format</span> <span class="o">=</span> <span class="n">QImage</span><span class="o">.</span><span class="n">Format</span><span class="o">.</span><span class="n">Format_RGB888</span>
+            <span class="k">elif</span> <span class="n">obj</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="n">qimg_format</span> <span class="o">=</span> <span class="n">QImage</span><span class="o">.</span><span class="n">Format</span><span class="o">.</span><span class="n">Format_RGBA8888</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Can only copy an array of shape (..., 3) or (..., 4).&quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can only copy 2D or 3D array&quot;</span><span class="p">)</span>
+            <span class="n">qimg_format</span> <span class="o">=</span> <span class="n">QImage</span><span class="o">.</span><span class="n">Format</span><span class="o">.</span><span class="n">Format_Indexed8</span>
+
+        <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="n">qimg</span> <span class="o">=</span> <span class="n">QImage</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">strides</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">qimg_format</span><span class="p">)</span>
         <span class="n">gray_color_table</span> <span class="o">=</span> <span class="p">[</span><span class="n">qRgb</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">256</span><span class="p">)]</span>
         <span class="n">qimg</span><span class="o">.</span><span class="n">setColorTable</span><span class="p">(</span><span class="n">gray_color_table</span><span class="p">)</span>
         <span class="n">clipboard</span><span class="o">.</span><span class="n">setImage</span><span class="p">(</span><span class="n">qimg</span><span class="p">)</span>

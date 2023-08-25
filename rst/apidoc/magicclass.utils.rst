@@ -1,6 +1,14 @@
 magicclass.utils package
 ========================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   magicclass.utils.qthreading
+
 Submodules
 ----------
 
@@ -8,14 +16,6 @@ magicclass.utils.qt module
 --------------------------
 
 .. automodule:: magicclass.utils.qt
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-magicclass.utils.qthreading module
-----------------------------------
-
-.. automodule:: magicclass.utils.qthreading
    :members:
    :undoc-members:
    :show-inheritance:

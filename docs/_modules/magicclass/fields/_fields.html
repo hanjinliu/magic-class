@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.fields._fields &mdash; magic-class 0.7.4 documentation</title>
+  <title>magicclass.fields._fields &mdash; magic-class 0.7.5 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -12,9 +12,8 @@
   <![endif]-->
 
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -32,7 +31,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.4
+                0.7.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -81,6 +80,8 @@
 
   <h1>Source code for magicclass.fields._fields</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">GeneratorType</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Any</span><span class="p">,</span>
     <span class="n">TYPE_CHECKING</span><span class="p">,</span>
@@ -91,6 +92,10 @@
     <span class="n">Generic</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">from</span> <span class="nn">timeit</span> <span class="kn">import</span> <span class="n">default_timer</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">create_widget</span><span class="p">,</span> <span class="n">Widget</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets.bases</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ValueWidget</span><span class="p">,</span>
@@ -107,17 +112,21 @@
     <span class="n">method_as_getter</span><span class="p">,</span>
     <span class="n">eval_attribute</span><span class="p">,</span>
     <span class="n">is_type_like</span><span class="p">,</span>
+    <span class="n">argcount</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">magicclass.signature</span> <span class="kn">import</span> <span class="n">MagicMethodSignature</span>
 <span class="kn">from</span> <span class="nn">magicclass._gui.mgui_ext</span> <span class="kn">import</span> <span class="n">Action</span><span class="p">,</span> <span class="n">WidgetAction</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Self</span>
+    <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Self</span><span class="p">,</span> <span class="n">ParamSpec</span>
+    <span class="kn">from</span> <span class="nn">superqt.utils</span> <span class="kn">import</span> <span class="n">WorkerBase</span>
+    <span class="kn">from</span> <span class="nn">magicclass.utils</span> <span class="kn">import</span> <span class="n">thread_worker</span>
     <span class="kn">from</span> <span class="nn">magicclass._gui._base</span> <span class="kn">import</span> <span class="n">MagicTemplate</span>
     <span class="kn">from</span> <span class="nn">magicclass._gui.mgui_ext</span> <span class="kn">import</span> <span class="n">AbstractAction</span>
 
     <span class="n">_M</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_M&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">MagicTemplate</span><span class="p">)</span>
     <span class="n">_X</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_X&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">MGUI_SIMPLE_TYPES</span><span class="p">)</span>
+    <span class="n">_P</span> <span class="o">=</span> <span class="n">ParamSpec</span><span class="p">(</span><span class="s2">&quot;_P&quot;</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">_FieldObject</span><span class="p">:</span>
@@ -134,7 +143,7 @@
 <span class="n">_F</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_F&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Callable</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">MagicField</span><span class="p">(</span><span class="n">_FieldObject</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">_W</span><span class="p">]):</span>
+<div class="viewcode-block" id="MagicField"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicField">[docs]</a><span class="k">class</span> <span class="nc">MagicField</span><span class="p">(</span><span class="n">_FieldObject</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">_W</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Field class for magicgui construction.</span>
 
@@ -153,7 +162,7 @@
         <span class="n">widget_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">constructor</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">constructor</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">options</span> <span class="o">=</span> <span class="p">{}</span>
@@ -165,8 +174,8 @@
             <span class="k">def</span> <span class="nf">_create_widget</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">create_widget</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                    <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                    <span class="n">label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">,</span>
+                    <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
                     <span class="n">annotation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span>
                     <span class="n">widget_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">widget_type</span><span class="p">,</span>
                     <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">,</span>
@@ -210,11 +219,11 @@
                 <span class="n">api</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
                 <span class="n">api</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">MagicMethodSignature</span><span class="p">([])</span>
 
-    <span class="k">def</span> <span class="nf">set_destination</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dest</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="MagicField.set_destination"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicField.set_destination">[docs]</a>    <span class="k">def</span> <span class="nf">set_destination</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dest</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_destination_class</span> <span class="o">=</span> <span class="n">dest</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
 
-    <span class="k">def</span> <span class="nf">with_options</span><span class="p">(</span>
+<div class="viewcode-block" id="MagicField.with_options"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicField.with_options">[docs]</a>    <span class="k">def</span> <span class="nf">with_options</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">Undefined</span><span class="p">,</span>
         <span class="n">tooltip</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Undefined</span><span class="p">,</span>
@@ -249,7 +258,7 @@
         <span class="k">if</span> <span class="s2">&quot;value&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
 
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="nf">with_choices</span><span class="p">(</span>
@@ -273,10 +282,16 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">CategoricalWidget</span><span class="p">[</span><span class="n">_U</span><span class="p">]]:</span>
         <span class="o">...</span>
 
-    <span class="k">def</span> <span class="nf">with_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">):</span>
+<div class="viewcode-block" id="MagicField.with_choices"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicField.with_choices">[docs]</a>    <span class="k">def</span> <span class="nf">with_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Method to add choices to the field.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">choices</span>
-        <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="MagicField.with_widget_type"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicField.with_widget_type">[docs]</a>    <span class="k">def</span> <span class="nf">with_widget_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Method to add widget type to the field.&quot;&quot;&quot;</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">_widget_type</span> <span class="o">=</span> <span class="n">widget_type</span>
+        <span class="k">return</span> <span class="n">new</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">__signature__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -287,7 +302,7 @@
         <span class="k">return</span> <span class="n">MagicMethodSignature</span><span class="p">([],</span> <span class="n">additional_options</span><span class="o">=</span><span class="n">additional_options</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">constructor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Widget</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">constructor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Widget</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get widget constructor.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constructor</span>
 
@@ -300,7 +315,7 @@
     <span class="k">def</span> <span class="nf">record</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_record</span>
 
-    <span class="k">def</span> <span class="nf">construct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_W</span><span class="p">:</span>
+<div class="viewcode-block" id="MagicField.construct"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicField.construct">[docs]</a>    <span class="k">def</span> <span class="nf">construct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_W</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct a widget.&quot;&quot;&quot;</span>
         <span class="n">constructor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">constructor</span>
         <span class="n">_arg_choices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;choices&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -324,9 +339,9 @@
             <span class="k">if</span> <span class="n">_arg_choices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_arg_choices</span>
 
-        <span class="k">return</span> <span class="n">widget</span>
+        <span class="k">return</span> <span class="n">widget</span></div>
 
-    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">]:</span>
+<div class="viewcode-block" id="MagicField.copy"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicField.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy object.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span>
             <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
@@ -337,43 +352,37 @@
             <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">,</span>
             <span class="n">record</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">,</span>
             <span class="n">constructor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">constructor</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="p">)</span></div>
 
-    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="MagicField.from_callable"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicField.from_callable">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_callable</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">_W</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">[</span><span class="n">_W</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Use a function as the constructor of MagicField.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">constructor</span><span class="o">=</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">constructor</span><span class="o">=</span><span class="n">func</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">get_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_W</span><span class="p">:</span>
+<div class="viewcode-block" id="MagicField.get_widget"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicField.get_widget">[docs]</a>    <span class="k">def</span> <span class="nf">get_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_W</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get a widget from ``obj``. This function will be called every time MagicField is referred</span>
-<span class="sd">        by ``obj.field``.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">magicclass._gui</span> <span class="kn">import</span> <span class="n">MagicTemplate</span>
+<span class="sd">        Get a widget from ``obj``.</span>
 
+<span class="sd">        This function will be called every time MagicField is referred by</span>
+<span class="sd">        ``obj.field``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">obj_id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">widget</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_guis</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">obj_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_guis</span><span class="p">[</span><span class="n">obj_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-            <span class="n">widget</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="p">(</span><span class="n">ValueWidget</span><span class="p">,</span> <span class="n">ContainerWidget</span><span class="p">)):</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
-                    <span class="n">_def</span> <span class="o">=</span> <span class="n">define_callback_gui</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">_def</span> <span class="o">=</span> <span class="n">define_callback</span>
+                <span class="n">_def</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_define_callback</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="p">:</span>
-                    <span class="c1"># funcname = callback.__name__</span>
                     <span class="n">widget</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_def</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">callback</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">widget</span>
+        <span class="k">return</span> <span class="n">widget</span></div>
 
-    <span class="k">def</span> <span class="nf">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbstractAction</span><span class="p">:</span>
+<div class="viewcode-block" id="MagicField.get_action"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicField.get_action">[docs]</a>    <span class="k">def</span> <span class="nf">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbstractAction</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get an action from ``obj``. This function will be called every time MagicField is referred</span>
 <span class="sd">        by ``obj.field``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">magicclass._gui</span> <span class="kn">import</span> <span class="n">MagicTemplate</span>
-
         <span class="n">obj_id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">obj_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_guis</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_guis</span><span class="p">[</span><span class="n">obj_id</span><span class="p">]</span>
@@ -398,21 +407,30 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_guis</span><span class="p">[</span><span class="n">obj_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">action</span>
 
             <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">support_value</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
-                    <span class="n">_def</span> <span class="o">=</span> <span class="n">define_callback_gui</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">_def</span> <span class="o">=</span> <span class="n">define_callback</span>
+                <span class="n">_def</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_define_callback</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="p">:</span>
                     <span class="c1"># funcname = callback.__name__</span>
                     <span class="n">action</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_def</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">callback</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">action</span>
+        <span class="k">return</span> <span class="n">action</span></div>
 
-    <span class="k">def</span> <span class="nf">as_getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">_get_define_callback</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]:</span>
+        <span class="kn">from</span> <span class="nn">magicclass._gui</span> <span class="kn">import</span> <span class="n">MagicTemplate</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
+            <span class="n">_def</span> <span class="o">=</span> <span class="n">define_callback_gui</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_def</span> <span class="o">=</span> <span class="n">define_callback</span>
+        <span class="k">return</span> <span class="n">_def</span>
+
+<div class="viewcode-block" id="MagicField.as_getter"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicField.as_getter">[docs]</a>    <span class="k">def</span> <span class="nf">as_getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a function that get the value of Widget or Action.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_guis</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">obj</span><span class="p">)]</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_guis</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">obj</span><span class="p">)]</span><span class="o">.</span><span class="n">value</span></div>
 
-    <span class="k">def</span> <span class="nf">as_remote_getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+<div class="viewcode-block" id="MagicField.as_remote_getter"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicField.as_remote_getter">[docs]</a>    <span class="k">def</span> <span class="nf">as_remote_getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Called when a MagicField is used in Bound method.&quot;&quot;&quot;</span>
         <span class="n">qualname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent_class</span><span class="o">.</span><span class="vm">__qualname__</span>
         <span class="n">_LOCALS</span> <span class="o">=</span> <span class="s2">&quot;&lt;locals&gt;.&quot;</span>
@@ -443,7 +461,7 @@
                 <span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_getter</span><span class="p">(</span><span class="n">ins</span><span class="p">)(</span><span class="n">w</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">_func</span>
+        <span class="k">return</span> <span class="n">_func</span></div>
 
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">objtype</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">]:</span>
@@ -462,19 +480,19 @@
     <span class="k">def</span> <span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot set value to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="MagicField.ready"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicField.ready">[docs]</a>    <span class="k">def</span> <span class="nf">ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return true if field is ready to create widgets.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_ready</span><span class="p">()</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_ready</span><span class="p">()</span></div>
 
-    <span class="k">def</span> <span class="nf">not_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="MagicField.not_ready"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicField.not_ready">[docs]</a>    <span class="k">def</span> <span class="nf">not_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="n">Undefined</span>
             <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotation</span> <span class="ow">is</span> <span class="kc">None</span>
             <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget_type</span> <span class="ow">is</span> <span class="kc">None</span>
             <span class="ow">and</span> <span class="s2">&quot;choices&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span>
-        <span class="p">)</span>
+        <span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">to_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_W</span><span class="p">:</span>
+<div class="viewcode-block" id="MagicField.to_widget"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicField.to_widget">[docs]</a>    <span class="k">def</span> <span class="nf">to_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_W</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a widget from the field.</span>
 
@@ -488,9 +506,9 @@
 <span class="sd">        ValueError</span>
 <span class="sd">            If there is not enough information to build a widget.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_object</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_object</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">to_action</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Action</span> <span class="o">|</span> <span class="n">WidgetAction</span><span class="p">[</span><span class="n">_W</span><span class="p">]:</span>
+<div class="viewcode-block" id="MagicField.to_action"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicField.to_action">[docs]</a>    <span class="k">def</span> <span class="nf">to_action</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Action</span> <span class="o">|</span> <span class="n">WidgetAction</span><span class="p">[</span><span class="n">_W</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a menu action or a menu widget action from the field.</span>
 
@@ -504,24 +522,142 @@
 <span class="sd">        ValueError</span>
 <span class="sd">            If there is not enough information to build an action.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_action</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_object</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_action</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_object</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">_F</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_F</span><span class="p">:</span>
+<div class="viewcode-block" id="MagicField.connect"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicField.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">_F</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_F</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set callback function to &quot;ready to connect&quot; state.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Cannot connect non-callable object&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isgeneratorfunction</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Generator function is connected, which will not complete &quot;</span>
+                <span class="s2">&quot;as a callback.&quot;</span><span class="p">,</span>
+                <span class="ne">UserWarning</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">func</span>
+        <span class="k">return</span> <span class="n">func</span></div>
 
-    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="MagicField.disconnect"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicField.disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Disconnect callback from the field.</span>
+
 <span class="sd">        This method does NOT disconnect callbacks from widgets that are</span>
 <span class="sd">        already created.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">connect_async</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">_P</span><span class="p">,</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">ignore_errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">thread_worker</span><span class="p">[</span><span class="n">_P</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">connect_async</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">func</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">ignore_errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Callable</span><span class="p">[</span><span class="n">_P</span><span class="p">,</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]],</span> <span class="n">thread_worker</span><span class="p">[</span><span class="n">_P</span><span class="p">]]:</span>
+        <span class="o">...</span>
+
+<div class="viewcode-block" id="MagicField.connect_async"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicField.connect_async">[docs]</a>    <span class="k">def</span> <span class="nf">connect_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Connect a callback function to be called asynchronously.</span>
+
+<span class="sd">        This method can be used similarly as ``connect`` but returns</span>
+<span class="sd">        a ``thread_worder`` object.</span>
+
+<span class="sd">        &gt;&gt;&gt; @magicclass</span>
+<span class="sd">        &gt;&gt;&gt; class A:</span>
+<span class="sd">        ...     x = field(int)</span>
+<span class="sd">        ...     @x.connect_async</span>
+<span class="sd">        ...     def _x_changed(self, v):</span>
+<span class="sd">        ...         time.sleep(1)</span>
+<span class="sd">        ...         return v</span>
+<span class="sd">        ...     @_x_changed.returned.connect</span>
+<span class="sd">        ...     def _x_returned(self, v):</span>
+<span class="sd">        ...         print(v)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        func : callable</span>
+<span class="sd">            The callback function</span>
+<span class="sd">        timeout : float, default is 0.0</span>
+<span class="sd">            Timeout second. All the callback called within this time will be</span>
+<span class="sd">            aborted. In other words, callback will only be called every</span>
+<span class="sd">            ``timeout`` seconds.</span>
+<span class="sd">        ignore_errors : bool, default is False</span>
+<span class="sd">            If true, error will be ignored so that it does not disturb users.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">magicclass.utils</span> <span class="kn">import</span> <span class="n">thread_worker</span>
+
+        <span class="k">def</span> <span class="nf">_wrapper</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">thread_worker</span><span class="p">):</span>
+                <span class="c1"># this case is needed when multiple @connect_async are used</span>
+                <span class="c1"># for the same function.</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+            <span class="c1"># non-local variables</span>
+            <span class="n">_running</span><span class="p">:</span> <span class="n">WorkerBase</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># the running worker</span>
+            <span class="n">_last_run</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># last time the worker was started</span>
+            <span class="n">_last_run_id</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># last starting time (= worker ID) that ended</span>
+
+            <span class="nd">@wraps</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+            <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="k">nonlocal</span> <span class="n">_running</span><span class="p">,</span> <span class="n">_last_run</span><span class="p">,</span> <span class="n">_last_run_id</span>
+                <span class="k">with</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">():</span>
+                    <span class="n">_this_id</span> <span class="o">=</span> <span class="n">default_timer</span><span class="p">()</span>
+                    <span class="n">f</span> <span class="o">=</span> <span class="n">_afunc</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">timeout</span> <span class="o">&gt;=</span> <span class="n">_this_id</span> <span class="o">-</span> <span class="n">_last_run</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">_running</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">_running</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+                        <span class="n">_running</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">_worker</span><span class="p">()</span>
+                    <span class="n">_last_run</span> <span class="o">=</span> <span class="n">default_timer</span><span class="p">()</span>
+                    <span class="n">_last_run_copy</span> <span class="o">=</span> <span class="n">_last_run</span>
+                <span class="c1"># call the original function</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
+                        <span class="n">out</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">GeneratorType</span><span class="p">):</span>
+                            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                                <span class="k">try</span><span class="p">:</span>
+                                    <span class="nb">next</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+                                <span class="k">except</span> <span class="ne">StopIteration</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                                    <span class="n">out</span> <span class="o">=</span> <span class="n">exc</span><span class="o">.</span><span class="n">value</span>
+                                    <span class="k">break</span>
+                                <span class="k">if</span> <span class="p">(</span>
+                                    <span class="n">_last_run_copy</span> <span class="o">&lt;</span> <span class="n">_last_run</span>
+                                    <span class="ow">or</span> <span class="n">_this_id</span> <span class="o">&lt;</span> <span class="n">_last_run_id</span>
+                                <span class="p">):</span>
+                                    <span class="k">return</span> <span class="n">thread_worker</span><span class="o">.</span><span class="n">callback</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">_running</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">_running</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+                    <span class="k">raise</span> <span class="n">exc</span>
+                <span class="k">if</span> <span class="n">_this_id</span> <span class="o">&lt;</span> <span class="n">_last_run_id</span><span class="p">:</span>
+                    <span class="c1"># if j-th call finished after i-th call (i &lt; j),</span>
+                    <span class="c1"># don&#39;t run returned callback.</span>
+                    <span class="k">return</span> <span class="n">thread_worker</span><span class="o">.</span><span class="n">callback</span><span class="p">()</span>
+                <span class="k">with</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">():</span>
+                    <span class="n">_last_run_id</span> <span class="o">=</span> <span class="n">_this_id</span>
+                    <span class="k">yield</span> <span class="n">thread_worker</span><span class="o">.</span><span class="n">callback</span><span class="p">()</span>  <span class="c1"># empty callback</span>
+                    <span class="k">return</span> <span class="n">out</span>
+
+            <span class="n">_afunc</span> <span class="o">=</span> <span class="n">thread_worker</span><span class="p">(</span>
+                <span class="n">_func</span><span class="p">,</span>
+                <span class="n">force_async</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_afunc</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">_wrapper</span> <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">_wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">)</span></div>
 
     <span class="c1"># fmt: off</span>
     <span class="nd">@overload</span>
@@ -530,26 +666,23 @@
     <span class="k">def</span> <span class="nf">wraps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">template</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">_F</span><span class="p">],</span> <span class="n">_F</span><span class="p">]:</span> <span class="o">...</span>
     <span class="c1"># fmt: on</span>
 
-    <span class="k">def</span> <span class="nf">wraps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="MagicField.wraps"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicField.wraps">[docs]</a>    <span class="k">def</span> <span class="nf">wraps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Call the ``wraps`` class method of magic class.</span>
 
 <span class="sd">        This method is needed when a child magic class is defined outside the main magic</span>
 <span class="sd">        class, and integrated into the main magic class by ``field`` function, like below</span>
 
-<span class="sd">        .. code-block:: python</span>
+<span class="sd">        &gt;&gt;&gt; @magicclass</span>
+<span class="sd">        &gt;&gt;&gt; class B:</span>
+<span class="sd">        ...     def func(self): ...  # pre-definition</span>
 
-<span class="sd">            @magicclass</span>
-<span class="sd">            class B:</span>
-<span class="sd">                def func(self): ...  # pre-definition</span>
-
-<span class="sd">            @magicclass</span>
-<span class="sd">            class A:</span>
-<span class="sd">                b = field(B)</span>
-
-<span class="sd">                @b.wraps</span>
-<span class="sd">                def func(self):</span>
-<span class="sd">                    # do something</span>
+<span class="sd">        &gt;&gt;&gt; @magicclass</span>
+<span class="sd">        &gt;&gt;&gt; class A:</span>
+<span class="sd">        ...     b = field(B)</span>
+<span class="sd">        ...     @b.wraps</span>
+<span class="sd">        ...     def func(self):</span>
+<span class="sd">        ...         # do something</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -572,7 +705,7 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                 <span class="s2">&quot;The wraps method cannot be used for any objects but magic class.&quot;</span>
             <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="n">template</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="n">template</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tooltip</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -604,10 +737,10 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">widget_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return type of the resulting widget.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget_type</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget_type</span></div>
 
 
-<span class="k">class</span> <span class="nc">MagicValueField</span><span class="p">(</span><span class="n">MagicField</span><span class="p">[</span><span class="n">ValueWidget</span><span class="p">[</span><span class="n">_V</span><span class="p">]]):</span>
+<div class="viewcode-block" id="MagicValueField"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicValueField">[docs]</a><span class="k">class</span> <span class="nc">MagicValueField</span><span class="p">(</span><span class="n">MagicField</span><span class="p">[</span><span class="n">ValueWidget</span><span class="p">[</span><span class="n">_V</span><span class="p">]]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Field class for magicgui construction. Unlike MagicField, object of this class</span>
 <span class="sd">    always returns value itself.</span>
@@ -631,10 +764,10 @@
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot set </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">get_widget</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_presethook</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">_V</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<div class="viewcode-block" id="MagicValueField.copy"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicValueField.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">_V</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
 
-    <span class="k">def</span> <span class="nf">post_get_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="n">_V</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">_V</span><span class="p">],</span> <span class="n">Any</span><span class="p">]):</span>
+<div class="viewcode-block" id="MagicValueField.post_get_hook"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicValueField.post_get_hook">[docs]</a>    <span class="k">def</span> <span class="nf">post_get_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="n">_V</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">_V</span><span class="p">],</span> <span class="n">Any</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Define a post-get hook for the field.</span>
 
@@ -659,9 +792,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_postgethook</span> <span class="o">=</span> <span class="n">hook</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_postgethook</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">hook</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">hook</span>
+        <span class="k">return</span> <span class="n">hook</span></div>
 
-    <span class="k">def</span> <span class="nf">pre_set_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">_V</span><span class="p">]</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">_V</span><span class="p">]):</span>
+<div class="viewcode-block" id="MagicValueField.pre_set_hook"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicValueField.pre_set_hook">[docs]</a>    <span class="k">def</span> <span class="nf">pre_set_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">_V</span><span class="p">]</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">_V</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Define a pre-set hook for the field.</span>
 
@@ -686,7 +819,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_presethook</span> <span class="o">=</span> <span class="n">hook</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_presethook</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">hook</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">hook</span>
+        <span class="k">return</span> <span class="n">hook</span></div>
 
     <span class="k">def</span> <span class="nf">_postgethook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">_V</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_V</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">value</span>
@@ -712,9 +845,9 @@
     <span class="k">def</span> <span class="nf">with_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">_U</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">_U</span><span class="p">]:</span>
         <span class="o">...</span>
 
-    <span class="k">def</span> <span class="nf">with_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">):</span>
+<div class="viewcode-block" id="MagicValueField.with_choices"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.MagicValueField.with_choices">[docs]</a>    <span class="k">def</span> <span class="nf">with_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Method to add choices to the field.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">with_choices</span><span class="p">(</span><span class="n">choices</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">with_choices</span><span class="p">(</span><span class="n">choices</span><span class="p">)</span></div></div>
 
 
 <span class="nd">@overload</span>
@@ -806,7 +939,7 @@
     <span class="o">...</span>
 
 
-<div class="viewcode-block" id="field"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.field">[docs]</a><span class="k">def</span> <span class="nf">field</span><span class="p">(</span>
+<div class="viewcode-block" id="field"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.field">[docs]</a><span class="k">def</span> <span class="nf">field</span><span class="p">(</span>
     <span class="n">obj</span><span class="o">=</span><span class="n">Undefined</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -935,7 +1068,7 @@
     <span class="o">...</span>
 
 
-<div class="viewcode-block" id="vfield"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.vfield">[docs]</a><span class="k">def</span> <span class="nf">vfield</span><span class="p">(</span>
+<div class="viewcode-block" id="vfield"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.vfield">[docs]</a><span class="k">def</span> <span class="nf">vfield</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">Undefined</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -981,7 +1114,7 @@
     <span class="k">return</span> <span class="n">_get_field</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">widget_type</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">record</span><span class="p">,</span> <span class="n">MagicValueField</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="widget_property"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.widget_property">[docs]</a><span class="k">def</span> <span class="nf">widget_property</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">_W</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">_W</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<div class="viewcode-block" id="widget_property"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.widget_property">[docs]</a><span class="k">def</span> <span class="nf">widget_property</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">_W</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">_W</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a widget property from a function.</span>
 

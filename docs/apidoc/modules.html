@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="English" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass &mdash; magic-class 0.7.4 documentation</title>
+  <title>magicclass &mdash; magic-class 0.7.5 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -13,9 +13,8 @@
   <![endif]-->
 
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -33,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.4
+                0.7.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -81,11 +80,15 @@
            <div itemprop="articleBody">
 
   <section id="magicclass">
-<h1>magicclass<a class="headerlink" href="#magicclass" title="Permalink to this headline">¶</a></h1>
+<h1>magicclass<a class="headerlink" href="#magicclass" title="Permalink to this heading">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="magicclass.html">magicclass package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.box.html">magicclass.box package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.box.html#module-magicclass.box">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="magicclass.ext.html">magicclass.ext package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.ext.html#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.ext.html#module-magicclass.ext">Module contents</a></li>
@@ -118,9 +121,9 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="magicclass.utils.html">magicclass.utils package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.utils.html#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.utils.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.utils.html#module-magicclass.utils.qt">magicclass.utils.qt module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.utils.html#module-magicclass.utils.qthreading">magicclass.utils.qthreading module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.utils.html#module-magicclass.utils.qtsignal">magicclass.utils.qtsignal module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.utils.html#module-magicclass.utils">Module contents</a></li>
 </ul>
@@ -150,13 +153,349 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.html#module-magicclass.command_palette">magicclass.command_palette module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.html#module-magicclass.core">magicclass.core module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.html#module-magicclass.help">magicclass.help module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.html#module-magicclass.plot_api">magicclass.plot_api module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.html#module-magicclass.signature">magicclass.signature module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.html#module-magicclass.undo">magicclass.undo module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.html#module-magicclass">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.html#module-magicclass.command_palette">magicclass.command_palette module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.command_palette.exec_command_palette"><code class="docutils literal notranslate"><span class="pre">exec_command_palette()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.html#module-magicclass.core">magicclass.core module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.core.Parameters"><code class="docutils literal notranslate"><span class="pre">Parameters</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.core.Parameters.as_dict"><code class="docutils literal notranslate"><span class="pre">Parameters.as_dict()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.core.build_help"><code class="docutils literal notranslate"><span class="pre">build_help()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.core.get_button"><code class="docutils literal notranslate"><span class="pre">get_button()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.core.get_function_gui"><code class="docutils literal notranslate"><span class="pre">get_function_gui()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.core.magicclass"><code class="docutils literal notranslate"><span class="pre">magicclass()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.core.magiccontext"><code class="docutils literal notranslate"><span class="pre">magiccontext()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.core.magicmenu"><code class="docutils literal notranslate"><span class="pre">magicmenu()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.core.magictoolbar"><code class="docutils literal notranslate"><span class="pre">magictoolbar()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.core.repeat"><code class="docutils literal notranslate"><span class="pre">repeat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.core.update_widget_state"><code class="docutils literal notranslate"><span class="pre">update_widget_state()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.html#module-magicclass.help">magicclass.help module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.help.HelpWidget"><code class="docutils literal notranslate"><span class="pre">HelpWidget</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.help.UiBoundTreeItem"><code class="docutils literal notranslate"><span class="pre">UiBoundTreeItem</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.help.UiBoundTreeItem.child"><code class="docutils literal notranslate"><span class="pre">UiBoundTreeItem.child()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.help.UiBoundTreeItem.takeChild"><code class="docutils literal notranslate"><span class="pre">UiBoundTreeItem.takeChild()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.help.UiBoundTreeItem.ui"><code class="docutils literal notranslate"><span class="pre">UiBoundTreeItem.ui</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.help.get_help_info"><code class="docutils literal notranslate"><span class="pre">get_help_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.help.get_keymap"><code class="docutils literal notranslate"><span class="pre">get_keymap()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.html#module-magicclass.plot_api">magicclass.plot_api module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.plot_api.close"><code class="docutils literal notranslate"><span class="pre">close()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.plot_api.draw"><code class="docutils literal notranslate"><span class="pre">draw()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.plot_api.gcw"><code class="docutils literal notranslate"><span class="pre">gcw()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.plot_api.show"><code class="docutils literal notranslate"><span class="pre">show()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.html#module-magicclass.signature">magicclass.signature module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.signature.MagicMethodSignature"><code class="docutils literal notranslate"><span class="pre">MagicMethodSignature</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.signature.MagicMethodSignature.from_signature"><code class="docutils literal notranslate"><span class="pre">MagicMethodSignature.from_signature()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.signature.MagicMethodSignature.get_gui_options"><code class="docutils literal notranslate"><span class="pre">MagicMethodSignature.get_gui_options()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.signature.MagicMethodSignature.replace"><code class="docutils literal notranslate"><span class="pre">MagicMethodSignature.replace()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.signature.MagicParameter"><code class="docutils literal notranslate"><span class="pre">MagicParameter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.signature.MagicParameter.from_parameter"><code class="docutils literal notranslate"><span class="pre">MagicParameter.from_parameter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.signature.MagicParameter.from_widget"><code class="docutils literal notranslate"><span class="pre">MagicParameter.from_widget()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.signature.MagicParameter.options"><code class="docutils literal notranslate"><span class="pre">MagicParameter.options</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.signature.MagicParameter.to_widget"><code class="docutils literal notranslate"><span class="pre">MagicParameter.to_widget()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.signature.MagicSignature"><code class="docutils literal notranslate"><span class="pre">MagicSignature</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.signature.MagicSignature.from_signature"><code class="docutils literal notranslate"><span class="pre">MagicSignature.from_signature()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.signature.MagicSignature.replace"><code class="docutils literal notranslate"><span class="pre">MagicSignature.replace()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.signature.MagicSignature.to_container"><code class="docutils literal notranslate"><span class="pre">MagicSignature.to_container()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.signature.MagicSignature.widgets"><code class="docutils literal notranslate"><span class="pre">MagicSignature.widgets()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.signature.get_additional_option"><code class="docutils literal notranslate"><span class="pre">get_additional_option()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.signature.is_annotated"><code class="docutils literal notranslate"><span class="pre">is_annotated()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.signature.split_annotated_type"><code class="docutils literal notranslate"><span class="pre">split_annotated_type()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.signature.upgrade_signature"><code class="docutils literal notranslate"><span class="pre">upgrade_signature()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.html#module-magicclass.undo">magicclass.undo module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.undo.undo_callback"><code class="docutils literal notranslate"><span class="pre">undo_callback()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.html#module-magicclass">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.FieldGroup"><code class="docutils literal notranslate"><span class="pre">FieldGroup</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.FieldGroup.callbacks"><code class="docutils literal notranslate"><span class="pre">FieldGroup.callbacks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.FieldGroup.connect"><code class="docutils literal notranslate"><span class="pre">FieldGroup.connect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.FieldGroup.copy"><code class="docutils literal notranslate"><span class="pre">FieldGroup.copy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.FieldGroup.get_widget"><code class="docutils literal notranslate"><span class="pre">FieldGroup.get_widget()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.HasFields"><code class="docutils literal notranslate"><span class="pre">HasFields</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.HasFields.signals"><code class="docutils literal notranslate"><span class="pre">HasFields.signals</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.HasFields.widgets"><code class="docutils literal notranslate"><span class="pre">HasFields.widgets</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.Icon"><code class="docutils literal notranslate"><span class="pre">Icon</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.ArrowBack"><code class="docutils literal notranslate"><span class="pre">Icon.ArrowBack</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.ArrowDown"><code class="docutils literal notranslate"><span class="pre">Icon.ArrowDown</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.ArrowForward"><code class="docutils literal notranslate"><span class="pre">Icon.ArrowForward</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.ArrowLeft"><code class="docutils literal notranslate"><span class="pre">Icon.ArrowLeft</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.ArrowRight"><code class="docutils literal notranslate"><span class="pre">Icon.ArrowRight</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.ArrowUp"><code class="docutils literal notranslate"><span class="pre">Icon.ArrowUp</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.BrowserReload"><code class="docutils literal notranslate"><span class="pre">Icon.BrowserReload</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.BrowserStop"><code class="docutils literal notranslate"><span class="pre">Icon.BrowserStop</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.CommandLink"><code class="docutils literal notranslate"><span class="pre">Icon.CommandLink</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.ComputerIcon"><code class="docutils literal notranslate"><span class="pre">Icon.ComputerIcon</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.CustomBase"><code class="docutils literal notranslate"><span class="pre">Icon.CustomBase</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DesktopIcon"><code class="docutils literal notranslate"><span class="pre">Icon.DesktopIcon</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DialogAbortButton"><code class="docutils literal notranslate"><span class="pre">Icon.DialogAbortButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DialogApplyButton"><code class="docutils literal notranslate"><span class="pre">Icon.DialogApplyButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DialogCancelButton"><code class="docutils literal notranslate"><span class="pre">Icon.DialogCancelButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DialogCloseButton"><code class="docutils literal notranslate"><span class="pre">Icon.DialogCloseButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DialogDiscardButton"><code class="docutils literal notranslate"><span class="pre">Icon.DialogDiscardButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DialogHelpButton"><code class="docutils literal notranslate"><span class="pre">Icon.DialogHelpButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DialogIgnoreButton"><code class="docutils literal notranslate"><span class="pre">Icon.DialogIgnoreButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DialogNoButton"><code class="docutils literal notranslate"><span class="pre">Icon.DialogNoButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DialogNoToAllButton"><code class="docutils literal notranslate"><span class="pre">Icon.DialogNoToAllButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DialogOkButton"><code class="docutils literal notranslate"><span class="pre">Icon.DialogOkButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DialogOpenButton"><code class="docutils literal notranslate"><span class="pre">Icon.DialogOpenButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DialogResetButton"><code class="docutils literal notranslate"><span class="pre">Icon.DialogResetButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DialogRetryButton"><code class="docutils literal notranslate"><span class="pre">Icon.DialogRetryButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DialogSaveAllButton"><code class="docutils literal notranslate"><span class="pre">Icon.DialogSaveAllButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DialogSaveButton"><code class="docutils literal notranslate"><span class="pre">Icon.DialogSaveButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DialogYesButton"><code class="docutils literal notranslate"><span class="pre">Icon.DialogYesButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DialogYesToAllButton"><code class="docutils literal notranslate"><span class="pre">Icon.DialogYesToAllButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DirClosedIcon"><code class="docutils literal notranslate"><span class="pre">Icon.DirClosedIcon</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DirHomeIcon"><code class="docutils literal notranslate"><span class="pre">Icon.DirHomeIcon</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DirIcon"><code class="docutils literal notranslate"><span class="pre">Icon.DirIcon</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DirLinkIcon"><code class="docutils literal notranslate"><span class="pre">Icon.DirLinkIcon</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DirLinkOpenIcon"><code class="docutils literal notranslate"><span class="pre">Icon.DirLinkOpenIcon</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DirOpenIcon"><code class="docutils literal notranslate"><span class="pre">Icon.DirOpenIcon</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DockWidgetCloseButton"><code class="docutils literal notranslate"><span class="pre">Icon.DockWidgetCloseButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DriveCDIcon"><code class="docutils literal notranslate"><span class="pre">Icon.DriveCDIcon</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DriveDVDIcon"><code class="docutils literal notranslate"><span class="pre">Icon.DriveDVDIcon</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DriveFDIcon"><code class="docutils literal notranslate"><span class="pre">Icon.DriveFDIcon</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DriveHDIcon"><code class="docutils literal notranslate"><span class="pre">Icon.DriveHDIcon</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.DriveNetIcon"><code class="docutils literal notranslate"><span class="pre">Icon.DriveNetIcon</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.FileDialogBack"><code class="docutils literal notranslate"><span class="pre">Icon.FileDialogBack</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.FileDialogContentsView"><code class="docutils literal notranslate"><span class="pre">Icon.FileDialogContentsView</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.FileDialogDetailedView"><code class="docutils literal notranslate"><span class="pre">Icon.FileDialogDetailedView</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.FileDialogEnd"><code class="docutils literal notranslate"><span class="pre">Icon.FileDialogEnd</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.FileDialogInfoView"><code class="docutils literal notranslate"><span class="pre">Icon.FileDialogInfoView</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.FileDialogListView"><code class="docutils literal notranslate"><span class="pre">Icon.FileDialogListView</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.FileDialogNewFolder"><code class="docutils literal notranslate"><span class="pre">Icon.FileDialogNewFolder</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.FileDialogStart"><code class="docutils literal notranslate"><span class="pre">Icon.FileDialogStart</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.FileDialogToParent"><code class="docutils literal notranslate"><span class="pre">Icon.FileDialogToParent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.FileIcon"><code class="docutils literal notranslate"><span class="pre">Icon.FileIcon</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.FileLinkIcon"><code class="docutils literal notranslate"><span class="pre">Icon.FileLinkIcon</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.LineEditClearButton"><code class="docutils literal notranslate"><span class="pre">Icon.LineEditClearButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.MediaPause"><code class="docutils literal notranslate"><span class="pre">Icon.MediaPause</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.MediaPlay"><code class="docutils literal notranslate"><span class="pre">Icon.MediaPlay</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.MediaSeekBackward"><code class="docutils literal notranslate"><span class="pre">Icon.MediaSeekBackward</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.MediaSeekForward"><code class="docutils literal notranslate"><span class="pre">Icon.MediaSeekForward</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.MediaSkipBackward"><code class="docutils literal notranslate"><span class="pre">Icon.MediaSkipBackward</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.MediaSkipForward"><code class="docutils literal notranslate"><span class="pre">Icon.MediaSkipForward</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.MediaStop"><code class="docutils literal notranslate"><span class="pre">Icon.MediaStop</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.MediaVolume"><code class="docutils literal notranslate"><span class="pre">Icon.MediaVolume</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.MediaVolumeMuted"><code class="docutils literal notranslate"><span class="pre">Icon.MediaVolumeMuted</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.MessageBoxCritical"><code class="docutils literal notranslate"><span class="pre">Icon.MessageBoxCritical</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.MessageBoxInformation"><code class="docutils literal notranslate"><span class="pre">Icon.MessageBoxInformation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.MessageBoxQuestion"><code class="docutils literal notranslate"><span class="pre">Icon.MessageBoxQuestion</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.MessageBoxWarning"><code class="docutils literal notranslate"><span class="pre">Icon.MessageBoxWarning</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.RestoreDefaultsButton"><code class="docutils literal notranslate"><span class="pre">Icon.RestoreDefaultsButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.TitleBarCloseButton"><code class="docutils literal notranslate"><span class="pre">Icon.TitleBarCloseButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.TitleBarContextHelpButton"><code class="docutils literal notranslate"><span class="pre">Icon.TitleBarContextHelpButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.TitleBarMaxButton"><code class="docutils literal notranslate"><span class="pre">Icon.TitleBarMaxButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.TitleBarMenuButton"><code class="docutils literal notranslate"><span class="pre">Icon.TitleBarMenuButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.TitleBarMinButton"><code class="docutils literal notranslate"><span class="pre">Icon.TitleBarMinButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.TitleBarNormalButton"><code class="docutils literal notranslate"><span class="pre">Icon.TitleBarNormalButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.TitleBarShadeButton"><code class="docutils literal notranslate"><span class="pre">Icon.TitleBarShadeButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.TitleBarUnshadeButton"><code class="docutils literal notranslate"><span class="pre">Icon.TitleBarUnshadeButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.ToolBarHorizontalExtensionButton"><code class="docutils literal notranslate"><span class="pre">Icon.ToolBarHorizontalExtensionButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.ToolBarVerticalExtensionButton"><code class="docutils literal notranslate"><span class="pre">Icon.ToolBarVerticalExtensionButton</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.TrashIcon"><code class="docutils literal notranslate"><span class="pre">Icon.TrashIcon</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Icon.VistaShield"><code class="docutils literal notranslate"><span class="pre">Icon.VistaShield</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.Key"><code class="docutils literal notranslate"><span class="pre">Key</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.A"><code class="docutils literal notranslate"><span class="pre">Key.A</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Alt"><code class="docutils literal notranslate"><span class="pre">Key.Alt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Ampersand"><code class="docutils literal notranslate"><span class="pre">Key.Ampersand</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Apostrophe"><code class="docutils literal notranslate"><span class="pre">Key.Apostrophe</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Asterisk"><code class="docutils literal notranslate"><span class="pre">Key.Asterisk</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.At"><code class="docutils literal notranslate"><span class="pre">Key.At</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.B"><code class="docutils literal notranslate"><span class="pre">Key.B</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Backspace"><code class="docutils literal notranslate"><span class="pre">Key.Backspace</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.C"><code class="docutils literal notranslate"><span class="pre">Key.C</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Colon"><code class="docutils literal notranslate"><span class="pre">Key.Colon</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Comma"><code class="docutils literal notranslate"><span class="pre">Key.Comma</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Ctrl"><code class="docutils literal notranslate"><span class="pre">Key.Ctrl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.D"><code class="docutils literal notranslate"><span class="pre">Key.D</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Delete"><code class="docutils literal notranslate"><span class="pre">Key.Delete</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Dollar"><code class="docutils literal notranslate"><span class="pre">Key.Dollar</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Down"><code class="docutils literal notranslate"><span class="pre">Key.Down</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.E"><code class="docutils literal notranslate"><span class="pre">Key.E</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Equal"><code class="docutils literal notranslate"><span class="pre">Key.Equal</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Exclam"><code class="docutils literal notranslate"><span class="pre">Key.Exclam</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.F"><code class="docutils literal notranslate"><span class="pre">Key.F</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.F1"><code class="docutils literal notranslate"><span class="pre">Key.F1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.F10"><code class="docutils literal notranslate"><span class="pre">Key.F10</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.F11"><code class="docutils literal notranslate"><span class="pre">Key.F11</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.F12"><code class="docutils literal notranslate"><span class="pre">Key.F12</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.F2"><code class="docutils literal notranslate"><span class="pre">Key.F2</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.F3"><code class="docutils literal notranslate"><span class="pre">Key.F3</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.F4"><code class="docutils literal notranslate"><span class="pre">Key.F4</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.F5"><code class="docutils literal notranslate"><span class="pre">Key.F5</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.F6"><code class="docutils literal notranslate"><span class="pre">Key.F6</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.F7"><code class="docutils literal notranslate"><span class="pre">Key.F7</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.F8"><code class="docutils literal notranslate"><span class="pre">Key.F8</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.F9"><code class="docutils literal notranslate"><span class="pre">Key.F9</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.G"><code class="docutils literal notranslate"><span class="pre">Key.G</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Greater"><code class="docutils literal notranslate"><span class="pre">Key.Greater</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.H"><code class="docutils literal notranslate"><span class="pre">Key.H</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.I"><code class="docutils literal notranslate"><span class="pre">Key.I</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.J"><code class="docutils literal notranslate"><span class="pre">Key.J</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.K"><code class="docutils literal notranslate"><span class="pre">Key.K</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.L"><code class="docutils literal notranslate"><span class="pre">Key.L</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Left"><code class="docutils literal notranslate"><span class="pre">Key.Left</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Less"><code class="docutils literal notranslate"><span class="pre">Key.Less</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.M"><code class="docutils literal notranslate"><span class="pre">Key.M</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Meta"><code class="docutils literal notranslate"><span class="pre">Key.Meta</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Minus"><code class="docutils literal notranslate"><span class="pre">Key.Minus</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.N"><code class="docutils literal notranslate"><span class="pre">Key.N</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.O"><code class="docutils literal notranslate"><span class="pre">Key.O</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.P"><code class="docutils literal notranslate"><span class="pre">Key.P</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.PageDown"><code class="docutils literal notranslate"><span class="pre">Key.PageDown</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.PageUp"><code class="docutils literal notranslate"><span class="pre">Key.PageUp</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.ParenLeft"><code class="docutils literal notranslate"><span class="pre">Key.ParenLeft</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.ParenRight"><code class="docutils literal notranslate"><span class="pre">Key.ParenRight</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Percent"><code class="docutils literal notranslate"><span class="pre">Key.Percent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Period"><code class="docutils literal notranslate"><span class="pre">Key.Period</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Plus"><code class="docutils literal notranslate"><span class="pre">Key.Plus</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Q"><code class="docutils literal notranslate"><span class="pre">Key.Q</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Question"><code class="docutils literal notranslate"><span class="pre">Key.Question</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.R"><code class="docutils literal notranslate"><span class="pre">Key.R</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Right"><code class="docutils literal notranslate"><span class="pre">Key.Right</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.S"><code class="docutils literal notranslate"><span class="pre">Key.S</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Semicolon"><code class="docutils literal notranslate"><span class="pre">Key.Semicolon</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Shift"><code class="docutils literal notranslate"><span class="pre">Key.Shift</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Slash"><code class="docutils literal notranslate"><span class="pre">Key.Slash</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.T"><code class="docutils literal notranslate"><span class="pre">Key.T</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Tab"><code class="docutils literal notranslate"><span class="pre">Key.Tab</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.U"><code class="docutils literal notranslate"><span class="pre">Key.U</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Up"><code class="docutils literal notranslate"><span class="pre">Key.Up</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.V"><code class="docutils literal notranslate"><span class="pre">Key.V</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.W"><code class="docutils literal notranslate"><span class="pre">Key.W</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.X"><code class="docutils literal notranslate"><span class="pre">Key.X</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Y"><code class="docutils literal notranslate"><span class="pre">Key.Y</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.Z"><code class="docutils literal notranslate"><span class="pre">Key.Z</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.to_qtkey"><code class="docutils literal notranslate"><span class="pre">Key.to_qtkey()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Key.to_qtmodifier"><code class="docutils literal notranslate"><span class="pre">Key.to_qtmodifier()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate"><code class="docutils literal notranslate"><span class="pre">MagicTemplate</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.annotation"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.annotation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.changed"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.changed</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.close"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.config_context"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.config_context()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.enabled"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.enabled</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.field"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.field()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.find_ancestor"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.find_ancestor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.gui_only"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.gui_only</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.height"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.height</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.hide"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.hide()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.icon"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.icon</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.insert"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.insert()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.label"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.label</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.label_changed"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.label_changed</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.labels"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.labels</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.layout"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.layout</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.macro"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.macro</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.margins"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.margins</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.max_height"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.max_height</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.max_width"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.max_width</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.min_height"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.min_height</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.min_width"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.min_width</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.name"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.native"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.native</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.objectName"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.objectName()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.options"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.options</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.param_kind"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.param_kind</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.parent"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.parent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.parent_changed"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.parent_changed</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.parent_dock_widget"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.parent_dock_widget</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.parent_viewer"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.parent_viewer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.render"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.render()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.reset_choices"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.reset_choices()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.show"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.show()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.tooltip"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.tooltip</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.vfield"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.vfield()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.visible"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.visible</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.widget_type"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.widget_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.width"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.width</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate.wraps"><code class="docutils literal notranslate"><span class="pre">MagicTemplate.wraps()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.Parameters"><code class="docutils literal notranslate"><span class="pre">Parameters</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.Parameters.as_dict"><code class="docutils literal notranslate"><span class="pre">Parameters.as_dict()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.PopUpMode"><code class="docutils literal notranslate"><span class="pre">PopUpMode</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.PopUpMode.above"><code class="docutils literal notranslate"><span class="pre">PopUpMode.above</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.PopUpMode.activate_magicgui"><code class="docutils literal notranslate"><span class="pre">PopUpMode.activate_magicgui()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.PopUpMode.below"><code class="docutils literal notranslate"><span class="pre">PopUpMode.below</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.PopUpMode.connect_close_callback"><code class="docutils literal notranslate"><span class="pre">PopUpMode.connect_close_callback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.PopUpMode.dialog"><code class="docutils literal notranslate"><span class="pre">PopUpMode.dialog</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.PopUpMode.dock"><code class="docutils literal notranslate"><span class="pre">PopUpMode.dock</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.PopUpMode.first"><code class="docutils literal notranslate"><span class="pre">PopUpMode.first</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.PopUpMode.last"><code class="docutils literal notranslate"><span class="pre">PopUpMode.last</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.PopUpMode.need_title_bar"><code class="docutils literal notranslate"><span class="pre">PopUpMode.need_title_bar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.PopUpMode.parentlast"><code class="docutils literal notranslate"><span class="pre">PopUpMode.parentlast</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.PopUpMode.parentsub"><code class="docutils literal notranslate"><span class="pre">PopUpMode.parentsub</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.PopUpMode.popup"><code class="docutils literal notranslate"><span class="pre">PopUpMode.popup</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.abstractapi"><code class="docutils literal notranslate"><span class="pre">abstractapi</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.abstractapi.check_resolved"><code class="docutils literal notranslate"><span class="pre">abstractapi.check_resolved()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.abstractapi.resolve"><code class="docutils literal notranslate"><span class="pre">abstractapi.resolve()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.bind_key"><code class="docutils literal notranslate"><span class="pre">bind_key()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.build_help"><code class="docutils literal notranslate"><span class="pre">build_help()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.confirm"><code class="docutils literal notranslate"><span class="pre">confirm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.dataclass_gui"><code class="docutils literal notranslate"><span class="pre">dataclass_gui()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.do_not_record"><code class="docutils literal notranslate"><span class="pre">do_not_record()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.field"><code class="docutils literal notranslate"><span class="pre">field()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.get_button"><code class="docutils literal notranslate"><span class="pre">get_button()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.get_function_gui"><code class="docutils literal notranslate"><span class="pre">get_function_gui()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.impl_preview"><code class="docutils literal notranslate"><span class="pre">impl_preview()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.magicclass"><code class="docutils literal notranslate"><span class="pre">magicclass()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.magiccontext"><code class="docutils literal notranslate"><span class="pre">magiccontext()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.magicmenu"><code class="docutils literal notranslate"><span class="pre">magicmenu()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.magicproperty"><code class="docutils literal notranslate"><span class="pre">magicproperty</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.magicproperty.copy"><code class="docutils literal notranslate"><span class="pre">magicproperty.copy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.magicproperty.deleter"><code class="docutils literal notranslate"><span class="pre">magicproperty.deleter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.magicproperty.from_setter"><code class="docutils literal notranslate"><span class="pre">magicproperty.from_setter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.magicproperty.get_widget"><code class="docutils literal notranslate"><span class="pre">magicproperty.get_widget()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.magicproperty.getter"><code class="docutils literal notranslate"><span class="pre">magicproperty.getter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#magicclass.magicproperty.setter"><code class="docutils literal notranslate"><span class="pre">magicproperty.setter()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.magictoolbar"><code class="docutils literal notranslate"><span class="pre">magictoolbar()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.mark_on_called"><code class="docutils literal notranslate"><span class="pre">mark_on_called()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.mark_on_calling"><code class="docutils literal notranslate"><span class="pre">mark_on_calling()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.mark_preview"><code class="docutils literal notranslate"><span class="pre">mark_preview()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.nogui"><code class="docutils literal notranslate"><span class="pre">nogui()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.repeat"><code class="docutils literal notranslate"><span class="pre">repeat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.set_design"><code class="docutils literal notranslate"><span class="pre">set_design()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.set_options"><code class="docutils literal notranslate"><span class="pre">set_options()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.setup_function_gui"><code class="docutils literal notranslate"><span class="pre">setup_function_gui()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.update_widget_state"><code class="docutils literal notranslate"><span class="pre">update_widget_state()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.vfield"><code class="docutils literal notranslate"><span class="pre">vfield()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#magicclass.widget_property"><code class="docutils literal notranslate"><span class="pre">widget_property()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

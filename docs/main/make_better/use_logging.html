@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="English" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Logging in magic-class &mdash; magic-class 0.7.4 documentation</title>
+  <title>Logging in magic-class &mdash; magic-class 0.7.5 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -13,9 +13,8 @@
   <![endif]-->
 
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -35,7 +34,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.4
+                0.7.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -55,6 +54,7 @@
 <li class="toctree-l2"><a class="reference internal" href="undo.html">Implement Undo/Redo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="use_choices.html">Set Choices Dynamically</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_validator.html">Validation/Normalization for Macro Recording</a></li>
 <li class="toctree-l2"><a class="reference internal" href="use_setup.html">Complicated Settings of FunctionGui</a></li>
 <li class="toctree-l2"><a class="reference internal" href="use_preview.html">Add Preview Functionalities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="use_confirm.html">Pre-run Confirmation</a></li>
@@ -110,9 +110,9 @@
            <div itemprop="articleBody">
 
   <section id="logging-in-magic-class">
-<h1>Logging in magic-class<a class="headerlink" href="#logging-in-magic-class" title="Permalink to this headline">¶</a></h1>
+<h1>Logging in magic-class<a class="headerlink" href="#logging-in-magic-class" title="Permalink to this heading">¶</a></h1>
 <section id="logger-widget">
-<h2>Logger Widget<a class="headerlink" href="#logger-widget" title="Permalink to this headline">¶</a></h2>
+<h2>Logger Widget<a class="headerlink" href="#logger-widget" title="Permalink to this heading">¶</a></h2>
 <p>It is important to keep a log if your GUI is complicated.
 In data science, it is also helpful to show the results with rich text, tables, and figures.</p>
 <p>In <a class="reference internal" href="../../apidoc/magicclass.html#module-magicclass" title="magicclass"><code class="xref py py-mod docutils literal notranslate"><span class="pre">magicclass</span></code></a>, you can use the logger widget to show the rich messages.</p>
@@ -123,7 +123,7 @@ In data science, it is also helpful to show the results with rich text, tables, 
 </pre></div>
 </div>
 <section id="print-texts">
-<h3>Print texts<a class="headerlink" href="#print-texts" title="Permalink to this headline">¶</a></h3>
+<h3>Print texts<a class="headerlink" href="#print-texts" title="Permalink to this heading">¶</a></h3>
 <p>There are several ways to show text messages.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">log</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">)</span>  <span class="c1"># print the message.</span>
 <span class="n">log</span><span class="o">.</span><span class="n">print_html</span><span class="p">(</span><span class="s2">&quot;&lt;b&gt;bold&lt;/b&gt;&lt;i&gt;italic&lt;/i&gt; &lt;code&gt;code&lt;/code&gt;&quot;</span><span class="p">)</span>  <span class="c1"># print the message with HTML.</span>
@@ -145,14 +145,14 @@ you can use the <code class="xref py py-meth docutils literal notranslate"><span
 </div>
 </section>
 <section id="print-images">
-<h3>Print images<a class="headerlink" href="#print-images" title="Permalink to this headline">¶</a></h3>
+<h3>Print images<a class="headerlink" href="#print-images" title="Permalink to this heading">¶</a></h3>
 <p>You can show 2D arrays as images with <code class="xref py py-meth docutils literal notranslate"><span class="pre">print_image()</span></code> method.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">log</span><span class="o">.</span><span class="n">print_image</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>  <span class="c1"># show the image.</span>
 </pre></div>
 </div>
 </section>
 <section id="print-tables">
-<h3>Print tables<a class="headerlink" href="#print-tables" title="Permalink to this headline">¶</a></h3>
+<h3>Print tables<a class="headerlink" href="#print-tables" title="Permalink to this heading">¶</a></h3>
 <p>Any <code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>-like objects can be shown as a table with <code class="xref py py-meth docutils literal notranslate"><span class="pre">print_table()</span></code>
 method.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">log</span><span class="o">.</span><span class="n">print_table</span><span class="p">({</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">]})</span>
@@ -161,7 +161,7 @@ method.</p>
 </div>
 </section>
 <section id="plotting">
-<h3>Plotting<a class="headerlink" href="#plotting" title="Permalink to this headline">¶</a></h3>
+<h3>Plotting<a class="headerlink" href="#plotting" title="Permalink to this heading">¶</a></h3>
 <p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">set_plt()</span></code> context manager can be used to show the <code class="xref py py-mod docutils literal notranslate"><span class="pre">matplotlib</span></code> plots in the
 logger widget.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -174,7 +174,7 @@ logger widget.</p>
 </section>
 </section>
 <section id="use-logging-submodule">
-<h2>Use <code class="docutils literal notranslate"><span class="pre">logging</span></code> Submodule<a class="headerlink" href="#use-logging-submodule" title="Permalink to this headline">¶</a></h2>
+<h2>Use <code class="docutils literal notranslate"><span class="pre">logging</span></code> Submodule<a class="headerlink" href="#use-logging-submodule" title="Permalink to this heading">¶</a></h2>
 <p><a class="reference internal" href="../../apidoc/magicclass.html#module-magicclass" title="magicclass"><code class="xref py py-mod docutils literal notranslate"><span class="pre">magicclass</span></code></a> provides a submodule <code class="docutils literal notranslate"><span class="pre">logging</span></code> to use the logger widget easily.
 Most of the methods are the same as the standard <code class="xref py py-mod docutils literal notranslate"><span class="pre">logging</span></code> module.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">logging</span>

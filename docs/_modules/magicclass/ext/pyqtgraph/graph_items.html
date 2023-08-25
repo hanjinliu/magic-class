@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.pyqtgraph.graph_items &mdash; magic-class 0.7.1 documentation</title>
+  <title>magicclass.ext.pyqtgraph.graph_items &mdash; magic-class 0.7.5 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -12,9 +12,8 @@
   <![endif]-->
 
         <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -32,7 +31,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.1
+                0.7.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -81,10 +80,10 @@
 
   <h1>Source code for magicclass.ext.pyqtgraph.graph_items</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span>
 <span class="kn">import</span> <span class="nn">pyqtgraph</span> <span class="k">as</span> <span class="nn">pg</span>
 <span class="kn">from</span> <span class="nn">qtpy</span> <span class="kn">import</span> <span class="n">QtGui</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">Signal</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">NDArray</span>
 
@@ -151,6 +150,15 @@
     <span class="nd">@ydata</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">ydata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xdata</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">getData</span><span class="p">()</span>
+
+    <span class="nd">@data</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]]):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ndata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -300,6 +308,7 @@
         <span class="n">lw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
         <span class="n">symbol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">antialias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span> <span class="o">=</span> <span class="n">_set_default_colors</span><span class="p">(</span>
             <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="p">,</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="s2">&quot;white&quot;</span>
@@ -314,6 +323,7 @@
             <span class="n">brush</span><span class="o">=</span><span class="n">brush</span><span class="p">,</span>
             <span class="n">symbolSize</span><span class="o">=</span><span class="n">size</span><span class="p">,</span>
             <span class="n">symbol</span><span class="o">=</span><span class="n">symbol</span><span class="p">,</span>
+            <span class="n">antialias</span><span class="o">=</span><span class="n">antialias</span><span class="p">,</span>
             <span class="n">symbolPen</span><span class="o">=</span><span class="n">pen</span><span class="p">,</span>
             <span class="n">symbolBrush</span><span class="o">=</span><span class="n">brush</span><span class="p">,</span>
         <span class="p">)</span>
@@ -356,7 +366,16 @@
     <span class="k">def</span> <span class="nf">face_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">):</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setSymbolBrush</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setSymbolBrush</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">antialias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;antialias&quot;</span><span class="p">]</span>
+
+    <span class="nd">@antialias</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">antialias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;antialias&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">updateItems</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Histogram"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Histogram">[docs]</a><span class="k">class</span> <span class="nc">Histogram</span><span class="p">(</span><span class="n">PlotDataLayer</span><span class="p">):</span>
@@ -587,6 +606,113 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">pen</span><span class="o">.</span><span class="n">setStyle</span><span class="p">(</span><span class="n">_ls</span><span class="p">)</span>
 
     <span class="n">linestyle</span> <span class="o">=</span> <span class="n">ls</span>  <span class="c1"># alias</span></div>
+
+
+<div class="viewcode-block" id="NativeInfCurve"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.NativeInfCurve">[docs]</a><span class="k">class</span> <span class="nc">NativeInfCurve</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">PlotDataItem</span><span class="p">):</span>
+    <span class="n">sigViewRangeChanged</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NativeInfCurve.viewRangeChanged"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.NativeInfCurve.viewRangeChanged">[docs]</a>    <span class="k">def</span> <span class="nf">viewRangeChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vb</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ranges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">changed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">viewRangeChanged</span><span class="p">(</span><span class="n">vb</span><span class="p">,</span> <span class="n">ranges</span><span class="p">,</span> <span class="n">changed</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ranges</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigViewRangeChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">ranges</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="InfCurve"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfCurve">[docs]</a><span class="k">class</span> <span class="nc">InfCurve</span><span class="p">(</span><span class="n">LayerItem</span><span class="p">):</span>
+    <span class="n">native</span><span class="p">:</span> <span class="n">NativeInfCurve</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">face_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">edge_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">lw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
+        <span class="n">symbol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">antialias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span> <span class="o">=</span> <span class="n">_set_default_colors</span><span class="p">(</span>
+            <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="p">,</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="s2">&quot;white&quot;</span>
+        <span class="p">)</span>
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">mkPen</span><span class="p">(</span><span class="n">edge_color</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">_LINE_STYLE</span><span class="p">[</span><span class="n">ls</span><span class="p">])</span>
+        <span class="n">brush</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">mkBrush</span><span class="p">(</span><span class="n">face_color</span><span class="p">)</span>
+        <span class="n">symbol</span> <span class="o">=</span> <span class="n">_SYMBOL_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">symbol</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span> <span class="o">=</span> <span class="n">NativeInfCurve</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="p">[],</span>
+            <span class="n">y</span><span class="o">=</span><span class="p">[],</span>
+            <span class="n">pen</span><span class="o">=</span><span class="n">pen</span><span class="p">,</span>
+            <span class="n">brush</span><span class="o">=</span><span class="n">brush</span><span class="p">,</span>
+            <span class="n">symbolSize</span><span class="o">=</span><span class="n">size</span><span class="p">,</span>
+            <span class="n">symbol</span><span class="o">=</span><span class="n">symbol</span><span class="p">,</span>
+            <span class="n">antialias</span><span class="o">=</span><span class="n">antialias</span><span class="p">,</span>
+            <span class="n">symbolPen</span><span class="o">=</span><span class="n">pen</span><span class="p">,</span>
+            <span class="n">symbolBrush</span><span class="o">=</span><span class="n">brush</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_func</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">sigViewRangeChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_create_data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_create_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ranges</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]):</span>
+        <span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">),</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ranges</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">isval</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">isval</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">isval</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_func</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+
+    <span class="nd">@name</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="n">color</span> <span class="o">=</span> <span class="nb">property</span><span class="p">()</span>
+
+    <span class="nd">@color</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set face color and edge color at the same time.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">face_color</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edge_color</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Line width.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">width</span><span class="p">()</span>
+
+    <span class="nd">@lw</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">lw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setWidth</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="n">linewidth</span> <span class="o">=</span> <span class="n">lw</span>  <span class="c1"># alias</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ls</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Line style.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">style</span><span class="p">()</span>
+
+    <span class="nd">@ls</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">ls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">_ls</span> <span class="o">=</span> <span class="n">_LINE_STYLE</span><span class="p">[</span><span class="n">value</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setStyle</span><span class="p">(</span><span class="n">_ls</span><span class="p">)</span>
+
+    <span class="n">linestyle</span> <span class="o">=</span> <span class="n">ls</span>  <span class="c1"># alias</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">antialias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;antialias&quot;</span><span class="p">]</span>
+
+    <span class="nd">@antialias</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">antialias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;antialias&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">updateItems</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="FillBetween"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.FillBetween">[docs]</a><span class="k">class</span> <span class="nc">FillBetween</span><span class="p">(</span><span class="n">PlotDataLayer</span><span class="p">):</span>

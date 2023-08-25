@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.pyqtgraph.widgets &mdash; magic-class 0.7.1 documentation</title>
+  <title>magicclass.ext.pyqtgraph.widgets &mdash; magic-class 0.7.5 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -12,9 +12,8 @@
   <![endif]-->
 
         <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -32,7 +31,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.1
+                0.7.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -84,7 +83,15 @@
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">pyqtgraph</span> <span class="k">as</span> <span class="nn">pg</span>
 <span class="kn">from</span> <span class="nn">pyqtgraph</span> <span class="kn">import</span> <span class="n">colormap</span> <span class="k">as</span> <span class="n">cmap</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">overload</span><span class="p">,</span> <span class="n">MutableSequence</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">Generic</span><span class="p">,</span>
+    <span class="n">Iterator</span><span class="p">,</span>
+    <span class="n">Sequence</span><span class="p">,</span>
+    <span class="n">TypeVar</span><span class="p">,</span>
+    <span class="n">overload</span><span class="p">,</span>
+    <span class="n">MutableSequence</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">.components</span> <span class="kn">import</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">Legend</span><span class="p">,</span> <span class="n">Region</span><span class="p">,</span> <span class="n">ScaleBar</span><span class="p">,</span> <span class="n">TextItem</span>
@@ -93,6 +100,7 @@
     <span class="n">Curve</span><span class="p">,</span>
     <span class="n">FillBetween</span><span class="p">,</span>
     <span class="n">InfLine</span><span class="p">,</span>
+    <span class="n">InfCurve</span><span class="p">,</span>
     <span class="n">LayerItem</span><span class="p">,</span>
     <span class="n">Scatter</span><span class="p">,</span>
     <span class="n">Histogram</span><span class="p">,</span>
@@ -193,6 +201,7 @@
         <span class="n">lw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
         <span class="n">symbol</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">antialias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Curve</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a line plot like ``plt.plot(x, y)``.</span>
@@ -222,6 +231,7 @@
             <span class="n">lw</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span>
             <span class="n">ls</span><span class="o">=</span><span class="n">ls</span><span class="p">,</span>
             <span class="n">symbol</span><span class="o">=</span><span class="n">symbol</span><span class="p">,</span>
+            <span class="n">antialias</span><span class="o">=</span><span class="n">antialias</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">item</span></div>
@@ -481,6 +491,55 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">item</span></div>
 
+<div class="viewcode-block" id="HasDataItems.add_infcurve"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_infcurve">[docs]</a>    <span class="nd">@write_docs</span>
+    <span class="k">def</span> <span class="nf">add_infcurve</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">face_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">edge_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">lw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
+        <span class="n">symbol</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">antialias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Curve</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a function and plot it.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        func : callable</span>
+<span class="sd">            A function that takes a 1-D array and returns a 1-D array.</span>
+<span class="sd">        {face_color}{edge_color}{color}</span>
+<span class="sd">        size: float, default is 7</span>
+<span class="sd">            Symbol size.</span>
+<span class="sd">        {name}{lw}{ls}{symbol}</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Curve</span>
+<span class="sd">            A plot item of a curve.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_unique_name</span><span class="p">(</span><span class="n">name</span> <span class="ow">or</span> <span class="s2">&quot;InfCurve&quot;</span><span class="p">)</span>
+        <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span> <span class="o">=</span> <span class="n">_check_colors</span><span class="p">(</span><span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">InfCurve</span><span class="p">(</span>
+            <span class="n">func</span><span class="p">,</span>
+            <span class="n">face_color</span><span class="o">=</span><span class="n">face_color</span><span class="p">,</span>
+            <span class="n">edge_color</span><span class="o">=</span><span class="n">edge_color</span><span class="p">,</span>
+            <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">lw</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span>
+            <span class="n">ls</span><span class="o">=</span><span class="n">ls</span><span class="p">,</span>
+            <span class="n">symbol</span><span class="o">=</span><span class="n">symbol</span><span class="p">,</span>
+            <span class="n">antialias</span><span class="o">=</span><span class="n">antialias</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">xlim</span> <span class="o">:=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;xlim&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xlim</span> <span class="o">=</span> <span class="n">xlim</span>
+        <span class="k">return</span> <span class="n">item</span></div>
+
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="nf">add_text</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -684,6 +743,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">setBorder</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
 <div class="viewcode-block" id="HasViewBox.auto_range"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasViewBox.auto_range">[docs]</a>    <span class="k">def</span> <span class="nf">auto_range</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Auto range the viewbox.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">autoRange</span><span class="p">()</span></div></div>
 
 
@@ -991,7 +1051,13 @@
     <span class="nd">@background_color</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">background_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span><span class="o">.</span><span class="n">setBackground</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span><span class="o">.</span><span class="n">setBackground</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HasBackground.to_clipboard"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasBackground.to_clipboard">[docs]</a>    <span class="k">def</span> <span class="nf">to_clipboard</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy the image to clipboard.&quot;&quot;&quot;</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="n">get_app</span><span class="p">()</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">grab</span><span class="p">()</span><span class="o">.</span><span class="n">toImage</span><span class="p">()</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">clipboard</span><span class="p">()</span><span class="o">.</span><span class="n">setImage</span><span class="p">(</span><span class="n">img</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="QtPlotCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtPlotCanvas">[docs]</a><span class="k">class</span> <span class="nc">QtPlotCanvas</span><span class="p">(</span><span class="n">HasBackground</span><span class="p">,</span> <span class="n">PlotItem</span><span class="p">):</span>
@@ -1157,6 +1223,10 @@
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">_C</span><span class="p">]:</span>
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_axes</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of axes.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_axes</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="QtMultiPlotCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtMultiPlotCanvas">[docs]</a><span class="k">class</span> <span class="nc">QtMultiPlotCanvas</span><span class="p">(</span><span class="n">_MultiPlot</span><span class="p">[</span><span class="n">PlotItem</span><span class="p">]):</span>

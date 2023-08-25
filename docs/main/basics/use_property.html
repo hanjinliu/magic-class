@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="English" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Use magicproperty in magic-class &mdash; magic-class 0.7.4 documentation</title>
+  <title>Use magicproperty in magic-class &mdash; magic-class 0.7.5 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -13,9 +13,8 @@
   <![endif]-->
 
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -35,7 +34,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.4
+                0.7.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -96,15 +95,15 @@
            <div itemprop="articleBody">
 
   <section id="use-magicproperty-in-magic-class">
-<h1>Use magicproperty in magic-class<a class="headerlink" href="#use-magicproperty-in-magic-class" title="Permalink to this headline">¶</a></h1>
-<div class="contents local topic" id="contents">
+<h1>Use magicproperty in magic-class<a class="headerlink" href="#use-magicproperty-in-magic-class" title="Permalink to this heading">¶</a></h1>
+<nav class="contents local" id="contents">
 <p class="topic-title">Contents</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#how-to-use-magicproperty" id="id1">How to Use <code class="docutils literal notranslate"><span class="pre">magicproperty</span></code></a></p></li>
 <li><p><a class="reference internal" href="#configuration-of-magicproperty" id="id2">Configuration of <code class="docutils literal notranslate"><span class="pre">magicproperty</span></code></a></p></li>
 <li><p><a class="reference internal" href="#setter-only-property" id="id3">Setter-only property</a></p></li>
 </ul>
-</div>
+</nav>
 <p>In <a class="reference internal" href="../../apidoc/magicclass.html#module-magicclass" title="magicclass"><code class="xref py py-mod docutils literal notranslate"><span class="pre">magicclass</span></code></a>, properties will not be conveted into widgets.
 The reason for this is that properties are usually used to get references
 to one of the child widgets.</p>
@@ -128,7 +127,7 @@ a <code class="docutils literal notranslate"><span class="pre">FunctionGui</span
 <p><code class="docutils literal notranslate"><span class="pre">magicproperty</span></code> is a subclass of <code class="docutils literal notranslate"><span class="pre">MagicField</span></code>.</p>
 </div>
 <section id="how-to-use-magicproperty">
-<h2><a class="toc-backref" href="#id1">How to Use <code class="docutils literal notranslate"><span class="pre">magicproperty</span></code></a><a class="headerlink" href="#how-to-use-magicproperty" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">How to Use <code class="docutils literal notranslate"><span class="pre">magicproperty</span></code></a><a class="headerlink" href="#how-to-use-magicproperty" title="Permalink to this heading">¶</a></h2>
 <p>Basically, it is used exactly the same as the built-in <code class="docutils literal notranslate"><span class="pre">property</span></code> class,
 except that you have to provide at least one type annotation for widget
 creation.</p>
@@ -164,7 +163,7 @@ creation.</p>
 </div>
 </section>
 <section id="configuration-of-magicproperty">
-<h2><a class="toc-backref" href="#id2">Configuration of <code class="docutils literal notranslate"><span class="pre">magicproperty</span></code></a><a class="headerlink" href="#configuration-of-magicproperty" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Configuration of <code class="docutils literal notranslate"><span class="pre">magicproperty</span></code></a><a class="headerlink" href="#configuration-of-magicproperty" title="Permalink to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">magicproperty</span></code> can be configured similar to <code class="docutils literal notranslate"><span class="pre">magicgui</span></code>.
 Here's some examples of how to configure.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@magicclass</span>
@@ -192,7 +191,7 @@ Here's some examples of how to configure.</p>
 </div>
 </section>
 <section id="setter-only-property">
-<h2><a class="toc-backref" href="#id3">Setter-only property</a><a class="headerlink" href="#setter-only-property" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Setter-only property</a><a class="headerlink" href="#setter-only-property" title="Permalink to this heading">¶</a></h2>
 <p>Although it's rare, built-in <code class="docutils literal notranslate"><span class="pre">property</span></code> can be setter-only. In this case, you
 can only set a value and getting a value is forbidden.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">A</span><span class="p">:</span>

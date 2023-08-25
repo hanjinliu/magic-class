@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="English" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.testing package &mdash; magic-class 0.7.4 documentation</title>
+  <title>magicclass.testing package &mdash; magic-class 0.7.5 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -13,9 +13,8 @@
   <![endif]-->
 
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -35,7 +34,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.4
+                0.7.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -111,47 +110,54 @@
            <div itemprop="articleBody">
 
   <section id="magicclass-testing-package">
-<h1>magicclass.testing package<a class="headerlink" href="#magicclass-testing-package" title="Permalink to this headline">¶</a></h1>
+<h1>magicclass.testing package<a class="headerlink" href="#magicclass-testing-package" title="Permalink to this heading">¶</a></h1>
 <section id="module-magicclass.testing">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-magicclass.testing" title="Permalink to this headline">¶</a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-magicclass.testing" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.testing.FunctionGuiTester">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.testing.</span></span><span class="sig-name descname"><span class="pre">FunctionGuiTester</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">magicclass.testing._function_gui_test._R</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/testing/_function_gui_test.html#FunctionGuiTester"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.testing.FunctionGuiTester" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">magicclass.testing._function_gui_test._P</span></code>]</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.testing.</span></span><span class="sig-name descname"><span class="pre">FunctionGuiTester</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_R</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/testing/_function_gui_test.html#FunctionGuiTester"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.testing.FunctionGuiTester" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">_P</span></code>]</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.testing.FunctionGuiTester.call">
-<span class="sig-name descname"><span class="pre">call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*args:</span> <span class="pre">typing.~_P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs:</span> <span class="pre">typing.~_P</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/testing/_function_gui_test.html#FunctionGuiTester.call"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.testing.FunctionGuiTester.call" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*args:</span> <span class="pre">~typing.~_P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs:</span> <span class="pre">~typing.~_P</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/testing/_function_gui_test.html#FunctionGuiTester.call"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.testing.FunctionGuiTester.call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call the method as if it is called from the GUI.</p>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.testing.FunctionGuiTester.call_count">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">call_count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#magicclass.testing.FunctionGuiTester.call_count" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Number of times the method is called.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.testing.FunctionGuiTester.click_preview">
 <span class="sig-name descname"><span class="pre">click_preview</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/testing/_function_gui_test.html#FunctionGuiTester.click_preview"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.testing.FunctionGuiTester.click_preview" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Emulate the preview button click.</p>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.testing.FunctionGuiTester.confirm_count">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">confirm_count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#magicclass.testing.FunctionGuiTester.confirm_count" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Number of times the confirmation is called.</p>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.testing.FunctionGuiTester.has_confirmation">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">has_confirmation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#magicclass.testing.FunctionGuiTester.has_confirmation" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>True if the method has confirmation function.</p>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.testing.FunctionGuiTester.has_preview">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">has_preview</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#magicclass.testing.FunctionGuiTester.has_preview" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>True if the method has preview function.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.testing.FunctionGuiTester.update_parameters">
 <span class="sig-name descname"><span class="pre">update_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/testing/_function_gui_test.html#FunctionGuiTester.update_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.testing.FunctionGuiTester.update_parameters" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Update the parameters of the function GUI.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -195,13 +201,13 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="magicclass.testing.check_function_gui_buildable">
-<span class="sig-prename descclassname"><span class="pre">magicclass.testing.</span></span><span class="sig-name descname"><span class="pre">check_function_gui_buildable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ui</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate" title="magicclass._gui._base.MagicTemplate"><span class="pre">magicclass._gui._base.MagicTemplate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">skips</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/testing/_gui_test.html#check_function_gui_buildable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.testing.check_function_gui_buildable" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">magicclass.testing.</span></span><span class="sig-name descname"><span class="pre">check_function_gui_buildable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ui</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate" title="magicclass._gui._base.MagicTemplate"><span class="pre">MagicTemplate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">skips</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/testing/_gui_test.html#check_function_gui_buildable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.testing.check_function_gui_buildable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assert that all methods in <code class="docutils literal notranslate"><span class="pre">ui</span></code> can be built into GUI.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="magicclass.testing.check_tooltip">
-<span class="sig-prename descclassname"><span class="pre">magicclass.testing.</span></span><span class="sig-name descname"><span class="pre">check_tooltip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ui</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate" title="magicclass._gui._base.MagicTemplate"><span class="pre">magicclass._gui._base.MagicTemplate</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/testing/_gui_test.html#check_tooltip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.testing.check_tooltip" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">magicclass.testing.</span></span><span class="sig-name descname"><span class="pre">check_tooltip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ui</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="magicclass.html#magicclass.MagicTemplate" title="magicclass._gui._base.MagicTemplate"><span class="pre">MagicTemplate</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/testing/_gui_test.html#check_tooltip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.testing.check_tooltip" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>

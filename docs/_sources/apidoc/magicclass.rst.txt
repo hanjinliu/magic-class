@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   magicclass.box
    magicclass.ext
    magicclass.fields
    magicclass.functools

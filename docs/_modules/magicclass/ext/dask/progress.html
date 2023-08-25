@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.dask.progress &mdash; magic-class 0.7.4 documentation</title>
+  <title>magicclass.ext.dask.progress &mdash; magic-class 0.7.5 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -12,9 +12,8 @@
   <![endif]-->
 
         <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -32,7 +31,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.4
+                0.7.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -164,13 +163,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_frac</span> <span class="o">=</span> <span class="mf">1.0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_running</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-        <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="nf">_on_timer_updated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span><span class="o">.</span><span class="n">sec</span> <span class="o">&lt;</span> <span class="mi">3600</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">time_label</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span><span class="o">.</span><span class="n">format_time</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{min:0&gt;2}</span><span class="s2">:</span><span class="si">{sec:0&gt;2}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">time_label</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span><span class="o">.</span><span class="n">format_time</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="DaskProgressBar.set_worker"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.dask.html#magicclass.ext.dask.progress.DaskProgressBar.set_worker">[docs]</a>    <span class="k">def</span> <span class="nf">set_worker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">worker</span><span class="p">:</span> <span class="n">GeneratorWorker</span> <span class="o">|</span> <span class="n">FunctionWorker</span><span class="p">):</span>
@@ -306,7 +298,7 @@
             <span class="nd">@wraps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="p">)</span>
             <span class="k">def</span> <span class="nf">_wrapped</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="k">with</span> <span class="n">pbar</span><span class="p">:</span>
-                    <span class="k">with</span> <span class="n">gui</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
+                    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_context</span><span class="p">(</span><span class="n">gui</span><span class="p">):</span>
                         <span class="n">out</span> <span class="o">=</span> <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">out</span>
 
@@ -315,7 +307,7 @@
             <span class="nd">@wraps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="p">)</span>
             <span class="k">def</span> <span class="nf">_wrapped</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="k">with</span> <span class="n">pbar</span><span class="p">:</span>
-                    <span class="k">with</span> <span class="n">gui</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
+                    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_context</span><span class="p">(</span><span class="n">gui</span><span class="p">):</span>
                         <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">out</span>
 

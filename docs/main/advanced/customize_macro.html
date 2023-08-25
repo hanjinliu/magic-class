@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="English" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Customize Macro Recording &mdash; magic-class 0.7.4 documentation</title>
+  <title>Customize Macro Recording &mdash; magic-class 0.7.5 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -13,9 +13,8 @@
   <![endif]-->
 
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -35,7 +34,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.4
+                0.7.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -94,11 +93,11 @@
            <div itemprop="articleBody">
 
   <section id="customize-macro-recording">
-<h1>Customize Macro Recording<a class="headerlink" href="#customize-macro-recording" title="Permalink to this headline">¶</a></h1>
+<h1>Customize Macro Recording<a class="headerlink" href="#customize-macro-recording" title="Permalink to this heading">¶</a></h1>
 <p>Magic class depends its macro recording functionalities on <a class="reference external" href="https://github.com/hanjinliu/macro-kit">macro-kit</a>.
 To customize macro recording, you can use functions and methods in <code class="docutils literal notranslate"><span class="pre">macrokit</span></code>.</p>
 <section id="define-how-to-record-objects">
-<h2>Define How to Record Objects<a class="headerlink" href="#define-how-to-record-objects" title="Permalink to this headline">¶</a></h2>
+<h2>Define How to Record Objects<a class="headerlink" href="#define-how-to-record-objects" title="Permalink to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">macrokit</span></code> does not record all the values as strings because the string form of a value could be
 very long (such as an image data). To define a rule of how to record a certain type of objects, you
 can use <code class="docutils literal notranslate"><span class="pre">register_type</span></code> function (actually this is how <code class="docutils literal notranslate"><span class="pre">magic-class</span></code> registers <code class="docutils literal notranslate"><span class="pre">Path</span></code> and

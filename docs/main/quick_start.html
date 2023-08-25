@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="English" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quick Start &mdash; magic-class 0.7.4 documentation</title>
+  <title>Quick Start &mdash; magic-class 0.7.5 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -13,9 +13,8 @@
   <![endif]-->
 
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -35,7 +34,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.4
+                0.7.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -98,8 +97,8 @@
            <div itemprop="articleBody">
 
   <section id="quick-start">
-<h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h1>
-<div class="contents local topic" id="contents">
+<h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this heading">¶</a></h1>
+<nav class="contents local" id="contents">
 <p class="topic-title">Contents</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#basics" id="id1">Basics</a></p></li>
@@ -117,9 +116,9 @@
 <li><p><a class="reference internal" href="#build-command-palette-widget-automatically" id="id10">Build Command Palette Widget Automatically</a></p></li>
 <li><p><a class="reference internal" href="#add-functions-after-construction" id="id11">Add Functions after Construction</a></p></li>
 </ul>
-</div>
+</nav>
 <section id="basics">
-<h2><a class="toc-backref" href="#id1">Basics</a><a class="headerlink" href="#basics" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Basics</a><a class="headerlink" href="#basics" title="Permalink to this heading">¶</a></h2>
 <p>In <code class="docutils literal notranslate"><span class="pre">magicgui</span></code>, you can convert functions into widgets. For instance,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicgui</span> <span class="kn">import</span> <span class="n">magicgui</span>
 
@@ -170,7 +169,7 @@ a tool bar, using <code class="docutils literal notranslate"><span class="pre">&
 Go to <a class="reference internal" href="basics/nest.html"><span class="doc">Nest magic-classes</span></a> for more details.</p>
 </section>
 <section id="use-other-widgets-in-magic-class">
-<h2><a class="toc-backref" href="#id2">Use Other Widgets in magic-class</a><a class="headerlink" href="#use-other-widgets-in-magic-class" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Use Other Widgets in magic-class</a><a class="headerlink" href="#use-other-widgets-in-magic-class" title="Permalink to this heading">¶</a></h2>
 <p>Magic classes can also detect other <code class="docutils literal notranslate"><span class="pre">magicgui</span></code>'s widgets.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">LineEdit</span><span class="p">,</span> <span class="n">Slider</span>
 <span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
@@ -215,7 +214,7 @@ but <code class="docutils literal notranslate"><span class="pre">FunctionGui</sp
 <img alt="../_images/fig_1-3.png" src="../_images/fig_1-3.png" />
 </section>
 <section id="gui-specific-settings">
-<h2><a class="toc-backref" href="#id3">GUI-specific Settings</a><a class="headerlink" href="#gui-specific-settings" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">GUI-specific Settings</a><a class="headerlink" href="#gui-specific-settings" title="Permalink to this heading">¶</a></h2>
 <p>In <a class="reference internal" href="../apidoc/magicclass.html#module-magicclass" title="magicclass"><code class="xref py py-mod docutils literal notranslate"><span class="pre">magicclass</span></code></a>, GUI-specific settings are defined by decorators to keep code tidy.</p>
 <p>&quot;GUI-specific settings&quot; include</p>
 <ul class="simple">
@@ -224,7 +223,7 @@ but <code class="docutils literal notranslate"><span class="pre">FunctionGui</sp
 <li><p>Whether to be recorded to macro.</p></li>
 </ul>
 <section id="parameter-options">
-<h3><a class="toc-backref" href="#id4">Parameter Options</a><a class="headerlink" href="#parameter-options" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Parameter Options</a><a class="headerlink" href="#parameter-options" title="Permalink to this heading">¶</a></h3>
 <p>In <code class="docutils literal notranslate"><span class="pre">magicgui</span></code> you can define parameter options with keyword arguments:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@magicgui</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;widget_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Slider&quot;</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
 <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span> <span class="o">...</span>
@@ -246,7 +245,7 @@ but <code class="docutils literal notranslate"><span class="pre">FunctionGui</sp
 <img alt="../_images/fig_1-4.png" src="../_images/fig_1-4.png" />
 </section>
 <section id="change-button-designs">
-<h3><a class="toc-backref" href="#id5">Change Button Designs</a><a class="headerlink" href="#change-button-designs" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Change Button Designs</a><a class="headerlink" href="#change-button-designs" title="Permalink to this heading">¶</a></h3>
 <p>Aside from those options of <code class="docutils literal notranslate"><span class="pre">magicgui</span></code> popup widget to run functions, you may also want to change
 the design of button itself. <code class="docutils literal notranslate"><span class="pre">magicclass</span></code> uses <code class="docutils literal notranslate"><span class="pre">set_design</span></code> decorator to do this.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">set_design</span>
@@ -264,7 +263,7 @@ the design of button itself. <code class="docutils literal notranslate"><span cl
 </section>
 </section>
 <section id="post-initialization">
-<h2><a class="toc-backref" href="#id6">Post Initialization</a><a class="headerlink" href="#post-initialization" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Post Initialization</a><a class="headerlink" href="#post-initialization" title="Permalink to this heading">¶</a></h2>
 <p>Widgets are constructed only after <code class="docutils literal notranslate"><span class="pre">__init__</span></code> is called. To change widget designs or
 geometries, you should not call those methods in <code class="docutils literal notranslate"><span class="pre">__init__</span></code> because they are not
 constructed yet.</p>
@@ -284,7 +283,7 @@ initalization procedure. It is called after widget is completely built.</p>
 </div>
 </section>
 <section id="code-completion">
-<h2><a class="toc-backref" href="#id7">Code Completion</a><a class="headerlink" href="#code-completion" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Code Completion</a><a class="headerlink" href="#code-completion" title="Permalink to this heading">¶</a></h2>
 <p>A problem of using decorators to overwrite classes is code completion. When you are
 coding, the classes do not inherits magic classes yet, so IDE and console don't know
 they will have attributes such as <code class="docutils literal notranslate"><span class="pre">self.parent_viewer</span></code> or <code class="docutils literal notranslate"><span class="pre">self.name</span></code>.</p>
@@ -300,7 +299,7 @@ information of typings and annotations.</p>
 </div>
 </section>
 <section id="macro-recording">
-<h2><a class="toc-backref" href="#id8">Macro Recording</a><a class="headerlink" href="#macro-recording" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Macro Recording</a><a class="headerlink" href="#macro-recording" title="Permalink to this heading">¶</a></h2>
 <p>Another outstanding feature of magic class is its <strong>macro recorder functionalities</strong>.
 Function calls and value changes in child widgets are all recorded and you can generate
 executable Python script at any time.</p>
@@ -336,7 +335,7 @@ widgets. You can prevent macro recording with <code class="docutils literal notr
 </div>
 </section>
 <section id="make-document-of-your-widgets-automatically">
-<h2><a class="toc-backref" href="#id9">Make Document of Your Widgets Automatically</a><a class="headerlink" href="#make-document-of-your-widgets-automatically" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Make Document of Your Widgets Automatically</a><a class="headerlink" href="#make-document-of-your-widgets-automatically" title="Permalink to this heading">¶</a></h2>
 <p>It is usually time consuming to make a help menu of a widget all the way. You also have to keep
 it updated whenever UI changed.</p>
 <p>Magic class has a powerful help widget builder. You can create a help widget using <code class="docutils literal notranslate"><span class="pre">build_help</span></code>
@@ -356,7 +355,7 @@ and parameter annotations of functions are summerized with rich texts.</p>
 <img alt="../_images/fig_1-5.png" src="../_images/fig_1-5.png" />
 </section>
 <section id="build-command-palette-widget-automatically">
-<h2><a class="toc-backref" href="#id10">Build Command Palette Widget Automatically</a><a class="headerlink" href="#build-command-palette-widget-automatically" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Build Command Palette Widget Automatically</a><a class="headerlink" href="#build-command-palette-widget-automatically" title="Permalink to this heading">¶</a></h2>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 0.6.14.</span></p>
 </div>
@@ -390,7 +389,7 @@ package.</p>
 <p>In the example above, two commands <code class="docutils literal notranslate"><span class="pre">Main:</span> <span class="pre">func</span></code> and <code class="docutils literal notranslate"><span class="pre">Main.SubClass:</span> <span class="pre">func</span> <span class="pre">sub</span></code> will be registered.</p>
 </section>
 <section id="add-functions-after-construction">
-<h2><a class="toc-backref" href="#id11">Add Functions after Construction</a><a class="headerlink" href="#add-functions-after-construction" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Add Functions after Construction</a><a class="headerlink" href="#add-functions-after-construction" title="Permalink to this heading">¶</a></h2>
 <p>Making a button or menu action dynamically is also useful, especially when you already have a
 UI platform but you still want some extensions like plugin system. You don't have to worry
 about that since magic class construction itself is dynamic. Just <code class="docutils literal notranslate"><span class="pre">append</span></code> well-typed

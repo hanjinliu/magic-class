@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.codeedit &mdash; magic-class 0.7.4 documentation</title>
+  <title>magicclass.widgets.codeedit &mdash; magic-class 0.7.5 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -12,9 +12,8 @@
   <![endif]-->
 
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -32,7 +31,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.4
+                0.7.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -234,42 +233,30 @@
                 <span class="k">elif</span> <span class="n">_key</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_Slash</span> <span class="ow">and</span> <span class="n">_mod</span> <span class="o">&amp;</span> <span class="n">Mod</span><span class="o">.</span><span class="n">Ctrl</span><span class="p">:</span>
                     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ctrl_slash_event</span><span class="p">()</span>
                 <span class="c1"># move selected lines up or down</span>
-                <span class="k">elif</span> <span class="p">(</span>
-                    <span class="n">_key</span> <span class="ow">in</span> <span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_Up</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_Down</span><span class="p">)</span>
-                    <span class="ow">and</span> <span class="n">_mod</span> <span class="o">&amp;</span> <span class="n">Qt</span><span class="o">.</span><span class="n">KeyboardModifier</span><span class="o">.</span><span class="n">AltModifier</span>
-                <span class="p">):</span>
+                <span class="k">elif</span> <span class="n">_key</span> <span class="ow">in</span> <span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_Up</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_Down</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_mod</span> <span class="o">&amp;</span> <span class="n">Mod</span><span class="o">.</span><span class="n">Alt</span><span class="p">:</span>
                     <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
                     <span class="n">cursor0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
                     <span class="n">start</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">selectionStart</span><span class="p">()</span>
                     <span class="n">end</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">selectionEnd</span><span class="p">()</span>
+                    <span class="n">Op</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span>
+                    <span class="n">_keep</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveMode</span><span class="o">.</span><span class="n">KeepAnchor</span>
                     <span class="k">if</span> <span class="n">_key</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_Up</span> <span class="ow">and</span> <span class="nb">min</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                         <span class="n">cursor0</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
-                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
-                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">PreviousBlock</span>
-                        <span class="p">)</span>
-                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
-                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">StartOfLine</span>
-                        <span class="p">)</span>
-                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
-                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">EndOfLine</span><span class="p">,</span>
-                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveMode</span><span class="o">.</span><span class="n">KeepAnchor</span><span class="p">,</span>
-                        <span class="p">)</span>
-                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
-                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">NextCharacter</span><span class="p">,</span>
-                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveMode</span><span class="o">.</span><span class="n">KeepAnchor</span><span class="p">,</span>
-                        <span class="p">)</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">Op</span><span class="o">.</span><span class="n">PreviousBlock</span><span class="p">)</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">Op</span><span class="o">.</span><span class="n">StartOfLine</span><span class="p">)</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">Op</span><span class="o">.</span><span class="n">EndOfLine</span><span class="p">,</span> <span class="n">_keep</span><span class="p">)</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">Op</span><span class="o">.</span><span class="n">NextCharacter</span><span class="p">,</span> <span class="n">_keep</span><span class="p">)</span>
                         <span class="n">txt</span> <span class="o">=</span> <span class="n">cursor0</span><span class="o">.</span><span class="n">selectedText</span><span class="p">()</span>
                         <span class="n">cursor0</span><span class="o">.</span><span class="n">removeSelectedText</span><span class="p">()</span>
-                        <span class="n">cursor0</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span>
-                            <span class="n">cursor</span><span class="o">.</span><span class="n">selectionEnd</span><span class="p">()</span>
-                        <span class="p">)</span>  <span class="c1"># NOTE: cursor position changed!</span>
-                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">EndOfLine</span><span class="p">)</span>
+                        <span class="c1"># NOTE: cursor position changed!</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">cursor</span><span class="o">.</span><span class="n">selectionEnd</span><span class="p">())</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">Op</span><span class="o">.</span><span class="n">EndOfLine</span><span class="p">)</span>
                         <span class="k">if</span> <span class="n">cursor0</span><span class="o">.</span><span class="n">position</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">document</span><span class="p">()</span><span class="o">.</span><span class="n">characterCount</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
                             <span class="n">cursor0</span><span class="o">.</span><span class="n">insertText</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
                             <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\u2029</span><span class="s2">&quot;</span><span class="p">)</span>
-                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
-                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">NextCharacter</span>
-                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="n">cursor</span><span class="o">.</span><span class="n">position</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">document</span><span class="p">()</span><span class="o">.</span><span class="n">characterCount</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">Op</span><span class="o">.</span><span class="n">Up</span><span class="p">)</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">Op</span><span class="o">.</span><span class="n">NextCharacter</span><span class="p">)</span>
                         <span class="n">cursor0</span><span class="o">.</span><span class="n">insertText</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">setTextCursor</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span>
                     <span class="k">elif</span> <span class="p">(</span>
@@ -277,29 +264,18 @@
                         <span class="ow">and</span> <span class="nb">max</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">document</span><span class="p">()</span><span class="o">.</span><span class="n">characterCount</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
                     <span class="p">):</span>
                         <span class="n">cursor0</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
-                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">EndOfLine</span><span class="p">)</span>
-                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
-                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">NextCharacter</span><span class="p">,</span>
-                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveMode</span><span class="o">.</span><span class="n">KeepAnchor</span><span class="p">,</span>
-                        <span class="p">)</span>
-                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
-                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">EndOfLine</span><span class="p">,</span>
-                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveMode</span><span class="o">.</span><span class="n">KeepAnchor</span><span class="p">,</span>
-                        <span class="p">)</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">Op</span><span class="o">.</span><span class="n">EndOfLine</span><span class="p">)</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">Op</span><span class="o">.</span><span class="n">NextCharacter</span><span class="p">,</span> <span class="n">_keep</span><span class="p">)</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">Op</span><span class="o">.</span><span class="n">EndOfLine</span><span class="p">,</span> <span class="n">_keep</span><span class="p">)</span>
                         <span class="n">txt</span> <span class="o">=</span> <span class="n">cursor0</span><span class="o">.</span><span class="n">selectedText</span><span class="p">()</span>
                         <span class="n">cursor0</span><span class="o">.</span><span class="n">removeSelectedText</span><span class="p">()</span>
-                        <span class="n">cursor0</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span>
-                            <span class="n">cursor</span><span class="o">.</span><span class="n">selectionStart</span><span class="p">()</span>
-                        <span class="p">)</span>  <span class="c1"># NOTE: cursor position changed!</span>
-                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
-                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">StartOfLine</span>
-                        <span class="p">)</span>
+                        <span class="c1"># NOTE: cursor position changed!</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">cursor</span><span class="o">.</span><span class="n">selectionStart</span><span class="p">())</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">Op</span><span class="o">.</span><span class="n">StartOfLine</span><span class="p">)</span>
                         <span class="k">if</span> <span class="n">cursor0</span><span class="o">.</span><span class="n">position</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                             <span class="n">cursor0</span><span class="o">.</span><span class="n">insertText</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
                             <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\u2029</span><span class="s2">&quot;</span><span class="p">)</span>
-                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
-                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">PreviousCharacter</span>
-                        <span class="p">)</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">Op</span><span class="o">.</span><span class="n">PreviousCharacter</span><span class="p">)</span>
                         <span class="n">cursor0</span><span class="o">.</span><span class="n">insertText</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">setTextCursor</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span>
                     <span class="k">return</span> <span class="kc">True</span>

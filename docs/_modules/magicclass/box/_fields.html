@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>magicclass.box._fields &mdash; magic-class 0.7.5 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+</head>
+
+<body class="wy-body-for-nav">
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+
+          <a href="../../../index.html" class="icon icon-home">
+            magic-class
+          </a>
+              <div class="version">
+                0.7.5
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/quick_start.html">Quick Start</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/basics/index.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/make_better/index.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/visualization/index.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/advanced/index.html">Advanced Topics</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/best_practice.html">Best Practice</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass.box._fields</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <h1>Source code for magicclass.box._fields</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Any</span><span class="p">,</span>
+    <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">TYPE_CHECKING</span><span class="p">,</span>
+    <span class="n">Generic</span><span class="p">,</span>
+    <span class="n">Literal</span><span class="p">,</span>
+    <span class="n">Protocol</span><span class="p">,</span>
+    <span class="n">TypeVar</span><span class="p">,</span>
+    <span class="n">overload</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Concatenate</span><span class="p">,</span> <span class="n">ParamSpec</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets.bases</span> <span class="kn">import</span> <span class="n">Widget</span><span class="p">,</span> <span class="n">ValueWidget</span><span class="p">,</span> <span class="n">ContainerWidget</span>
+<span class="kn">from</span> <span class="nn">magicclass.fields</span> <span class="kn">import</span> <span class="n">MagicField</span><span class="p">,</span> <span class="n">MagicValueField</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">magicclass.fields._define</span> <span class="kn">import</span> <span class="n">define_callback</span><span class="p">,</span> <span class="n">define_callback_gui</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">magicclass._gui</span> <span class="kn">import</span> <span class="n">MagicTemplate</span>
+    <span class="kn">from</span> <span class="nn">magicclass.widgets._box</span> <span class="kn">import</span> <span class="n">SingleWidgetBox</span>
+
+<span class="n">_W</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_W&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Widget</span><span class="p">)</span>
+<span class="n">_V</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_V&quot;</span><span class="p">)</span>
+<span class="n">_F</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_F&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Callable</span><span class="p">)</span>
+<span class="n">_P</span> <span class="o">=</span> <span class="n">ParamSpec</span><span class="p">(</span><span class="s2">&quot;_P&quot;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_FieldConstructor</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">_W</span><span class="p">]):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">fld</span><span class="p">:</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">],</span>
+        <span class="n">box_cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">SingleWidgetBox</span><span class="p">],</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_field</span> <span class="o">=</span> <span class="n">fld</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_box_cls</span> <span class="o">=</span> <span class="n">box_cls</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_box_cls_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">field</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_field</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SingleWidgetBox</span><span class="p">[</span><span class="n">_W</span><span class="p">]:</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_box_cls</span><span class="o">.</span><span class="n">from_widget</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_box_cls_kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">BoxMagicField</span><span class="p">(</span><span class="n">MagicField</span><span class="p">[</span><span class="s2">&quot;SingleWidgetBox[_W]&quot;</span><span class="p">],</span> <span class="n">Generic</span><span class="p">[</span><span class="n">_W</span><span class="p">]):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_field</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">fld</span><span class="p">:</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">],</span>
+        <span class="n">box_cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">SingleWidgetBox</span><span class="p">],</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoxMagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a field object from another field.&quot;&quot;&quot;</span>
+        <span class="n">constructor</span> <span class="o">=</span> <span class="n">_FieldConstructor</span><span class="p">(</span><span class="n">fld</span><span class="p">,</span> <span class="n">box_cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">fld</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">fld</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="n">fld</span><span class="o">.</span><span class="n">label</span><span class="p">,</span>
+            <span class="n">annotation</span><span class="o">=</span><span class="n">fld</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span>
+            <span class="n">widget_type</span><span class="o">=</span><span class="n">box_cls</span><span class="p">,</span>
+            <span class="n">options</span><span class="o">=</span><span class="n">fld</span><span class="o">.</span><span class="n">options</span><span class="p">,</span>
+            <span class="n">record</span><span class="o">=</span><span class="n">fld</span><span class="o">.</span><span class="n">record</span><span class="p">,</span>
+            <span class="n">constructor</span><span class="o">=</span><span class="n">constructor</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_widget_type</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">widget_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_W</span><span class="p">],</span>
+        <span class="n">box_cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">SingleWidgetBox</span><span class="p">],</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoxMagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a field object from a widget type.&quot;&quot;&quot;</span>
+        <span class="n">fld</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">widget_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_field</span><span class="p">(</span><span class="n">fld</span><span class="p">,</span> <span class="n">box_cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_any</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">box_cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">SingleWidgetBox</span><span class="p">],</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoxMagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a field object from any types.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">MagicField</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_field</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">box_cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_widget_type</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">box_cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot make BoxMagicField from </span><span class="si">{</span><span class="n">obj</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SingleWidgetBox</span><span class="p">[</span><span class="n">_W</span><span class="p">]:</span>
+        <span class="kn">from</span> <span class="nn">magicclass._gui</span> <span class="kn">import</span> <span class="n">MagicTemplate</span>
+
+        <span class="n">obj_id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">box</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_guis</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">obj_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_guis</span><span class="p">[</span><span class="n">obj_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">box</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <span class="n">box</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">inner</span> <span class="o">=</span> <span class="n">box</span><span class="o">.</span><span class="n">widget</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inner</span><span class="p">,</span> <span class="p">(</span><span class="n">ValueWidget</span><span class="p">,</span> <span class="n">ContainerWidget</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
+                    <span class="n">_def</span> <span class="o">=</span> <span class="n">define_callback_gui</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">_def</span> <span class="o">=</span> <span class="n">define_callback</span>
+                <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="p">:</span>
+                    <span class="c1"># funcname = callback.__name__</span>
+                    <span class="n">inner</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_def</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">callback</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">box</span>
+
+    <span class="k">def</span> <span class="nf">as_getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a function that get the value of Widget or Action.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_guis</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">obj</span><span class="p">)]</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">objtype</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoxMagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">objtype</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_W</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">objtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get widget for the object.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="n">_unbox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_widget</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+
+    <span class="c1"># fmt: off</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">wraps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">_F</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">template</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_F</span><span class="p">:</span> <span class="o">...</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">wraps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">template</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">_F</span><span class="p">],</span> <span class="n">_F</span><span class="p">]:</span> <span class="o">...</span>
+    <span class="c1"># fmt: on</span>
+
+    <span class="k">def</span> <span class="nf">wraps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        method : Callable, optional</span>
+<span class="sd">            Method of parent class.</span>
+<span class="sd">        template : Callable, optional</span>
+<span class="sd">            Function template for signature.</span>
+<span class="sd">        copy: bool, default is False</span>
+<span class="sd">            If true, wrapped method is still enabled.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Callable</span>
+<span class="sd">            Same method as input, but has updated signature.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">magicclass._gui</span> <span class="kn">import</span> <span class="n">BaseGui</span>
+
+        <span class="n">cst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">constructor</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cst</span><span class="p">,</span> <span class="n">_FieldConstructor</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">cst</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="n">template</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">cst</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">cst</span><span class="p">,</span> <span class="n">BaseGui</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;The wraps method cannot be used for any objects but magic class.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">cst</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="n">template</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">BoxMagicValueField</span><span class="p">(</span><span class="n">BoxMagicField</span><span class="p">[</span><span class="n">ValueWidget</span><span class="p">[</span><span class="n">_V</span><span class="p">]]):</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">objtype</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoxMagicValueField</span><span class="p">[</span><span class="n">_V</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">objtype</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_V</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">objtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get widget for the object.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="n">_unbox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_widget</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="k">def</span> <span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">_V</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot set </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="n">_unbox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_widget</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+
+
+<span class="k">def</span> <span class="nf">_unbox</span><span class="p">(</span><span class="n">w</span><span class="p">:</span> <span class="n">SingleWidgetBox</span><span class="p">[</span><span class="n">_W</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">_W</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">magicclass.widgets._box</span> <span class="kn">import</span> <span class="n">SingleWidgetBox</span>
+
+    <span class="k">while</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">SingleWidgetBox</span><span class="p">):</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">widget</span>
+    <span class="k">return</span> <span class="n">w</span>
+
+
+<span class="k">class</span> <span class="nc">BoxProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">[</span><span class="n">_P</span><span class="p">]):</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">fld</span><span class="p">:</span> <span class="n">BoxMagicValueField</span><span class="p">[</span><span class="n">_V</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">_P</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_P</span><span class="o">.</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoxMagicValueField</span><span class="p">[</span><span class="n">_V</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">fld</span><span class="p">:</span> <span class="n">BoxMagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">_P</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_P</span><span class="o">.</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoxMagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">fld</span><span class="p">:</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">_V</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">_P</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_P</span><span class="o">.</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoxMagicValueField</span><span class="p">[</span><span class="n">_V</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">fld</span><span class="p">:</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">_P</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_P</span><span class="o">.</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoxMagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">widget_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_W</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">_P</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_P</span><span class="o">.</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoxMagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+
+<span class="c1"># fmt: off</span>
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_boxifier</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">Concatenate</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">_P</span><span class="p">],</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">BoxProtocol</span><span class="p">[</span><span class="n">_P</span><span class="p">]:</span> <span class="o">...</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">_boxifier</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+<span class="c1"># fmt: on</span>
+
+
+<div class="viewcode-block" id="resizable"><a class="viewcode-back" href="../../../apidoc/magicclass.box.html#magicclass.box.resizable">[docs]</a><span class="nd">@_boxifier</span>
+<span class="k">def</span> <span class="nf">resizable</span><span class="p">(</span>
+    <span class="n">obj</span><span class="p">,</span>
+    <span class="n">x_enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">y_enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a widget or a field to a resizable one.&quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">magicclass.widgets._box</span> <span class="kn">import</span> <span class="n">ResizableBox</span>
+
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x_enabled&quot;</span><span class="p">:</span> <span class="n">x_enabled</span><span class="p">,</span> <span class="s2">&quot;y_enabled&quot;</span><span class="p">:</span> <span class="n">y_enabled</span><span class="p">}</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="n">MagicValueField</span><span class="p">,</span> <span class="n">BoxMagicValueField</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">BoxMagicValueField</span><span class="o">.</span><span class="n">from_field</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">ResizableBox</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">BoxMagicField</span><span class="o">.</span><span class="n">from_any</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">ResizableBox</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="draggable"><a class="viewcode-back" href="../../../apidoc/magicclass.box.html#magicclass.box.draggable">[docs]</a><span class="nd">@_boxifier</span>
+<span class="k">def</span> <span class="nf">draggable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a widget or a field to a draggable one.&quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">magicclass.widgets._box</span> <span class="kn">import</span> <span class="n">DraggableBox</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="n">MagicValueField</span><span class="p">,</span> <span class="n">BoxMagicValueField</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">BoxMagicValueField</span><span class="o">.</span><span class="n">from_field</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">DraggableBox</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">BoxMagicField</span><span class="o">.</span><span class="n">from_any</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">DraggableBox</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="scrollable"><a class="viewcode-back" href="../../../apidoc/magicclass.box.html#magicclass.box.scrollable">[docs]</a><span class="nd">@_boxifier</span>
+<span class="k">def</span> <span class="nf">scrollable</span><span class="p">(</span>
+    <span class="n">obj</span><span class="p">,</span>
+    <span class="n">x_enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">y_enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a widget or a field to a scrollable one.&quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">magicclass.widgets._box</span> <span class="kn">import</span> <span class="n">ScrollableBox</span>
+
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x_enabled&quot;</span><span class="p">:</span> <span class="n">x_enabled</span><span class="p">,</span> <span class="s2">&quot;y_enabled&quot;</span><span class="p">:</span> <span class="n">y_enabled</span><span class="p">}</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="n">MagicValueField</span><span class="p">,</span> <span class="n">BoxMagicValueField</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">BoxMagicValueField</span><span class="o">.</span><span class="n">from_field</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">ScrollableBox</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">BoxMagicField</span><span class="o">.</span><span class="n">from_any</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">ScrollableBox</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="collapsible"><a class="viewcode-back" href="../../../apidoc/magicclass.box.html#magicclass.box.collapsible">[docs]</a><span class="nd">@_boxifier</span>
+<span class="k">def</span> <span class="nf">collapsible</span><span class="p">(</span>
+    <span class="n">obj</span><span class="p">,</span>
+    <span class="n">orientation</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;horizontal&quot;</span><span class="p">,</span> <span class="s2">&quot;vertical&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;vertical&quot;</span><span class="p">,</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a widget or a field to a collapsible one.&quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">magicclass.widgets._box</span> <span class="kn">import</span> <span class="n">CollapsibleBox</span><span class="p">,</span> <span class="n">HCollapsibleBox</span>
+
+    <span class="k">if</span> <span class="n">orientation</span> <span class="o">==</span> <span class="s2">&quot;vertical&quot;</span><span class="p">:</span>
+        <span class="n">box_cls</span> <span class="o">=</span> <span class="n">CollapsibleBox</span>
+    <span class="k">elif</span> <span class="n">orientation</span> <span class="o">==</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">:</span>
+        <span class="n">box_cls</span> <span class="o">=</span> <span class="n">HCollapsibleBox</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid orientation: </span><span class="si">{</span><span class="n">orientation</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">}</span> <span class="k">if</span> <span class="n">text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="n">MagicValueField</span><span class="p">,</span> <span class="n">BoxMagicValueField</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">BoxMagicValueField</span><span class="o">.</span><span class="n">from_field</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">box_cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">BoxMagicField</span><span class="o">.</span><span class="n">from_any</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">box_cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+</body>
+</html>

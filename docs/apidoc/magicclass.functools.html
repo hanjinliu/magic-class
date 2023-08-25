@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="English" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.functools package &mdash; magic-class 0.7.4 documentation</title>
+  <title>magicclass.functools package &mdash; magic-class 0.7.5 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -13,9 +13,8 @@
   <![endif]-->
 
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -35,7 +34,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.4
+                0.7.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -111,21 +110,21 @@
            <div itemprop="articleBody">
 
   <section id="magicclass-functools-package">
-<h1>magicclass.functools package<a class="headerlink" href="#magicclass-functools-package" title="Permalink to this headline">¶</a></h1>
+<h1>magicclass.functools package<a class="headerlink" href="#magicclass-functools-package" title="Permalink to this heading">¶</a></h1>
 <section id="module-magicclass.functools">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-magicclass.functools" title="Permalink to this headline">¶</a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-magicclass.functools" title="Permalink to this heading">¶</a></h2>
 <p>A magic-class submodule that mimics the built-in <code class="docutils literal notranslate"><span class="pre">functools</span></code> module.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.functools.partial">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.functools.</span></span><span class="sig-name descname"><span class="pre">partial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/functools/_partial.html#partial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.functools.partial" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">functools.partial</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">partial</span></code></p>
 <p>Partialize a function and its signature.</p>
 <p>This object is similar to <code class="docutils literal notranslate"><span class="pre">functools.partial</span></code>, but it also update
 widget options to build magicgui widget with subset of widgets. More
 precisely, partializing <code class="docutils literal notranslate"><span class="pre">x=0</span></code> will add option
 <code class="docutils literal notranslate"><span class="pre">x={&quot;gui_only&quot;:</span> <span class="pre">True,</span> <span class="pre">&quot;widget_type&quot;:</span> <span class="pre">EmptyWidget,</span> <span class="pre">&quot;visible&quot;:</span> <span class="pre">False}</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>func</strong> (<em>Callable</em>) -- Callable object to be partialized.</p>
 </dd>
 </dl>
@@ -152,14 +151,14 @@ precisely, partializing <code class="docutils literal notranslate"><span class="
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.functools.partialmethod">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.functools.</span></span><span class="sig-name descname"><span class="pre">partialmethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/functools/_partial.html#partialmethod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.functools.partialmethod" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">functools.partialmethod</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">partialmethod</span></code></p>
 <p>Partialize a method and its signature.</p>
 <p>This object is similar to <code class="docutils literal notranslate"><span class="pre">functools.partialmethod</span></code>, but it also update
 widget options to build magicgui widget with subset of widgets. More
 precisely, partializing <code class="docutils literal notranslate"><span class="pre">x=0</span></code> will add option
 <code class="docutils literal notranslate"><span class="pre">x={&quot;gui_only&quot;:</span> <span class="pre">True,</span> <span class="pre">&quot;widget_type&quot;:</span> <span class="pre">EmptyWidget,</span> <span class="pre">&quot;visible&quot;:</span> <span class="pre">False}</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>func</strong> (<em>Callable</em>) -- Callable object to be partialized.</p>
 </dd>
 </dl>
@@ -189,15 +188,15 @@ are also possible using <code class="docutils literal notranslate"><span class="
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.functools.singledispatchmethod">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.functools.</span></span><span class="sig-name descname"><span class="pre">singledispatchmethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/functools/_dispatch.html#singledispatchmethod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.functools.singledispatchmethod" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">functools.singledispatchmethod</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">singledispatchmethod</span></code></p>
 <p>Single dispatch method aware of GUI options in magic-class.</p>
 <p>Dispatched functions are converted into a multi-valued widget. GUI configurations
 are also possible using <code class="docutils literal notranslate"><span class="pre">&#64;set_options</span></code> decorator.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.functools.singledispatchmethod.register">
-<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">_AnnotatedAlias</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'{}'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/functools/_dispatch.html#singledispatchmethod.register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.functools.singledispatchmethod.register" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">_AnnotatedAlias</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/functools/_dispatch.html#singledispatchmethod.register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.functools.singledispatchmethod.register" title="Permalink to this definition">¶</a></dt>
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'{}'</span></span></em><span class="sig-paren">)</span></dt>
+<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span></dt>
 <dd><p>generic_method.register(cls, func) -&gt; func</p>
 <p>Registers a new implementation for the given <em>cls</em> on a <em>generic_method</em>.</p>
 </dd></dl>
@@ -206,18 +205,18 @@ are also possible using <code class="docutils literal notranslate"><span class="
 
 <dl class="py function">
 <dt class="sig sig-object py" id="magicclass.functools.wraps">
-<span class="sig-prename descclassname"><span class="pre">magicclass.functools.</span></span><span class="sig-name descname"><span class="pre">wraps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">inspect.Signature</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">magicclass.functools._wraps._C</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">magicclass.functools._wraps._C</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/magicclass/functools/_wraps.html#wraps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.functools.wraps" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">magicclass.functools.</span></span><span class="sig-name descname"><span class="pre">wraps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Signature</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">_C</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_C</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/magicclass/functools/_wraps.html#wraps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.functools.wraps" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update signature using a template. If class is wrapped, then all the methods
 except for those start with &quot;__&quot; will be wrapped.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>template</strong> (<em>Callable</em><em> or </em><em>inspect.Signature object</em>) -- Template function or its signature.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A wrapper which take a function or class as an input and returns same
 function or class with updated signature(s).</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Callable</p>
 </dd>
 </dl>

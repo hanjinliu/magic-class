@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.containers &mdash; magic-class 0.7.4 documentation</title>
+  <title>magicclass.widgets.containers &mdash; magic-class 0.7.5 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -12,9 +12,8 @@
   <![endif]-->
 
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -32,7 +31,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.4
+                0.7.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -82,10 +81,10 @@
   <h1>Source code for magicclass.widgets.containers</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">TypeVar</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">qtpy</span> <span class="kn">import</span> <span class="n">QtWidgets</span> <span class="k">as</span> <span class="n">QtW</span><span class="p">,</span> <span class="n">QtCore</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QEvent</span><span class="p">,</span> <span class="n">QSize</span>
+<span class="kn">from</span> <span class="nn">qtpy</span> <span class="kn">import</span> <span class="n">QtWidgets</span> <span class="k">as</span> <span class="n">QtW</span><span class="p">,</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QSize</span>
 
 <span class="kn">from</span> <span class="nn">magicgui.application</span> <span class="kn">import</span> <span class="n">use_app</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">Widget</span>
@@ -104,28 +103,32 @@
 <span class="n">C</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">ContainerWidget</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="wrap_container"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.containers.wrap_container">[docs]</a><span class="k">def</span> <span class="nf">wrap_container</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">C</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">C</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Provide a wrapper for a new container widget with a new protocol.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="wrap_container"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.containers.wrap_container">[docs]</a><span class="k">def</span> <span class="nf">wrap_container</span><span class="p">(</span>
+    <span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">C</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">base</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">additionals</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">C</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Provide a wrapper for containers widget with a new protocol.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]:</span>
         <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="n">app</span> <span class="o">=</span> <span class="n">use_app</span><span class="p">()</span>
             <span class="k">assert</span> <span class="n">app</span><span class="o">.</span><span class="n">native</span>
             <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;widget_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">base</span>
+            <span class="n">_container_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">additionals</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                    <span class="n">_container_kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="nb">super</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">_container_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
         <span class="bp">cls</span><span class="o">.</span><span class="fm">__init__</span> <span class="o">=</span> <span class="fm">__init__</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="n">merge_super_sigs</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span>
 
     <span class="k">return</span> <span class="n">wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="k">if</span> <span class="bp">cls</span> <span class="k">else</span> <span class="n">wrapper</span></div>
-
-
-<span class="k">def</span> <span class="nf">_btn_text_warning</span><span class="p">():</span>
-    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&#39;btn_text&#39; is deprecated and will be removed soon. Please use &#39;text&#39;.&quot;</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">_Splitter</span><span class="p">(</span><span class="n">ContainerBase</span><span class="p">):</span>
@@ -263,10 +266,31 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+            <span class="n">policy</span> <span class="o">=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarPolicy</span><span class="o">.</span><span class="n">ScrollBarAsNeeded</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">policy</span> <span class="o">=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarPolicy</span><span class="o">.</span><span class="n">ScrollBarAlwaysOff</span>
+        <span class="k">return</span> <span class="n">policy</span>
+
+    <span class="k">def</span> <span class="nf">x_scrollable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">xpolicy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="o">.</span><span class="n">horizontalScrollBarPolicy</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">xpolicy</span> <span class="o">!=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarPolicy</span><span class="o">.</span><span class="n">ScrollBarAlwaysOff</span>
+
+    <span class="k">def</span> <span class="nf">set_x_scrollable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="o">.</span><span class="n">setHorizontalScrollBarPolicy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">y_scrollable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ypolicy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="o">.</span><span class="n">verticalScrollBarPolicy</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ypolicy</span> <span class="o">!=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarPolicy</span><span class="o">.</span><span class="n">ScrollBarAlwaysOff</span>
+
+    <span class="k">def</span> <span class="nf">set_y_scrollable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="o">.</span><span class="n">setVerticalScrollBarPolicy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
 
 <span class="k">class</span> <span class="nc">_WheelDisabledScrollArea</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QScrollArea</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">eventFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QEvent</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="o">==</span> <span class="n">QEvent</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">Wheel</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">eventFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QEvent</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QEvent</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">Wheel</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">eventFilter</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span>
 
@@ -572,6 +596,70 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_groupbox</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 
 
+<span class="k">class</span> <span class="nc">_SizeGrip</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QSizeGrip</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setFixedHeight</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_pos</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y_resizable</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x_resizable</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">mousePressEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a0</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMouseEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">a0</span><span class="o">.</span><span class="n">button</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">MouseButton</span><span class="o">.</span><span class="n">LeftButton</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_last_pos</span> <span class="o">=</span> <span class="n">a0</span><span class="o">.</span><span class="n">globalPos</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">mouseReleaseEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a0</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMouseEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_pos</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">mouseMoveEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a0</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMouseEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_pos</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">a0</span><span class="o">.</span><span class="n">globalPos</span><span class="p">()</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_pos</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+            <span class="n">dy</span> <span class="o">=</span> <span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_pos</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
+            <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parentWidget</span><span class="p">()</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">width</span><span class="p">()</span>
+            <span class="n">height</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_resizable</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">width</span> <span class="o">+</span> <span class="n">dx</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">:</span>
+                    <span class="n">width</span> <span class="o">+=</span> <span class="n">dx</span>
+                <span class="n">parent</span><span class="o">.</span><span class="n">setFixedWidth</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_resizable</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">height</span> <span class="o">+</span> <span class="n">dy</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">:</span>
+                    <span class="n">height</span> <span class="o">+=</span> <span class="n">dy</span>
+                <span class="n">parent</span><span class="o">.</span><span class="n">setFixedHeight</span><span class="p">(</span><span class="n">height</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_last_pos</span> <span class="o">=</span> <span class="n">pos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCursor</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CursorShape</span><span class="o">.</span><span class="n">SizeFDiagCursor</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">moveEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ev</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMoveEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># to avoid changing the size grip icon</span>
+        <span class="k">return</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="o">.</span><span class="n">moveEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ev</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_ResizableContainer</span><span class="p">(</span><span class="n">ContainerBase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">,</span> <span class="n">scrollable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">QBaseWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">layout</span> <span class="o">==</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">:</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QLayout</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignmentFlag</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignmentFlag</span><span class="o">.</span><span class="n">AlignTop</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">())</span>
+        <span class="n">_size_grip</span> <span class="o">=</span> <span class="n">_SizeGrip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span>
+            <span class="n">_size_grip</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">AlignmentFlag</span><span class="o">.</span><span class="n">AlignBottom</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">AlignmentFlag</span><span class="o">.</span><span class="n">AlignRight</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setSpacing</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_size_grip</span> <span class="o">=</span> <span class="n">_size_grip</span>
+
+
 <span class="c1"># Container Widgets</span>
 
 
@@ -627,9 +715,27 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">native_stacked_widget</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 
 
-<span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_ScrollableContainer</span><span class="p">)</span>
+<span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_ScrollableContainer</span><span class="p">,</span> <span class="n">additionals</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x_enabled&quot;</span><span class="p">,</span> <span class="s2">&quot;y_enabled&quot;</span><span class="p">])</span>
 <span class="k">class</span> <span class="nc">ScrollableContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A scrollable Container Widget.&quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">x_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether the widget is scrollable in x direction.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">x_scrollable</span><span class="p">()</span>
+
+    <span class="nd">@x_enabled</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">x_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">set_x_scrollable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">y_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether the widget is scrollable in y direction.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">y_scrollable</span><span class="p">()</span>
+
+    <span class="nd">@y_enabled</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">y_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">set_y_scrollable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_DraggableContainer</span><span class="p">)</span>
@@ -637,22 +743,13 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A draggable Container Widget.&quot;&quot;&quot;</span>
 
 
-<span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_ButtonContainer</span><span class="p">)</span>
+<span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_ButtonContainer</span><span class="p">,</span> <span class="n">additionals</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">])</span>
 <span class="k">class</span> <span class="nc">ButtonContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A Container Widget hidden in a button.&quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">btn_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">_btn_text_warning</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-
-    <span class="nd">@btn_text</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">btn_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">_btn_text_warning</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The text of the button.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
 
     <span class="nd">@text</span><span class="o">.</span><span class="n">setter</span>
@@ -660,19 +757,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 
 
-<span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_VCollapsibleContainer</span><span class="p">)</span>
+<span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_VCollapsibleContainer</span><span class="p">,</span> <span class="n">additionals</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;collapsed&quot;</span><span class="p">])</span>
 <span class="k">class</span> <span class="nc">CollapsibleContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A collapsible Container Widget.&quot;&quot;&quot;</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">btn_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">_btn_text_warning</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-
-    <span class="nd">@btn_text</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">btn_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">_btn_text_warning</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -694,7 +781,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_expand</span><span class="p">()</span>
 
 
-<span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_HCollapsibleContainer</span><span class="p">)</span>
+<span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_HCollapsibleContainer</span><span class="p">,</span> <span class="n">additionals</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;collapsed&quot;</span><span class="p">])</span>
 <span class="k">class</span> <span class="nc">HCollapsibleContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A collapsible Container Widget.&quot;&quot;&quot;</span>
 
@@ -765,6 +852,29 @@
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_FrameContainer</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">FrameContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A QGroupBox like container without title.&quot;&quot;&quot;</span>
+
+
+<span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_ResizableContainer</span><span class="p">,</span> <span class="n">additionals</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x_enabled&quot;</span><span class="p">,</span> <span class="s2">&quot;y_enabled&quot;</span><span class="p">])</span>
+<span class="k">class</span> <span class="nc">ResizableContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A resizable Container Widget.&quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">x_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether the widget is resizable in x direction.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_size_grip</span><span class="o">.</span><span class="n">_x_resizable</span>
+
+    <span class="nd">@x_enabled</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">x_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_size_grip</span><span class="o">.</span><span class="n">_x_resizable</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">y_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether the widget is resizable in y direction.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_size_grip</span><span class="o">.</span><span class="n">_y_resizable</span>
+
+    <span class="nd">@y_enabled</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">y_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_size_grip</span><span class="o">.</span><span class="n">_y_resizable</span> <span class="o">=</span> <span class="n">value</span>
 </pre></div>
 
            </div>

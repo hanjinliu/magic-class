@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.command_palette &mdash; magic-class 0.7.4 documentation</title>
+  <title>magicclass.command_palette &mdash; magic-class 0.7.5 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -12,9 +12,8 @@
   <![endif]-->
 
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -32,7 +31,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.4
+                0.7.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -88,8 +87,8 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span>
 <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Literal</span>
 <span class="kn">from</span> <span class="nn">qt_command_palette</span> <span class="kn">import</span> <span class="n">get_palette</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">Widget</span>
 <span class="kn">from</span> <span class="nn">magicclass._gui</span> <span class="kn">import</span> <span class="n">BaseGui</span>
-<span class="kn">from</span> <span class="nn">magicclass._gui.class_gui</span> <span class="kn">import</span> <span class="n">ClassGuiBase</span>
 <span class="kn">from</span> <span class="nn">magicclass._gui.mgui_ext</span> <span class="kn">import</span> <span class="n">Clickable</span><span class="p">,</span> <span class="n">is_clickable</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
@@ -101,6 +100,9 @@
 <div class="viewcode-block" id="exec_command_palette"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.command_palette.exec_command_palette">[docs]</a><span class="k">def</span> <span class="nf">exec_command_palette</span><span class="p">(</span>
     <span class="n">gui</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">,</span>
     <span class="n">alignment</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;screen&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Widget</span><span class="p">,</span> <span class="n">Clickable</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">desc</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Widget</span><span class="p">,</span> <span class="n">Clickable</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="nb">filter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Widget</span><span class="p">,</span> <span class="n">Clickable</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Register all the methods available from GUI to the command palette.</span>
@@ -121,6 +123,18 @@
 <span class="sd">        Magic-class instance.</span>
 <span class="sd">    alignment : &quot;parent&quot; or &quot;screen&quot;, default is &quot;parent&quot;</span>
 <span class="sd">        How to align the command palette.</span>
+<span class="sd">    title : callable, optional</span>
+<span class="sd">        Formatter function for the title of each command. The function should</span>
+<span class="sd">        take two arguments. For a command corresponding to a button, the first</span>
+<span class="sd">        argument is the parent magic-class instance, and the second argument</span>
+<span class="sd">        is the button widget itself.</span>
+<span class="sd">    desc : callable, optional</span>
+<span class="sd">        Formatter function for the description of each command. The function</span>
+<span class="sd">        takes the same arguments as `title`.</span>
+<span class="sd">    filter : callable, optional</span>
+<span class="sd">        Filter function for the commands. The function should take the same</span>
+<span class="sd">        arguments as `title`. If the function returns False, the command will</span>
+<span class="sd">        not be registered.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="n">gui</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">_id</span> <span class="ow">in</span> <span class="n">_PALETTES</span><span class="p">:</span>
@@ -128,16 +142,24 @@
     <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;magicclass-</span><span class="si">{</span><span class="nb">id</span><span class="p">(</span><span class="n">gui</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="n">palette</span> <span class="o">=</span> <span class="n">get_palette</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">alignment</span><span class="o">=</span><span class="n">alignment</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">mcls</span><span class="p">,</span> <span class="n">btn</span><span class="p">:</span> <span class="nb">type</span><span class="p">(</span><span class="n">mcls</span><span class="p">)</span><span class="o">.</span><span class="vm">__qualname__</span>
+    <span class="k">if</span> <span class="n">desc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">mcls</span><span class="p">,</span> <span class="n">btn</span><span class="p">:</span> <span class="n">btn</span><span class="o">.</span><span class="n">text</span>
+    <span class="k">if</span> <span class="nb">filter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">filter</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">mcls</span><span class="p">,</span> <span class="n">btn</span><span class="p">:</span> <span class="kc">True</span>
+
     <span class="n">processed</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">parent</span><span class="p">,</span> <span class="n">wdt</span> <span class="ow">in</span> <span class="n">_iter_executable</span><span class="p">(</span><span class="n">gui</span><span class="p">):</span>
         <span class="n">_id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="n">wdt</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">_id</span> <span class="ow">in</span> <span class="n">processed</span><span class="p">:</span>
             <span class="k">continue</span>
-        <span class="n">_qualname</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span><span class="o">.</span><span class="vm">__qualname__</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">filter</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">wdt</span><span class="p">):</span>
+            <span class="k">continue</span>
         <span class="n">palette</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
             <span class="n">_define_command</span><span class="p">(</span><span class="n">wdt</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">emit</span><span class="p">),</span>
-            <span class="n">title</span><span class="o">=</span><span class="n">_qualname</span><span class="p">,</span>
-            <span class="n">desc</span><span class="o">=</span><span class="n">wdt</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">wdt</span><span class="p">),</span>
+            <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">wdt</span><span class="p">),</span>
             <span class="n">when</span><span class="o">=</span><span class="n">_define_when</span><span class="p">(</span><span class="n">wdt</span><span class="p">,</span> <span class="n">parent</span><span class="p">),</span>
         <span class="p">)</span>
         <span class="n">processed</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">_id</span><span class="p">)</span>
