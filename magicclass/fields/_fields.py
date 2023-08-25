@@ -469,7 +469,7 @@ class MagicField(_FieldObject, Generic[_W]):
     @overload
     def connect_async(
         self,
-        func: Callable[_P, Any],
+        func: Callable[_P, Any | None],
         *,
         timeout: float = 0.0,
         ignore_errors: bool = False,
@@ -483,7 +483,7 @@ class MagicField(_FieldObject, Generic[_W]):
         *,
         timeout: float = 0.0,
         ignore_errors: bool = False,
-    ) -> Callable[[Callable[_P, Any]], thread_worker[_P]]:
+    ) -> Callable[[Callable[_P, Any | None]], thread_worker[_P]]:
         ...
 
     def connect_async(self, func=None, *, timeout=0.0, ignore_errors=False):
@@ -520,13 +520,15 @@ class MagicField(_FieldObject, Generic[_W]):
                 return self.connect(fn)
             _running = None
             _last_run = 0.0
+            _last_run_id = 0.0
 
             @wraps(fn)
             def _func(self: MagicTemplate, *args, **kwargs):
-                nonlocal _running, _last_run
+                nonlocal _running, _last_run, _last_run_id
                 with threading.Lock():
+                    _this_run = default_timer()
                     f = _afunc.__get__(self)
-                    if timeout >= default_timer() - _last_run:
+                    if timeout >= _this_run - _last_run:
                         if _running is not None:
                             _running.quit()
                         _running = f._worker()
@@ -541,8 +543,14 @@ class MagicField(_FieldObject, Generic[_W]):
                     if _running is not None:
                         _running.quit()
                     raise exc
-                yield thread_worker.callback()  # empty callback
-                return out
+                with threading.Lock():
+                    if _this_run < _last_run_id:
+                        # if j-th call finished after i-th call (i < j),
+                        # don't run returned callback.
+                        return thread_worker.callback()
+                    _last_run_id = _this_run
+                    yield thread_worker.callback()  # empty callback
+                    return out
 
             _afunc = thread_worker(
                 _func,

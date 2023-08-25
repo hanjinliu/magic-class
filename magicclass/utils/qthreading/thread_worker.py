@@ -391,6 +391,7 @@ class thread_worker(Generic[_P]):
                     gui.macro.active = True
                     Aborted.raise_()
 
+            _create_worker._worker = weakref.ref(worker)
             if _is_non_blocking:
                 if not self._ignore_errors:
 
@@ -403,7 +404,6 @@ class thread_worker(Generic[_P]):
                         raise err  # reraise
 
                 worker.start()
-                _create_worker._worker = weakref.ref(worker)
                 return None
             else:
                 # If function is called from script, some events must get processed by
