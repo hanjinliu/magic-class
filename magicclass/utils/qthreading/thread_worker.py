@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from contextlib import suppress, contextmanager, nullcontext
 import inspect
-from functools import partial, wraps
+from functools import wraps
 import time
 from typing import (
     Any,
@@ -15,7 +15,6 @@ from typing import (
     Protocol,
 )
 from typing_extensions import ParamSpec
-import warnings
 import weakref
 
 from superqt.utils import create_worker, GeneratorWorker, FunctionWorker
@@ -38,7 +37,6 @@ from ._callback import CallbackList, Callback, NestedCallback
 
 if TYPE_CHECKING:
     from magicclass._gui import BaseGui
-    from magicclass._gui.mgui_ext import Clickable
     from magicclass.fields import MagicField
 
 
@@ -199,18 +197,6 @@ class thread_worker(Generic[_P]):
                 )
         cls._DEFAULT_PROGRESS_BAR = pbar_cls
         return pbar_cls
-
-    @staticmethod
-    def to_callback(callback: Callable, *args, **kwargs) -> Callback:
-        warnings.warn(
-            "Defining callback with to_callback is deprecated because its "
-            "behavior is confusing. Use thread_worker.callback instead.",
-            DeprecationWarning,
-        )
-        cb = _CallbackDeprecated(callback)
-        if args or kwargs:
-            cb = cb(*args, **kwargs)
-        return cb
 
     @staticmethod
     def callback(callback: Callable[_P, _R] = lambda: None) -> Callback[_P, _R]:
@@ -769,7 +755,7 @@ class thread_worker(Generic[_P]):
                 if isinstance(out, NestedCallback):
                     return out.call()
                 if isinstance(out, Callback):
-                    out = out._func()
+                    out = out()
             return out
 
         return cb
@@ -778,7 +764,7 @@ class thread_worker(Generic[_P]):
         def cb(out: Any | None):
             if isinstance(out, Callback):
                 with self._call_context(gui):
-                    out = out._func()
+                    out = out()
             if gui.macro.active and self._recorder is not None:
                 self._recorder(gui, out, *args, **kwargs)
             return out
@@ -830,12 +816,3 @@ def _filter_args(fn: Callable, arguments: dict[str, Any]) -> dict[str, Any]:
 def _is_main_thread() -> bool:
     """True if the current thread is the main thread."""
     return QThread.currentThread() is QCoreApplication.instance().thread()
-
-
-class _CallbackDeprecated(Callback):
-    def __call__(self, *args, **kwargs) -> Callback:
-        """Return a partial callback."""
-        return self.__class__(partial(self._func, *args, **kwargs))
-
-
-to_callback = thread_worker.to_callback  # function version

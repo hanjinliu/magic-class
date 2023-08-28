@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import time
 from functools import partial, wraps
 from typing import (
     Any,
@@ -110,9 +111,13 @@ class Callback(Generic[_P, _R1]):
             raise TypeError(f"{f} is not callable.")
         self._func = f
         wraps(f)(self)
+        self._called = False
 
     def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _R1:
-        return self._func(*args, **kwargs)
+        self._called = False
+        out = self._func(*args, **kwargs)
+        self._called = True
+        return out
 
     def with_args(self, *args: _P.args, **kwargs: _P.kwargs) -> Callback[[], _R1]:
         """Return a partial callback."""
@@ -130,6 +135,24 @@ class Callback(Generic[_P, _R1]):
         if obj is None:
             return self
         return self.__class__(partial(self._func, obj))
+
+    def copy(self) -> Callback[_P, _R1]:
+        """Return a copy of the callback."""
+        return self.__class__(self._func)
+
+    def await_call(self, timeout: float = -1) -> None:
+        if timeout < 0:
+            while not self._called:
+                time.sleep(0.01)
+            return None
+        t0 = time.time()
+        while not self._called:
+            time.sleep(0.01)
+            if time.time() - t0 > timeout:
+                raise TimeoutError(
+                    f"Callback {self} did not finish within {timeout} seconds."
+                )
+        return None
 
 
 class NestedCallback:
