@@ -314,4 +314,4 @@ def test_async_callback_macro_blocked():
     ui = A()
     with thread_worker.blocking_mode():
         ui.x.value = 1
-        assert not any(z)
+        assert z == [False, False, False]

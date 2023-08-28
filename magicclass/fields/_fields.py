@@ -551,13 +551,13 @@ class MagicField(_FieldObject, Generic[_W]):
                                 except StopIteration as exc:
                                     out = exc.value
                                     break
-                                else:
-                                    yield next_value
                                 if (
                                     _last_run_copy < _last_run
                                     or _this_id < _last_run_id
                                 ):
                                     return thread_worker.callback()
+                                else:
+                                    yield next_value
                 except Exception as exc:
                     if _running is not None:
                         _running.quit()

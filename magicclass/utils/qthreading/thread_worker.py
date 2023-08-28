@@ -388,7 +388,7 @@ class thread_worker(Generic[_P]):
                 @worker.aborted.connect
                 def _on_abort():
                     gui._error_mode.wrap_handler(Aborted.raise_, parent=gui)()
-                    gui.macro.active = True
+                    gui.macro.active = True  # TODO: is this necessary anymore?
                     Aborted.raise_()
 
             _create_worker._worker = weakref.ref(worker)
@@ -403,8 +403,7 @@ class thread_worker(Generic[_P]):
                         gui._error_mode.get_handler()(err, parent=gui)
                         raise err  # reraise
 
-                worker.start()
-                return None
+                return worker.start()
             else:
                 # If function is called from script, some events must get processed by
                 # the application while keep script stopping at each line of code.
