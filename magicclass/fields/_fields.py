@@ -547,10 +547,12 @@ class MagicField(_FieldObject, Generic[_W]):
                         if isinstance(out, GeneratorType):
                             while True:
                                 try:
-                                    next(out)
+                                    next_value = next(out)
                                 except StopIteration as exc:
                                     out = exc.value
                                     break
+                                else:
+                                    yield next_value
                                 if (
                                     _last_run_copy < _last_run
                                     or _this_id < _last_run_id
