@@ -200,9 +200,33 @@ class thread_worker(Generic[_P]):
 
     @staticmethod
     def callback(callback: Callable[_P, _R] = lambda: None) -> Callback[_P, _R]:
-        """Convert a callback function to a callback object."""
+        """
+        Convert a function to a callback object.
+
+        Should be used as follow.
+
+        >>> @thread_worker
+        >>> def func(self):
+        ...     @thread_worker.callback
+        ...     def cb():
+        ...         # update GUI
+        ...     yield cb
+
+        You can call `arun` to run the callback in a similar syntax as a
+        `thread_worker`.
+
+        >>> @thread_worker
+        >>> def func(self):
+        ...     @thread_worker.callback
+        ...     def cb():
+        ...         # update GUI
+        ...     yield from cb.arun()
+
+        """
         if not callable(callback):
             raise TypeError(f"{callback} is not callable.")
+        if isinstance(callback, Callback):
+            return callback
         return Callback(callback)
 
     @classmethod

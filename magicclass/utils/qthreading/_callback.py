@@ -173,8 +173,23 @@ class Callback(_AwaitableCallback[_P, _R1]):
         """Return a partial callback."""
         return self.__class__(partial(self._func, *args, **kwargs))
 
+    def arun(self, *args: _P.args, **kwargs: _P.kwargs) -> CallbackTask[_R1]:
+        """Run the callback in a thread."""
+        return CallbackTask(self.with_args(*args, **kwargs))
+
 
 class NestedCallback(_AwaitableCallback[_P, _R1]):
     def with_args(self, *args: _P.args, **kwargs: _P.kwargs) -> NestedCallback[_P, _R1]:
         """Return a partial callback."""
         return self.__class__(partial(self._func, *args, **kwargs))
+
+
+class CallbackTask(Generic[_R1]):
+    """A class to make the syntax of thread_worker and Callback similar."""
+
+    def __init__(self, callback: Callback[[], _R1]):
+        self._callback = callback
+
+    def __iter__(self):
+        yield self._callback
+        self._callback.await_call()
