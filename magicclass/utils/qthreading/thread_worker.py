@@ -490,9 +490,11 @@ class thread_worker(Generic[_P]):
                                 gui, _val, filtered=True
                             )
                             cb_yielded = self._create_cb_yielded(gui)
-                            yield NestedCallback(cb_yielded, _val)
+                            ncb = NestedCallback(cb_yielded).with_args(_val)
+                            yield ncb
+                            ncb.await_call()
                             if pbar and pbar.max != 0:
-                                yield NestedCallback(increment.__get__(pbar))
+                                yield NestedCallback(increment).with_args(pbar)
                 else:
                     out = self._func.__get__(gui)(*args, **kwargs)
             except Exception as exc:
@@ -501,24 +503,26 @@ class thread_worker(Generic[_P]):
                 # returned
                 yield from self.returned._iter_as_nested_cb(gui, out)
                 cb_returned = self._create_cb_returned(gui, args, kwargs)
-                yield NestedCallback(cb_returned, out)
+                ncb = NestedCallback(cb_returned).with_args(out)
+                yield ncb
+                ncb.await_call()
             # finished
             yield from self.finished._iter_as_nested_cb(gui)
             _calc_finished = True
             if has_pbar:
                 if _calc_finished:
                     if pbar is not None:
-                        yield NestedCallback(close_pbar.__get__(pbar))
+                        yield NestedCallback(close_pbar).with_args(pbar)
                     return
                 count = 0
                 while pbar is None:
-                    time.sleep(0.05)
+                    time.sleep(0.01)
                     count += 1
-                    if count > 40:
+                    if count > 200:
                         raise RuntimeError(
                             f"Timeout: cannot find progressbar on calling {self.func.__name__}."
                         )
-                yield NestedCallback(close_pbar.__get__(pbar))
+                yield NestedCallback(close_pbar).with_args(pbar)
 
         return _gen
 
@@ -752,9 +756,7 @@ class thread_worker(Generic[_P]):
     def _create_cb_yielded(self, gui: BaseGui):
         def cb(out: Any | None):
             with self._call_context(gui):
-                if isinstance(out, NestedCallback):
-                    return out.call()
-                if isinstance(out, Callback):
+                if isinstance(out, (NestedCallback, Callback)):
                     out = out()
             return out
 
