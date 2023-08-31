@@ -9,7 +9,7 @@ from qtpy import QtWidgets as QtW, QtCore
 from macrokit import Symbol, Expr, Head, BaseMacro, parse, symbol
 from macrokit.utils import check_call_args, check_attributes
 from magicgui.widgets import FileEdit, LineEdit, EmptyWidget, PushButton
-from magicclass.utils.qthreading import thread_worker
+from magicclass.utils.qthreading import thread_worker, run_async
 
 from magicclass.widgets import CodeEdit, TabbedContainer, ScrollableContainer, Dialog
 from magicclass.utils import move_to_screen_center
@@ -39,6 +39,7 @@ class MacroEdit(TabbedContainer):
         self._signature_check = False
         self._name_check = False
         self._syntax_highlight = False
+        self._run_async = False
 
     def _add_code_edit(self, name: str = "script", native: bool = False) -> CodeEdit:
         """Add a new code edit widget as a new tab."""
@@ -295,7 +296,10 @@ class MacroEdit(TabbedContainer):
                 raise ValueError("No code selected")
             if (viewer := parent.parent_viewer) is not None:
                 ns.setdefault(Symbol.var("viewer"), viewer)
-            code.eval(ns)
+            if self._run_async:
+                run_async(code, parent, ns=ns)
+            else:
+                code.eval(ns)
 
     def _execute_selected(self, e=None):
         """Run selected line of macro."""
@@ -450,7 +454,8 @@ class PropertyGroup:
             f"syntax_highlight={self.syntax_highlight}, "
             f"attribute_check={self.attribute_check}, "
             f"signature_check={self.signature_check}, "
-            f"name_check={self.name_check})"
+            f"name_check={self.name_check}, "
+            f"run_async={self.run_async})"
         )
 
     @property
@@ -519,6 +524,15 @@ class PropertyGroup:
     @name_check.setter
     def name_check(self, value: bool):
         self.macro.widget._name_check = bool(value)
+
+    @property
+    def run_async(self) -> bool:
+        """Whether to execute macro asynchronously."""
+        return self.macro.widget._run_async
+
+    @run_async.setter
+    def run_async(self, value: bool):
+        self.macro.widget._run_async = bool(value)
 
 
 class GuiMacro(BaseMacro):
