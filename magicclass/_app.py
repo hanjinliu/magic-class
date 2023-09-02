@@ -1,7 +1,7 @@
 import sys
 from qtpy.QtWidgets import QApplication
 
-APPLICATION: QApplication = None
+APPLICATION: "QApplication | None" = None
 
 
 def get_shell():

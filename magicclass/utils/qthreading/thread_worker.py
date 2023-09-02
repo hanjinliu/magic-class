@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from contextlib import suppress, contextmanager, nullcontext
 import inspect
-from functools import partial, wraps
+from functools import wraps
 import time
 from typing import (
     Any,
@@ -15,7 +15,6 @@ from typing import (
     Protocol,
 )
 from typing_extensions import ParamSpec
-import warnings
 import weakref
 
 from superqt.utils import create_worker, GeneratorWorker, FunctionWorker
@@ -38,7 +37,6 @@ from ._callback import CallbackList, Callback, NestedCallback
 
 if TYPE_CHECKING:
     from magicclass._gui import BaseGui
-    from magicclass._gui.mgui_ext import Clickable
     from magicclass.fields import MagicField
 
 
@@ -201,22 +199,34 @@ class thread_worker(Generic[_P]):
         return pbar_cls
 
     @staticmethod
-    def to_callback(callback: Callable, *args, **kwargs) -> Callback:
-        warnings.warn(
-            "Defining callback with to_callback is deprecated because its "
-            "behavior is confusing. Use thread_worker.callback instead.",
-            DeprecationWarning,
-        )
-        cb = _CallbackDeprecated(callback)
-        if args or kwargs:
-            cb = cb(*args, **kwargs)
-        return cb
-
-    @staticmethod
     def callback(callback: Callable[_P, _R] = lambda: None) -> Callback[_P, _R]:
-        """Convert a callback function to a callback object."""
+        """
+        Convert a function to a callback object.
+
+        Should be used as follow.
+
+        >>> @thread_worker
+        >>> def func(self):
+        ...     @thread_worker.callback
+        ...     def cb():
+        ...         # update GUI
+        ...     yield cb
+
+        You can call `arun` to run the callback in a similar syntax as a
+        `thread_worker`.
+
+        >>> @thread_worker
+        >>> def func(self):
+        ...     @thread_worker.callback
+        ...     def cb():
+        ...         # update GUI
+        ...     yield from cb.arun()
+
+        """
         if not callable(callback):
             raise TypeError(f"{callback} is not callable.")
+        if isinstance(callback, Callback):
+            return callback
         return Callback(callback)
 
     @classmethod
@@ -388,7 +398,7 @@ class thread_worker(Generic[_P]):
                 @worker.aborted.connect
                 def _on_abort():
                     gui._error_mode.wrap_handler(Aborted.raise_, parent=gui)()
-                    gui.macro.active = True
+                    gui.macro.active = True  # TODO: is this necessary anymore?
                     Aborted.raise_()
 
             _create_worker._worker = weakref.ref(worker)
@@ -403,8 +413,7 @@ class thread_worker(Generic[_P]):
                         gui._error_mode.get_handler()(err, parent=gui)
                         raise err  # reraise
 
-                worker.start()
-                return None
+                return worker.start()
             else:
                 # If function is called from script, some events must get processed by
                 # the application while keep script stopping at each line of code.
@@ -505,9 +514,11 @@ class thread_worker(Generic[_P]):
                                 gui, _val, filtered=True
                             )
                             cb_yielded = self._create_cb_yielded(gui)
-                            yield NestedCallback(cb_yielded, _val)
+                            ncb = NestedCallback(cb_yielded).with_args(_val)
+                            yield ncb
+                            ncb.await_call()
                             if pbar and pbar.max != 0:
-                                yield NestedCallback(increment.__get__(pbar))
+                                yield NestedCallback(increment).with_args(pbar)
                 else:
                     out = self._func.__get__(gui)(*args, **kwargs)
             except Exception as exc:
@@ -516,24 +527,26 @@ class thread_worker(Generic[_P]):
                 # returned
                 yield from self.returned._iter_as_nested_cb(gui, out)
                 cb_returned = self._create_cb_returned(gui, args, kwargs)
-                yield NestedCallback(cb_returned, out)
+                ncb = NestedCallback(cb_returned).with_args(out)
+                yield ncb
+                ncb.await_call()
             # finished
             yield from self.finished._iter_as_nested_cb(gui)
             _calc_finished = True
             if has_pbar:
                 if _calc_finished:
                     if pbar is not None:
-                        yield NestedCallback(close_pbar.__get__(pbar))
+                        yield NestedCallback(close_pbar).with_args(pbar)
                     return
                 count = 0
                 while pbar is None:
-                    time.sleep(0.05)
+                    time.sleep(0.01)
                     count += 1
-                    if count > 40:
+                    if count > 200:
                         raise RuntimeError(
                             f"Timeout: cannot find progressbar on calling {self.func.__name__}."
                         )
-                yield NestedCallback(close_pbar.__get__(pbar))
+                yield NestedCallback(close_pbar).with_args(pbar)
 
         return _gen
 
@@ -767,10 +780,8 @@ class thread_worker(Generic[_P]):
     def _create_cb_yielded(self, gui: BaseGui):
         def cb(out: Any | None):
             with self._call_context(gui):
-                if isinstance(out, NestedCallback):
-                    return out.call()
-                if isinstance(out, Callback):
-                    out = out._func()
+                if isinstance(out, (NestedCallback, Callback)):
+                    out = out()
             return out
 
         return cb
@@ -779,7 +790,7 @@ class thread_worker(Generic[_P]):
         def cb(out: Any | None):
             if isinstance(out, Callback):
                 with self._call_context(gui):
-                    out = out._func()
+                    out = out()
             if gui.macro.active and self._recorder is not None:
                 self._recorder(gui, out, *args, **kwargs)
             return out
@@ -831,12 +842,3 @@ def _filter_args(fn: Callable, arguments: dict[str, Any]) -> dict[str, Any]:
 def _is_main_thread() -> bool:
     """True if the current thread is the main thread."""
     return QThread.currentThread() is QCoreApplication.instance().thread()
-
-
-class _CallbackDeprecated(Callback):
-    def __call__(self, *args, **kwargs) -> Callback:
-        """Return a partial callback."""
-        return self.__class__(partial(self._func, *args, **kwargs))
-
-
-to_callback = thread_worker.to_callback  # function version

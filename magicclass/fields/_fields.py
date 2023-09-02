@@ -547,7 +547,7 @@ class MagicField(_FieldObject, Generic[_W]):
                         if isinstance(out, GeneratorType):
                             while True:
                                 try:
-                                    next(out)
+                                    next_value = next(out)
                                 except StopIteration as exc:
                                     out = exc.value
                                     break
@@ -556,6 +556,8 @@ class MagicField(_FieldObject, Generic[_W]):
                                     or _this_id < _last_run_id
                                 ):
                                     return thread_worker.callback()
+                                else:
+                                    yield next_value
                 except Exception as exc:
                     if _running is not None:
                         _running.quit()

@@ -20,6 +20,7 @@ from .utils import merge_super_sigs
 # Container variations that is useful in making GUI designs better.
 
 C = TypeVar("C", bound=ContainerWidget)
+_W = TypeVar("_W", bound=Widget)
 
 
 def wrap_container(
@@ -583,12 +584,12 @@ class _ResizableContainer(ContainerBase):
 
 
 @wrap_container(base=_Splitter)
-class SplitterContainer(ContainerWidget):
+class SplitterContainer(ContainerWidget[_W]):
     """A Container equipped with splitter"""
 
 
 @wrap_container(base=_ToolBox)
-class ToolBoxContainer(ContainerWidget):
+class ToolBoxContainer(ContainerWidget[_W]):
     """A Tool box Widget."""
 
     @property
@@ -601,7 +602,7 @@ class ToolBoxContainer(ContainerWidget):
 
 
 @wrap_container(base=_Tab)
-class TabbedContainer(ContainerWidget):
+class TabbedContainer(ContainerWidget[_W]):
     """A tab categorized Container Widget."""
 
     @property
@@ -618,7 +619,7 @@ class TabbedContainer(ContainerWidget):
 
 
 @wrap_container(base=_Stack)
-class StackedContainer(ContainerWidget):
+class StackedContainer(ContainerWidget[_W]):
     """A stacked Container Widget"""
 
     @property
@@ -635,7 +636,7 @@ class StackedContainer(ContainerWidget):
 
 
 @wrap_container(base=_ScrollableContainer, additionals=["x_enabled", "y_enabled"])
-class ScrollableContainer(ContainerWidget):
+class ScrollableContainer(ContainerWidget[_W]):
     """A scrollable Container Widget."""
 
     @property
@@ -658,12 +659,12 @@ class ScrollableContainer(ContainerWidget):
 
 
 @wrap_container(base=_DraggableContainer)
-class DraggableContainer(ContainerWidget):
+class DraggableContainer(ContainerWidget[_W]):
     """A draggable Container Widget."""
 
 
 @wrap_container(base=_ButtonContainer, additionals=["text"])
-class ButtonContainer(ContainerWidget):
+class ButtonContainer(ContainerWidget[_W]):
     """A Container Widget hidden in a button."""
 
     @property
@@ -677,7 +678,7 @@ class ButtonContainer(ContainerWidget):
 
 
 @wrap_container(base=_VCollapsibleContainer, additionals=["text", "collapsed"])
-class CollapsibleContainer(ContainerWidget):
+class CollapsibleContainer(ContainerWidget[_W]):
     """A collapsible Container Widget."""
 
     @property
@@ -701,7 +702,7 @@ class CollapsibleContainer(ContainerWidget):
 
 
 @wrap_container(base=_HCollapsibleContainer, additionals=["collapsed"])
-class HCollapsibleContainer(ContainerWidget):
+class HCollapsibleContainer(ContainerWidget[_W]):
     """A collapsible Container Widget."""
 
     @property
@@ -717,7 +718,7 @@ class HCollapsibleContainer(ContainerWidget):
 
 
 @wrap_container(base=_ListContainer)
-class ListContainer(ContainerWidget):
+class ListContainer(ContainerWidget[_W]):
     """A Container Widget that support drag and drop."""
 
     def _post_init(self):
@@ -750,12 +751,12 @@ class ListContainer(ContainerWidget):
 
 
 @wrap_container(base=_SubWindowsContainer)
-class SubWindowsContainer(ContainerWidget):
+class SubWindowsContainer(ContainerWidget[_W]):
     """A window-in-window container"""
 
 
 @wrap_container(base=_GroupBoxContainer)
-class GroupBoxContainer(ContainerWidget):
+class GroupBoxContainer(ContainerWidget[_W]):
     """A QGroupBox like container"""
 
     @property
@@ -769,12 +770,12 @@ class GroupBoxContainer(ContainerWidget):
 
 
 @wrap_container(base=_FrameContainer)
-class FrameContainer(ContainerWidget):
+class FrameContainer(ContainerWidget[_W]):
     """A QGroupBox like container without title."""
 
 
 @wrap_container(base=_ResizableContainer, additionals=["x_enabled", "y_enabled"])
-class ResizableContainer(ContainerWidget):
+class ResizableContainer(ContainerWidget[_W]):
     """A resizable Container Widget."""
 
     @property

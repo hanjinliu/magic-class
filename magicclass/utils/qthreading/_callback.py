@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import time
 from functools import partial, wraps
 from typing import (
     Any,
@@ -77,7 +78,9 @@ class CallbackList(Generic[_R1]):
         self, gui: BaseGui, *args, filtered: bool = False
     ) -> Iterable[NestedCallback]:
         for c in self._iter_as_method(gui, filtered=filtered):
-            yield NestedCallback(c, *args)
+            ncb = NestedCallback(c).with_args(*args)
+            yield ncb
+            ncb.await_call()
 
 
 def _make_method(func, obj: BaseGui):
@@ -102,21 +105,56 @@ def _make_filtered_method(func, obj: BaseGui):
     return f
 
 
-class Callback(Generic[_P, _R1]):
-    """Callback object that can be recognized by thread_worker."""
-
+class _AwaitableCallback(Generic[_P, _R1]):
     def __init__(self, f: Callable[_P, _R1]):
         if not callable(f):
             raise TypeError(f"{f} is not callable.")
         self._func = f
         wraps(f)(self)
+        self._called = False
 
     def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _R1:
-        return self._func(*args, **kwargs)
+        self._called = False
+        out = self._func(*args, **kwargs)
+        self._called = True
+        return out
 
-    def with_args(self, *args: _P.args, **kwargs: _P.kwargs) -> Callback[[], _R1]:
+    def with_args(
+        self, *args: _P.args, **kwargs: _P.kwargs
+    ) -> _AwaitableCallback[[], _R1]:
         """Return a partial callback."""
         return self.__class__(partial(self._func, *args, **kwargs))
+
+    def copy(self) -> _AwaitableCallback[_P, _R1]:
+        """Return a copy of the callback."""
+        return self.__class__(self._func)
+
+    def await_call(self, timeout: float = -1) -> None:
+        """
+        Await the callback to be called.
+
+        Usage
+        -----
+        >>> cb = thread_worker.callback(func)
+        >>> yield cb
+        >>> cb.await_call()  # stop here until callback is called
+        """
+        if timeout <= 0:
+            while not self._called:
+                time.sleep(0.01)
+            return None
+        t0 = time.time()
+        while not self._called:
+            time.sleep(0.01)
+            if time.time() - t0 > timeout:
+                raise TimeoutError(
+                    f"Callback {self} did not finish within {timeout} seconds."
+                )
+        return None
+
+
+class Callback(_AwaitableCallback[_P, _R1]):
+    """Callback object that can be recognized by thread_worker."""
 
     @overload
     def __get__(self, obj: Any, type=None) -> Callback[..., _R1]:
@@ -131,12 +169,27 @@ class Callback(Generic[_P, _R1]):
             return self
         return self.__class__(partial(self._func, obj))
 
+    def with_args(self, *args: _P.args, **kwargs: _P.kwargs) -> Callback[[], _R1]:
+        """Return a partial callback."""
+        return self.__class__(partial(self._func, *args, **kwargs))
 
-class NestedCallback:
-    def __init__(self, cb: Callable[..., Any], *args):
-        self._cb = cb
-        self._args = args
+    def arun(self, *args: _P.args, **kwargs: _P.kwargs) -> CallbackTask[_R1]:
+        """Run the callback in a thread."""
+        return CallbackTask(self.with_args(*args, **kwargs))
 
-    def call(self):
-        """Call the callback function."""
-        return self._cb(*self._args)
+
+class NestedCallback(_AwaitableCallback[_P, _R1]):
+    def with_args(self, *args: _P.args, **kwargs: _P.kwargs) -> NestedCallback[_P, _R1]:
+        """Return a partial callback."""
+        return self.__class__(partial(self._func, *args, **kwargs))
+
+
+class CallbackTask(Generic[_R1]):
+    """A class to make the syntax of thread_worker and Callback similar."""
+
+    def __init__(self, callback: Callback[[], _R1]):
+        self._callback = callback
+
+    def __iter__(self):
+        yield self._callback
+        self._callback.await_call()
