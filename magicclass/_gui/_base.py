@@ -164,35 +164,6 @@ def check_override(cls: type):
         )
 
 
-def count_callback_levels(cls: type):
-    if cls.__mro__[1] is not MagicTemplate:
-        return
-    for name, attr in cls.__dict__.items():
-        if isinstance(attr, MagicField):
-            for cb in attr.callbacks:
-                cb_ns = cb.__qualname__.rsplit(".", maxsplit=1)[0]
-                if not hasattr(cb, "__qualname__"):
-                    continue
-                if cls.__qualname__.startswith(cb_ns):
-                    level = cls.__qualname__[len(cb_ns) :].count(".")
-                    cb.__magicclass_callback_level__ = level
-
-
-def init_sub_magicclass(cls: type):
-    check_override(cls)
-    if cls.__mro__[1] is not MagicTemplate:
-        return
-    for attr in cls.__dict__.values():
-        if isinstance(attr, MagicField):
-            for cb in attr.callbacks:
-                cb_ns = cb.__qualname__.rsplit(".", maxsplit=1)[0]
-                if not hasattr(cb, "__qualname__"):
-                    continue
-                if cls.__qualname__.startswith(cb_ns):
-                    level = cls.__qualname__[len(cb_ns) :].count(".")
-                    cb.__magicclass_callback_level__ = level
-
-
 _ANCESTORS: dict[tuple[int, int], MagicTemplate] = {}
 
 _T = TypeVar("_T", bound="MagicTemplate")
@@ -257,7 +228,7 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
     width: int
 
     def __init_subclass__(cls, **kwargs):
-        init_sub_magicclass(cls)
+        check_override(cls)
 
     @overload
     def __getitem__(self, key: int | str) -> _Comp:

@@ -51,14 +51,20 @@ def define_callback_gui(self: MagicTemplate, callback: Callable):
 
             return _callback
 
-    if hasattr(callback, "__magicclass_callback_level__"):
-        level = callback.__magicclass_callback_level__
-        assert isinstance(level, int) and level >= 0
+    if isinstance(_qn := getattr(callback, "__qualname__", None), str):
+        cb_level = _qn.count(".") - 1
+        cls_level = self.__class__.__qualname__.count(".")
+        level_dif = cls_level - cb_level
+        if level_dif < 0:
+            raise ValueError(
+                f"Callback {_qn} is trying to be connected to {cls_level}, which "
+                "is in a upper level."
+            )
 
         def _callback(v):
             # search for parent instances that have the same name.
             current_self = self
-            for _ in range(level):
+            for _ in range(level_dif):
                 current_self = current_self.__magicclass_parent__
             _func = _normalize_argcount(getattr(current_self, funcname))
 
