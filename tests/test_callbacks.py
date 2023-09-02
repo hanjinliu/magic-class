@@ -1,4 +1,3 @@
-from concurrent.futures import thread
 from magicclass import magicclass, magicmenu, MagicTemplate, field, vfield, abstractapi
 from magicclass.utils import thread_worker
 import time
@@ -146,6 +145,49 @@ def test_warning():
 
     with pytest.warns(UserWarning):
         ui = A()
+
+def test_callback_connected_to_different_levels():
+    mock = MagicMock()
+
+    @magicclass
+    class A:
+        @magicclass
+        class B:
+            x = field(int)
+        x = field(int)
+        @x.connect
+        @B.x.connect
+        def _callback(self):
+            mock(self)
+
+    ui = A()
+    mock.assert_not_called()
+    ui.x.value = 1
+    mock.assert_called_once_with(ui)
+    mock.reset_mock()
+    ui.B.x.value = 1
+    mock.assert_called_once_with(ui)
+
+    mock = MagicMock()
+
+    @magicclass
+    class A(MagicTemplate):
+        @magicclass
+        class B(MagicTemplate):
+            x = field(int)
+        x = field(int)
+        @x.connect
+        @B.x.connect
+        def _callback(self):
+            mock(self)
+
+    ui = A()
+    mock.assert_not_called()
+    ui.x.value = 1
+    mock.assert_called_once_with(ui)
+    mock.reset_mock()
+    ui.B.x.value = 1
+    mock.assert_called_once_with(ui)
 
 def test_container_callback():
     from magicclass.widgets import GroupBoxContainer, LineEdit
