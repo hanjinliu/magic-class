@@ -31,7 +31,7 @@ from magicclass._gui._base import (
     ErrorMode,
     defaults,
     MagicTemplate,
-    init_sub_magicclass,
+    check_override,
     convert_attributes,
 )
 from magicclass._gui import ContextMenuGui, MenuGui, ToolBarGui
@@ -52,7 +52,7 @@ if TYPE_CHECKING:
     from magicclass.help import HelpWidget
     from macrokit import Macro
 
-_BASE_CLASS_SUFFIX = ".base"
+_BASE_CLASS_SUFFIX = ":base"
 
 _TYPE_MAP: dict[WidgetType, type[ClassGuiBase]] = {
     WidgetType.none: ClassGui,
@@ -156,7 +156,7 @@ def magicclass(
         class_gui = _TYPE_MAP[widget_type]
 
         if not issubclass(cls, MagicTemplate):
-            init_sub_magicclass(cls)
+            check_override(cls)
 
         # get class attributes first
         doc = cls.__doc__
@@ -282,7 +282,7 @@ def magiccontext(
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
 
         if not issubclass(cls, MagicTemplate):
-            init_sub_magicclass(cls)
+            check_override(cls)
 
         # get class attributes first
         doc = cls.__doc__
@@ -407,7 +407,7 @@ def _call_magicmenu(
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
 
         if not issubclass(cls, MagicTemplate):
-            init_sub_magicclass(cls)
+            check_override(cls)
 
         # get class attributes first
         doc = cls.__doc__
