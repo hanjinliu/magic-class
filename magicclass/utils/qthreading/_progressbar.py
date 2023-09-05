@@ -18,7 +18,7 @@ from magicgui.widgets import ProgressBar, Container, PushButton, Label
 
 from magicclass.utils.qt import move_to_screen_center
 from magicclass.utils.qtsignal import QtSignal
-
+from magicclass.utils.qthreading._callback import NestedCallback
 from magicclass.widgets.containers import FrameContainer
 
 if TYPE_CHECKING:
@@ -132,6 +132,10 @@ class _SupportProgress(Protocol):
         """Close the progressbar."""
         raise NotImplementedError()
 
+    def increment(self):
+        """Increment the progressbar"""
+        raise NotImplementedError()
+
 
 ProgressBarLike = Union[ProgressBar, _SupportProgress]
 
@@ -172,9 +176,15 @@ class NapariProgressBar(_SupportProgress):
 
     def show(self):
         type(self._pbar)._all_instances.events.changed(added={self._pbar}, removed={})
+        return None
 
     def close(self):
-        self._pbar.close()
+        return self._pbar.close()
+
+    def increment(self, yielded=None):
+        if isinstance(yielded, NestedCallback):
+            return None
+        return self._pbar.increment_with_overflow()
 
 
 class Timer:
@@ -352,6 +362,17 @@ class DefaultProgressBar(FrameContainer, _SupportProgress):
                 self._CONTAINER.height = 1  # minimize height
                 if len(self._CONTAINER) == 0:
                     self._CONTAINER.close()
+        return None
+
+    def increment(self, yielded=None):
+        """Increment progressbar."""
+        if isinstance(yielded, NestedCallback):
+            return None
+        with suppress(RuntimeError):
+            if self.value == self.max:
+                self.max = 0
+            else:
+                self.value += 1
         return None
 
     def hide_footer(self):

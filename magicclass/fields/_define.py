@@ -16,9 +16,6 @@ def define_callback(self: Any, callback: Callable):
 def define_callback_gui(self: MagicTemplate, callback: Callable):
     """Define a callback function from a method of a magic-class."""
 
-    # if isinstance(callback, thread_worker):
-    #     return callback.with_func(define_callback_gui(self, callback.func))
-
     if callback.__qualname__.split("<locals>.")[-1].count(".") == 0:
         # not defined in a class
         params = list(inspect.signature(callback).parameters.values())

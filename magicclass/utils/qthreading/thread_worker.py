@@ -518,7 +518,7 @@ class thread_worker(Generic[_P]):
                             yield ncb
                             ncb.await_call()
                             if pbar and pbar.max != 0:
-                                yield NestedCallback(increment).with_args(pbar)
+                                yield NestedCallback(pbar.increment)
                 else:
                     out = self._func.__get__(gui)(*args, **kwargs)
             except Exception as exc:
@@ -615,7 +615,7 @@ class thread_worker(Generic[_P]):
             worker.finished.connect(close_pbar.__get__(pbar))
         if pbar.max != 0 and self.is_generator:
             worker.pbar = pbar  # avoid garbage collection
-            worker.yielded.connect(increment.__get__(pbar))
+            worker.yielded.connect(pbar.increment)
 
         if hasattr(pbar, "set_worker"):
             # if _SupportProgress object support set_worker

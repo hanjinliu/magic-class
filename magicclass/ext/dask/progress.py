@@ -14,6 +14,7 @@ from magicclass.utils.qthreading import (
     thread_worker,
     ProgressDict,
 )
+from magicclass.utils.qthreading._callback import NestedCallback
 
 if TYPE_CHECKING:
     from magicclass._gui import BaseGui
@@ -65,6 +66,8 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
             ntasks = sum(len(s[k]) for k in ["ready", "waiting", "running"]) + ndone
             if ndone <= ntasks:
                 self._frac = ndone / ntasks if ntasks else 0.0
+            else:
+                self._frac = 1.0
         self.pbar.value = self.max * self._frac
         self.computed.emit(result)
         return None
@@ -107,6 +110,11 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
             self.pause_button.enabled = True
             self._timer.stop()
 
+        return None
+
+    def increment(self, yielded=None):
+        # Dask progressbar is incremented by computed signal.
+        # Do not increment by yielded signal.
         return None
 
 
