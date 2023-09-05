@@ -1,27 +1,19 @@
-try:
-    from .widgets import (
-        QtPlotCanvas,
-        QtMultiPlotCanvas,
-        Qt2YPlotCanvas,
-        QtImageCanvas,
-        QtMultiImageCanvas,
-    )
+from .widgets import (
+    QtPlotCanvas,
+    QtMultiPlotCanvas,
+    Qt2YPlotCanvas,
+    QtImageCanvas,
+    QtMultiImageCanvas,
+)
 
-    PYQTGRAPH_AVAILABLE = True
-
-    __all__ = [
-        "QtPlotCanvas",
-        "QtMultiPlotCanvas",
-        "Qt2YPlotCanvas",
-        "QtImageCanvas",
-        "QtMultiImageCanvas",
-        "PYQTGRAPH_AVAILABLE",
-    ]
-except ImportError:
-
-    PYQTGRAPH_AVAILABLE = False
-
-    __all__ = ["PYQTGRAPH_AVAILABLE"]
+__all__ = [
+    "QtPlotCanvas",
+    "QtMultiPlotCanvas",
+    "Qt2YPlotCanvas",
+    "QtImageCanvas",
+    "QtMultiImageCanvas",
+    "PYQTGRAPH_AVAILABLE",
+]
 
 
 def _join(strs):

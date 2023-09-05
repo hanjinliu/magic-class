@@ -1,5 +1,4 @@
 from __future__ import annotations
-import warnings
 import pyqtgraph as pg
 from pyqtgraph import colormap as cmap
 from typing import (
@@ -360,12 +359,6 @@ class HasDataItems:
         **kwargs,
     ) -> InfLine:
         if kwargs:
-            if "angle" in kwargs:
-                # backward compatibility
-                warnings.warn(
-                    "`angle` keyword argument is deprecated. Please use `degree` instead."
-                )
-                kwargs["degree"] = kwargs.pop("angle")
             if len(args) == 1:
                 if "degree" in kwargs:
                     kwargs["pos"] = args[0]
@@ -566,22 +559,6 @@ class HasDataItems:
         return name
 
 
-class SignalCompat:
-    def __init__(self, signal: SignalInstance, name: str):
-        self.signal = signal
-        self.name = name
-
-    def _warn(self):
-        warnings.warn(
-            f"Use of `{self.name}.append` is deprecated. Please use `{self.signal.name}.connect` instead.",
-            DeprecationWarning,
-        )
-
-    def append(self, slot):
-        self._warn()
-        self.signal.connect(slot)
-
-
 class HasViewBox(HasDataItems):
     range_changed = Signal(object)
     mouse_clicked = Signal(MouseClickEvent)
@@ -589,11 +566,6 @@ class HasViewBox(HasDataItems):
     def __init__(self, viewbox: pg.ViewBox):
         self._viewbox = viewbox
         self._items: list[LayerItem] = []
-
-        # prepare mouse event
-        self.mouse_click_callbacks = SignalCompat(
-            self.mouse_clicked, "mouse_click_callbacks"
-        )
 
         # This ROI is not editable. Mouse click event will use it to determine
         # the origin of the coordinate system.
@@ -792,6 +764,7 @@ class ImageItem(HasViewBox):
         if viewbox is None:
             viewbox = ViewBoxExt(lockAspect=True, invertY=True)
         self._lock_contrast_limits = lock_contrast_limits
+        self._scale = (1.0, 1.0)
         super().__init__(viewbox)
         self._image_item = pg.ImageItem()
         tr = self._image_item.transform().translate(-0.5, -0.5)
@@ -960,6 +933,24 @@ class ImageItem(HasViewBox):
             _cmap = value
         self._hist.gradient.setColorMap(_cmap)
         self._cmap = value
+
+    @property
+    def image_scale(self) -> tuple[float, float]:
+        """Scale of the image."""
+        return self._scale
+
+    @image_scale.setter
+    def image_scale(self, value: float | tuple[float, float]):
+        try:
+            scale = float(value)
+        except TypeError:
+            yscale, xscale = value
+            tr = self._image_item.transform().scale(xscale, yscale)
+            self._image_item.setTransform(tr)
+            self._scale = (yscale, xscale)
+        else:
+            self._image_item.setScale(scale)
+            self._scale = (scale, scale)
 
 
 class HasBackground(FreeWidget):
