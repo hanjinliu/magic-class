@@ -641,22 +641,6 @@ def test_get_set_hooks():
     a.y = "Y"
     assert a.y == "Y-0"
 
-def test_dataclass_gui():
-    from magicclass import dataclass_gui
-    @dataclass_gui
-    class A:
-        a: int = vfield(int)
-        b: str = vfield("x")
-
-    x = A()
-    assert x == A(a=0, b="x")  # dataclass-like eq
-    assert repr(x) == "A(a=0, b='x')"  # dataclass-like repr
-    assert len(x.widgets) == 2
-
-    assert A(2) == A(a=2, b="x")
-    assert A(a=2) == A(a=2, b="x")
-    assert A(b="a") == A(a=0, b="a")
-
 def test_with_options():
     @magicclass
     class A:

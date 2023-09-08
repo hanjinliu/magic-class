@@ -8,7 +8,6 @@ from typing import (
     TYPE_CHECKING,
     Callable,
     Iterator,
-    TypeVar,
     overload,
 )
 from abc import ABCMeta
@@ -53,35 +52,6 @@ class _FieldGroupMeta(ABCMeta):
         return cls
 
 
-_C = TypeVar("_C", bound=type)
-
-
-@overload
-def dataclass_gui(
-    cls: _C,
-    init: bool = True,
-    repr: bool = True,
-    eq: bool = True,
-    order: bool = False,
-    unsafe_hash: bool = False,
-    frozen: bool = False,
-) -> _C | type[HasFields]:
-    ...
-
-
-@overload
-def dataclass_gui(
-    cls: Literal[None],
-    init: bool = True,
-    repr: bool = True,
-    eq: bool = True,
-    order: bool = False,
-    unsafe_hash: bool = False,
-    frozen: bool = False,
-) -> Callable[[_C], _C | type[HasFields]]:
-    ...
-
-
 def dataclass_gui(
     cls=None,
     /,
@@ -93,31 +63,6 @@ def dataclass_gui(
     unsafe_hash=False,
     frozen=False,
 ):
-    """
-    A dataclass-like decorator for GUI-implemented class.
-
-    .. code-block:: python
-
-        @dataclass_gui
-        class A:
-            i: int = vfield(int)
-            s: str = vfield(str)
-
-    is identical to:
-
-    .. code-block:: python
-
-        @dataclass
-        class A(HasFields):
-            i: int = vfield(int)
-            s: str = vfield(str)
-
-    Returns
-    -------
-    HasField subtype
-        GUI implemented class
-    """
-
     def _wrapper(cls: type):
         from dataclasses import dataclass, Field, MISSING
 
@@ -313,9 +258,9 @@ class FieldGroup(Container, HasFields, _FieldObject):
         _id = id(obj)
         wdt = self._containers.get(_id, None)
         if wdt is None:
-            from .._gui import MagicTemplate
+            from magicclass._gui import MagicTemplate
 
-            wdt = self.copy()
+            wdt = self.__newlike__()
             self._containers[_id] = wdt
             if isinstance(obj, MagicTemplate):
                 _def = define_callback_gui
@@ -326,6 +271,7 @@ class FieldGroup(Container, HasFields, _FieldObject):
         return wdt
 
     def connect(self, callback: Callable):
+        """Connect a callback to this field."""
         # self.changed.connect(callback)  NOTE: the original container doesn't need signals!
         self._callbacks.append(callback)
         return callback

@@ -73,7 +73,6 @@ __all__ = [
     "magicproperty",
     "FieldGroup",
     "HasFields",
-    "dataclass_gui",
     "defaults",
     "MagicTemplate",
     "PopUpMode",
@@ -117,5 +116,16 @@ def __getattr__(key: str):
         from magicclass.functools import wraps
 
         return wraps
+
+    elif key == "dataclass_gui":
+        warnings.warn(
+            "Function `dataclass_gui` is deprecated. `magicgui`'s `guiclass` "
+            "does almost the same thing. Please use `guiclass` instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        from magicclass.fields import dataclass_gui
+
+        return dataclass_gui
 
     raise AttributeError(f"module {__name__!r} has no attribute {key!r}")
