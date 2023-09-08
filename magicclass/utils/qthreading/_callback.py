@@ -127,7 +127,7 @@ class _AwaitableCallback(Generic[_P, _R1]):
         except Exception as e:
             self._called = CallState.ERRORED
             raise e
-        finally:
+        else:
             self._called = CallState.CALLED
         return out
 
