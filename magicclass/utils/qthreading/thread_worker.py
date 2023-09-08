@@ -145,7 +145,7 @@ class thread_worker(Generic[_P]):
         total: str | Callable | int | None = None,
         pbar: ProgressBar | _SupportProgress | MagicField | None = None,
         **kwargs,
-    ) -> Callable[[Callable[_P, _R]], thread_worker[_P]]:
+    ) -> Callable[[Callable[_P, Any | None]], thread_worker[_P]]:
         """
         Configure the progressbar.
 
@@ -275,7 +275,7 @@ class thread_worker(Generic[_P]):
         return None
 
     @overload
-    def __call__(self, f: Callable[_P, _R]) -> thread_worker[_P]:
+    def __call__(self, f: Callable[_P, Any | None]) -> thread_worker[_P]:
         ...
 
     @overload
@@ -288,7 +288,7 @@ class thread_worker(Generic[_P]):
         else:
             return self._func(*args, **kwargs)
 
-    def with_func(self, func: Callable[_P, _R]) -> thread_worker[_P]:
+    def with_func(self, func: Callable[_P, Any | None]) -> thread_worker[_P]:
         """Set the function."""
         self._func = func
         wraps(func)(self)  # NOTE: __name__ etc. are updated here.
@@ -299,7 +299,7 @@ class thread_worker(Generic[_P]):
         ...
 
     @overload
-    def __get__(self, gui: Any, objtype=None) -> AsyncMethod[_P, Any]:
+    def __get__(self, gui: Any, objtype=None) -> AsyncMethod[_P, Any | None]:
         ...
 
     def __get__(self, gui, objtype=None):
@@ -371,7 +371,7 @@ class thread_worker(Generic[_P]):
         not_blocking_mode = len(self._BLOCKING_SOURCES) == 0
         return async_ok and not_blocking_mode
 
-    def _create_method(self, gui: BaseGui) -> Callable[_P, None]:
+    def _create_method(self, gui: BaseGui) -> AsyncMethod[_P, None]:
         @_async_method
         @wraps(self)
         def _create_worker(*args, **kwargs):

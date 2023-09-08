@@ -1,4 +1,5 @@
 from __future__ import annotations
+from enum import Enum, auto
 
 import time
 from functools import partial, wraps
@@ -105,18 +106,29 @@ def _make_filtered_method(func, obj: BaseGui):
     return f
 
 
+class CallState(Enum):
+    NOT_CALLED = auto()
+    CALLED = auto()
+    ERRORED = auto()
+
+
 class _AwaitableCallback(Generic[_P, _R1]):
     def __init__(self, f: Callable[_P, _R1]):
         if not callable(f):
             raise TypeError(f"{f} is not callable.")
         self._func = f
         wraps(f)(self)
-        self._called = False
+        self._called = CallState.NOT_CALLED
 
     def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _R1:
-        self._called = False
-        out = self._func(*args, **kwargs)
-        self._called = True
+        self._called = CallState.NOT_CALLED
+        try:
+            out = self._func(*args, **kwargs)
+        except Exception as e:
+            self._called = CallState.ERRORED
+            raise e
+        finally:
+            self._called = CallState.CALLED
         return out
 
     def with_args(
@@ -140,16 +152,18 @@ class _AwaitableCallback(Generic[_P, _R1]):
         >>> cb.await_call()  # stop here until callback is called
         """
         if timeout <= 0:
-            while not self._called:
+            while self._called is CallState.NOT_CALLED:
                 time.sleep(0.01)
-            return None
-        t0 = time.time()
-        while not self._called:
-            time.sleep(0.01)
-            if time.time() - t0 > timeout:
-                raise TimeoutError(
-                    f"Callback {self} did not finish within {timeout} seconds."
-                )
+        else:
+            t0 = time.time()
+            while self._called is CallState.NOT_CALLED:
+                time.sleep(0.01)
+                if time.time() - t0 > timeout:
+                    raise TimeoutError(
+                        f"Callback {self} did not finish within {timeout} seconds."
+                    )
+        if self._called is CallState.ERRORED:
+            raise RuntimeError(f"Callback {self} raised an error.")
         return None
 
 
