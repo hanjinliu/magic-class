@@ -170,6 +170,22 @@ class HasFields(metaclass=_FieldGroupMeta):
 # also defined there. Thus, FieldGroup must inherit magicgui Container although
 # the original container will never be used.
 class FieldGroup(Container, HasFields, _FieldObject):
+    """
+    Base class of field group.
+
+    Subclasses can contain ``field`` and ``vfield`` as class attributes, which
+    will be converted into child widgets. A field group is also a field.
+
+    .. code-block:: python
+
+        class A(FieldGroup):
+            a = field(int)
+            b = field(str)
+
+    If you want to use it as a container, use ``self.changed.connect`` instead of
+    ``self.connect`` to connect callbacks.
+    """
+
     def __init__(
         self,
         layout: str = "vertical",
@@ -271,7 +287,27 @@ class FieldGroup(Container, HasFields, _FieldObject):
         return wdt
 
     def connect(self, callback: Callable):
-        """Connect a callback to this field."""
+        """
+        Connect a callback to this field.
+
+        This function will NOT directly connect the callback to the field itself.
+        The connected callback will be present when the field group is used as a
+        class attribute.
+
+        >>> class A(FieldGroup):
+        ...     x = field(int)
+        >>> a = A()
+        >>> a.connect(some_callback)
+        >>> a.x.value = 1  # some_callback will NOT be called
+
+        >>> class B:
+        ...     a = A()
+        >>> b = B()
+        >>> b.a.value = 1  # some_callback will be called
+
+        If you want to use it directly as a container, please use
+        ``self.changed.connect``.
+        """
         # self.changed.connect(callback)  NOTE: the original container doesn't need signals!
         self._callbacks.append(callback)
         return callback
