@@ -133,6 +133,23 @@ class thread_worker(Generic[_P]):
         self._progress: ProgressDict | None = progress
         self._force_async = force_async
 
+    def __repr__(self) -> str:
+        return f"thread_worker<{self.func!r}>"
+
+    def replace(
+        self,
+        ignore_errors: bool = False,
+        progress: ProgressDict | bool | None = None,
+        force_async: bool = False,
+    ):
+        """Create a new object with new config."""
+        return self.__class__(
+            self.func,
+            ignore_errors=ignore_errors,
+            progress=progress,
+            force_async=force_async,
+        )
+
     @property
     def func(self) -> Callable[_P, _R]:
         """The original function."""
@@ -381,6 +398,7 @@ class thread_worker(Generic[_P]):
 
             # create a worker object
             worker = self._create_qt_worker(gui, *args, **kwargs)
+            _create_worker._worker = weakref.ref(worker)
             is_generator = isinstance(worker, GeneratorWorker)
             pbar: _SupportProgress | None = None
             if self._progress:
@@ -401,7 +419,6 @@ class thread_worker(Generic[_P]):
                     gui.macro.active = True  # TODO: is this necessary anymore?
                     Aborted.raise_()
 
-            _create_worker._worker = weakref.ref(worker)
             if _is_non_blocking:
                 if not self._ignore_errors:
 
@@ -421,6 +438,7 @@ class thread_worker(Generic[_P]):
 
         _create_worker.__self__ = gui
         _create_worker.__thread_worker__ = self
+        _create_worker._worker = lambda: None  # will be replaced with weakref.ref
         _create_worker.arun = self._create_generator(gui)
         return _create_worker
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 from enum import Enum, auto
 
 import time
-from functools import partial, wraps
+from functools import wraps
 from typing import (
     Any,
     Callable,
@@ -106,6 +106,22 @@ def _make_filtered_method(func, obj: BaseGui):
     return f
 
 
+class _partial:
+    def __init__(self, fn, *args, **kwargs):
+        if not isinstance(fn, _partial):
+            self._fn = fn
+            self._args = args
+            self._kwargs = kwargs
+        else:
+            self._fn = fn._fn
+            self._args = fn._args + args
+            self._kwargs = {**fn._kwargs, **kwargs}
+        self.__name__ = self._fn.__name__
+
+    def __call__(self, *args, **kwargs):
+        return self._fn(*self._args, *args, **self._kwargs, **kwargs)
+
+
 class CallState(Enum):
     NOT_CALLED = auto()
     CALLED = auto()
@@ -126,6 +142,11 @@ class _AwaitableCallback(Generic[_P, _R1]):
             out = self._func(*args, **kwargs)
         except Exception as e:
             self._called = CallState.ERRORED
+            if type(e) is RuntimeError and str(e).startswith(
+                "wrapped C/C++ object of type"
+            ):
+                # to avoid the exception raised after GUI quit
+                return None
             raise e
         else:
             self._called = CallState.CALLED
@@ -135,13 +156,13 @@ class _AwaitableCallback(Generic[_P, _R1]):
         self, *args: _P.args, **kwargs: _P.kwargs
     ) -> _AwaitableCallback[[], _R1]:
         """Return a partial callback."""
-        return self.__class__(partial(self._func, *args, **kwargs))
+        return self.__class__(_partial(self._func, *args, **kwargs))
 
     def copy(self) -> _AwaitableCallback[_P, _R1]:
         """Return a copy of the callback."""
         return self.__class__(self._func)
 
-    def await_call(self, timeout: float = -1) -> None:
+    def await_call(self, timeout: float = 60.0) -> None:
         """
         Await the callback to be called.
 
@@ -159,8 +180,9 @@ class _AwaitableCallback(Generic[_P, _R1]):
             while self._called is CallState.NOT_CALLED:
                 time.sleep(0.01)
                 if time.time() - t0 > timeout:
+                    s = "s" if timeout > 1 else ""
                     raise TimeoutError(
-                        f"Callback {self} did not finish within {timeout} seconds."
+                        f"Callback {self} did not finish within {timeout} second{s}."
                     )
         if self._called is CallState.ERRORED:
             raise RuntimeError(f"Callback {self} raised an error.")
@@ -181,11 +203,11 @@ class Callback(_AwaitableCallback[_P, _R1]):
     def __get__(self, obj, type=None):
         if obj is None:
             return self
-        return self.__class__(partial(self._func, obj))
+        return self.__class__(_partial(self._func, obj))
 
     def with_args(self, *args: _P.args, **kwargs: _P.kwargs) -> Callback[[], _R1]:
         """Return a partial callback."""
-        return self.__class__(partial(self._func, *args, **kwargs))
+        return self.__class__(_partial(self._func, *args, **kwargs))
 
     def arun(self, *args: _P.args, **kwargs: _P.kwargs) -> CallbackTask[_R1]:
         """Run the callback in a thread."""
@@ -195,7 +217,7 @@ class Callback(_AwaitableCallback[_P, _R1]):
 class NestedCallback(_AwaitableCallback[_P, _R1]):
     def with_args(self, *args: _P.args, **kwargs: _P.kwargs) -> NestedCallback[_P, _R1]:
         """Return a partial callback."""
-        return self.__class__(partial(self._func, *args, **kwargs))
+        return self.__class__(_partial(self._func, *args, **kwargs))
 
 
 class CallbackTask(Generic[_R1]):

@@ -600,7 +600,8 @@ class MagicField(_FieldObject, Generic[_W]):
                 force_async=True,
                 ignore_errors=ignore_errors,
             )
-            return self.connect(_afunc)
+            self.connect(_afunc)
+            return _afunc.replace(force_async=False)
 
         return _wrapper if func is None else _wrapper(func)
 
