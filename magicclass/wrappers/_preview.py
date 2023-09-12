@@ -3,6 +3,7 @@ import inspect
 from typing import Callable, TypeVar, TYPE_CHECKING
 from magicgui.widgets import FunctionGui
 
+from magicclass._exceptions import PreviewError
 from magicclass.signature import upgrade_signature
 
 _F = TypeVar("_F", bound=Callable)
@@ -178,21 +179,3 @@ def impl_arg_filter(f: _F, tgt: Callable, tgt_sig: inspect.Signature) -> _F:
         return out
 
     return _func
-
-
-class PreviewError(Exception):
-    """Error raised during preview."""
-
-    def __init__(self, exc: Exception, target_func: Callable):
-        super().__init__(str(exc))
-        self._target_qualname: str = getattr(
-            target_func, "__qualname__", repr(target_func)
-        )
-        self._original_type = type(exc)
-
-    def __str__(self):
-        return (
-            f"{self.__class__.__name__}: Error calling preview function of "
-            f"`{self._target_qualname}`...\n{self._original_type.__name__}: "
-            f"{super().__str__()}"
-        )

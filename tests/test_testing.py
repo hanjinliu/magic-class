@@ -290,3 +290,18 @@ def test_error_detectable():
     testf = FunctionGuiTester(ui.f)
     with pytest.raises(ValueError):
         testf.call()
+
+def test_error_during_preview():
+    @magicclass
+    class A:
+        def f(self, raises=True):
+            pass
+
+        @impl_preview(f)
+        def _preview(self):
+            raise ValueError("error")
+
+    ui = A()
+    testf = FunctionGuiTester(ui.f)
+    with pytest.raises(ValueError):
+        testf.click_preview()

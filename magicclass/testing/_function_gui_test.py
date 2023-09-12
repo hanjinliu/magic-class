@@ -2,10 +2,13 @@ from __future__ import annotations
 
 from typing import Callable, Generic, TypeVar, TYPE_CHECKING
 from typing_extensions import ParamSpec
+from contextlib import contextmanager
 
+from psygnal import EmitLoopError
 from magicgui.widgets import PushButton, CheckBox
 
 from magicclass import get_function_gui
+from magicclass._exceptions import unwrap_errors
 from magicclass.signature import get_additional_option
 
 if TYPE_CHECKING:
@@ -46,6 +49,8 @@ _R = TypeVar("_R")
 
 
 class FunctionGuiTester(Generic[_P]):
+    """Testing class for magicclass-integrated FunctionGui."""
+
     def __init__(self, method: Callable[_P, _R]):
         self._fgui = get_function_gui(method)
         # NOTE: if the widget is in napari etc., choices depend on the parent.
@@ -86,18 +91,21 @@ class FunctionGuiTester(Generic[_P]):
         prev_widget = self._fgui[idx]
         if self._prev_auto_call:
             assert isinstance(prev_widget, CheckBox)
-            prev_widget.value = not prev_widget.value
+            with self.stream_error():
+                prev_widget.value = not prev_widget.value
         else:
             assert isinstance(prev_widget, PushButton)
-            prev_widget.changed.emit(True)
+            with self.stream_error():
+                prev_widget.changed.emit(True)
 
     def update_parameters(self, **kwargs):
         """Update the parameters of the function GUI."""
-        self._fgui.update(**kwargs)
+        with self.stream_error():
+            self._fgui.update(**kwargs)
 
     def call(self, *args: _P.args, **kwargs: _P.kwargs):
         """Call the method as if it is called from the GUI."""
-        with self._magicclass_gui.config_context(error_mode="stderr"):
+        with self.stream_error():
             if not self.has_confirmation:
                 return self._fgui(*args, **kwargs)
             cb = self._conf_dict["callback"]
@@ -107,6 +115,15 @@ class FunctionGuiTester(Generic[_P]):
             finally:
                 self._conf_dict["callback"] = cb
             return out
+
+    @contextmanager
+    def stream_error(self):
+        """Stream the error message to stderr not to raise in GUI."""
+        with self._magicclass_gui.config_context(error_mode="stderr"):
+            try:
+                yield
+            except Exception as e:
+                raise unwrap_errors(e)
 
     @property
     def confirm_count(self) -> int:

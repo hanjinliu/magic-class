@@ -1,13 +1,10 @@
 from __future__ import annotations
 from typing import Callable, TYPE_CHECKING
 import functools
+from magicclass._exceptions import AbstractAPIError
 
 if TYPE_CHECKING:
     from typing import NoReturn
-
-
-class AbstractAPIError(Exception):
-    """Raised when an abstract API is called."""
 
 
 class abstractapi(Callable):

@@ -7,6 +7,7 @@ from magicgui.type_map import get_widget_class
 from magicgui.signature import magic_signature, MagicParameter
 
 from macrokit import Symbol
+from magicclass._exceptions import MagicClassConstructionError
 from magicclass.signature import split_annotated_type
 
 if TYPE_CHECKING:
@@ -57,10 +58,6 @@ def copy_class(cls: _C, ns: str, name: str) -> _C:
     out = type(cls.__name__, cls.__bases__, namespace)
     out.__qualname__ = qualname
     return out
-
-
-class MagicClassConstructionError(Exception):
-    """Raised when class definition is not a valid magic-class."""
 
 
 def format_error(

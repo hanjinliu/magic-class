@@ -34,6 +34,7 @@ from ._progressbar import (
     ProgressBarLike,
 )
 from ._callback import CallbackList, Callback, NestedCallback
+from magicclass._exceptions import Aborted
 
 if TYPE_CHECKING:
     from magicclass._gui import BaseGui
@@ -42,17 +43,6 @@ if TYPE_CHECKING:
 
 _P = ParamSpec("_P")
 _R = TypeVar("_R")
-
-
-class Aborted(RuntimeError):
-    """Raised when worker is aborted."""
-
-    @classmethod
-    def raise_(cls, *args):
-        """A function version of "raise"."""
-        if not args:
-            args = ("Aborted.",)
-        raise cls(*args)
 
 
 class AsyncMethod(Protocol[_P, _R]):
