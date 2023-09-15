@@ -508,6 +508,7 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
                     index = n_children
                     new = True
 
+                widget._unwrapped = True
                 self._fast_insert(len(self), widget, remove_label=True)
                 copy = _name in copyto
 
@@ -538,8 +539,6 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
                     child_widget.tooltip = widget.tooltip
                     child_widget._doc = widget._doc
                     child_widget._get_running = lambda: widget.running
-
-                widget._unwrapped = True
 
                 _found += 1
                 if _found == _n_match:

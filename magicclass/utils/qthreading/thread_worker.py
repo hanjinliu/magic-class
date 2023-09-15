@@ -119,6 +119,8 @@ class thread_worker(Generic[_P]):
             progress.setdefault("desc", None)
             progress.setdefault("total", self.__class__._DEFAULT_TOTAL)
             progress.setdefault("pbar", None)
+        else:
+            progress = None
 
         self._progress: ProgressDict | None = progress
         self._force_async = force_async

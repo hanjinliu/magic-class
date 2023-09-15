@@ -14,7 +14,6 @@ from magicclass.utils.qthreading import (
     thread_worker,
     ProgressDict,
 )
-from magicclass.utils.qthreading._callback import NestedCallback
 
 if TYPE_CHECKING:
     from magicclass._gui import BaseGui
@@ -166,14 +165,7 @@ class dask_thread_worker(thread_worker):
         return self._callback_dict_["computed"]
 
     def _create_method(self, gui: BaseGui):
-        if self._progress is None:
-            self._progress = {
-                "pbar": None,
-                "desc": "Progress",
-                "total": 100,
-                "descs": [],
-            }
-        else:
+        if self._progress is not None:
             self._progress["pbar"] = None
 
         return super()._create_method(gui)
@@ -182,41 +174,42 @@ class dask_thread_worker(thread_worker):
         self, gui, *args, **kwargs
     ) -> FunctionWorker | GeneratorWorker:
         gui_id = id(gui)
+        if self._progress:
+            pbar = self._DEFAULT_PROGRESS_BAR(max=self._DEFAULT_TOTAL)
+            self._progressbars[gui_id] = pbar
+            for c in self.computed._iter_as_method(gui):
+                pbar.computed.connect(c)
+            if descs := self._progress.get("descs"):
+                if callable(descs):
+                    arguments = self.__signature__.bind(gui, *args, **kwargs)
+                    arguments.apply_defaults()
+                    _descs = lambda: descs(**_filter_args(descs, arguments.arguments))
+                else:
+                    _descs = lambda: iter(descs)
+                self._progress["desc"] = next(_descs(), "<No description>")
+                it = _descs()
 
-        pbar = self._DEFAULT_PROGRESS_BAR(max=self._DEFAULT_TOTAL)
-        self._progressbars[gui_id] = pbar
-        for c in self.computed._iter_as_method(gui):
-            pbar.computed.connect(c)
-        if descs := self._progress.get("descs"):
-            if callable(descs):
-                arguments = self.__signature__.bind(gui, *args, **kwargs)
-                arguments.apply_defaults()
-                _descs = lambda: descs(**_filter_args(descs, arguments.arguments))
-            else:
-                _descs = lambda: iter(descs)
-            self._progress["desc"] = next(_descs(), "<No description>")
-            it = _descs()
+                @pbar._new_cycle_signal.connect
+                def _(i: int):
+                    pbar.set_description(next(it, "<No description>"))
 
-            @pbar._new_cycle_signal.connect
-            def _(i: int):
-                pbar.set_description(next(it, "<No description>"))
+            pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
+            move_to_screen_center(pbar.native)
+            if self.is_generator:
 
-        pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
-        move_to_screen_center(pbar.native)
+                @self.yielded.connect
+                def _(*args):
+                    pbar.value = 0
 
-        worker = create_worker(
-            self._define_function(pbar, gui).__get__(gui),
-            _ignore_errors=self._ignore_errors,
-            _start_thread=False,
-            *args,
-            **kwargs,
-        )
-        if self.is_generator:
-
-            @self.yielded.connect
-            def _(*args):
-                pbar.value = 0
-
+            worker = create_worker(
+                self._define_function(pbar, gui).__get__(gui),
+                _ignore_errors=self._ignore_errors,
+                _start_thread=False,
+                *args,
+                **kwargs,
+            )
+        else:
+            worker = super()._create_qt_worker(gui, *args, **kwargs)
         return worker
 
     def _define_function(self, pbar, gui: BaseGui):

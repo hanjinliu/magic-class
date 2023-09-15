@@ -97,6 +97,8 @@ class _ToolBox(ContainerBase):
         self._layout = self._qwidget.layout()
 
     def _mgui_insert_widget(self, position: int, widget: Widget):
+        if _is_unwrapped(widget):
+            return
         self._qwidget.insertItem(position, widget.native, widget.name)
 
     def _mgui_remove_widget(self, widget: Widget):
@@ -125,6 +127,8 @@ class _Tab(ContainerBase):
         self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
 
     def _mgui_insert_widget(self, position: int, widget: Widget):
+        if _is_unwrapped(widget):
+            return
         if isinstance(widget, _LabeledWidget):
             tabname = widget._label_widget.value
         else:
@@ -479,6 +483,8 @@ class _SubWindowsContainer(ContainerBase):
 
     def _mgui_insert_widget(self, position: int, widget: Widget):
         # position does not have any effect
+        if _is_unwrapped(widget):
+            return
         self._mdiarea.addSubWindow(widget.native, self._NoCloseButtonFlag)
 
     def _mgui_remove_widget(self, widget: Widget):
@@ -578,6 +584,13 @@ class _ResizableContainer(ContainerBase):
         self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
         self._qwidget.layout().setSpacing(0)
         self._size_grip = _size_grip
+
+
+def _is_unwrapped(widget: Widget) -> bool:
+    if widget.widget_type == "PushButtonPlus":
+        if getattr(widget, "_unwrapped", False):
+            return True
+    return False
 
 
 # Container Widgets
