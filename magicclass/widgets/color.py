@@ -84,7 +84,7 @@ class QColorSwatch(QtW.QFrame):
 
 
 @lru_cache(maxsize=1)
-def _get_color_converter() -> Callable[[Any], tuple[float, float, float, float]]:
+def get_color_converter() -> Callable[[Any], tuple[float, float, float, float]]:
     """Get a function that converts a color to a tuple of floats."""
     import pkgutil
 
@@ -107,7 +107,7 @@ def _get_color_converter() -> Callable[[Any], tuple[float, float, float, float]]
 
 class QColorLineEdit(QtW.QLineEdit):
     def _color_converter(self, x):
-        return _get_color_converter()(x)
+        return get_color_converter()(x)
 
     def setText(self, color: str | Iterable[float]):
         """Set the text of the lineEdit using any ColorType.
