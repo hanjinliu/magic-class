@@ -1,3 +1,4 @@
+from typing import Annotated
 from magicclass import (
     magicclass,
     magicmenu,
@@ -786,3 +787,12 @@ def test_nested_boxes():
     assert ui.y == 3
     ui.y = 10
     assert ui.y == 10
+
+def test_class_annotation():
+    @magicclass
+    class A:
+        x: Annotated[int, {"max": 10}] = field(0)
+        y: Annotated[float, {"widget_type": "FloatSlider"}] = vfield(4.0)
+    ui = A()
+    assert ui.x.max == 10
+    assert ui["y"].widget_type == "FloatSlider"

@@ -127,6 +127,8 @@ class MagicField(_FieldObject, Generic[_W]):
 
     def __set_name__(self, owner: type, name: str) -> None:
         self._parent_class = owner
+        if name in owner.__annotations__ and self.annotation is None:
+            self.annotation = owner.__annotations__[name]
         if self.name is None:
             self.name = name
 
