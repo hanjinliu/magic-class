@@ -65,6 +65,8 @@ class OptionalWidget(Container):
         if text is None:
             text = "Use default value"
         self._checkbox = CheckBox(text=text, value=True)
+        # NOTE: Optional[Literal[...]] may add a `choices` argument...
+        kwargs.pop("choices", None)
 
         if inner_widget is None:
             annot = kwargs.get("annotation", None)

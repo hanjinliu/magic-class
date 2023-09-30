@@ -1130,6 +1130,7 @@ class _MultiPlot(HasBackground, Generic[_C]):
     def __delitem__(self, k: int):
         item = self._axes[k]
         self.layoutwidget.removeItem(item._graphics)
+        del self._axes[k]
 
     def __iter__(self) -> Iterator[_C]:
         return iter(self._axes)
