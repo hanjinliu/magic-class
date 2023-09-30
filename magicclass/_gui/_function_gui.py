@@ -213,7 +213,11 @@ def _append_preview(self: FunctionGui, f: Callable, text: str = "Preview"):
         with f.__self__.macro.blocked():
             context.exit()
             generator = _prev_context_method(*_args, **_kwargs)
-            context.enter(generator)
+            try:
+                context.enter(generator)
+            except StopIteration as e:
+                context.exit()
+                raise RuntimeError(f"Preview function {f!r} raised StopIteration: {e}")
         return f(*_args, **_kwargs)
 
     if _prev_context_method is not _dummy_context_manager:
@@ -247,25 +251,34 @@ def _append_auto_call_preview(self: FunctionGui, f: Callable, text: str = "Previ
 
     @self.changed.connect
     def _call_preview():
-        nonlocal generator
-        sig = self.__signature__
-        if cbox.value:
-            if not self._call_button.enabled:
-                # Button is disabled, such as when the call button is clicked.
-                context.exit()
-                return
-            bound = sig.bind()
-            bound.apply_defaults()
-            _args = bound.args
-            _kwargs = bound.kwargs
-            with f.__self__.macro.blocked():
-                context.send(active=True)
-                generator = _prev_context_method(*_args, **_kwargs)
-                context.enter(generator)
-                return f(*_args, **_kwargs)
-        else:
-            with f.__self__.macro.blocked():
-                context.exit()  # reset the original state
+        nonlocal generator, context
+        # NOTE: if the preview function trigger the changed signal, this function
+        # may call enter() twice without closing the previous context.
+        with self.changed.blocked():
+            if cbox.value:
+                sig = self.__signature__
+                if not self._call_button.enabled:
+                    # Button is disabled, such as when the call button is clicked.
+                    context.exit()
+                    return
+                bound = sig.bind()
+                bound.apply_defaults()
+                _args = bound.args
+                _kwargs = bound.kwargs
+                with f.__self__.macro.blocked():
+                    context.send(active=True)
+                    generator = _prev_context_method(*_args, **_kwargs)
+                    try:
+                        context.enter(generator)
+                    except StopIteration as e:
+                        context.exit()
+                        raise RuntimeError(
+                            f"Preview function {f!r} raised StopIteration: {e}"
+                        )
+                    return f(*_args, **_kwargs)
+            else:
+                with f.__self__.macro.blocked():
+                    context.exit()  # reset the original state
 
     if _prev_context_method is not _dummy_context_manager:
         if not isinstance(self, FunctionGuiPlus):

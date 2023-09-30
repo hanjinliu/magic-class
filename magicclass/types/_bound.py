@@ -7,10 +7,10 @@ from typing import (
     TypeVar,
     Callable,
 )
-from typing_extensions import Annotated, _AnnotatedAlias
+from typing_extensions import Annotated
 from magicgui.widgets import Widget, EmptyWidget
 
-from magicclass.signature import split_annotated_type
+from magicclass.signature import split_annotated_type, is_annotated
 
 try:
     from typing import _tp_cache
@@ -48,7 +48,7 @@ def bound(obj):
         outtype = Any
     else:
         raise TypeError("'bound' can only convert callable, MagicField or type objects")
-    while isinstance(outtype, _AnnotatedAlias):
+    while is_annotated(outtype):
         outtype, _ = split_annotated_type(outtype)
     if isinstance(obj, str):
         obj = BoundLiteral(obj)

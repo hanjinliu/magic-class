@@ -9,9 +9,9 @@ from typing import (
     get_args,
     get_origin,
 )
-from typing_extensions import Annotated, _AnnotatedAlias
+from typing_extensions import Annotated
 from magicclass.utils import is_type_like
-from magicclass.signature import split_annotated_type
+from magicclass.signature import split_annotated_type, is_annotated
 
 _T = TypeVar("_T")
 
@@ -36,7 +36,7 @@ class _OptionalAlias(type):
         from magicclass.widgets import OptionalWidget
 
         opt = dict(widget_type=OptionalWidget)
-        if isinstance(value, _AnnotatedAlias):
+        if is_annotated(value):
             type0, opt0 = split_annotated_type(value)
             type_ = typing.Optional[type0]
             opt.update(annotation=type_, options=opt0)

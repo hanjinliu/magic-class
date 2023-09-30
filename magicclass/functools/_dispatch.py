@@ -1,18 +1,22 @@
 from __future__ import annotations
 
 import sys
-from typing import Callable, Sequence, Any, get_type_hints, overload
+from typing import Callable, Sequence, Any, get_type_hints, overload, TYPE_CHECKING
 from abc import get_cache_token
 import functools
 import inspect
-from typing_extensions import _AnnotatedAlias
 
 from magicgui.signature import MagicParameter
-from magicgui.widgets import create_widget, Widget, Label
-from magicgui.types import Undefined
 
-from magicclass.widgets import TabbedContainer
-from magicclass.signature import get_signature, split_annotated_type, upgrade_signature
+from magicclass.signature import (
+    get_signature,
+    split_annotated_type,
+    upgrade_signature,
+    is_annotated,
+)
+
+if TYPE_CHECKING:
+    from typing_extensions import _AnnotatedAlias
 
 
 def singledispatch(func):
@@ -73,7 +77,7 @@ def singledispatch(func):
             argname, cls = next(iter(get_type_hints(func).items()))
 
             # Here, we also support Annotated type.
-            if isinstance(cls, _AnnotatedAlias):
+            if is_annotated(cls):
                 cls, _ = split_annotated_type(cls)
             elif not isinstance(cls, type):
                 raise TypeError(

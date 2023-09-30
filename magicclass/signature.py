@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, Callable, TypedDict, overload, Literal, TYPE_CHECKING
-from typing_extensions import _AnnotatedAlias, get_args
+from typing_extensions import Annotated, get_origin, get_args
 
 from magicgui.signature import MagicSignature, MagicParameter
 from magicgui.widgets import FunctionGui
@@ -79,7 +79,7 @@ def upgrade_signature(
     # Annotated options should also be updated
     for k, v in sig.parameters.items():
         annot = v.annotation
-        if isinstance(annot, _AnnotatedAlias):
+        if is_annotated(annot):
             _, widget_option = split_annotated_type(annot)
             if k in new_gui_options:
                 widget_option.update(new_gui_options[k])
@@ -192,7 +192,7 @@ class MagicMethodSignature(MagicSignature):
             out: dict = {}
             for k, v in sig.parameters.items():
                 annot = v.annotation
-                if isinstance(annot, _AnnotatedAlias):
+                if is_annotated(annot):
                     _, widget_option = split_annotated_type(annot)
                     out[k] = widget_option
             return out
@@ -253,10 +253,10 @@ def _normalize_validator(validator: Callable) -> Callable:
 
 def is_annotated(annotation: Any) -> bool:
     """Check if a type hint is an Annotated type."""
-    return isinstance(annotation, _AnnotatedAlias)
+    return get_origin(annotation) is Annotated
 
 
-def split_annotated_type(annotation: _AnnotatedAlias) -> tuple[Any, dict]:
+def split_annotated_type(annotation) -> tuple[Any, dict]:
     """Split an Annotated type into its base type and options dict."""
     if not is_annotated(annotation):
         raise TypeError("Type hint must be an 'Annotated' type.")

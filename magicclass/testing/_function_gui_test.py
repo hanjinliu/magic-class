@@ -4,8 +4,7 @@ from typing import Callable, Generic, TypeVar, TYPE_CHECKING
 from typing_extensions import ParamSpec
 from contextlib import contextmanager
 
-from psygnal import EmitLoopError
-from magicgui.widgets import PushButton, CheckBox
+from magicgui.widgets import PushButton, CheckBox, FunctionGui
 
 from magicclass import get_function_gui
 from magicclass._exceptions import unwrap_errors
@@ -134,6 +133,11 @@ class FunctionGuiTester(Generic[_P]):
     def call_count(self) -> int:
         """Number of times the method is called."""
         return self._fgui.call_count
+
+    @property
+    def gui(self) -> FunctionGui:
+        """The FunctionGui instance."""
+        return self._fgui
 
     def _mock_confirmation(self, *_, **__):
         self._n_confirm += 1

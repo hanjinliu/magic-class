@@ -8,7 +8,7 @@ from typing import (
     Any,
     TypeVar,
 )
-from typing_extensions import _AnnotatedAlias, get_args
+from typing_extensions import get_args
 from qtpy import QtWidgets as QtW, QtGui
 from qtpy.QtCore import Qt
 from magicgui.widgets import (
@@ -29,7 +29,7 @@ from magicgui.backends._qtpy.widgets import (
     LineEdit as BaseLineEdit,
 )
 from .utils import FreeWidget, merge_super_sigs
-from magicclass.signature import split_annotated_type
+from magicclass.signature import split_annotated_type, is_annotated
 from magicclass.widgets._const import FONT
 
 _W = TypeVar("_W", bound=ValueWidget)
@@ -77,7 +77,7 @@ class OptionalWidget(Container):
                 else:
                     annot_arg = type(value)
 
-            if isinstance(annot_arg, _AnnotatedAlias):
+            if is_annotated(annot_arg):
                 options = options or {}
                 annot_arg, metadata = split_annotated_type(annot_arg)
                 options.update(metadata)

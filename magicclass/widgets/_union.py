@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from typing_extensions import _AnnotatedAlias
-
 from magicgui.widgets import create_widget, Widget, Label
 from magicgui.types import Undefined
 
 from magicclass.widgets import TabbedContainer
-from magicclass.signature import split_annotated_type
+from magicclass.signature import split_annotated_type, is_annotated
 
 
 class UnionWidget(TabbedContainer):
@@ -26,7 +24,7 @@ class UnionWidget(TabbedContainer):
             for ann in annotations:
                 if isinstance(ann, type):
                     names.append(ann.__name__)
-                elif isinstance(ann, _AnnotatedAlias):
+                elif is_annotated(ann):
                     _type, _options = split_annotated_type(ann)
                     _name = _options.get("name", _options.get("label", _type.__name__))
                     names.append(_name)
@@ -38,7 +36,7 @@ class UnionWidget(TabbedContainer):
         for ann, name, opt in zip(annotations, names, options):
             _kwargs = dict(name=name, label="")
             _kwargs.update(opt)
-            if isinstance(ann, _AnnotatedAlias):
+            if is_annotated(ann):
                 ann, _options = split_annotated_type(ann)
                 _kwargs.update(_options)
             wdt = create_widget(annotation=ann, options=_kwargs)

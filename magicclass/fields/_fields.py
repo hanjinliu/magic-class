@@ -10,7 +10,7 @@ from typing import (
     overload,
     Generic,
 )
-from typing_extensions import Literal, _AnnotatedAlias
+from typing_extensions import Literal
 import threading
 from timeit import default_timer
 from functools import wraps
@@ -33,7 +33,11 @@ from magicclass.utils import (
     is_type_like,
     argcount,
 )
-from magicclass.signature import MagicMethodSignature
+from magicclass.signature import (
+    MagicMethodSignature,
+    is_annotated,
+    split_annotated_type,
+)
 from magicclass._gui.mgui_ext import Action, WidgetAction
 
 if TYPE_CHECKING:
@@ -1114,9 +1118,7 @@ def _get_field(
         name=name, label=label, record=record, annotation=None, options=options
     )
     if is_type_like(obj):
-        if isinstance(obj, _AnnotatedAlias):
-            from magicclass.signature import split_annotated_type
-
+        if is_annotated(obj):
             tp, widget_option = split_annotated_type(obj)
             kwargs.update(annotation=tp)
             options.update(**widget_option)
