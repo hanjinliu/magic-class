@@ -589,6 +589,7 @@ class Logger(Widget, logging.Handler):
             if not show._called:
                 show()
             self.__class__.current_logger = None
+            plt.close("all")
             mpl.use(backend)
         return None
 
