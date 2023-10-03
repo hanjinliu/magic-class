@@ -194,7 +194,7 @@ class QtLogger(QtW.QTextEdit):
         self._emit_output(Output.LINK, linkedStr(text, link))
 
     def _emit_output(self, output: int, obj: Printable):
-        with suppress(RuntimeError):
+        with suppress(RuntimeError, OSError):
             self.process.emit((output, obj))
 
     def _post_append(self):
