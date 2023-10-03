@@ -87,7 +87,6 @@ class Figure(FreeWidget):
         style=None,
         **kwargs,
     ):
-
         if isinstance(nrows, int):
             import matplotlib as mpl
             import matplotlib.pyplot as plt
@@ -101,6 +100,7 @@ class Figure(FreeWidget):
                     with plt.style.context(style):
                         fig, _ = plt.subplots(nrows, ncols, figsize=figsize)
             finally:
+                plt.close("all")
                 mpl.use(backend)
         else:
             fig = nrows
@@ -407,6 +407,7 @@ def _use_seaborn_grid(f):
             mpl.use("Agg")
             grid: Grid = f(self, *args, **kwargs)
         finally:
+            plt.close("all")
             mpl.use(backend)
 
         self._reset_canvas(grid.figure)

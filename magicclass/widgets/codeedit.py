@@ -3,6 +3,7 @@ from contextlib import contextmanager
 import inspect
 from typing import Any, Iterator, NamedTuple, TYPE_CHECKING
 import weakref
+from collections import Counter
 from qtpy import QtWidgets as QtW, QtGui, QtCore
 from qtpy.QtCore import Qt, Signal as pyqtSignal
 
@@ -599,29 +600,16 @@ class QCodeEditor(QtW.QPlainTextEdit):
 
         ndel = len(line) - len(line_rstripped)
         last_char = line_rstripped[-1]
-        if last_char in "([{:":
+        _counter = Counter(line)
+        _not_closed = (
+            _counter["("] - _counter[")"] > 0
+            or _counter["["] - _counter["]"] > 0
+            or _counter["{"] - _counter["}"] > 0
+        )
+        if _not_closed or last_char in "([{:":
             for _ in range(ndel):
                 cursor.deletePreviousChar()
             cursor.insertText("\n" + indent + _TAB)
-            self.setTextCursor(cursor)
-            cursor = self.textCursor()
-            if _close := {"(": ")", "{": "}", "[": "]"}.get(last_char):
-                cursor.movePosition(
-                    QtGui.QTextCursor.MoveOperation.EndOfLine,
-                    QtGui.QTextCursor.MoveMode.KeepAnchor,
-                )
-                if (idx := cursor.selectedText().find(_close)) >= 0:
-                    cursor.clearSelection()
-                    for _ in range(idx):
-                        cursor.movePosition(
-                            QtGui.QTextCursor.MoveOperation.NextCharacter,
-                        )
-                    cursor.movePosition(QtGui.QTextCursor.MoveOperation.Left)
-                    cursor.insertText("\n" + indent)
-                    cursor.movePosition(QtGui.QTextCursor.MoveOperation.Up)
-                    cursor.movePosition(QtGui.QTextCursor.MoveOperation.StartOfLine)
-                    cursor.movePosition(QtGui.QTextCursor.MoveOperation.NextWord)
-                cursor.clearSelection()
             self.setTextCursor(cursor)
         else:
             cursor.insertText("\n" + indent)
