@@ -386,7 +386,11 @@ class thread_worker(Generic[_P]):
         def _create_worker(*args, **kwargs):
             _is_non_blocking = self._is_non_blocking(gui)
             with gui.macro.blocked():
-                args, kwargs = self._validate_args(gui, args, kwargs)
+                try:
+                    args, kwargs = self._validate_args(gui, args, kwargs)
+                except Exception as e:
+                    # weirdly, try/except should be used to raise exceptions
+                    raise e
 
             # create a worker object
             worker = self._create_qt_worker(gui, *args, **kwargs)
@@ -408,7 +412,6 @@ class thread_worker(Generic[_P]):
                 @worker.aborted.connect
                 def _on_abort():
                     gui._error_mode.wrap_handler(Aborted.raise_, parent=gui)()
-                    gui.macro.active = True  # TODO: is this necessary anymore?
                     Aborted.raise_()
 
             if _is_non_blocking:

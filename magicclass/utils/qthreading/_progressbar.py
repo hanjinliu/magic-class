@@ -338,7 +338,7 @@ class DefaultProgressBar(FrameContainer, _SupportProgress):
         with suppress(RuntimeError):
             if _is_main_thread():
                 self._CONTAINER.append(self)
-                if self._CONTAINER.parent is not parent:
+                if self._CONTAINER.native.parent() is not parent:
                     self._CONTAINER.native.setParent(
                         parent,
                         self._CONTAINER.native.windowFlags(),
