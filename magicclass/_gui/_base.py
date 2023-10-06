@@ -786,7 +786,7 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
                 # NOTE: callback must be defined inside function. Magic class must be
                 # "compiled" otherwise function wrappings are not ready!
                 mgui = _build_mgui(widget, func, self)
-                mgui.native.setParent(self.native, mgui.native.windowFlags())
+                _set_parent(mgui, self)
                 out = mgui()
 
                 return out
@@ -796,7 +796,7 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
 
             def run_function():
                 mgui = _build_mgui(widget, func, self)
-                mgui.native.setParent(self.native, mgui.native.windowFlags())
+                _set_parent(mgui, self)
                 out = show_dialog_from_mgui(mgui)
                 self._popup_mode.connect_close_callback(mgui)
                 return out
@@ -1067,8 +1067,15 @@ class ContainerLikeGui(BaseGui[Union[Action, Widget]], mguiLike):
 
 
 def _get_widget_name(widget: Widget):
-    # To escape reference
+    # To escape the local scope
     return widget.name
+
+
+def _set_parent(mgui: FunctionGui, ui: BaseGui):
+    mgui.native.setParent(
+        ui._search_parent_magicclass().native,
+        mgui.native.windowFlags(),
+    )
 
 
 def _create_gui_method(self: BaseGui, obj: MethodType):
@@ -1346,9 +1353,9 @@ def _define_popup(self: BaseGui, obj, widget: PushButtonPlus | Action):
         # "windowFlags" and should appear at the center.
         def _prep(mgui: FunctionGui):
             if mgui.native.parent() is not self.native:
-                mgui.native.setParent(self.native, mgui.native.windowFlags())
-                mgui.show()
+                _set_parent(mgui, self)
                 move_to_screen_center(mgui.native)
+                mgui.show()
 
     elif popup_mode == PopUpMode.parentlast:
 

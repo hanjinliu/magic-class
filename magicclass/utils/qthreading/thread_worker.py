@@ -19,7 +19,7 @@ import weakref
 
 from superqt.utils import create_worker, GeneratorWorker, FunctionWorker
 from qtpy.QtCore import Qt, QThread, QCoreApplication
-from magicgui.widgets import ProgressBar, Widget
+from magicgui.widgets import ProgressBar
 from magicgui.application import use_app
 
 from magicclass.utils._functions import get_signature
@@ -606,6 +606,8 @@ class thread_worker(Generic[_P]):
 
     def _create_pbar(self, gui: BaseGui, desc: str, total: int) -> _SupportProgress:
         # prepare progress bar
+        from magicclass.fields import MagicField
+
         _pbar = self._progress["pbar"]
 
         # create progressbar widget (or any proper widget)
@@ -703,7 +705,11 @@ class thread_worker(Generic[_P]):
 
         if _pbar is None:
             _pbar = self.__class__._DEFAULT_PROGRESS_BAR(max=total)
-            if isinstance(_pbar, Widget) and _pbar.parent is None and _is_main_thread():
+            if (
+                isinstance(_pbar, DefaultProgressBar)
+                and _pbar.parent is None
+                and _is_main_thread()
+            ):
                 # Popup progressbar as a splashscreen if it is not a child widget.
                 _pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
 
