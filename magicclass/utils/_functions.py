@@ -126,6 +126,13 @@ def argcount(func: Callable) -> int:
     return nargs
 
 
+def get_level(f: Callable | type) -> int:
+    level = f.__qualname__.split(_LOCALS)[-1].count(".")
+    if callable(f):
+        return level - 1
+    return level
+
+
 _LOCALS = "<locals>."
 
 

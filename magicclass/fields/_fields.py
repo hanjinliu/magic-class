@@ -32,6 +32,7 @@ from magicclass.utils import (
     eval_attribute,
     is_type_like,
     argcount,
+    get_level,
 )
 from magicclass.signature import (
     MagicMethodSignature,
@@ -44,7 +45,7 @@ if TYPE_CHECKING:
     from typing_extensions import Self, ParamSpec
     from superqt.utils import WorkerBase
     from magicclass.utils import thread_worker
-    from magicclass._gui._base import MagicTemplate
+    from magicclass._gui._base import MagicTemplate, MoveInfo
     from magicclass._gui.mgui_ext import AbstractAction
 
     _M = TypeVar("_M", bound=MagicTemplate)
@@ -123,6 +124,7 @@ class MagicField(_FieldObject, Generic[_W]):
 
         # This attribute will be used when wrapped field/vfield is used.
         self._destination_class: type | None = None
+        self._move_info: MoveInfo | None = None
 
     def __repr__(self):
         attrs = ["value", "name", "widget_type", "record", "options"]
@@ -138,11 +140,16 @@ class MagicField(_FieldObject, Generic[_W]):
 
         if self._destination_class is not None:
             from magicclass.wrappers import abstractapi
+            from magicclass._gui._base import MoveInfo
 
             api = getattr(self._destination_class, name, None)
             if isinstance(api, abstractapi):
                 api.resolve()
                 api.__signature__ = MagicMethodSignature([])
+
+            dest_name = self._destination_class.__name__
+            level = get_level(self._destination_class) - get_level(owner)
+            self._move_info = MoveInfo(dest_name, level)
 
     def set_destination(self, dest: type) -> None:
         self._destination_class = dest
@@ -223,7 +230,7 @@ class MagicField(_FieldObject, Generic[_W]):
         """This property is necessary to hack _unwrap_method."""
         additional_options = {}
         if self._destination_class is not None:
-            additional_options["into"] = self._destination_class.__name__
+            additional_options["into"] = self._move_info
         return MagicMethodSignature([], additional_options=additional_options)
 
     @property

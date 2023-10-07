@@ -147,24 +147,7 @@ class ClassGuiBase(BaseGui[Widget]):
                 continue
 
             try:
-                if isinstance(attr, type):
-                    # Nested magic-class
-                    widget = attr()
-                    object.__setattr__(self, name, widget)
-
-                elif isinstance(attr, MagicField):
-                    # If MagicField is given by field() function.
-                    widget = self._create_widget_from_field(name, attr)
-                    if not widget.tooltip:
-                        widget.tooltip = _tooltips.attributes.get(name, "")
-
-                elif isinstance(attr, FunctionGui):
-                    widget = attr.copy()
-                    widget[0].bind(self)  # bind self to the first argument
-
-                else:
-                    # convert class method into instance method
-                    widget = getattr(self, name, None)
+                widget = self._convert_an_attribute_into_widget(name, attr, _tooltips)
 
                 if isinstance(widget, BaseGui):
                     connect_magicclasses(self, widget, name)

@@ -13,6 +13,7 @@ from typing import (
     TypeVar,
     overload,
     MutableSequence,
+    NamedTuple,
 )
 from types import MethodType
 from abc import ABCMeta
@@ -64,6 +65,7 @@ from magicclass.utils import (
     is_instance_method,
     method_as_getter,
     eval_attribute,
+    get_level,
 )
 from magicclass.widgets import Separator, FreeWidget
 from magicclass.fields import MagicField, MagicValueField, field, vfield
@@ -451,12 +453,14 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
                 if isinstance(predefined, abstractapi):
                     predefined.resolve()
 
+            level_dif = get_level(cls) - get_level(method) + 1
+            info = MoveInfo(cls.__name__, level_dif)
             if copy:
                 copyto_list = get_additional_option(func, "copyto", [])
-                copyto_list.append(cls.__name__)
+                copyto_list.append(info)
                 upgrade_signature(func, additional_options={"copyto": copyto_list})
             else:
-                upgrade_signature(func, additional_options={"into": cls.__name__})
+                upgrade_signature(func, additional_options={"into": info})
             return method
 
         return wrapper if method is None else wrapper(method)
@@ -465,8 +469,8 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
         self,
         method_name: str,
         widget: FunctionGui | PushButtonPlus | AbstractAction,
-        moveto: str,
-        copyto: list[str],
+        moveto: MoveInfo,
+        copyto: list[MoveInfo],
     ):
         """
         This private method converts class methods that are wrapped by its child widget class
@@ -492,17 +496,18 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
             matcher = copyto + [moveto]
         else:
             matcher = copyto
+        levels = {l for _, l in matcher}
 
         _found = 0
         _n_match = len(matcher)
-        for child_instance in self._iter_child_magicclasses():
-            _name = child_instance.__class__.__name__
-            if _name in matcher:
-                n_children = len(child_instance)
+        for level, child_ins in self._iter_child_magicclasses(max_level=max(levels)):
+            _name = child_ins.__class__.__name__
+            if (_name, level) in matcher:
+                n_children = len(child_ins)
 
                 # get the position of predefined child widget
                 try:
-                    index = _get_index(child_instance, method_name)
+                    index = _get_index(child_ins, method_name)
                     new = False
                 except ValueError:
                     index = n_children
@@ -516,23 +521,23 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
                     if copy:
                         widget = widget.copy()
                     if new:
-                        child_instance._fast_insert(n_children, widget)
+                        child_ins._fast_insert(n_children, widget)
                     else:
-                        del child_instance[index]
-                        child_instance._fast_insert(index, widget)
+                        del child_ins[index]
+                        child_ins._fast_insert(index, widget)
 
                 else:
                     # NOTE: wrapping button with action is not supported in the
                     # method above.
                     widget.visible = copy
                     if new:
-                        child_widget = child_instance._create_widget_from_method(
+                        child_widget = child_ins._create_widget_from_method(
                             _empty_func(method_name)
                         )
                         child_widget.text = widget.text
-                        child_instance._fast_insert(n_children, child_widget)
+                        child_ins._fast_insert(n_children, child_widget)
                     else:
-                        child_widget = child_instance[index]
+                        child_widget = child_ins[index]
 
                     child_widget.changed.disconnect()
                     child_widget.changed.connect(widget.changed)
@@ -728,7 +733,35 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
         """
         raise NotImplementedError()
 
-    def _create_widget_from_field(self, name: str, fld: MagicField):
+    def _convert_an_attribute_into_widget(
+        self, name: str, attr: Any, tooltips: Tooltips
+    ) -> Widget:
+        if isinstance(attr, type):
+            # Nested magic-class
+            widget = attr()
+            object.__setattr__(self, name, widget)
+
+        elif isinstance(attr, MagicField):
+            # If MagicField is given by field() function.
+            widget = self._create_widget_from_field(name, attr)
+            if not widget.tooltip:
+                widget.tooltip = tooltips.attributes.get(name, "")
+
+        elif isinstance(attr, FunctionGui):
+            widget = attr.copy()
+            first_widget = widget[0]
+            if not isinstance(first_widget, ValueWidget):
+                raise TypeError(
+                    f"The first widget of FunctionGui {attr!r} must be ValueWidget."
+                )
+            first_widget.bind(self)  # bind self to the first argument
+
+        else:
+            # convert class method into instance method
+            widget = getattr(self, name, None)
+        return widget
+
+    def _create_widget_from_field(self, name: str, fld: MagicField) -> Widget:
         """
         This function is called when magic-class encountered a MagicField in its definition.
 
@@ -862,11 +895,17 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
             current_self = parent
         return current_self
 
-    def _iter_child_magicclasses(self) -> Iterable[MagicTemplate]:
+    def _iter_child_magicclasses(
+        self,
+        level: int = 0,
+        max_level: int = 999999,
+    ) -> Iterable[tuple[int, MagicTemplate]]:
         """Iterate over all the child magic classes"""
+        if level >= max_level:
+            return
         for child in self.__magicclass_children__:
-            yield child
-            yield from child._iter_child_magicclasses()
+            yield level + 1, child
+            yield from child._iter_child_magicclasses(level=level + 1)
 
     def _call_with_return_callback(self, fname: str, *args, **kwargs) -> None:
         from magicclass.core import get_function_gui
@@ -1242,11 +1281,13 @@ def _get_index(container: Container, widget_or_name: Widget | str) -> int:
 def _child_that_has_widget(
     self: BaseGui, method: Callable, widget_or_name: Widget | str
 ) -> BaseGui:
-    child_clsname = get_additional_option(method, "into")
-    if child_clsname is None:
+    info: MoveInfo | None = get_additional_option(method, "into")
+    if info is None:
         return self
-    for child_instance in self._iter_child_magicclasses():
-        if child_instance.__class__.__name__ == child_clsname:
+    for level, child_instance in self._iter_child_magicclasses(max_level=info.level):
+        if info.level != level:
+            continue
+        if child_instance.__class__.__name__ == info.name:
             break
     else:
         raise ValueError(f"{widget_or_name} not found.")
@@ -1334,6 +1375,11 @@ def convert_attributes(
     if not record:
         _dict["macro"] = macro
     return _dict
+
+
+class MoveInfo(NamedTuple):
+    name: str
+    level: int
 
 
 _dummy_macro = DummyMacro()

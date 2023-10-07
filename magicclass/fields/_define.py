@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING, Callable
 import inspect
 
-from magicclass.utils import argcount, thread_worker
+from magicclass.utils import argcount, get_level
 
 if TYPE_CHECKING:
     from magicclass._gui._base import MagicTemplate
@@ -17,6 +17,7 @@ def define_callback_gui(self: MagicTemplate, callback: Callable):
     """Define a callback function from a method of a magic-class."""
 
     if callback.__qualname__.split("<locals>.")[-1].count(".") == 0:
+        # if get_level(callback) <= 0:
         # not defined in a class
         params = list(inspect.signature(callback).parameters.values())
         if len(params) > 0 and params[0].name == "self":
@@ -49,6 +50,8 @@ def define_callback_gui(self: MagicTemplate, callback: Callable):
             return _callback
 
     if isinstance(_qn := getattr(callback, "__qualname__", None), str):
+        # cb_level = get_level(callback)
+        # cls_level = get_level(self.__class__)
         cb_level = _qn.count(".") - 1
         cls_level = self.__class__.__qualname__.count(".")
         level_dif = cls_level - cb_level

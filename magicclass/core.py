@@ -530,7 +530,7 @@ def get_button(ui: MagicTemplate | ModuleType, name: str | None = None) -> Click
 
         opt = get_additional_option(getattr(ui, name), "into", None)
         if opt is not None:
-            for child_instance in ui._iter_child_magicclasses():
+            for _, child_instance in ui._iter_child_magicclasses():
                 _name = child_instance.__class__.__name__
                 if _name == opt:
                     widget = child_instance[name]
