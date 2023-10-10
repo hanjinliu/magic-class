@@ -45,7 +45,7 @@ if TYPE_CHECKING:
     from typing_extensions import Self, ParamSpec
     from superqt.utils import WorkerBase
     from magicclass.utils import thread_worker
-    from magicclass._gui._base import MagicTemplate, MoveInfo
+    from magicclass._gui._base import MagicTemplate
     from magicclass._gui.mgui_ext import AbstractAction
 
     _M = TypeVar("_M", bound=MagicTemplate)
@@ -124,7 +124,6 @@ class MagicField(_FieldObject, Generic[_W]):
 
         # This attribute will be used when wrapped field/vfield is used.
         self._destination_class: type | None = None
-        self._move_info: MoveInfo | None = None
 
     def __repr__(self):
         attrs = ["value", "name", "widget_type", "record", "options"]
@@ -140,16 +139,11 @@ class MagicField(_FieldObject, Generic[_W]):
 
         if self._destination_class is not None:
             from magicclass.wrappers import abstractapi
-            from magicclass._gui._base import MoveInfo
 
             api = getattr(self._destination_class, name, None)
             if isinstance(api, abstractapi):
                 api.resolve()
                 api.__signature__ = MagicMethodSignature([])
-
-            dest_name = self._destination_class.__name__
-            level = get_level(self._destination_class) - get_level(owner)
-            self._move_info = MoveInfo(dest_name, level)
 
     def set_destination(self, dest: type) -> None:
         self._destination_class = dest
@@ -230,7 +224,7 @@ class MagicField(_FieldObject, Generic[_W]):
         """This property is necessary to hack _unwrap_method."""
         additional_options = {}
         if self._destination_class is not None:
-            additional_options["into"] = self._move_info
+            additional_options["into"] = self._destination_class.__name__
         return MagicMethodSignature([], additional_options=additional_options)
 
     @property
@@ -818,6 +812,7 @@ def field(
     widget_type: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
+    location: MagicTemplate | None = None,
 ) -> MagicField[_M]:
     ...
 
@@ -830,6 +825,7 @@ def field(
     label: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
+    location: MagicTemplate | None = None,
 ) -> MagicField[_W]:
     ...
 
@@ -843,6 +839,7 @@ def field(
     widget_type: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
+    location: MagicTemplate | None = None,
 ) -> MagicField[ValueWidget[_X]]:
     ...
 
@@ -856,6 +853,7 @@ def field(
     widget_type: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
+    location: MagicTemplate | None = None,
 ) -> MagicField[ValueWidget[_X]]:
     ...
 
@@ -869,6 +867,7 @@ def field(
     widget_type: type[_W] = None,
     options: dict[str, Any] = {},
     record: bool = True,
+    location: MagicTemplate | None = None,
 ) -> MagicField[_W]:
     ...
 
@@ -882,6 +881,7 @@ def field(
     widget_type: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
+    location: MagicTemplate | None = None,
 ) -> MagicField[Widget]:
     ...
 
@@ -894,6 +894,7 @@ def field(
     widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
+    location: MagicTemplate | None = None,
 ) -> MagicField[Widget]:
     ...
 
@@ -906,6 +907,7 @@ def field(
     widget_type=None,
     options={},
     record=True,
+    location=None,
 ):
     """
     Make a MagicField object.
@@ -931,12 +933,17 @@ def field(
         argument of ``create_widget``.
     record : bool, default is True
         A magic-class specific parameter. If true, record value changes as macro.
+    location : magic-class, optional
+        Location to put the widget.
 
     Returns
     -------
     MagicField
     """
-    return _get_field(obj, name, label, widget_type, options, record, MagicField)
+    fld = _get_field(obj, name, label, widget_type, options, record, MagicField)
+    if location is not None:
+        fld.set_destination(location)
+    return fld
 
 
 @overload
@@ -947,6 +954,7 @@ def vfield(
     label: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
+    location: MagicTemplate | None = None,
 ) -> MagicValueField[_V]:
     ...
 
@@ -959,6 +967,7 @@ def vfield(
     label: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
+    location: MagicTemplate | None = None,
 ) -> MagicValueField[Any]:
     ...
 
@@ -972,6 +981,7 @@ def vfield(
     widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
+    location: MagicTemplate | None = None,
 ) -> MagicValueField[_X]:
     ...
 
@@ -985,6 +995,7 @@ def vfield(
     widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
+    location: MagicTemplate | None = None,
 ) -> MagicValueField[_X]:
     ...
 
@@ -998,6 +1009,7 @@ def vfield(
     widget_type: type[ValueWidget[_V]] = None,
     options: dict[str, Any] = {},
     record: bool = True,
+    location: MagicTemplate | None = None,
 ) -> MagicValueField[_V]:
     ...
 
@@ -1011,6 +1023,7 @@ def vfield(
     widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
+    location: MagicTemplate | None = None,
 ) -> MagicValueField[Any]:
     ...
 
@@ -1023,6 +1036,7 @@ def vfield(
     widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
+    location: MagicTemplate | None = None,
 ) -> MagicValueField[Any]:
     ...
 
@@ -1035,6 +1049,7 @@ def vfield(
     widget_type: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
+    location: MagicTemplate | None = None,
 ) -> MagicValueField[Widget, Any]:
     """
     Make a MagicValueField object.
@@ -1070,7 +1085,10 @@ def vfield(
     -------
     MagicValueField
     """
-    return _get_field(obj, name, label, widget_type, options, record, MagicValueField)
+    fld = _get_field(obj, name, label, widget_type, options, record, MagicValueField)
+    if location is not None:
+        fld.set_destination(location)
+    return fld
 
 
 def widget_property(func: Callable[..., _W]) -> MagicValueField[_W, Any]:

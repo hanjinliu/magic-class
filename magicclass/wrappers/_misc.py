@@ -9,11 +9,9 @@ from magicclass.types import Color
 from magicclass.signature import get_additional_option, upgrade_signature
 
 if TYPE_CHECKING:
-    from magicclass._gui import BaseGui
+    from magicclass._gui import MagicTemplate
 
-    _T = TypeVar("T", bound=BaseGui)
-
-_F = TypeVar("F", bound=Callable)
+_F = TypeVar("_F", bound=Callable)
 
 
 def set_options(
@@ -62,13 +60,14 @@ def set_options(
     """
 
     def wrapper(func: _F) -> _F:
-        sig = inspect.signature(func)
-        rem = options.keys() - sig.parameters.keys()
-        if rem:
-            warnings.warn(
-                f"Unknown arguments found in set_options of {func.__name__}: {rem}",
-                UserWarning,
-            )
+        if options:
+            sig = inspect.signature(func)
+            rem = options.keys() - sig.parameters.keys()
+            if rem:
+                warnings.warn(
+                    f"Unknown arguments found in set_options of {func.__name__}: {rem}",
+                    UserWarning,
+                )
 
         upgrade_signature(
             func,
@@ -95,6 +94,7 @@ def set_design(
     max_height: int | None = None,
     text: str | None = None,
     icon: str | None = None,
+    location: MagicTemplate | None = None,
     font_size: int | None = None,
     font_family: int | None = None,
     font_color: Color | None = None,
@@ -129,6 +129,7 @@ def set_design(
         Button visibility.
     """
     caller_options = locals()
+    caller_options.pop("location")
     caller_options = {k: v for k, v in caller_options.items() if v is not None}
 
     def wrapper(obj):
@@ -143,6 +144,8 @@ def set_design(
             obj.__post_init__ = __post_init__
         else:
             upgrade_signature(obj, caller_options=caller_options)
+            if location is not None:
+                location.wraps(obj)
         return obj
 
     return wrapper
@@ -242,7 +245,7 @@ def setup_function_gui(target: Callable):
     ...             gui.x.max = xmax_value
     """
 
-    def wrapper(setup: Callable[[BaseGui, FunctionGui], None]):
+    def wrapper(setup: Callable[[MagicTemplate, FunctionGui], None]):
         setup_qualname = setup.__qualname__
         target_qualname = target.__qualname__
         setup_qualname_list = setup_qualname.split(".")
@@ -251,7 +254,7 @@ def setup_function_gui(target: Callable):
             and setup_qualname_list[-2] != target_qualname.split(".")[-2]
         ):
             # have to search for the proper parent instance
-            def _setup(self: BaseGui, mgui: FunctionGui):
+            def _setup(self: MagicTemplate, mgui: FunctionGui):
                 prev_ns = setup_qualname_list[-2]
                 while self.__class__.__name__ != prev_ns:
                     self = self.__magicclass_parent__

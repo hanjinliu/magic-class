@@ -175,8 +175,8 @@ def test_wrapped_field():
         class B:
             a = abstractapi()
             b = abstractapi()
-        a = B.field(int)
-        b = B.field(str)
+        a = field(int, location=B)
+        b = field(str, location=B)
 
     ui = A()
     assert ui.B[0].widget_type == "SpinBox"
@@ -203,8 +203,8 @@ def test_wrapped_vfield():
         class B:
             a = abstractapi()
             b = abstractapi()
-        a = B.vfield(int)
-        b = B.vfield(str)
+        a = vfield(int, location=B)
+        b = vfield(str, location=B)
 
     ui = A()
     assert ui.B[0].widget_type == "SpinBox"
