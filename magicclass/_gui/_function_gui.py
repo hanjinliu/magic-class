@@ -24,6 +24,7 @@ class FunctionGuiPlus(FunctionGui[_R]):
     """FunctionGui class with a parameter recording functionality etc."""
 
     _dialog_widget = None
+    _initialized_for_magicclass = False
     calling = Signal(object)
 
     def __call__(self, *args: Any, update_widget: bool = False, **kwargs: Any) -> _R:

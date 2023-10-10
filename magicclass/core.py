@@ -1,7 +1,7 @@
 from __future__ import annotations
 from functools import wraps as functools_wraps
 import inspect
-from types import ModuleType
+from types import MethodType
 import warnings
 from weakref import WeakValueDictionary
 from typing import Any, TYPE_CHECKING, Callable
@@ -498,7 +498,7 @@ def build_help(ui: MagicTemplate, parent=None) -> HelpWidget:
     return help_widget
 
 
-def get_button(ui: MagicTemplate | ModuleType, name: str | None = None) -> Clickable:
+def get_button(ui: MagicTemplate | MethodType, name: str | None = None) -> Clickable:
     """
     Get the button/action object for the given method.
 
@@ -540,7 +540,7 @@ def get_button(ui: MagicTemplate | ModuleType, name: str | None = None) -> Click
 
 
 def get_function_gui(
-    ui: MagicTemplate | ModuleType, name: str = None
+    ui: MagicTemplate | MethodType, name: str | None = None
 ) -> FunctionGuiPlus:
     """
     Get the FunctionGui object hidden beneath push button or menu action.

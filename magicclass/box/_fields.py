@@ -200,8 +200,8 @@ class BoxProtocol(Protocol[_P]):
 
     @overload
     def __call__(
-        self, fld: BoxMagicField[_W], *args: _P.args, **kwargs: _P.kwargs
-    ) -> BoxMagicField[_W]:
+        self, fld: BoxMagicField[_V], *args: _P.args, **kwargs: _P.kwargs
+    ) -> BoxMagicField[_V]:
         ...
 
     @overload
@@ -212,14 +212,14 @@ class BoxProtocol(Protocol[_P]):
 
     @overload
     def __call__(
-        self, fld: MagicField[_W], *args: _P.args, **kwargs: _P.kwargs
-    ) -> BoxMagicField[_W]:
+        self, fld: MagicField[_V], *args: _P.args, **kwargs: _P.kwargs
+    ) -> BoxMagicField[_V]:
         ...
 
     @overload
     def __call__(
-        self, widget_type: type[_W], *args: _P.args, **kwargs: _P.kwargs
-    ) -> BoxMagicField[_W]:
+        self, widget_type: type[_V], *args: _P.args, **kwargs: _P.kwargs
+    ) -> BoxMagicField[_V]:
         ...
 
 
