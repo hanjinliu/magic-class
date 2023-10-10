@@ -840,7 +840,7 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
             def run_function():
                 mgui = _build_mgui(widget, func, self)
                 _need_title_bar = self._popup_mode.need_title_bar()
-                if mgui.call_count == 0:  # connect only once
+                if not mgui._initialized_for_magicclass:  # connect only once
                     _prep_func(mgui)
                     if _need_title_bar:
                         mgui.label = ""
@@ -854,6 +854,7 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
                             # TODO: should remove mgui from self?
                             title.btn_clicked.connect(mgui.hide)
                             mgui.insert(0, title)
+                    mgui._initialized_for_magicclass = True
 
                     if self._close_on_run and not mgui._auto_call:
                         self._popup_mode.connect_close_callback(mgui)
