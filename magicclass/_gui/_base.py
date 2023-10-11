@@ -192,8 +192,13 @@ class _MagicTemplateMeta(ABCMeta):
         return self
 
 
-_W = TypeVar("_W", bound=Widget)
 _Comp = TypeVar("_Comp", Widget, AbstractAction)
+
+
+def _typeof(current_self) -> type:
+    """Compatible with the copy_class function."""
+    tp = type(current_self)
+    return getattr(tp, "__original_class__", tp)
 
 
 class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
@@ -354,7 +359,7 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
             )
 
         current_self = self
-        while type(current_self) is not ancestor:
+        while _typeof(current_self) is not ancestor:
             current_self = current_self.__magicclass_parent__
             if current_self is None:
                 raise RuntimeError(
@@ -673,9 +678,9 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
         if isinstance(attr, type):
             # Nested magic-class
             widget = attr()
+            object.__setattr__(self, name, widget)
             if isinstance(widget, BaseGui):
                 connect_magicclasses(self, widget, name)
-            object.__setattr__(self, name, widget)
 
         elif isinstance(attr, MagicField):
             # If MagicField is given by field() function.
@@ -741,12 +746,10 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
         # Get the number of parameters except for empty widgets.
         # With these lines, "bind" method of magicgui works inside magicclass.
         fgui_info = callable_to_classes(func)
-        n_empty = len(
-            [
-                0
-                for _wdg_cls, _prm in fgui_info
-                if _wdg_cls is EmptyWidget or _prm.options.get("bind", None) is not None
-            ]
+        n_empty = sum(
+            1
+            for _wdg_cls, _prm in fgui_info
+            if _wdg_cls is EmptyWidget or _prm.options.get("bind", None) is not None
         )
         nparams = argcount(func) - n_empty
         if len(fgui_info) == 0:

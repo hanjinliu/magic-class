@@ -49,6 +49,8 @@ def copy_class(cls: _C, ns: str, name: str) -> _C:
     namespace = {}
     qualname = f"{ns}.{name}"
     for key, attr in cls.__dict__.items():
+        if key == ("__original_class__"):
+            continue
         if isinstance(attr, (FunctionType, abstractapi, thread_worker)):
             if attr.__qualname__.split("<locals>.")[-1].count(".") == 0:
                 pass
@@ -57,9 +59,9 @@ def copy_class(cls: _C, ns: str, name: str) -> _C:
         elif isinstance(attr, type):
             attr = copy_class(attr, qualname, attr.__qualname__.split(".")[-1])
         namespace[key] = attr
-
     out = type(cls.__name__, cls.__bases__, namespace)
     out.__qualname__ = qualname
+    out.__original_class__ = getattr(cls, "__original_class__", cls)
     return out
 
 

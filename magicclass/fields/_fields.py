@@ -542,8 +542,7 @@ class MagicField(_FieldObject, Generic[_W]):
             if isinstance(fn, thread_worker):
                 # this case is needed when multiple @connect_async are used
                 # for the same function.
-                self.connect(fn.replace(force_async=True))
-                return fn
+                return self.connect(fn)
             # non-local variables
             _running: WorkerBase | None = None  # the running worker
             _last_run = 0.0  # last time the worker was started
@@ -610,8 +609,7 @@ class MagicField(_FieldObject, Generic[_W]):
                 force_async=True,
                 ignore_errors=ignore_errors,
             )
-            self.connect(_afunc)
-            return _afunc.replace(force_async=False)
+            return self.connect(_afunc)
 
         return _wrapper if func is None else _wrapper(func)
 
