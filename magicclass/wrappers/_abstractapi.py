@@ -47,7 +47,7 @@ class abstractapi(Callable):
             self.__name__ = "unknown"
         self._resolved = False
         self._location = location
-        if location is not None:
+        if location is not None and not hasattr(self, "__signature__"):
             self.__signature__ = inspect.Signature([])
 
     def __call__(self, *args, **kwargs) -> NoReturn:
@@ -61,7 +61,8 @@ class abstractapi(Callable):
         api = getattr(self._location, name, None)
         if isinstance(api, abstractapi):
             api.resolve()
-            api.__signature__ = inspect.Signature([])
+            if not hasattr(self, "__signature__"):
+                api.__signature__ = inspect.Signature([])
 
     def __get__(self, instance, owner=None) -> abstractapi:
         """Always return the same object."""
