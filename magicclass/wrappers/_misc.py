@@ -10,6 +10,7 @@ from magicclass.signature import get_additional_option, upgrade_signature
 
 if TYPE_CHECKING:
     from magicclass._gui import MagicTemplate
+    from magicclass.fields import MagicField
 
 _F = TypeVar("_F", bound=Callable)
 
@@ -94,7 +95,7 @@ def set_design(
     max_height: int | None = None,
     text: str | None = None,
     icon: str | None = None,
-    location: MagicTemplate | None = None,
+    location: MagicTemplate | MagicField | None = None,
     font_size: int | None = None,
     font_family: int | None = None,
     font_color: Color | None = None,

@@ -215,9 +215,8 @@ class MagicField(_FieldObject, Generic[_W]):
 
     def with_widget_type(self, widget_type: type[Widget]):
         """Method to add widget type to the field."""
-        new = self.copy()
-        new._widget_type = widget_type
-        return new
+        self._widget_type = widget_type
+        return self
 
     @property
     def __signature__(self):
@@ -812,7 +811,7 @@ def field(
     widget_type: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-    location: MagicTemplate | None = None,
+    location: type[MagicTemplate] | MagicField | None = None,
 ) -> MagicField[_M]:
     ...
 
@@ -825,7 +824,7 @@ def field(
     label: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-    location: MagicTemplate | None = None,
+    location: type[MagicTemplate] | MagicField | None = None,
 ) -> MagicField[_W]:
     ...
 
@@ -839,7 +838,7 @@ def field(
     widget_type: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-    location: MagicTemplate | None = None,
+    location: type[MagicTemplate] | MagicField | None = None,
 ) -> MagicField[ValueWidget[_X]]:
     ...
 
@@ -853,7 +852,7 @@ def field(
     widget_type: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-    location: MagicTemplate | None = None,
+    location: type[MagicTemplate] | MagicField | None = None,
 ) -> MagicField[ValueWidget[_X]]:
     ...
 
@@ -867,7 +866,7 @@ def field(
     widget_type: type[_W] = None,
     options: dict[str, Any] = {},
     record: bool = True,
-    location: MagicTemplate | None = None,
+    location: type[MagicTemplate] | MagicField | None = None,
 ) -> MagicField[_W]:
     ...
 
@@ -881,7 +880,7 @@ def field(
     widget_type: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-    location: MagicTemplate | None = None,
+    location: type[MagicTemplate] | MagicField | None = None,
 ) -> MagicField[Widget]:
     ...
 
@@ -894,7 +893,7 @@ def field(
     widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-    location: MagicTemplate | None = None,
+    location: type[MagicTemplate] | MagicField | None = None,
 ) -> MagicField[Widget]:
     ...
 
@@ -954,7 +953,7 @@ def vfield(
     label: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-    location: MagicTemplate | None = None,
+    location: type[MagicTemplate] | MagicField | None = None,
 ) -> MagicValueField[_V]:
     ...
 
@@ -967,7 +966,7 @@ def vfield(
     label: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-    location: MagicTemplate | None = None,
+    location: type[MagicTemplate] | MagicField | None = None,
 ) -> MagicValueField[Any]:
     ...
 
@@ -981,7 +980,7 @@ def vfield(
     widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-    location: MagicTemplate | None = None,
+    location: type[MagicTemplate] | MagicField | None = None,
 ) -> MagicValueField[_X]:
     ...
 
@@ -995,7 +994,7 @@ def vfield(
     widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-    location: MagicTemplate | None = None,
+    location: type[MagicTemplate] | MagicField | None = None,
 ) -> MagicValueField[_X]:
     ...
 
@@ -1009,7 +1008,7 @@ def vfield(
     widget_type: type[ValueWidget[_V]] = None,
     options: dict[str, Any] = {},
     record: bool = True,
-    location: MagicTemplate | None = None,
+    location: type[MagicTemplate] | MagicField | None = None,
 ) -> MagicValueField[_V]:
     ...
 
@@ -1023,7 +1022,7 @@ def vfield(
     widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-    location: MagicTemplate | None = None,
+    location: type[MagicTemplate] | MagicField | None = None,
 ) -> MagicValueField[Any]:
     ...
 
@@ -1036,20 +1035,20 @@ def vfield(
     widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-    location: MagicTemplate | None = None,
+    location: type[MagicTemplate] | MagicField | None = None,
 ) -> MagicValueField[Any]:
     ...
 
 
 def vfield(
-    obj: Any = Undefined,
+    obj=Undefined,
     *,
-    name: str | None = None,
-    label: str | None = None,
-    widget_type: str | None = None,
-    options: dict[str, Any] = {},
-    record: bool = True,
-    location: MagicTemplate | None = None,
+    name=None,
+    label=None,
+    widget_type=None,
+    options={},
+    record=True,
+    location=None,
 ) -> MagicValueField[Widget, Any]:
     """
     Make a MagicValueField object.
