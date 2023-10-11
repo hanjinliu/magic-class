@@ -89,18 +89,6 @@ class ClassGuiBase(BaseGui[Widget]):
         fld.name = fld.name or name
         widget = fld.get_widget(self)
 
-        if isinstance(widget, BaseGui):
-            widget.__magicclass_parent__ = self
-            self.__magicclass_children__.append(widget)
-            widget._my_symbol = Symbol(name)
-
-        elif isinstance(fld, BoxMagicField):
-            for wdt in widget:
-                if isinstance(wdt, BaseGui):
-                    wdt.__magicclass_parent__ = self
-                    self.__magicclass_children__.append(wdt)
-                    wdt._my_symbol = Symbol(name)
-
         if isinstance(widget, (ValueWidget, ContainerWidget)):
             # If the field has callbacks, connect it to the newly generated widget.
             if fld.record:
@@ -148,9 +136,6 @@ class ClassGuiBase(BaseGui[Widget]):
 
             try:
                 widget = self._convert_an_attribute_into_widget(name, attr, _tooltips)
-
-                if isinstance(widget, BaseGui):
-                    connect_magicclasses(self, widget, name)
 
                 if isinstance(widget, MenuGui):
                     # Add menubar to container

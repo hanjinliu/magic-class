@@ -92,8 +92,6 @@ class MenuGuiBase(ContainerLikeGui):
                 widget = self._convert_an_attribute_into_widget(name, attr, _tooltips)
 
                 if isinstance(widget, BaseGui):
-                    connect_magicclasses(self, widget, name)
-
                     if isinstance(widget, MenuGuiBase):
                         widget.native.setParent(
                             self.native, widget.native.windowFlags()

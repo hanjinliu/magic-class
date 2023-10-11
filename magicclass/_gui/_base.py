@@ -44,13 +44,19 @@ from macrokit import Symbol
 from .keybinding import as_shortcut
 from .mgui_ext import (
     AbstractAction,
-    Action,
     FunctionGuiPlus,
-    PushButtonPlus,
+    Action,
+    Clickable,
+    is_clickable,
     _LabeledWidgetAction,
     mguiLike,
 )
-from .utils import copy_class, callable_to_classes, show_dialog_from_mgui
+from .utils import (
+    copy_class,
+    callable_to_classes,
+    show_dialog_from_mgui,
+    connect_magicclasses,
+)
 from ._macro import GuiMacro, DummyMacro
 from ._macro_utils import inject_recorder, inject_silencer, value_widget_callback
 from ._icon import get_icon
@@ -64,10 +70,9 @@ from magicclass.utils import (
     is_instance_method,
     method_as_getter,
     eval_attribute,
-    get_level,
 )
 from magicclass.widgets import Separator, FreeWidget
-from magicclass.fields import MagicField, MagicValueField, field, vfield
+from magicclass.fields import MagicField, field, vfield
 from magicclass.signature import (
     ConfirmDict,
     MagicMethodSignature,
@@ -196,9 +201,9 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
     __magicclass_parent__: None | MagicTemplate
     __magicclass_children__: list[MagicTemplate]
     _close_on_run: bool
-    _component_class: type[Action | PushButtonPlus]
+    _component_class: type[Clickable]
     _error_mode: ErrorMode
-    _list: list[Action | Widget]
+    _list: list[AbstractAction | Widget]
     _macro_instance: GuiMacro
     _my_symbol: Symbol
     _popup_mode: PopUpMode
@@ -428,6 +433,15 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
                 wraps(template)(func)
 
             predefined = getattr(cls, func.__name__, None)
+            into_cls = cls
+            while (
+                isinstance(predefined, abstractapi)
+                and (loc := predefined.get_location()) is not None
+            ):
+                predefined.resolve()
+                predefined = getattr(loc, func.__name__, None)
+                into_cls = loc
+
             if predefined is not None:
                 # Update signature to the parent one. This step is necessary when widget design
                 # is defined on the parent side. Parameters should be replaced with a simplest
@@ -454,10 +468,10 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
 
             if copy:
                 copyto_list = get_additional_option(func, "copyto", [])
-                copyto_list.append(cls.__name__)
+                copyto_list.append(into_cls.__name__)
                 upgrade_signature(func, additional_options={"copyto": copyto_list})
             else:
-                upgrade_signature(func, additional_options={"into": cls.__name__})
+                upgrade_signature(func, additional_options={"into": into_cls.__name__})
             return method
 
         return wrapper if method is None else wrapper(method)
@@ -465,7 +479,7 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
     def _unwrap_method(
         self,
         method_name: str,
-        widget: FunctionGui | PushButtonPlus | AbstractAction,
+        widget: FunctionGui | Clickable,
         moveto: str,
         copyto: list[str],
     ):
@@ -513,7 +527,7 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
                 self._fast_insert(len(self), widget, remove_label=True)
                 copy = _name in copyto
 
-                if not isinstance(widget, (PushButtonPlus, AbstractAction)):
+                if not is_clickable(widget):
                     if copy:
                         widget = widget.copy()
                     if new:
@@ -547,7 +561,8 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
 
         else:
             raise RuntimeError(
-                f"{method_name} not found in class {self.__class__.__name__}"
+                f"{method_name} not found in any of the nested classes in class "
+                f"{self.__class__.__name__}"
             )
 
     @classmethod
@@ -658,11 +673,19 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
         if isinstance(attr, type):
             # Nested magic-class
             widget = attr()
+            if isinstance(widget, BaseGui):
+                connect_magicclasses(self, widget, name)
             object.__setattr__(self, name, widget)
 
         elif isinstance(attr, MagicField):
             # If MagicField is given by field() function.
             widget = self._create_widget_from_field(name, attr)
+            if isinstance(widget, BaseGui):
+                connect_magicclasses(self, widget, name)
+            if isinstance(attr, BoxMagicField):
+                for wdt in widget:
+                    if isinstance(wdt, BaseGui):
+                        connect_magicclasses(self, wdt, name)
             if not widget.tooltip:
                 widget.tooltip = tooltips.attributes.get(name, "")
 
@@ -678,6 +701,7 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
         else:
             # convert class method into instance method
             widget = getattr(self, name, None)
+
         return widget
 
     def _create_widget_from_field(self, name: str, fld: MagicField) -> Widget:
@@ -803,7 +827,8 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
         if keybinding is not None:
             shortcut = as_shortcut(keybinding)
             widget.set_shortcut(shortcut)
-
+        if isinstance(obj, abstractapi) and obj.get_location() is not None:
+            widget.visible = False
         return widget
 
     def _search_parent_magicclass(self) -> MagicTemplate:
@@ -1118,7 +1143,7 @@ class MagicGuiBuildError(RuntimeError):
     """Error raised when magicgui cannot build a gui."""
 
 
-def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGui):
+def _build_mgui(widget_: Clickable, func: Callable, parent: BaseGui):
     """Build a magicgui from a function for the give button/action."""
     if widget_.mgui is not None:
         return widget_.mgui
@@ -1280,6 +1305,13 @@ def convert_attributes(
             _isfunc = callable(obj)
             if isinstance(obj, _MagicTemplateMeta):
                 new_attr = copy_class(obj, cls.__qualname__, name=name)
+            elif isinstance(obj, MagicField) and isinstance(
+                obj.constructor, _MagicTemplateMeta
+            ):
+                obj._constructor = copy_class(
+                    obj.constructor, cls.__qualname__, name=name
+                )
+                new_attr = obj
             elif name.startswith("_") or isinstance(obj, _pass) or not _isfunc:
                 # private method, non-action-like object, not-callable object are passed.
                 new_attr = obj
@@ -1304,7 +1336,7 @@ def macro(self: BaseGui):
     return _dummy_macro
 
 
-def _define_popup(self: BaseGui, obj, widget: PushButtonPlus | Action):
+def _define_popup(self: BaseGui, obj, widget: Clickable):
     # deal with popup mode.
     popup_mode = self._popup_mode
     if popup_mode == PopUpMode.popup:

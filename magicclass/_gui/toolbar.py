@@ -130,8 +130,6 @@ class ToolBarGui(ContainerLikeGui):
                 widget = self._convert_an_attribute_into_widget(name, attr, _tooltips)
 
                 if isinstance(widget, BaseGui):
-                    connect_magicclasses(self, widget, name)
-
                     if isinstance(widget, MenuGui):
                         tb = ToolButtonPlus(widget.name)
                         tb.set_menu(widget.native)

@@ -365,13 +365,15 @@ class MagicField(_FieldObject, Generic[_W]):
 
         def _func(w):
             # First we have to know where (which instance) MagicField came from.
-            if obj.__class__.__name__ not in clsnames:
+            objname = obj.__class__.__qualname__.split(".")[-1]
+            if objname not in clsnames:
                 ns = ".".join(clsnames)
                 raise ValueError(
+                    f"{obj.__class__.__name__!r} not in {clsnames!r}. "
                     f"Method {self.name!r} is in namespace {ns!r}, so it is invisible "
                     f"from magicclass {obj.__class__.__qualname__!r}."
                 )
-            i = clsnames.index(type(obj).__name__) + 1
+            i = clsnames.index(objname) + 1
             ins = obj
             for clsname in clsnames[i:]:
                 ins = getattr(ins, clsname, ins)
@@ -540,7 +542,8 @@ class MagicField(_FieldObject, Generic[_W]):
             if isinstance(fn, thread_worker):
                 # this case is needed when multiple @connect_async are used
                 # for the same function.
-                return self.connect(fn)
+                self.connect(fn.replace(force_async=True))
+                return fn
             # non-local variables
             _running: WorkerBase | None = None  # the running worker
             _last_run = 0.0  # last time the worker was started
@@ -550,6 +553,7 @@ class MagicField(_FieldObject, Generic[_W]):
             @wraps(fn)
             def _func(self: MagicTemplate, *args, **kwargs):
                 nonlocal _running, _last_run, _last_run_id, _abort_begin
+
                 with threading.Lock():
                     _this_id = default_timer()
                     f = _afunc.__get__(self)
