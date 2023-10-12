@@ -498,7 +498,15 @@ def build_help(ui: MagicTemplate, parent=None) -> HelpWidget:
     return help_widget
 
 
-def get_button(ui: MagicTemplate | MethodType, name: str | None = None) -> Clickable:
+_BUTTON_CACHE: WeakValueDictionary[tuple[int, str], Clickable] = WeakValueDictionary()
+
+
+def get_button(
+    ui: MagicTemplate | MethodType,
+    name: str | None = None,
+    *,
+    cache: bool = False,
+) -> Clickable:
     """
     Get the button/action object for the given method.
 
@@ -520,6 +528,10 @@ def get_button(ui: MagicTemplate | MethodType, name: str | None = None) -> Click
                 "The first argument of `get_button() must be a method if "
                 "the method name is not given."
             )
+    cache_key = (id(ui), name)
+    if cache and (btn := _BUTTON_CACHE.get(cache_key, None) is not None):
+        return btn
+
     widget: Clickable = ui[name]
 
     if not hasattr(widget, "mgui"):
@@ -536,11 +548,14 @@ def get_button(ui: MagicTemplate | MethodType, name: str | None = None) -> Click
                     widget = child_instance[name]
                     return widget
             raise ValueError(f"Could not find {opt} in {ui}.")
+    if cache:
+        _BUTTON_CACHE[cache_key] = widget
     return widget
 
 
 def get_function_gui(
-    ui: MagicTemplate | MethodType, name: str | None = None
+    ui: MagicTemplate | MethodType,
+    name: str | None = None,
 ) -> FunctionGuiPlus:
     """
     Get the FunctionGui object hidden beneath push button or menu action.

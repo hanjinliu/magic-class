@@ -18,6 +18,7 @@ from types import MethodType
 from abc import ABCMeta
 import inspect
 import warnings
+from weakref import WeakValueDictionary
 from qtpy import QtWidgets as QtW
 
 from psygnal import Signal
@@ -89,11 +90,6 @@ from magicclass.box._fields import BoxMagicField
 if TYPE_CHECKING:
     import numpy as np
     import napari
-    from typing_extensions import Self
-
-    _X = TypeVar("_X", bound=MGUI_SIMPLE_TYPES)
-    _V = TypeVar("_V")
-    _M = TypeVar("_M", bound="MagicTemplate")
 
 defaults = {
     "popup_mode": PopUpMode.popup,
@@ -170,7 +166,8 @@ def check_override(cls: type):
         )
 
 
-_ANCESTORS: dict[tuple[int, int], MagicTemplate] = {}
+_ANCESTORS: WeakValueDictionary[tuple[int, int], MagicTemplate] = WeakValueDictionary()
+
 
 _T = TypeVar("_T", bound="MagicTemplate")
 _T1 = TypeVar("_T1")
