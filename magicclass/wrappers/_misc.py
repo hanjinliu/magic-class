@@ -28,19 +28,17 @@ def set_options(
     By decorating a method with this function, ``magicgui`` will create a widget with these
     options. These codes are similar in appearance.
 
-    .. code-block:: python
+    >>> # A magicgui way
+    >>> @magicgui(a={...})
+    >>> def func(a):
+    ...     print(a)
 
-        # A magicgui way
-        @magicgui(a={...})
-        def func(a):
-            ...
-
-        # A magicclass way
-        @magicclass
-        class A:
-            @set_options(a={...})
-            def func(self, a):
-                ...
+    >>> # A magicclass way
+    >>> @magicclass
+    >>> class A:
+    ...     @set_options(a={...})
+    ...     def func(self, a):
+    ...         print(a)
 
     Parameters
     ----------
@@ -93,11 +91,11 @@ def set_design(
     min_height: int | None = None,
     max_width: int | None = None,
     max_height: int | None = None,
-    text: str | None = None,
-    icon: str | None = None,
-    location: MagicTemplate | MagicField | None = None,
+    text: str | Callable[[str], str] | None = None,
+    icon: str | int | None = None,
+    location: type[MagicTemplate] | MagicField | None = None,
     font_size: int | None = None,
-    font_family: int | None = None,
+    font_family: str | None = None,
     font_color: Color | None = None,
     background_color: Color | None = None,
     visible: bool | None = None,
@@ -119,22 +117,53 @@ def set_design(
         Button maximum width. Call ``button.max_width = max_width``.
     max_height : int, optional
         Button maximum height. Call ``button.max_height = max_height``.
-    text : str, optional
-        Button text. Call ``button.text = text``.
+    text : str or callable, optional
+        Button text. Call ``button.text = text``. A function can be given to set the text
+        from the function name.
     icon : str, optional
         Path to icon file. ``min_width`` and ``min_height`` will be automatically set to the icon size
         if not given.
+    location : magic-class or magic-field of magic-class, optional
+        If given, the button will be added to the given magic-class.
     font_size : int, optional
         Font size of the text.
     visible : bool default is True
         Button visibility.
     """
-    caller_options = locals()
-    caller_options.pop("location")
-    caller_options = {k: v for k, v in caller_options.items() if v is not None}
+    caller_options = {}
+    if width is not None:
+        caller_options["width"] = int(width)
+    if height is not None:
+        caller_options["height"] = int(height)
+    if min_width is not None:
+        caller_options["min_width"] = int(min_width)
+    if min_height is not None:
+        caller_options["min_height"] = int(min_height)
+    if max_width is not None:
+        caller_options["max_width"] = int(max_width)
+    if max_height is not None:
+        caller_options["max_height"] = int(max_height)
+    if font_size is not None:
+        caller_options["font_size"] = int(font_size)
+    if font_family is not None:
+        caller_options["font_family"] = str(font_family)
+    if font_color is not None:
+        caller_options["font_color"] = font_color
+    if background_color is not None:
+        caller_options["background_color"] = background_color
+    if visible is not None:
+        caller_options["visible"] = bool(visible)
+    if icon is not None:
+        caller_options["icon"] = icon
 
     def wrapper(obj):
+        if callable(text):
+            caller_options["text"] = text(obj.__name__)
+        elif text is not None:
+            caller_options["text"] = str(text)
         if isinstance(obj, type):
+            if location is not None:
+                raise TypeError("Cannot use location argument on classes.")
             _post_init = getattr(obj, "__post_init__", lambda self: None)
 
             def __post_init__(self):
@@ -191,7 +220,6 @@ def bind_key(*key) -> Callable[[_F], _F]:
 
     >>> @bind_key("Ctrl-A")         # napari style
     >>> @bind_key("Ctrl+A")         # Qt style
-
     >>> @bind_key("Ctrl+K, Ctrl+V") # Key combo
 
     """

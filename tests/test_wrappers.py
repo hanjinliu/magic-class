@@ -82,6 +82,18 @@ def test_set_design():
     ui = A()
     assert ui["f1"].text == "new-text"
 
+def test_set_design_with_callable():
+    from magicclass import set_design
+
+    @magicclass
+    class A:
+        @set_design(text=str.capitalize)
+        def f1(self, a: int):
+            pass
+
+    ui = A()
+    assert ui["f1"].text == "F1"
+
 def test_do_not_record():
     from magicclass import do_not_record
     @magicclass

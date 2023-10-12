@@ -119,13 +119,13 @@ class Icon(SimpleNamespace):
 
     .. code-block:: python
 
-        from magicclass import magicclass, set_design, Icon
+    >>> from magicclass import magicclass, set_design, Icon
 
-        @magicclass
-        class A:
-            @set_design(icon=Icon.FileIcon)
-            def func(self):
-                ...
+    >>> @magicclass
+    >>> class A:
+    ...     @set_design(icon=Icon.FileIcon)
+    ...     def func(self):
+    ...         ...
 
     """
 
