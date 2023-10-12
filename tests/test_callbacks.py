@@ -307,7 +307,7 @@ def test_async_callback_wrapped():
         class B(MagicTemplate):
             x = abstractapi()
 
-        x = B.vfield(int)
+        x = vfield(int, location=B)
         @x.connect_async
         def _x(self, v):
             self._val = self, v

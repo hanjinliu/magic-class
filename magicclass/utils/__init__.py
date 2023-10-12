@@ -3,6 +3,7 @@ from ._functions import (
     Tooltips,
     get_signature,
     argcount,
+    get_level,
     is_instance_method,
     method_as_getter,
     eval_attribute,

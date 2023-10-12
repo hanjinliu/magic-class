@@ -35,7 +35,6 @@ from .fields import (
     magicproperty,
     FieldGroup,
     HasFields,
-    dataclass_gui,
 )
 from ._gui._base import defaults, MagicTemplate, PopUpMode
 from ._gui.keybinding import Key

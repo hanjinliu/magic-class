@@ -44,13 +44,19 @@ from macrokit import Symbol
 from .keybinding import as_shortcut
 from .mgui_ext import (
     AbstractAction,
-    Action,
     FunctionGuiPlus,
-    PushButtonPlus,
+    Action,
+    Clickable,
+    is_clickable,
     _LabeledWidgetAction,
     mguiLike,
 )
-from .utils import copy_class, callable_to_classes, show_dialog_from_mgui
+from .utils import (
+    copy_class,
+    callable_to_classes,
+    show_dialog_from_mgui,
+    connect_magicclasses,
+)
 from ._macro import GuiMacro, DummyMacro
 from ._macro_utils import inject_recorder, inject_silencer, value_widget_callback
 from ._icon import get_icon
@@ -66,7 +72,7 @@ from magicclass.utils import (
     eval_attribute,
 )
 from magicclass.widgets import Separator, FreeWidget
-from magicclass.fields import MagicField, MagicValueField, field, vfield
+from magicclass.fields import MagicField, field, vfield
 from magicclass.signature import (
     ConfirmDict,
     MagicMethodSignature,
@@ -186,8 +192,13 @@ class _MagicTemplateMeta(ABCMeta):
         return self
 
 
-_W = TypeVar("_W", bound=Widget)
 _Comp = TypeVar("_Comp", Widget, AbstractAction)
+
+
+def _typeof(current_self) -> type:
+    """Compatible with the copy_class function."""
+    tp = type(current_self)
+    return getattr(tp, "__original_class__", tp)
 
 
 class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
@@ -195,9 +206,9 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
     __magicclass_parent__: None | MagicTemplate
     __magicclass_children__: list[MagicTemplate]
     _close_on_run: bool
-    _component_class: type[Action | PushButtonPlus]
+    _component_class: type[Clickable]
     _error_mode: ErrorMode
-    _list: list[Action | Widget]
+    _list: list[AbstractAction | Widget]
     _macro_instance: GuiMacro
     _my_symbol: Symbol
     _popup_mode: PopUpMode
@@ -348,7 +359,7 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
             )
 
         current_self = self
-        while type(current_self) is not ancestor:
+        while _typeof(current_self) is not ancestor:
             current_self = current_self.__magicclass_parent__
             if current_self is None:
                 raise RuntimeError(
@@ -427,6 +438,15 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
                 wraps(template)(func)
 
             predefined = getattr(cls, func.__name__, None)
+            into_cls = cls
+            while (
+                isinstance(predefined, abstractapi)
+                and (loc := predefined.get_location()) is not None
+            ):
+                predefined.resolve()
+                predefined = getattr(loc, func.__name__, None)
+                into_cls = loc
+
             if predefined is not None:
                 # Update signature to the parent one. This step is necessary when widget design
                 # is defined on the parent side. Parameters should be replaced with a simplest
@@ -453,10 +473,10 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
 
             if copy:
                 copyto_list = get_additional_option(func, "copyto", [])
-                copyto_list.append(cls.__name__)
+                copyto_list.append(into_cls.__name__)
                 upgrade_signature(func, additional_options={"copyto": copyto_list})
             else:
-                upgrade_signature(func, additional_options={"into": cls.__name__})
+                upgrade_signature(func, additional_options={"into": into_cls.__name__})
             return method
 
         return wrapper if method is None else wrapper(method)
@@ -464,7 +484,7 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
     def _unwrap_method(
         self,
         method_name: str,
-        widget: FunctionGui | PushButtonPlus | AbstractAction,
+        widget: FunctionGui | Clickable,
         moveto: str,
         copyto: list[str],
     ):
@@ -495,14 +515,14 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
 
         _found = 0
         _n_match = len(matcher)
-        for child_instance in self._iter_child_magicclasses():
-            _name = child_instance.__class__.__name__
+        for _, child_ins in self._iter_child_magicclasses():
+            _name = child_ins.__class__.__name__
             if _name in matcher:
-                n_children = len(child_instance)
+                n_children = len(child_ins)
 
                 # get the position of predefined child widget
                 try:
-                    index = _get_index(child_instance, method_name)
+                    index = _get_index(child_ins, method_name)
                     new = False
                 except ValueError:
                     index = n_children
@@ -512,27 +532,27 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
                 self._fast_insert(len(self), widget, remove_label=True)
                 copy = _name in copyto
 
-                if not isinstance(widget, (PushButtonPlus, AbstractAction)):
+                if not is_clickable(widget):
                     if copy:
                         widget = widget.copy()
                     if new:
-                        child_instance._fast_insert(n_children, widget)
+                        child_ins._fast_insert(n_children, widget)
                     else:
-                        del child_instance[index]
-                        child_instance._fast_insert(index, widget)
+                        del child_ins[index]
+                        child_ins._fast_insert(index, widget)
 
                 else:
                     # NOTE: wrapping button with action is not supported in the
                     # method above.
                     widget.visible = copy
                     if new:
-                        child_widget = child_instance._create_widget_from_method(
+                        child_widget = child_ins._create_widget_from_method(
                             _empty_func(method_name)
                         )
                         child_widget.text = widget.text
-                        child_instance._fast_insert(n_children, child_widget)
+                        child_ins._fast_insert(n_children, child_widget)
                     else:
-                        child_widget = child_instance[index]
+                        child_widget = child_ins[index]
 
                     child_widget.changed.disconnect()
                     child_widget.changed.connect(widget.changed)
@@ -546,38 +566,9 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
 
         else:
             raise RuntimeError(
-                f"{method_name} not found in class {self.__class__.__name__}"
+                f"{method_name} not found in any of the nested classes in class "
+                f"{self.__class__.__name__}"
             )
-
-    # fmt: off
-    @overload
-    @classmethod
-    def field(cls, gui_class: type[_M], *, name: str | None = None, label: str | None = None, widget_type: str | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicField[_M, Any]: ...  # noqa
-
-    @overload
-    @classmethod
-    def field(cls, type_of_widget: type[_W], *, name: str | None = None, label: str | None = None, options: dict[str, Any] = {}, record: bool = True) -> MagicField[_W, Any]: ...  # noqa
-
-    @overload
-    @classmethod
-    def field(cls, obj: type[_X], *, name: str | None = None, label: str | None = None, widget_type: str | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicField[ValueWidget, _X]: ...  # noqa
-
-    @overload
-    @classmethod
-    def field(cls, obj: _X, *, name: str | None = None, label: str | None = None, widget_type: str | None = None, options: dict[str, Any] = {}, record: bool = True) -> MagicField[ValueWidget, _X]: ...  # noqa
-
-    @overload
-    @classmethod
-    def field(cls, obj: Any | None, *, name: str | None = None, label: str | None = None, widget_type: type[_W] = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicField[_W, Any]: ...  # noqa
-
-    @overload
-    @classmethod
-    def field(cls, obj: Any, *, name: str | None = None, label: str | None = None, widget_type: str | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicField[Widget, Any]: ...  # noqa
-
-    @overload
-    @classmethod
-    def field(cls, *, name: str | None = None, label: str | None = None, widget_type: str | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicField[Widget, Any]: ...  # noqa
-    # fmt: on
 
     @classmethod
     def field(
@@ -589,72 +580,21 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
         widget_type=None,
         options={},
         record=True,
-    ) -> MagicField:
-        """
-        Make a MagicField object, with the widget in the child class.
-
-        >>> @magicclass
-        ... class A:
-        ...     @magicclass
-        ...     class B:
-        ...         i = ...  # pre-definition
-        ...     i = B.field(1)
-
-        Parameters
-        ----------
-        obj : Any, default is Undefined
-            Reference to determine what type of widget will be created. If Widget
-            subclass is given, it will be used as is. If other type of class is given,
-            it will used as type annotation. If an object (not type) is given, it will
-            be assumed to be the default value.
-        name : str, optional
-            Name of the widget.
-        label : str, optional
-            Label of the widget.
-        widget_type : str, optional
-            Widget type. This argument will be sent to ``create_widget`` function.
-        options : dict, optional
-            Widget options. This parameter will be passed to the ``options`` keyword
-            argument of ``create_widget``.
-        record : bool, default is True
-            A magic-class specific parameter. If true, record value changes as macro.
-
-        Returns
-        -------
-        MagicField
-        """
-        fld = field(
+    ):
+        warnings.warn(
+            "Method 'field' is deprecated. Use field(..., location=...) instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return field(
             obj,
             name=name,
             label=label,
             widget_type=widget_type,
             options=options,
             record=record,
+            location=cls,
         )
-        fld.set_destination(cls)
-        return fld
-
-    # fmt: off
-    @overload
-    @classmethod
-    def vfield(cls, widget_type: type[ValueWidget[_V]], *, name: str | None = None, label: str | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[_V]: ...  # noqa
-
-    @overload
-    @classmethod
-    def vfield(cls, annotation: type[_X], *, name: str | None = None, label: str | None = None, widget_type: str | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[_X]: ...  # noqa
-
-    @overload
-    @classmethod
-    def vfield(cls, obj: _X, *, name: str | None = None, label: str | None = None, widget_type: str | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[_X]: ...  # noqa
-
-    @overload
-    @classmethod
-    def vfield(cls, obj: Any, *, name: str | None = None, label: str | None = None, widget_type: type[_W] = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[Any]: ...  # noqa
-
-    @overload
-    @classmethod
-    def vfield(cls, obj: Any, *, name: str | None = None, label: str | None = None, widget_type: str | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[Any]: ...  # noqa
-    # fmt: on
 
     @classmethod
     def vfield(
@@ -666,17 +606,21 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
         widget_type=None,
         options={},
         record=True,
-    ) -> MagicValueField:
-        fld = vfield(
+    ):
+        warnings.warn(
+            "Method 'field' is deprecated. Use vfield(..., location=...) instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return vfield(
             obj,
             name=name,
             label=label,
             widget_type=widget_type,
             options=options,
             record=record,
+            location=cls,
         )
-        fld.set_destination(cls)
-        return fld
 
     @contextmanager
     def config_context(
@@ -728,7 +672,44 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
         """
         raise NotImplementedError()
 
-    def _create_widget_from_field(self, name: str, fld: MagicField):
+    def _convert_an_attribute_into_widget(
+        self, name: str, attr: Any, tooltips: Tooltips
+    ) -> Widget:
+        if isinstance(attr, type):
+            # Nested magic-class
+            widget = attr()
+            object.__setattr__(self, name, widget)
+            if isinstance(widget, BaseGui):
+                connect_magicclasses(self, widget, name)
+
+        elif isinstance(attr, MagicField):
+            # If MagicField is given by field() function.
+            widget = self._create_widget_from_field(name, attr)
+            if isinstance(widget, BaseGui):
+                connect_magicclasses(self, widget, name)
+            if isinstance(attr, BoxMagicField):
+                for wdt in widget:
+                    if isinstance(wdt, BaseGui):
+                        connect_magicclasses(self, wdt, name)
+            if not widget.tooltip:
+                widget.tooltip = tooltips.attributes.get(name, "")
+
+        elif isinstance(attr, FunctionGui):
+            widget = attr.copy()
+            first_widget = widget[0]
+            if not isinstance(first_widget, ValueWidget):
+                raise TypeError(
+                    f"The first widget of FunctionGui {attr!r} must be ValueWidget."
+                )
+            first_widget.bind(self)  # bind self to the first argument
+
+        else:
+            # convert class method into instance method
+            widget = getattr(self, name, None)
+
+        return widget
+
+    def _create_widget_from_field(self, name: str, fld: MagicField) -> Widget:
         """
         This function is called when magic-class encountered a MagicField in its definition.
 
@@ -765,12 +746,10 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
         # Get the number of parameters except for empty widgets.
         # With these lines, "bind" method of magicgui works inside magicclass.
         fgui_info = callable_to_classes(func)
-        n_empty = len(
-            [
-                0
-                for _wdg_cls, _prm in fgui_info
-                if _wdg_cls is EmptyWidget or _prm.options.get("bind", None) is not None
-            ]
+        n_empty = sum(
+            1
+            for _wdg_cls, _prm in fgui_info
+            if _wdg_cls is EmptyWidget or _prm.options.get("bind", None) is not None
         )
         nparams = argcount(func) - n_empty
         if len(fgui_info) == 0:
@@ -851,7 +830,8 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
         if keybinding is not None:
             shortcut = as_shortcut(keybinding)
             widget.set_shortcut(shortcut)
-
+        if isinstance(obj, abstractapi) and obj.get_location() is not None:
+            widget.visible = False
         return widget
 
     def _search_parent_magicclass(self) -> MagicTemplate:
@@ -863,11 +843,17 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
             current_self = parent
         return current_self
 
-    def _iter_child_magicclasses(self) -> Iterable[MagicTemplate]:
+    def _iter_child_magicclasses(
+        self,
+        level: int = 0,
+        max_level: int = 999999,
+    ) -> Iterable[tuple[int, MagicTemplate]]:
         """Iterate over all the child magic classes"""
+        if level >= max_level:
+            return
         for child in self.__magicclass_children__:
-            yield child
-            yield from child._iter_child_magicclasses()
+            yield level + 1, child
+            yield from child._iter_child_magicclasses(level=level + 1)
 
     def _call_with_return_callback(self, fname: str, *args, **kwargs) -> None:
         from magicclass.core import get_function_gui
@@ -1160,7 +1146,7 @@ class MagicGuiBuildError(RuntimeError):
     """Error raised when magicgui cannot build a gui."""
 
 
-def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGui):
+def _build_mgui(widget_: Clickable, func: Callable, parent: BaseGui):
     """Build a magicgui from a function for the give button/action."""
     if widget_.mgui is not None:
         return widget_.mgui
@@ -1243,11 +1229,11 @@ def _get_index(container: Container, widget_or_name: Widget | str) -> int:
 def _child_that_has_widget(
     self: BaseGui, method: Callable, widget_or_name: Widget | str
 ) -> BaseGui:
-    child_clsname = get_additional_option(method, "into")
-    if child_clsname is None:
+    into: str | None = get_additional_option(method, "into")
+    if into is None:
         return self
-    for child_instance in self._iter_child_magicclasses():
-        if child_instance.__class__.__name__ == child_clsname:
+    for _, child_instance in self._iter_child_magicclasses():
+        if child_instance.__class__.__name__ == into:
             break
     else:
         raise ValueError(f"{widget_or_name} not found.")
@@ -1322,6 +1308,13 @@ def convert_attributes(
             _isfunc = callable(obj)
             if isinstance(obj, _MagicTemplateMeta):
                 new_attr = copy_class(obj, cls.__qualname__, name=name)
+            elif isinstance(obj, MagicField) and isinstance(
+                obj.constructor, _MagicTemplateMeta
+            ):
+                obj._constructor = copy_class(
+                    obj.constructor, cls.__qualname__, name=name
+                )
+                new_attr = obj
             elif name.startswith("_") or isinstance(obj, _pass) or not _isfunc:
                 # private method, non-action-like object, not-callable object are passed.
                 new_attr = obj
@@ -1346,7 +1339,7 @@ def macro(self: BaseGui):
     return _dummy_macro
 
 
-def _define_popup(self: BaseGui, obj, widget: PushButtonPlus | Action):
+def _define_popup(self: BaseGui, obj, widget: Clickable):
     # deal with popup mode.
     popup_mode = self._popup_mode
     if popup_mode == PopUpMode.popup:

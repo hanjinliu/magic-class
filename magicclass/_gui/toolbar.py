@@ -127,27 +127,9 @@ class ToolBarGui(ContainerLikeGui):
                 continue
 
             try:
-                if isinstance(attr, type):
-                    # Nested magic-menu
-                    widget = attr()
-                    object.__setattr__(self, name, widget)
+                widget = self._convert_an_attribute_into_widget(name, attr, _tooltips)
 
-                elif isinstance(attr, MagicField):
-                    widget = self._create_widget_from_field(name, attr)
-                    if not widget.tooltip:
-                        widget.tooltip = _tooltips.attributes.get(name, "")
-
-                else:
-                    # convert class method into instance method
-                    widget = getattr(self, name, None)
-
-                if isinstance(widget, FunctionGui):
-                    widget = attr.copy()
-                    widget[0].bind(self)  # bind self to the first argument
-
-                elif isinstance(widget, BaseGui):
-                    connect_magicclasses(self, widget, name)
-
+                if isinstance(widget, BaseGui):
                     if isinstance(widget, MenuGui):
                         tb = ToolButtonPlus(widget.name)
                         tb.set_menu(widget.native)

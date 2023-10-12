@@ -89,18 +89,6 @@ class ClassGuiBase(BaseGui[Widget]):
         fld.name = fld.name or name
         widget = fld.get_widget(self)
 
-        if isinstance(widget, BaseGui):
-            widget.__magicclass_parent__ = self
-            self.__magicclass_children__.append(widget)
-            widget._my_symbol = Symbol(name)
-
-        elif isinstance(fld, BoxMagicField):
-            for wdt in widget:
-                if isinstance(wdt, BaseGui):
-                    wdt.__magicclass_parent__ = self
-                    self.__magicclass_children__.append(wdt)
-                    wdt._my_symbol = Symbol(name)
-
         if isinstance(widget, (ValueWidget, ContainerWidget)):
             # If the field has callbacks, connect it to the newly generated widget.
             if fld.record:
@@ -147,27 +135,7 @@ class ClassGuiBase(BaseGui[Widget]):
                 continue
 
             try:
-                if isinstance(attr, type):
-                    # Nested magic-class
-                    widget = attr()
-                    object.__setattr__(self, name, widget)
-
-                elif isinstance(attr, MagicField):
-                    # If MagicField is given by field() function.
-                    widget = self._create_widget_from_field(name, attr)
-                    if not widget.tooltip:
-                        widget.tooltip = _tooltips.attributes.get(name, "")
-
-                elif isinstance(attr, FunctionGui):
-                    widget = attr.copy()
-                    widget[0].bind(self)  # bind self to the first argument
-
-                else:
-                    # convert class method into instance method
-                    widget = getattr(self, name, None)
-
-                if isinstance(widget, BaseGui):
-                    connect_magicclasses(self, widget, name)
+                widget = self._convert_an_attribute_into_widget(name, attr, _tooltips)
 
                 if isinstance(widget, MenuGui):
                     # Add menubar to container

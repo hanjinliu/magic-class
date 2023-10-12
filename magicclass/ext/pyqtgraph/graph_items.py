@@ -28,6 +28,7 @@ _SYMBOL_MAP = {
 
 class LayerItem:
     native: pg.GraphicsItem
+    name: str
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__} '{self.name}'"

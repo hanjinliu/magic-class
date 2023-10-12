@@ -1,6 +1,6 @@
 from typing import Tuple
-from magicclass import magicclass, set_options, field, vfield, magictoolbar
-from magicclass.core import get_button
+from typing_extensions import Annotated
+from magicclass import magicclass, set_options, set_design, field, vfield, magictoolbar, get_button, magicmenu, abstractapi
 from magicclass.types import Bound, Optional
 
 def test_bind_value():
@@ -185,7 +185,7 @@ def test_external_field():
         def _callback(self):
             self._a = 1
 
-        def func(self, x: Bound[b.x]):
+        def func(self, x: Annotated[int, {"bind": b.x}]):
             self._a = x
 
     ui = A()
@@ -194,6 +194,78 @@ def test_external_field():
     assert ui._a == 1
     ui["func"].changed()
     assert ui._a == 10
+
+def test_wrapped_with_external_field():
+    @magicclass
+    class B:
+        @magicmenu
+        class C:
+            x = abstractapi()
+        x = abstractapi(location=C)
+        y = abstractapi()
+
+    @magicclass
+    class A:
+        _x = -1
+        _y = -1
+        b = B
+        def _get_value(self, *_):
+            return 10
+
+        @set_design(location=b)
+        def x(self, v: Annotated[int, {"bind": _get_value}]):
+            self._x = v
+
+        @set_design(location=b)
+        def y(self, v: Annotated[int, {"bind": _get_value}]):
+            self._y = v
+
+    ui = A()
+    btn_x = get_button(ui.x)
+    assert ui._x == -1
+    btn_x.changed()
+    assert ui._x == 10
+
+    btn_y = get_button(ui.y)
+    assert ui._y == -1
+    btn_y.changed()
+    assert ui._y == 10
+
+def test_wrapped_with_external_field_via_field():
+    @magicclass
+    class B:
+        @magicmenu
+        class C:
+            x = abstractapi()
+        x = abstractapi(location=C)
+        y = abstractapi()
+
+    @magicclass
+    class A:
+        _x = -1
+        _y = -1
+        b = field(B)
+        def _get_value(self, *_):
+            return 10
+
+        @set_design(location=b)
+        def x(self, v: Annotated[int, {"bind": _get_value}]):
+            self._x = v
+
+        @set_design(location=b)
+        def y(self, v: Annotated[int, {"bind": _get_value}]):
+            self._y = v
+
+    ui = A()
+    btn_x = get_button(ui.x)
+    assert ui._x == -1
+    btn_x.changed()
+    assert ui._x == 10
+
+    btn_y = get_button(ui.y)
+    assert ui._y == -1
+    btn_y.changed()
+    assert ui._y == 10
 
 def test_multi_gui():
     @magicclass

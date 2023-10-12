@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING, Callable
 import inspect
 
-from magicclass.utils import argcount, thread_worker
+from magicclass.utils import argcount
 
 if TYPE_CHECKING:
     from magicclass._gui._base import MagicTemplate
