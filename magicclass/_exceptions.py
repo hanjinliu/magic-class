@@ -35,6 +35,10 @@ class MagicClassConstructionError(Exception):
     """Raised when class definition is not a valid magic-class."""
 
 
+class MagicGuiBuildError(RuntimeError):
+    """Error raised when magicgui cannot build a gui."""
+
+
 class AbstractAPIError(Exception):
     """Raised when an abstract API is called."""
 
