@@ -1,14 +1,8 @@
 from __future__ import annotations
-from typing import Callable, Iterable, Any, Generic, TypeVar, Union
+
+from typing import Callable, Iterable, Any, Generic, TypeVar, Union, TYPE_CHECKING
 from typing_extensions import TypeGuard
-from qtpy.QtWidgets import (
-    QPushButton,
-    QAction,
-    QWidgetAction,
-    QToolButton,
-    QWidget,
-    QMenu,
-)
+from qtpy import QtWidgets as QtW, QtCore
 from psygnal import Signal
 from magicgui.widgets import PushButton, Widget
 from magicgui.widgets.bases import ValueWidget
@@ -16,6 +10,11 @@ from magicgui.widgets._concrete import _LabeledWidget
 from magicgui.backends._qtpy.widgets import QBaseButtonWidget
 from ._function_gui import FunctionGuiPlus
 from ._icon import get_icon
+
+if TYPE_CHECKING:
+    from PyQt5.QtWidgets import QAction
+else:
+    from qtpy.QtWidgets import QAction
 
 # magicgui widgets that need to be extended to fit into magicclass
 Clickable = Union["PushButtonPlus", "Action"]
@@ -25,12 +24,21 @@ def is_clickable(wdt: Widget) -> TypeGuard[Clickable]:
     return isinstance(wdt, (PushButtonPlus, Action))
 
 
+class PaletteEvents(QtCore.QObject):
+    paletteChanged = QtCore.Signal()
+
+    def eventFilter(self, obj: QtCore.QObject, event: QtCore.QEvent) -> bool:
+        if event.type() == QtCore.QEvent.Type.PaletteChange:
+            self.paletteChanged.emit()
+        return super().eventFilter(obj, event)
+
+
 class PushButtonPlus(PushButton):
     """A Qt specific PushButton widget with a magicgui bound."""
 
     def __init__(self, text: str | None = None, **kwargs):
         super().__init__(text=text, **kwargs)
-        self.native: QPushButton
+        self.native: QtW.QPushButton
         self._icon = None
         self.mgui: FunctionGuiPlus | None = None  # tagged function GUI
         self._doc = ""
@@ -76,7 +84,7 @@ class PushButtonPlus(PushButton):
         icon = get_icon(val)
         icon.install(self)
         self._icon = icon
-        self.native.setIconSize(self.native.size())
+        # self.native.setIconSize(self.native.size())
 
     @property
     def font_size(self):
@@ -129,7 +137,7 @@ class PushButtonPlus(PushButton):
 
 class _QToolButton(QBaseButtonWidget):
     def __init__(self, **kwargs):
-        super().__init__(QToolButton, **kwargs)
+        super().__init__(QtW.QToolButton, **kwargs)
 
 
 class ToolButtonPlus(PushButtonPlus):
@@ -139,13 +147,20 @@ class ToolButtonPlus(PushButtonPlus):
         kwargs["widget_type"] = _QToolButton
         ValueWidget.__init__(self, **kwargs)
         self.text = text or self.name.replace("_", " ")
-        self.native: QToolButton
+        self.native: QtW.QToolButton
+        self._icon = None
 
-    def set_menu(self, qmenu: QMenu):
+    def _update_icon(self):
+        if self._icon is not None:
+            self._icon.install(self)
+
+    def set_menu(self, qmenu: QMenu, icon):
         """Set menu-like behavior to the tool button."""
+        self._qmenu = qmenu
         self.native.setMenu(qmenu)
-        self.native.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
-        self.native.setIcon(qmenu.icon())  # icon have to be copied.
+        self.native.setPopupMode(QtW.QToolButton.ToolButtonPopupMode.InstantPopup)
+        self._icon = icon
+        self._update_icon()
 
     def set_shortcut(self, key):
         """Set keyboard shortcut to the tool button."""
@@ -160,7 +175,7 @@ class ToolButtonPlus(PushButtonPlus):
 class mguiLike:
     """Abstract class that provide magicgui.widgets like properties."""
 
-    native: QWidget | QAction
+    native: QtW.QWidget | QAction
 
     @property
     def parent(self):
@@ -217,6 +232,13 @@ class mguiLike:
         return self.__class__.__name__
 
 
+class QMenu(QtW.QMenu):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._palette_event_filter = PaletteEvents(self)
+        self.installEventFilter(self._palette_event_filter)
+
+
 class AbstractAction(mguiLike):
     """
     QAction encapsulated class with a similar API as magicgui Widget.
@@ -225,14 +247,14 @@ class AbstractAction(mguiLike):
 
     changed = Signal(object)
     support_value: bool
-    _native: QAction | QWidgetAction
+    _native: QAction | QtW.QWidgetAction
 
     @property
     def value(self):
         raise NotImplementedError()
 
     @property
-    def native(self) -> QAction | QWidgetAction:
+    def native(self) -> QAction | QtW.QWidgetAction:
         """The native Qt object."""
         return self._native
 
@@ -247,7 +269,7 @@ class Action(AbstractAction):
         self, *args, name: str = None, text: str = None, gui_only: bool = True, **kwargs
     ):
         self._native = QAction(*args, **kwargs)
-        self.mgui: FunctionGuiPlus = None
+        self.mgui: FunctionGuiPlus | None = None
         self._doc = ""
         self._unwrapped = False
 
@@ -260,6 +282,15 @@ class Action(AbstractAction):
 
         self.native.triggered.connect(lambda: self.changed.emit(self.value))
         self._get_running: Callable[[], bool] | None = None
+
+    def _update_icon(self):
+        if self._icon is not None:
+            self._icon.install(self)
+
+    @property
+    def clicked(self):
+        """Alias of changed signal."""
+        return self.changed
 
     @property
     def running(self) -> bool:
@@ -330,7 +361,7 @@ class WidgetAction(AbstractAction, Generic[_W]):
                 f"The first argument must be a magicgui-like widget, got {type(widget)}"
             )
 
-        self._native = QWidgetAction(parent)
+        self._native = QtW.QWidgetAction(parent)
         self.widget = widget
         name = widget.name
         self.native.setObjectName(name)
@@ -391,6 +422,10 @@ class WidgetAction(AbstractAction, Generic[_W]):
         """Set the tooltip of the inner widget."""
         self.widget.tooltip = value
 
+    def _update_icon(self):
+        if hasattr(self.widget, "_update_icon"):
+            self.widget._update_icon()
+
     def _labeled_widget(self):
         return self.widget._labeled_widget()
 
@@ -440,11 +475,11 @@ def _to_rgb(color):
     return f"rgb({rgb})"
 
 
-def _stylesheet_to_dict(stylesheet: str):
+def _stylesheet_to_dict(stylesheet: str) -> dict[str, str]:
     if stylesheet == "":
         return {}
     lines = stylesheet.split(";")
-    d = dict()
+    d: dict[str, str] = {}
     for line in lines:
         k, v = line.split(":")
         d[k.strip()] = v.strip()

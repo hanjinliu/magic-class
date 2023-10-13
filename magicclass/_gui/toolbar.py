@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Callable, TYPE_CHECKING, Any
+from typing import Callable, TYPE_CHECKING
 import warnings
 from magicgui.widgets import Image, Table, Label, FunctionGui, Widget
 from magicgui.widgets.bases import ButtonWidget
@@ -8,7 +8,14 @@ from psygnal import Signal
 from qtpy.QtWidgets import QToolBar, QMenu, QWidgetAction, QTabWidget
 
 
-from .mgui_ext import AbstractAction, _LabeledWidgetAction, WidgetAction, ToolButtonPlus
+from .mgui_ext import (
+    AbstractAction,
+    _LabeledWidgetAction,
+    WidgetAction,
+    ToolButtonPlus,
+    PaletteEvents,
+    Action,
+)
 from .keybinding import register_shortcut
 from ._base import (
     BaseGui,
@@ -22,7 +29,6 @@ from .menu_gui import ContextMenuGui, MenuGui, MenuGuiBase, insert_action_like
 from ._macro_utils import nested_function_gui_callback
 
 from magicclass.signature import get_additional_option
-from magicclass.fields import MagicField
 from magicclass.widgets import FreeWidget, Separator
 from magicclass.utils import iter_members, Tooltips
 
@@ -53,6 +59,7 @@ class QtTabToolBar(QToolBar):
 
     def __init__(self, title: str, parent=None):
         super().__init__(title, parent)
+        self._palette_event_filter = PaletteEvents(self)
         self._tab = QTabWidget(self)
         self._tab.setContentsMargins(0, 0, 0, 0)
         self._tab.setTabBarAutoHide(True)
@@ -60,12 +67,20 @@ class QtTabToolBar(QToolBar):
             "QTabWidget {" "    margin: 0px, 0px, 0px, 0px;" "    padding: 0px;}"
         )
         self.addWidget(self._tab)
+        self.installEventFilter(self._palette_event_filter)
 
     def addToolBar(self, toolbar: QToolBar, name: str) -> None:
         """Add a toolbar as a tab."""
         self._tab.addTab(toolbar, name)
         toolbar.setContentsMargins(0, 0, 0, 0)
         return None
+
+
+class _QToolBar(QToolBar):
+    def __init__(self, title: str, parent=None):
+        super().__init__(title, parent)
+        self._palette_event_filter = PaletteEvents(self)
+        self.installEventFilter(self._palette_event_filter)
 
 
 class ToolBarGui(ContainerLikeGui):
@@ -86,28 +101,28 @@ class ToolBarGui(ContainerLikeGui):
             close_on_run=close_on_run, popup_mode=popup_mode, error_mode=error_mode
         )
         name = name or self.__class__.__name__
-        self._native = QToolBar(name, parent)
+        self._native = _QToolBar(name, parent)
         self.name = name
         self._list: list[MenuGuiBase | AbstractAction] = []
         self.labels = labels
+        self._native._palette_event_filter.paletteChanged.connect(self._update_icon)
 
     @property
     def native(self):
         """The native Qt widget."""
         return self._native
 
-    def reset_choices(self, *_: Any):
-        """Reset child Categorical widgets"""
-        super().reset_choices()
-
-        # If parent magic-class is added to napari viewer, the style sheet need update because
-        # QToolButton has inappropriate style.
-        # Detecting this event using "reset_choices" is not a elegant way, but works for now.
+    def _update_icon(self):
         viewer = self.parent_viewer
         if viewer is not None:
-            style = _create_stylesheet(viewer)
-            self.native.setStyleSheet(style)
-        return None
+            self._native._palette_event_filter.blockSignals(True)
+            try:
+                style = _create_stylesheet(viewer)
+                self.native.setStyleSheet(style)
+            finally:
+                self._native._palette_event_filter.blockSignals(False)
+
+        return super()._update_icon()
 
     def _convert_attributes_into_widgets(self):
         cls = self.__class__
@@ -131,8 +146,8 @@ class ToolBarGui(ContainerLikeGui):
 
                 if isinstance(widget, BaseGui):
                     if isinstance(widget, MenuGui):
-                        tb = ToolButtonPlus(widget.name)
-                        tb.set_menu(widget.native)
+                        tb = ToolButtonPlus(widget.name, parent=self.native)
+                        tb.set_menu(widget.native, widget.icon)
                         widget.native.setParent(tb.native, widget.native.windowFlags())
                         tb.tooltip = widget.__doc__
                         widget = WidgetAction(tb)
@@ -143,13 +158,13 @@ class ToolBarGui(ContainerLikeGui):
                         _hist.append((name, type(attr), "ContextMenuGui"))
 
                     elif isinstance(widget, ToolBarGui):
-                        tb = ToolButtonPlus(widget.name)
+                        tb = ToolButtonPlus(widget.name, parent=self.native)
                         tb.tooltip = widget.__doc__
                         qmenu = QMenu(self.native)
                         waction = QWidgetAction(qmenu)
                         waction.setDefaultWidget(widget.native)
                         qmenu.addAction(waction)
-                        tb.set_menu(qmenu)
+                        tb.set_menu(qmenu, widget.icon)
                         widget = WidgetAction(tb)
 
                     else:

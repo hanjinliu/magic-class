@@ -736,7 +736,9 @@ class MagicTemplate(
                 _inner_func = _inner_func.func
             obj_name = getattr(_inner_func, "__name__", str(_inner_func))
         text = obj_name.replace("_", " ")
-        widget = self._component_class(name=obj_name, text=text, gui_only=True)
+        widget = self._component_class(
+            name=obj_name, text=text, gui_only=True, parent=self.native
+        )
 
         func = _create_gui_method(self, obj)
 
@@ -894,8 +896,6 @@ class BaseGui(MagicTemplate):
             self.native.setIcon(qicon)
         else:
             self.native.setWindowIcon(qicon)
-        if hasattr(self.native, "setIconSize"):
-            self.native.setIconSize(self.native.size())
 
 
 class ContainerLikeGui(BaseGui, mguiLike):
@@ -919,6 +919,11 @@ class ContainerLikeGui(BaseGui, mguiLike):
         for w in all_widgets:
             if hasattr(w, "reset_choices"):
                 w.reset_choices()
+
+    def _update_icon(self):
+        for child in self._list:
+            if hasattr(child, "_update_icon"):
+                child._update_icon()
 
     def _create_widget_from_field(self, name: str, fld: MagicField):
         if fld.not_ready():
