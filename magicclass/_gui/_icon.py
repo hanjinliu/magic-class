@@ -126,18 +126,30 @@ def get_icon(val: Any) -> _IconBase:
     """Get a proper icon object from a value."""
     if isinstance(val, _IconBase):
         icon = val
-    elif isinstance(val, int):
-        icon = StandardIcon(val)
     elif isinstance(val, Path) or os.path.exists(val):
         icon = IconPath(val)
     elif hasattr(val, "__array__"):
         icon = ArrayIcon(val)
     elif isinstance(val, str):
         if hasattr(Icon, val):
+            warnings.warn(
+                "Qt Standard icons will not be supported anymore. Please use "
+                "iconify icons instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
             icon = StandardIcon(val)
         else:
             icon = IconifyIcon(val)
     else:
+        if isinstance(val, int):
+            warnings.warn(
+                "Qt Standard icons will not be supported anymore. Please use "
+                "iconify icons instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            icon = StandardIcon(val)
         raise TypeError(f"Input {val!r} cannot be converted to an icon.")
     return icon
 
@@ -145,7 +157,7 @@ def get_icon(val: Any) -> _IconBase:
 class _StandardPixmap:
     """To avoid version dependency."""
 
-    def __getattr__(self, name):
+    def __getattr__(self, name) -> QStyle.StandardPixmap:
         return getattr(QStyle.StandardPixmap, name, None)
 
 
@@ -153,21 +165,6 @@ sp = _StandardPixmap()
 
 
 class Icon(SimpleNamespace):
-    """
-    Namespace of icons.
-
-    .. code-block:: python
-
-    >>> from magicclass import magicclass, set_design, Icon
-
-    >>> @magicclass
-    >>> class A:
-    ...     @set_design(icon=Icon.FileIcon)
-    ...     def func(self):
-    ...         ...
-
-    """
-
     # fmt: off
     TitleBarMenuButton = sp.SP_TitleBarMenuButton
     TitleBarMinButton = sp.SP_TitleBarMinButton
