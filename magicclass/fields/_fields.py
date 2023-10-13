@@ -31,8 +31,6 @@ from magicclass.utils import (
     method_as_getter,
     eval_attribute,
     is_type_like,
-    argcount,
-    get_level,
 )
 from magicclass.signature import (
     MagicMethodSignature,
@@ -543,33 +541,25 @@ class MagicField(_FieldObject, Generic[_W]):
                 # this case is needed when multiple @connect_async are used
                 # for the same function.
                 return self.connect(fn)
-            # non-local variables
-            _running: WorkerBase | None = None  # the running worker
-            _last_run = 0.0  # last time the worker was started
-            _last_run_id = 0.0  # last starting time (= worker ID) that ended
-            _abort_begin = -1  # last time the worker started being aborted
+
+            conn = AsyncConnection(timeout, abort_limit)
 
             @wraps(fn)
             def _func(self: MagicTemplate, *args, **kwargs):
-                nonlocal _running, _last_run, _last_run_id, _abort_begin
-
-                with threading.Lock():
-                    _this_id = default_timer()
+                with conn.lock:
+                    now = default_timer()
                     f = _afunc.__get__(self)
-                    aborted_many_times = (
-                        _abort_begin > 0 and _this_id - _abort_begin > abort_limit
-                    )
-                    if timeout >= _this_id - _last_run and not aborted_many_times:
-                        if _abort_begin < 0:
-                            _abort_begin = _this_id
-                        if _running is not None:
-                            _running.quit()
-                        _running = f._worker()
+                    aborted_many_times = conn.is_aborted_many_times(now)
+                    if conn.is_timeout(now) and not aborted_many_times:
+                        if conn.abort_begin < 0:
+                            conn.abort_begin = now
+                        conn.quit_worker()
+                        conn.running_worker = f._worker()
                     elif aborted_many_times:
-                        _abort_begin = -1
+                        conn.abort_begin = -1
 
-                    _last_run = default_timer()
-                    _last_run_copy = _last_run
+                    conn.last_run = default_timer()
+                    _last_run_copy = conn.last_run
                 # call the original function
                 try:
                     with self.macro.blocked():
@@ -581,28 +571,38 @@ class MagicField(_FieldObject, Generic[_W]):
                                 except StopIteration as exc:
                                     out = exc.value
                                     break
+                                if now < conn.last_completed_id:
+                                    # if later function call finished earlier, current call
+                                    # should never be run.
+                                    return thread_worker.callback()
                                 if (
-                                    _last_run_copy < _last_run
-                                    or _this_id < _last_run_id
-                                ) and not aborted_many_times:
+                                    _last_run_copy < conn.last_run
+                                    and not aborted_many_times
+                                ):
                                     # if j-th call turned out to be out of date,
                                     # don't run anymore.
                                     return thread_worker.callback()
                                 else:
                                     yield next_value
+                    if now < conn.last_completed_id:
+                        return thread_worker.callback()
+                    if _last_run_copy < conn.last_run and not aborted_many_times:
+                        # if j-th call turned out to be out of date,
+                        # don't run anymore.
+                        return thread_worker.callback()
                 except Exception as exc:
-                    if _running is not None:
-                        _running.quit()
+                    conn.quit_worker()
                     raise exc
-                if _this_id < _last_run_id and not aborted_many_times:
-                    # if j-th call finished after i-th call (i < j),
-                    # don't run returned callback.
-                    return thread_worker.callback()
-                with threading.Lock():
-                    _last_run_id = _this_id
-                    # _abort_begin = -1
-                    yield thread_worker.callback()  # empty callback
-                    return out
+                if not aborted_many_times:
+                    if now < conn.last_completed_id:
+                        # if j-th call finished after i-th call (i < j),
+                        # don't run returned callback.
+                        return thread_worker.callback()
+                with conn.lock:
+                    conn.last_completed_id = now
+                    # conn.abort_begin = -1
+                yield thread_worker.callback()  # empty callback
+                return out
 
             _afunc = thread_worker(
                 _func,
@@ -1171,3 +1171,33 @@ def _is_magicclass(obj: Any):
         return issubclass(obj, (Widget, BaseGui))
     except Exception:
         return False
+
+
+class AsyncConnection:
+    def __init__(self, timeout: float, abort_limit: float):
+        self.running_worker: WorkerBase | None = None  # the running worker
+        self.last_run = 0.0  # last time the worker was started
+        self.last_completed_id = 0.0  # last starting time (= worker ID) that ended
+        self.abort_begin = -1.0  # last time the worker started being aborted
+        self._timeout = timeout
+        self._abort_limit = abort_limit
+        self._lock = threading.Lock()
+
+    def is_timeout(self, now: float) -> bool:
+        return self._timeout >= now - self.last_run
+
+    def is_aborted_many_times(self, now: float) -> bool:
+        return self.abort_begin > 0 and now - self.abort_begin > self._abort_limit
+
+    @property
+    def lock(self):
+        return self._lock
+
+    def quit_worker(self):
+        if self.running_worker is not None:
+            self.running_worker.quit()
+            self.running_worker = None
+
+    @property
+    def abort_requested(self) -> bool:
+        return self.running_worker is not None and self.running_worker.abort_requested

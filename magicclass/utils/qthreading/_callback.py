@@ -136,6 +136,10 @@ class _AwaitableCallback(Generic[_P, _R1]):
         wraps(f)(self)
         self._called = CallState.NOT_CALLED
 
+    def __repr__(self) -> str:
+        fname = getattr(self._func, "__name__", repr(self._func))
+        return f"{self.__class__.__name__}<{fname}>"
+
     def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _R1:
         self._called = CallState.NOT_CALLED
         try:
