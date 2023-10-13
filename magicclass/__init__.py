@@ -37,7 +37,6 @@ from .fields import (
     HasFields,
 )
 from ._gui._base import defaults, MagicTemplate, PopUpMode
-from ._gui.keybinding import Key
 from ._gui._icon import Icon
 from . import widgets, utils, types, functools, logging
 
@@ -75,7 +74,6 @@ __all__ = [
     "defaults",
     "MagicTemplate",
     "PopUpMode",
-    "Key",
     "Icon",
 ]
 
@@ -126,5 +124,15 @@ def __getattr__(key: str):
         from magicclass.fields import dataclass_gui
 
         return dataclass_gui
+
+    elif key == "Key":
+        warnings.warn(
+            "Enum `Key` is deprecated. Use string directly for `bind_key`.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        from ._gui.keybinding import Key
+
+        return Key
 
     raise AttributeError(f"module {__name__!r} has no attribute {key!r}")

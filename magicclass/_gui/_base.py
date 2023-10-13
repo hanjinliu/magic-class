@@ -5,7 +5,6 @@ from typing import (
     Any,
     ContextManager,
     Literal,
-    Union,
     Callable,
     TYPE_CHECKING,
     Iterable,
@@ -15,6 +14,7 @@ from typing import (
     MutableSequence,
 )
 from types import MethodType
+from typing_extensions import Self
 from abc import ABCMeta
 import inspect
 import warnings
@@ -82,8 +82,9 @@ from magicclass.signature import (
     split_annotated_type,
     upgrade_signature,
 )
+from magicclass._exceptions import MagicGuiBuildError
 from magicclass.wrappers import abstractapi
-from magicclass.types import BoundLiteral, MGUI_SIMPLE_TYPES
+from magicclass.types import BoundLiteral
 from magicclass.functools import wraps
 from magicclass.box._fields import BoxMagicField
 
@@ -170,7 +171,6 @@ _ANCESTORS: WeakValueDictionary[tuple[int, int], MagicTemplate] = WeakValueDicti
 
 
 _T = TypeVar("_T", bound="MagicTemplate")
-_T1 = TypeVar("_T1")
 _F = TypeVar("_F", bound=Callable)
 
 
@@ -178,18 +178,15 @@ class _MagicTemplateMeta(ABCMeta):
     """This metaclass enables type checking of nested magicclasses."""
 
     @overload
-    def __get__(self: type[_T], obj: Any, objtype=None) -> _T:
+    def __get__(self, obj: Literal[None], objtype=None) -> Self:
         ...
 
     @overload
-    def __get__(self: _T1, obj: Literal[None], objtype=None) -> _T1:
+    def __get__(self: type[_T], obj: Any, objtype=None) -> _T:
         ...
 
     def __get__(self, obj, objtype=None):
         return self
-
-
-_Comp = TypeVar("_Comp", Widget, AbstractAction)
 
 
 def _typeof(current_self) -> type:
@@ -198,7 +195,9 @@ def _typeof(current_self) -> type:
     return getattr(tp, "__original_class__", tp)
 
 
-class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
+class MagicTemplate(
+    MutableSequence[Widget | AbstractAction], metaclass=_MagicTemplateMeta
+):
     __doc__ = ""
     __magicclass_parent__: None | MagicTemplate
     __magicclass_children__: list[MagicTemplate]
@@ -239,11 +238,11 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
         check_override(cls)
 
     @overload
-    def __getitem__(self, key: int | str) -> _Comp:
+    def __getitem__(self, key: int | str) -> Widget | AbstractAction:
         ...
 
     @overload
-    def __getitem__(self, key: slice) -> list[_Comp]:
+    def __getitem__(self, key: slice) -> list[Widget | AbstractAction]:
         ...
 
     def __getitem__(self, key):
@@ -263,10 +262,13 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
 
     if TYPE_CHECKING:
 
+        def __iter__(self) -> Iterator[Widget | AbstractAction]:
+            raise NotImplementedError()
+
         def index(self, value: Any, start: int, stop: int) -> int:
             raise NotImplementedError()
 
-        def remove(self, value: _Comp | str):
+        def remove(self, value: Widget | AbstractAction | str):
             raise NotImplementedError()
 
     def show(self, run: bool = True) -> None:
@@ -278,10 +280,12 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
     def close(self) -> None:
         raise NotImplementedError()
 
-    def _fast_insert(self, key: int, widget: _Comp | Callable) -> None:
+    def _fast_insert(
+        self, key: int, widget: Widget | AbstractAction | Callable
+    ) -> None:
         raise NotImplementedError()
 
-    def insert(self, key: int, widget: _Comp | Callable) -> None:
+    def insert(self, key: int, widget: Widget | AbstractAction | Callable) -> None:
         self._fast_insert(key, widget)
         self._unify_label_widths()
 
@@ -860,7 +864,7 @@ class MagicTemplate(MutableSequence[_Comp], metaclass=_MagicTemplateMeta):
         return None
 
 
-class BaseGui(MagicTemplate[_Comp]):
+class BaseGui(MagicTemplate):
     def __init__(
         self, close_on_run=True, popup_mode=PopUpMode.popup, error_mode=ErrorMode.msgbox
     ):
@@ -894,7 +898,7 @@ class BaseGui(MagicTemplate[_Comp]):
             self.native.setIconSize(self.native.size())
 
 
-class ContainerLikeGui(BaseGui[Union[Action, Widget]], mguiLike):
+class ContainerLikeGui(BaseGui, mguiLike):
     # This class enables similar API between magicgui widgets and additional widgets
     # in magicclass such as menu and toolbar.
     _component_class = Action
@@ -955,7 +959,7 @@ class ContainerLikeGui(BaseGui[Union[Action, Widget]], mguiLike):
         self.native.removeAction(self[key].native)
         del self._list[key]
 
-    def __iter__(self) -> Iterator[ContainerLikeGui | AbstractAction]:
+    def __iter__(self) -> Iterator[Widget | AbstractAction]:
         return iter(self._list)
 
     def __len__(self) -> int:
@@ -1139,10 +1143,6 @@ def _create_gui_method(self: BaseGui, obj: MethodType):
     return func
 
 
-class MagicGuiBuildError(RuntimeError):
-    """Error raised when magicgui cannot build a gui."""
-
-
 def _build_mgui(widget_: Clickable, func: Callable, parent: BaseGui):
     """Build a magicgui from a function for the give button/action."""
     if widget_.mgui is not None:
@@ -1206,7 +1206,7 @@ def _connect_functiongui_event(
     return mgui
 
 
-def _get_index(container: Container, widget_or_name: Widget | str) -> int:
+def _get_index(container: Container[Widget], widget_or_name: Widget | str) -> int:
     """
     Identical to container[widget_or_name], which sometimes doesn't work
     in magic-class.
