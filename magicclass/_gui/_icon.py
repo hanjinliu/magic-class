@@ -87,6 +87,8 @@ class ArrayIcon(_IconBase):
 
 
 class IconifyIcon(_IconBase):
+    """Icon using iconify."""
+
     _source: str
 
     def __init__(self, source: Any):
@@ -150,7 +152,8 @@ def get_icon(val: Any) -> _IconBase:
                 stacklevel=2,
             )
             icon = StandardIcon(val)
-        raise TypeError(f"Input {val!r} cannot be converted to an icon.")
+        else:
+            raise TypeError(f"Input {val!r} cannot be converted to an icon.")
     return icon
 
 
