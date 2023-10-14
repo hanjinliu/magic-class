@@ -1,11 +1,14 @@
 from __future__ import annotations
 import os
+import warnings
 from types import SimpleNamespace
 from typing import TYPE_CHECKING, Any
 from pathlib import Path
-from qtpy.QtWidgets import QStyle, QApplication
-from qtpy.QtGui import QIcon, QImage, QPixmap
+from qtpy.QtWidgets import QStyle, QApplication, QWidget, QAction
+from qtpy.QtGui import QIcon, QImage, QPixmap, QPalette
 from qtpy.QtCore import Qt, QSize
+
+import superqt
 
 if TYPE_CHECKING:
     from .mgui_ext import PushButtonPlus, AbstractAction
@@ -58,13 +61,10 @@ class ArrayIcon(_IconBase):
 
     def __init__(self, source: Any):
         import numpy as np
-
-        arr = np.asarray(source)
-
         from magicgui.widgets._image import _mpl_image
 
+        arr = np.asarray(source)
         img = _mpl_image.Image()
-
         img.set_data(arr)
 
         val: np.ndarray = img.make_image()
@@ -86,27 +86,81 @@ class ArrayIcon(_IconBase):
         return QIcon(qpix)
 
 
+class IconifyIcon(_IconBase):
+    """Icon using iconify."""
+
+    _source: str
+
+    def __init__(self, source: Any):
+        if ":" not in source:
+            # for parity with the other backends, assume fontawesome
+            # if no prefix is given.
+            source = f"fa:{source}"
+
+        self._source = source
+
+    def get_qicon(self, dst) -> QIcon:
+        if isinstance(dst.native, QWidget):
+            palette = dst.native.palette()
+        elif isinstance(dst.native, QAction):
+            if menu := dst.native.parentWidget():
+                palette = menu.palette()
+            else:
+                palette = None
+        else:
+            return QIcon()
+
+        if palette is None:
+            color = "#333333"
+        else:
+            # use foreground color
+            color = palette.color(QPalette.ColorRole.WindowText).name()
+            # don't use full black or white
+            color = {"#000000": "#333333", "#ffffff": "#cccccc"}.get(color, color)
+        try:
+            return superqt.QIconifyIcon(self._source, color=color)
+        except (OSError, ValueError) as e:
+            warnings.warn(f"Could not set iconify icon: {e}", stacklevel=2)
+            return QIcon()
+
+
 def get_icon(val: Any) -> _IconBase:
     """Get a proper icon object from a value."""
     if isinstance(val, _IconBase):
         icon = val
-    elif isinstance(val, int):
-        icon = StandardIcon(val)
     elif isinstance(val, Path) or os.path.exists(val):
         icon = IconPath(val)
     elif hasattr(val, "__array__"):
         icon = ArrayIcon(val)
-    elif isinstance(val, str) and hasattr(Icon, val):
-        icon = StandardIcon(val)
+    elif isinstance(val, str):
+        if hasattr(Icon, val):
+            warnings.warn(
+                "Qt Standard icons will not be supported anymore. Please use "
+                "iconify icons instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            icon = StandardIcon(val)
+        else:
+            icon = IconifyIcon(val)
     else:
-        raise TypeError(f"Input {val!r} cannot be converted to an icon.")
+        if isinstance(val, int):
+            warnings.warn(
+                "Qt Standard icons will not be supported anymore. Please use "
+                "iconify icons instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            icon = StandardIcon(val)
+        else:
+            raise TypeError(f"Input {val!r} cannot be converted to an icon.")
     return icon
 
 
 class _StandardPixmap:
     """To avoid version dependency."""
 
-    def __getattr__(self, name):
+    def __getattr__(self, name) -> QStyle.StandardPixmap:
         return getattr(QStyle.StandardPixmap, name, None)
 
 
@@ -114,21 +168,6 @@ sp = _StandardPixmap()
 
 
 class Icon(SimpleNamespace):
-    """
-    Namespace of icons.
-
-    .. code-block:: python
-
-    >>> from magicclass import magicclass, set_design, Icon
-
-    >>> @magicclass
-    >>> class A:
-    ...     @set_design(icon=Icon.FileIcon)
-    ...     def func(self):
-    ...         ...
-
-    """
-
     # fmt: off
     TitleBarMenuButton = sp.SP_TitleBarMenuButton
     TitleBarMinButton = sp.SP_TitleBarMinButton

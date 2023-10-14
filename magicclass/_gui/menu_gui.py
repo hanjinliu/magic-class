@@ -5,10 +5,15 @@ from magicgui.widgets import Image, Table, Label, FunctionGui, Widget
 from magicgui.widgets.bases import ButtonWidget
 from macrokit import Symbol
 from psygnal import Signal
-from qtpy.QtWidgets import QMenu
 from qtpy.QtCore import Qt
 
-from .mgui_ext import AbstractAction, WidgetAction, _LabeledWidgetAction
+from .mgui_ext import (
+    AbstractAction,
+    WidgetAction,
+    _LabeledWidgetAction,
+    QMenu,
+    PaletteEvents,
+)
 from .keybinding import register_shortcut
 from ._base import (
     BaseGui,
@@ -65,6 +70,7 @@ class MenuGuiBase(ContainerLikeGui):
         self.name = name
         self._list: list[MenuGuiBase | AbstractAction] = []
         self.labels = labels
+        self._native._palette_event_filter.paletteChanged.connect(self._update_icon)
 
     @property
     def native(self):
