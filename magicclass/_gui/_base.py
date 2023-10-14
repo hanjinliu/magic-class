@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from contextlib import contextmanager
 import functools
 from typing import (
@@ -196,7 +197,7 @@ def _typeof(current_self) -> type:
 
 
 class MagicTemplate(
-    MutableSequence[Widget | AbstractAction], metaclass=_MagicTemplateMeta
+    MutableSequence["Widget | AbstractAction"], metaclass=_MagicTemplateMeta
 ):
     __doc__ = ""
     __magicclass_parent__: None | MagicTemplate
