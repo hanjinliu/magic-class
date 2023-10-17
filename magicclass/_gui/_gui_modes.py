@@ -128,12 +128,14 @@ class ErrorMode(Enum):
 
     @classmethod
     @contextmanager
-    def raise_with_handler(cls, parent: BaseGui):
+    def raise_with_handler(cls, parent: BaseGui, reraise: bool = True):
         """Raise error with the error handler in this context."""
         try:
             yield
         except Exception as e:
             parent._error_mode.get_handler()(e, parent=parent)
+            if reraise:
+                raise e
 
 
 ErrorModeHandlers = {
