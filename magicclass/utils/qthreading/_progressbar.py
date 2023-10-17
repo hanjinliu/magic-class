@@ -12,7 +12,7 @@ from typing import (
     TypedDict,
 )
 
-from qtpy.QtCore import QThread, QCoreApplication, Qt
+from qtpy.QtCore import Qt
 from superqt.utils import GeneratorWorker, FunctionWorker
 from magicgui.widgets import ProgressBar, Container, PushButton, Label
 
@@ -234,7 +234,7 @@ class Timer:
         return fmt.format(hour=int(hour), min=int(min), sec=int(sec))
 
 
-class _ProgressBarContainer(Container):
+class _ProgressBarContainer(Container["DefaultProgressBar"]):
     def __init__(self):
         super().__init__(labels=False)
         self.margins = (2, 2, 2, 2)
@@ -444,4 +444,4 @@ class DefaultProgressBar(FrameContainer, _SupportProgress):
 
 def _is_main_thread() -> bool:
     """True if the current thread is the main thread."""
-    return QThread.currentThread() is QCoreApplication.instance().thread()
+    return threading.current_thread().name == "MainThread"

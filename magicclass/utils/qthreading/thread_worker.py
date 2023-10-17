@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from contextlib import suppress, contextmanager, nullcontext
 import inspect
+import threading
 from functools import wraps
 import time
 from typing import (
@@ -18,7 +19,7 @@ from typing_extensions import ParamSpec
 import weakref
 
 from superqt.utils import create_worker, GeneratorWorker, FunctionWorker
-from qtpy.QtCore import Qt, QThread, QCoreApplication
+from qtpy.QtCore import Qt
 from magicgui.widgets import ProgressBar
 from magicgui.application import use_app
 
@@ -492,7 +493,7 @@ class thread_worker(Generic[_P]):
 
     def _create_generator(self, gui: BaseGui):
         def _gen(*args, **kwargs):
-            pbar: _SupportProgress | None = None
+            pbar: _SupportProgress | None = None  # the child pbar
             has_pbar = self._progress
             _calc_finished = False
 
@@ -536,6 +537,7 @@ class thread_worker(Generic[_P]):
                     out = self._func.__get__(gui)(*args, **kwargs)
             except Exception as exc:
                 yield from self.errored._iter_as_nested_cb(gui, exc)
+                raise exc
             else:
                 # returned
                 yield from self.returned._iter_as_nested_cb(gui, out)
@@ -723,39 +725,6 @@ class thread_worker(Generic[_P]):
             _pbar.label = desc
         return _pbar
 
-    def _normalize_desc_and_total(self, gui, *args, **kwargs):
-        _desc = self._progress["desc"]
-        _total = self._progress["total"]
-
-        all_args = None  # all the argument of the function
-        # progress bar description
-        if callable(_desc):
-            arguments = self.__signature__.bind(gui, *args, **kwargs)
-            arguments.apply_defaults()
-            all_args = arguments.arguments
-            desc = _desc(**_filter_args(_desc, all_args))
-        else:
-            desc = str(_desc or self._func.__name__)
-
-        # total number of steps
-        if isinstance(_total, str) or callable(_total):
-            if all_args is None:
-                arguments = self.__signature__.bind(gui, *args, **kwargs)
-                arguments.apply_defaults()
-                all_args = arguments.arguments
-            if isinstance(_total, str):
-                total = eval(_total, {}, all_args)
-            elif callable(_total):
-                total = _total(**_filter_args(_total, all_args))
-            else:
-                raise RuntimeError("Unreachable.")
-        elif isinstance(_total, int):
-            total = _total
-        else:
-            raise TypeError("'total' must be int, callable or evaluatable string.")
-
-        return desc, total
-
     @property
     def started(self) -> CallbackList[None]:
         """Event that will be emitted on started."""
@@ -860,4 +829,4 @@ def _filter_args(fn: Callable, arguments: dict[str, Any]) -> dict[str, Any]:
 
 def _is_main_thread() -> bool:
     """True if the current thread is the main thread."""
-    return QThread.currentThread() is QCoreApplication.instance().thread()
+    return threading.current_thread().name == "MainThread"
