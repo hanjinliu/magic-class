@@ -4,8 +4,11 @@ from functools import wraps
 import inspect
 from typing import Any, Callable, TYPE_CHECKING
 from dask.diagnostics import Callback as DaskCallback
+from magicgui import use_app
+from magicgui.widgets import ProgressBar
 from psygnal import Signal
 from superqt.utils import FunctionWorker, GeneratorWorker, create_worker
+from magicclass._gui import BaseGui
 
 from magicclass.utils import move_to_screen_center, QtSignal
 from magicclass.utils.qthreading import (
@@ -232,6 +235,17 @@ class dask_thread_worker(thread_worker):
                 return out
 
         return _wrapped
+
+    def _run_blocked(
+        self,
+        gui: BaseGui,
+        worker: FunctionWorker | GeneratorWorker,
+        pbar: ProgressBar | None,
+    ):
+        if isinstance(pbar, DaskProgressBar):
+            app = use_app()
+            pbar.computed.connect(app.process_events)
+        return super()._run_blocked(gui, worker, pbar)
 
 
 def _filter_args(fn: Callable, arguments: dict[str, Any]) -> dict[str, Any]:
