@@ -35,6 +35,7 @@ from ._progressbar import (
     ProgressBarLike,
 )
 from ._callback import CallbackList, Callback, NestedCallback
+from ._worker import GeneratorWorker2
 from magicclass._exceptions import Aborted
 
 if TYPE_CHECKING:
@@ -354,11 +355,13 @@ class thread_worker(Generic[_P]):
         """Create a worker object."""
         if self.is_generator:
 
+            @wraps(self._func)
             def _run(*args, **kwargs):
                 with self._call_context(gui):
                     out = yield from self._func.__get__(gui)(*args, **kwargs)
                 return out
 
+            _worker_class = GeneratorWorker2
         else:
 
             def _run(*args, **kwargs):
@@ -366,10 +369,13 @@ class thread_worker(Generic[_P]):
                     out = self._func.__get__(gui)(*args, **kwargs)
                 return out
 
+            _worker_class = FunctionWorker
+
         worker = create_worker(
             _run,
             _ignore_errors=True,  # NOTE: reraising is processed in _create_method
             _start_thread=False,
+            _worker_class=_worker_class,
             *args,
             **kwargs,
         )
@@ -396,7 +402,6 @@ class thread_worker(Generic[_P]):
             # create a worker object
             worker = self._create_qt_worker(gui, *args, **kwargs)
             _create_worker._worker = weakref.ref(worker)
-            is_generator = isinstance(worker, GeneratorWorker)
             pbar: _SupportProgress | None = None
             if self._progress:
                 _desc, _total = self._normalize_pbar_config(gui, args, kwargs)
@@ -407,13 +412,6 @@ class thread_worker(Generic[_P]):
 
             if self._progress:
                 self._init_pbar_post(pbar, worker)
-
-            if is_generator and not self._force_async:
-
-                @worker.aborted.connect
-                def _on_abort():
-                    gui._error_mode.wrap_handler(Aborted.raise_, parent=gui)()
-                    Aborted.raise_()
 
             if _is_non_blocking:
                 if not self._ignore_errors:
@@ -463,13 +461,6 @@ class thread_worker(Generic[_P]):
         def _(exc):
             nonlocal err
             err = gui._error_mode.cleanup_tb(exc)
-
-        if isinstance(worker, GeneratorWorker):
-
-            @worker.aborted.connect
-            def _():
-                nonlocal err
-                err = Aborted()
 
         if isinstance(worker, GeneratorWorker):
             worker.yielded.connect(app.process_events)
@@ -536,6 +527,8 @@ class thread_worker(Generic[_P]):
                 else:
                     out = self._func.__get__(gui)(*args, **kwargs)
             except Exception as exc:
+                if pbar is not None:
+                    yield NestedCallback(close_pbar).with_args(pbar)
                 yield from self.errored._iter_as_nested_cb(gui, exc)
                 raise exc
             else:
@@ -661,8 +654,6 @@ class thread_worker(Generic[_P]):
             worker.finished.connect(c)
 
         if is_generator:
-            for c in self.aborted._iter_as_method(gui):
-                worker.aborted.connect(c)
             for c in self.yielded._iter_as_method(gui, filtered=True):
                 worker.yielded.connect(c)
             cb_yielded = self._create_cb_yielded(gui)
