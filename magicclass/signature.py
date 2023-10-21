@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from typing import Any, Callable, TypedDict, overload, Literal, TYPE_CHECKING
 from typing_extensions import Annotated, get_origin, get_args
 
@@ -225,8 +226,33 @@ class MagicMethodSignature(MagicSignature):
         )
 
 
-def create_validators(sig: inspect.Signature) -> dict[str, Callable]:
-    validators = {}
+if sys.version_info < (3, 9):
+    dict_ = dict
+else:
+    dict_ = dict[str, Callable]
+
+
+class ValidatorDict(dict_):
+    def __init__(self, sig: inspect.Signature):
+        self._sig = sig
+        super().__init__()
+
+    def validate(
+        self, obj: Any, *args, **kwargs
+    ) -> tuple[tuple[Any, ...], dict[str, Any]]:
+        if self:
+            bound = self._sig.bind(*args, **kwargs)
+            bound.apply_defaults()
+            arguments = bound.arguments.copy()
+            for name, validator in self.items():
+                val = arguments[name]
+                bound.arguments[name] = validator(obj, val, arguments)
+            args, kwargs = bound.args, bound.kwargs
+        return args, kwargs
+
+
+def create_validators(sig: inspect.Signature) -> ValidatorDict:
+    validators = ValidatorDict(sig)
     for param in sig.parameters.values():
         if is_annotated(param.annotation):
             validator = param.annotation.__metadata__[0].pop("validator", None)

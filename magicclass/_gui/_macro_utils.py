@@ -112,14 +112,18 @@ _SELF = inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD)
 _IS_RECORDABLE = "__is_recordable__"
 
 
+def _drop_self(sig: inspect.Signature):
+    return sig.replace(
+        parameters=list(sig.parameters.values())[1:],
+        return_annotation=sig.return_annotation,
+    )
+
+
 def inject_recorder(func: Callable, is_method: bool = True) -> Callable:
     """Inject macro recording functionality into a function."""
     sig = get_signature(func)
     if is_method:
-        sig = sig.replace(
-            parameters=list(sig.parameters.values())[1:],
-            return_annotation=sig.return_annotation,
-        )
+        sig = _drop_self(sig)
         _func = func
         _is_partial = isinstance(func, (partial, partialmethod))
     else:
@@ -163,15 +167,7 @@ def inject_recorder(func: Callable, is_method: bool = True) -> Callable:
 
         @functools_wraps(_func)
         def _recordable(bgui: MagicTemplate, *args, **kwargs):
-            if validators:
-                bound = sig.bind_partial(*args, **kwargs)
-                bound.apply_defaults()
-                arguments = bound.arguments.copy()
-                for name, validator in validators.items():
-                    val = arguments[name]
-                    bound.arguments[name] = validator(bgui, val, arguments)
-                args, kwargs = bound.args, bound.kwargs
-
+            args, kwargs = validators.validate(bgui, *args, **kwargs)
             with bgui.macro.blocked():
                 out = _func.__get__(bgui)(*args, **kwargs)
             if bgui.macro.active:
@@ -192,14 +188,42 @@ def inject_recorder(func: Callable, is_method: bool = True) -> Callable:
         return _func
 
 
+def inject_validator_only(obj: Callable, is_method: bool = True) -> Callable:
+    sig = get_signature(obj)
+    if is_method:
+        sig = _drop_self(sig)
+        validators = create_validators(sig)
+        if validators:
+
+            @functools_wraps(obj)
+            def _func(self, *args, **kwargs):
+                args, kwargs = validators.validate(self, *args, **kwargs)
+                return obj(self, *args, **kwargs)
+
+        else:
+            _func = obj
+    else:
+        sig = sig.replace(
+            parameters=[_SELF] + list(sig.parameters.values()),
+            return_annotation=sig.return_annotation,
+        )
+        validators = create_validators(sig)
+
+        @functools_wraps(obj)
+        def _func(self, *args, **kwargs):
+            args, kwargs = validators.validate(self, *args, **kwargs)
+            return obj(*args, **kwargs)
+
+        _func.__signature__ = sig
+    return _func
+
+
 def inject_silencer(func: Callable, is_method: bool = True) -> Callable:
     sig = get_signature(func)
     if is_method:
-        sig = sig.replace(
-            parameters=list(sig.parameters.values())[1:],
-            return_annotation=sig.return_annotation,
-        )
+        sig = sig = _drop_self(sig)
         _func = func
+        validators = create_validators(sig)
     else:
         if isinstance(func, partial):
 
@@ -208,6 +232,7 @@ def inject_silencer(func: Callable, is_method: bool = True) -> Callable:
                 return func(*args, **kwargs)
 
             _func.func = func.func  # to make the function partialmethod-like
+            validators = create_validators(sig)
 
         else:
 
@@ -219,12 +244,14 @@ def inject_silencer(func: Callable, is_method: bool = True) -> Callable:
             parameters=[_SELF] + list(sig.parameters.values()),
             return_annotation=sig.return_annotation,
         )
+        validators = create_validators(_func.__signature__)
 
     if not isinstance(_func, thread_worker):
 
         @functools_wraps(_func)
         def _silent(bgui: MagicTemplate, *args, **kwargs):
             with bgui.macro.blocked():
+                args, kwargs = validators.validate(bgui, *args, **kwargs)
                 out = _func.__get__(bgui)(*args, **kwargs)
             return out
 
@@ -235,6 +262,8 @@ def inject_silencer(func: Callable, is_method: bool = True) -> Callable:
 
     else:
         _func._set_silencer()
+        if validators:
+            _func._set_validators(validators)
         return _func
 
 

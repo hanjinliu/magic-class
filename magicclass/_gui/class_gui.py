@@ -351,15 +351,16 @@ class ClassGuiBase(BaseGui):
             needed.
         """
         mcls_parent = self.__magicclass_parent__
-        if mcls_parent is not None and self.parent is None:
+        qt_parent = self.native.parent()
+        if mcls_parent is not None and qt_parent is None:
             # If child magic class is closed before, we have to set parent again.
             self.native.setParent(mcls_parent.native, self.native.windowFlags())
 
         viewer = self.parent_viewer
-        if viewer is not None and self.parent is not None:
-            name = self.parent.objectName()
+        if viewer is not None and qt_parent is not None:
+            name = qt_parent.objectName()
             if name in viewer.window._dock_widgets and isinstance(
-                self.parent, QDockWidget
+                qt_parent, QDockWidget
             ):
                 viewer.window._dock_widgets[name].show()
             else:

@@ -63,6 +63,7 @@ from ._macro import GuiMacro, DummyMacro
 from ._macro_utils import (
     inject_recorder,
     inject_silencer,
+    inject_validator_only,
     value_widget_callback,
     nested_function_gui_callback,
 )
@@ -1252,21 +1253,7 @@ def convert_function(obj: Callable, default: str | None = None, is_method: bool 
     if _record_policy is None:
         new_attr = inject_recorder(obj, is_method)
     elif _record_policy == "false":
-        if is_method:
-            new_attr = obj
-        else:
-            sig = get_signature(obj)
-
-            @functools.wraps(obj)
-            def _func(self, *args, **kwargs):
-                return obj(*args, **kwargs)
-
-            _self = inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD)
-            _func.__signature__ = sig.replace(
-                parameters=[_self] + list(sig.parameters.values()),
-                return_annotation=sig.return_annotation,
-            )
-            new_attr = _func
+        new_attr = inject_validator_only(obj, is_method)
     elif _record_policy == "all-false":
         new_attr = inject_silencer(obj, is_method)
     else:

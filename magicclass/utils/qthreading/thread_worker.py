@@ -39,6 +39,7 @@ from ._worker import GeneratorWorker2
 from magicclass._exceptions import Aborted
 
 if TYPE_CHECKING:
+    from magicclass.signature import ValidatorDict
     from magicclass._gui import BaseGui
     from magicclass.fields import MagicField
 
@@ -108,7 +109,7 @@ class thread_worker(Generic[_P]):
         # not recordable, recursive=True -> _recorder is _silent
         # not recordable, recursive=False -> _recorder is None
         self._recorder: Callable[_P, Any] | None = None
-        self._validators: dict[str, Callable] | None = None
+        self._validators: ValidatorDict | None = None
         self._signature_cache = None
 
         if f is not None:
@@ -280,7 +281,7 @@ class thread_worker(Generic[_P]):
         self._recorder = _silent
         return None
 
-    def _set_validators(self, validators: dict[str, Callable]):
+    def _set_validators(self, validators: ValidatorDict):
         """Set validator functions."""
         self._validators = validators
         return None
@@ -334,14 +335,7 @@ class thread_worker(Generic[_P]):
     def _validate_args(self, gui: BaseGui, args, kwargs) -> tuple[tuple, dict]:
         if self._validators is None:
             return args, kwargs
-        sig: inspect.Signature = self.__get__(gui).__signature__
-        bound = sig.bind_partial(*args, **kwargs)
-        bound.apply_defaults()
-        bound_args = bound.arguments.copy()
-        for name, validator in self._validators.items():
-            value = bound.arguments[name]
-            bound.arguments[name] = validator(gui, value, bound_args)
-        return bound.args, bound.kwargs
+        return self._validators.validate(gui, *args, **kwargs)
 
     def _call_context(self, gui: BaseGui):
         if self._recorder is not None:
