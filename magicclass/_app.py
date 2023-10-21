@@ -24,9 +24,8 @@ def gui_qt():
 
 
 def gui_qt_is_active() -> bool:
-    """True only if "%gui qt" magic is called in ipython kernel."""
-    shell = get_shell()
-    return shell and shell.active_eventloop == "qt"
+    """Check if Qt app is active."""
+    return QApplication.instance() is not None
 
 
 def get_app():

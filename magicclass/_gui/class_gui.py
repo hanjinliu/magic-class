@@ -358,12 +358,14 @@ class ClassGuiBase(BaseGui):
 
         viewer = self.parent_viewer
         if viewer is not None and qt_parent is not None:
-            name = qt_parent.objectName()
-            if name in viewer.window._dock_widgets and isinstance(
-                qt_parent, QDockWidget
-            ):
-                viewer.window._dock_widgets[name].show()
-            else:
+            _dock_found = False
+            if isinstance(qt_parent, QDockWidget):
+                for dock in viewer.window._dock_widgets.values():
+                    if dock is qt_parent:
+                        _dock_found = True
+                        dock.show()
+                        break
+            if not _dock_found:
                 _floating = self._popup_mode == PopUpMode.popup
                 _area = "left" if _floating else "right"
                 dock = viewer.window.add_dock_widget(
