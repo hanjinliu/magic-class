@@ -700,7 +700,7 @@ class thread_worker(Generic[_P]):
             _pbar = self.__class__._DEFAULT_PROGRESS_BAR(max=total)
             if (
                 isinstance(_pbar, DefaultProgressBar)
-                and _pbar.parent is None
+                and _pbar.native.parent() is None
                 and _is_main_thread()
             ):
                 # Popup progressbar as a splashscreen if it is not a child widget.

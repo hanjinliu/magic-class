@@ -12,7 +12,6 @@ from .mgui_ext import (
     WidgetAction,
     _LabeledWidgetAction,
     QMenu,
-    PaletteEvents,
 )
 from .keybinding import register_shortcut
 from ._base import (
@@ -20,10 +19,9 @@ from ._base import (
     PopUpMode,
     ErrorMode,
     ContainerLikeGui,
-    convert_function,
+    normalize_insertion,
 )
 from .utils import format_error, connect_magicclasses
-from ._macro_utils import nested_function_gui_callback
 
 from magicclass.signature import get_additional_option
 from magicclass.fields import MagicField
@@ -160,22 +158,7 @@ class MenuGuiBase(ContainerLikeGui):
         obj: Callable | MenuGuiBase | AbstractAction | Widget,
         remove_label: bool = False,
     ) -> None:
-        if isinstance(obj, Callable):
-            # Sometimes users want to dynamically add new functions to GUI.
-            if isinstance(obj, FunctionGui):
-                if obj.parent is None:
-                    f = nested_function_gui_callback(self, obj)
-                    obj.called.connect(f)
-                _obj = obj
-            else:
-                obj = convert_function(obj, is_method=False).__get__(self)
-                _obj = self._create_widget_from_method(obj)
-
-            method_name = getattr(obj, "__name__", None)
-            if method_name and not hasattr(self, method_name):
-                object.__setattr__(self, method_name, obj)
-        else:
-            _obj = obj
+        _obj = normalize_insertion(self, obj)
 
         if isinstance(_obj, Widget):
             _obj = WidgetAction(_obj)

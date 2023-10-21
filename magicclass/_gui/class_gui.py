@@ -32,7 +32,7 @@ from ._base import (
     BaseGui,
     PopUpMode,
     ErrorMode,
-    convert_function,
+    normalize_insertion,
 )
 from .utils import format_error, connect_magicclasses
 from ._macro_utils import value_widget_callback, nested_function_gui_callback
@@ -272,22 +272,7 @@ class ClassGuiBase(BaseGui):
     def _fast_insert(
         self, key: int, obj: Widget | Callable, remove_label: bool = False
     ) -> None:
-        if isinstance(obj, Callable):
-            # Sometimes users want to dynamically add new functions to GUI.
-            if isinstance(obj, FunctionGui):
-                if obj.parent is None:
-                    f = nested_function_gui_callback(self, obj)
-                    obj.called.connect(f)
-                widget = obj
-            else:
-                obj = convert_function(obj, is_method=False).__get__(self)
-                widget = self._create_widget_from_method(obj)
-
-            method_name = getattr(obj, "__name__", None)
-            if method_name and not hasattr(self, method_name):
-                object.__setattr__(self, method_name, obj)
-        else:
-            widget = obj
+        widget = normalize_insertion(self, obj)
 
         if isinstance(widget, (ValueWidget, ContainerWidget)):
             widget.changed.connect(lambda: self.changed.emit(self))

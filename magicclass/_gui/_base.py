@@ -60,7 +60,12 @@ from .utils import (
     connect_magicclasses,
 )
 from ._macro import GuiMacro, DummyMacro
-from ._macro_utils import inject_recorder, inject_silencer, value_widget_callback
+from ._macro_utils import (
+    inject_recorder,
+    inject_silencer,
+    value_widget_callback,
+    nested_function_gui_callback,
+)
 from ._icon import get_icon
 from ._gui_modes import PopUpMode, ErrorMode
 
@@ -1331,6 +1336,39 @@ def convert_attributes(
     if not record:
         _dict["macro"] = macro
     return _dict
+
+
+_T0 = TypeVar("_T0", Widget, AbstractAction, BaseGui)
+
+
+@overload
+def normalize_insertion(parent: BaseGui, obj: Callable) -> FunctionGui:
+    ...
+
+
+@overload
+def normalize_insertion(parent: BaseGui, obj: _T0) -> _T0:
+    ...
+
+
+def normalize_insertion(parent: BaseGui, obj: Callable | Widget | AbstractAction):
+    if isinstance(obj, Callable):
+        # Sometimes users want to dynamically add new functions to GUI.
+        if isinstance(obj, FunctionGui):
+            if obj.parent is None:
+                f = nested_function_gui_callback(parent, obj)
+                obj.called.connect(f)
+            _obj = obj
+        else:
+            obj = convert_function(obj, is_method=False).__get__(parent)
+            _obj = parent._create_widget_from_method(obj)
+
+        method_name = getattr(obj, "__name__", None)
+        if method_name and not hasattr(parent, method_name):
+            object.__setattr__(parent, method_name, obj)
+    else:
+        _obj = obj
+    return _obj
 
 
 _dummy_macro = DummyMacro()

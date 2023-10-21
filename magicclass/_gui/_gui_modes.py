@@ -29,6 +29,7 @@ class PopUpMode(Enum):
     parentsub = "parentsub"
 
     def need_title_bar(self) -> bool:
+        """Whethre the popup widget needs a custom title bar"""
         return self not in {
             PopUpMode.popup,
             PopUpMode.dock,
@@ -37,6 +38,7 @@ class PopUpMode(Enum):
         }
 
     def activate_magicgui(self, mgui: FunctionGuiPlus, parent: Widget):
+        """Mode specific methods to activate magicgui."""
         if self not in (
             PopUpMode.dock,
             PopUpMode.dialog,
@@ -44,7 +46,7 @@ class PopUpMode(Enum):
         ):
             mgui.show()
         elif self is PopUpMode.dock:
-            mgui.parent.show()  # show dock widget
+            mgui.native.parent().show()  # show dock widget
         elif self is PopUpMode.parentsub:
             mgui.native.parent().setVisible(True)
         else:
@@ -55,12 +57,13 @@ class PopUpMode(Enum):
             pass
 
     def connect_close_callback(self, mgui: FunctionGuiPlus):
+        """Connect mode specific closed callbacks to magicgui."""
         if self not in {PopUpMode.dock, PopUpMode.parentsub, PopUpMode.dialog}:
             mgui.calling.connect(mgui.hide)
         elif self in {PopUpMode.dock, PopUpMode.parentsub}:
             # If FunctioGui is docked or in a subwindow, we should close
             # the parent QDockWidget/QMdiSubwindow.
-            mgui.calling.connect(lambda: mgui.parent.hide())
+            mgui.calling.connect(lambda: mgui.native.parent().hide())
 
 
 def _msgbox_raising(e: Exception, parent: Widget):
