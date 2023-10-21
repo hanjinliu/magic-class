@@ -316,8 +316,6 @@ class MagicTemplate(
     def parent_viewer(self) -> napari.Viewer | None:
         """Return napari.Viewer if magic class is a dock widget of a viewer."""
         parent_self = self._search_parent_magicclass()
-        if not isinstance(parent_self.native.parent(), QtW.QDockWidget):
-            return None
         return _find_viewer_ancestor(parent_self.native)
 
     @property

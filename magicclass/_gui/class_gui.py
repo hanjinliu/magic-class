@@ -392,7 +392,7 @@ class ClassGuiBase(BaseGui):
         viewer = current_self.parent_viewer
         if viewer is not None:
             try:
-                viewer.window.remove_dock_widget(self.parent)
+                viewer.window.remove_dock_widget(self.native.parent())
             except Exception:
                 pass
 
