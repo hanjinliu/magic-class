@@ -355,6 +355,7 @@ class ClassGuiBase(BaseGui):
         if mcls_parent is not None and qt_parent is None:
             # If child magic class is closed before, we have to set parent again.
             self.native.setParent(mcls_parent.native, self.native.windowFlags())
+            qt_parent = self.native.parent()
 
         viewer = self.parent_viewer
         if viewer is not None and qt_parent is not None:
@@ -391,11 +392,11 @@ class ClassGuiBase(BaseGui):
         """Close GUI. if this widget is a dock widget, then also close it."""
 
         current_self = self._search_parent_magicclass()
-
         viewer = current_self.parent_viewer
-        if viewer is not None:
+        qt_parent = self.native.parent()
+        if viewer is not None and isinstance(qt_parent, QDockWidget):
             try:
-                viewer.window.remove_dock_widget(self.native.parent())
+                viewer.window.remove_dock_widget(qt_parent)
             except Exception:
                 pass
 
