@@ -60,7 +60,13 @@ from .utils import (
     connect_magicclasses,
 )
 from ._macro import GuiMacro, DummyMacro
-from ._macro_utils import inject_recorder, inject_silencer, value_widget_callback
+from ._macro_utils import (
+    inject_recorder,
+    inject_silencer,
+    inject_validator_only,
+    value_widget_callback,
+    nested_function_gui_callback,
+)
 from ._icon import get_icon
 from ._gui_modes import PopUpMode, ErrorMode
 
@@ -311,8 +317,6 @@ class MagicTemplate(
     def parent_viewer(self) -> napari.Viewer | None:
         """Return napari.Viewer if magic class is a dock widget of a viewer."""
         parent_self = self._search_parent_magicclass()
-        if not isinstance(parent_self.native.parent(), QtW.QDockWidget):
-            return None
         return _find_viewer_ancestor(parent_self.native)
 
     @property
@@ -1249,21 +1253,7 @@ def convert_function(obj: Callable, default: str | None = None, is_method: bool 
     if _record_policy is None:
         new_attr = inject_recorder(obj, is_method)
     elif _record_policy == "false":
-        if is_method:
-            new_attr = obj
-        else:
-            sig = get_signature(obj)
-
-            @functools.wraps(obj)
-            def _func(self, *args, **kwargs):
-                return obj(*args, **kwargs)
-
-            _self = inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD)
-            _func.__signature__ = sig.replace(
-                parameters=[_self] + list(sig.parameters.values()),
-                return_annotation=sig.return_annotation,
-            )
-            new_attr = _func
+        new_attr = inject_validator_only(obj, is_method)
     elif _record_policy == "all-false":
         new_attr = inject_silencer(obj, is_method)
     else:
@@ -1331,6 +1321,39 @@ def convert_attributes(
     if not record:
         _dict["macro"] = macro
     return _dict
+
+
+_T0 = TypeVar("_T0", Widget, AbstractAction, BaseGui)
+
+
+@overload
+def normalize_insertion(parent: BaseGui, obj: Callable) -> FunctionGui:
+    ...
+
+
+@overload
+def normalize_insertion(parent: BaseGui, obj: _T0) -> _T0:
+    ...
+
+
+def normalize_insertion(parent: BaseGui, obj: Callable | Widget | AbstractAction):
+    if isinstance(obj, Callable):
+        # Sometimes users want to dynamically add new functions to GUI.
+        if isinstance(obj, FunctionGui):
+            if obj.parent is None:
+                f = nested_function_gui_callback(parent, obj)
+                obj.called.connect(f)
+            _obj = obj
+        else:
+            obj = convert_function(obj, is_method=False).__get__(parent)
+            _obj = parent._create_widget_from_method(obj)
+
+        method_name = getattr(obj, "__name__", None)
+        if method_name and not hasattr(parent, method_name):
+            object.__setattr__(parent, method_name, obj)
+    else:
+        _obj = obj
+    return _obj
 
 
 _dummy_macro = DummyMacro()

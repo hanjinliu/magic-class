@@ -12,10 +12,14 @@ class Aborted(RuntimeError):
     """Raised when worker is aborted."""
 
     @classmethod
-    def raise_(cls, *args):
+    def raise_(cls, *args, func: Callable | None = None):
         """A function version of "raise"."""
         if not args:
-            args = ("Aborted.",)
+            if func is not None:
+                name = getattr(func, "__qualname__", repr(func))
+                args = (f"`{name}` was aborted.",)
+            else:
+                args = ("Aborted.",)
         raise cls(*args)
 
 

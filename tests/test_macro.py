@@ -1,5 +1,5 @@
 from typing_extensions import Annotated
-from magicclass import magicclass, magicmenu, set_options, defaults
+from magicclass import magicclass, magicmenu, set_options, defaults, do_not_record
 from enum import Enum
 from pathlib import Path
 from datetime import datetime, date, time
@@ -213,6 +213,7 @@ def test_validator():
             x: Annotated[int, {"validator": _set_default}] = None,
             y: Annotated[int, {"validator": _copy_value}] = None,
         ):
+            self._default  # check instance is bound to self
             return x, y
 
     ui = A()
@@ -250,6 +251,7 @@ def test_validator_with_worker():
             x: Annotated[int, {"validator": _set_default}] = None,
             y: Annotated[int, {"validator": _copy_value}] = None,
         ):
+            self._default  # check instance is bound to self
             return x, y
 
     ui = A()
@@ -259,3 +261,67 @@ def test_validator_with_worker():
     assert str(ui.macro[1]) == "ui.f(x=5, y=5)"
     assert str(ui.macro[2]) == "ui.f(x=3, y=3)"
     assert str(ui.macro[3]) == "ui.f(x=1, y=-1)"
+
+def test_validator_without_record():
+    @magicclass
+    class A:
+        def __init__(self) -> None:
+            self._default = 1
+
+        def _set_default(self, value):
+            if value is None:
+                value = self._default
+            return value
+
+        def _copy_value(self, value, args):
+            if value is None:
+                value = args["x"]
+                if value is None:
+                    value = -1
+            return value
+
+        @do_not_record
+        def f(
+            self,
+            x: Annotated[int, {"validator": _set_default}] = None,
+            y: Annotated[int, {"validator": _copy_value}] = None,
+        ):
+            self._default  # check instance is bound to self
+            return x, y
+
+    ui = A()
+    assert (5, 5) == ui.f(5, 5)
+    assert (3, 3) == ui.f(3)
+    assert (1, -1) == ui.f()
+
+def test_validator_with_silencer():
+    @magicclass
+    class A:
+        def __init__(self) -> None:
+            self._default = 1
+
+        def _set_default(self, value):
+            if value is None:
+                value = self._default
+            return value
+
+        def _copy_value(self, value, args):
+            if value is None:
+                value = args["x"]
+                if value is None:
+                    value = -1
+            return value
+
+        @do_not_record(recursive=True)
+        def f(
+            self,
+            x: Annotated[int, {"validator": _set_default}] = None,
+            y: Annotated[int, {"validator": _copy_value}] = None,
+        ):
+            self._default  # check instance is bound to self
+            return x, y
+
+    ui = A()
+    assert (5, 5) == ui.f(5, 5)
+    assert (3, 3) == ui.f(3)
+    assert (1, -1) == ui.f()

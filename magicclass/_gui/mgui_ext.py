@@ -44,6 +44,7 @@ class PushButtonPlus(PushButton):
         self._doc = ""
         self._unwrapped = False
         self._get_running: Callable[[], bool] | None = None
+        self._widget._event_filter.paletteChanged.connect(self._update_icon)
 
     @property
     def running(self) -> bool:
@@ -51,6 +52,10 @@ class PushButtonPlus(PushButton):
         if self._get_running is None:
             return getattr(self.mgui, "running", False)
         return self._get_running()
+
+    def _update_icon(self):
+        if self._icon is not None:
+            self._icon.install(self)
 
     def set_shortcut(self, key):
         """Set keyboard shortcut to the button."""

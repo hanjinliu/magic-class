@@ -32,7 +32,7 @@ from ._base import (
     BaseGui,
     PopUpMode,
     ErrorMode,
-    convert_function,
+    normalize_insertion,
 )
 from .utils import format_error, connect_magicclasses
 from ._macro_utils import value_widget_callback, nested_function_gui_callback
@@ -272,22 +272,7 @@ class ClassGuiBase(BaseGui):
     def _fast_insert(
         self, key: int, obj: Widget | Callable, remove_label: bool = False
     ) -> None:
-        if isinstance(obj, Callable):
-            # Sometimes users want to dynamically add new functions to GUI.
-            if isinstance(obj, FunctionGui):
-                if obj.parent is None:
-                    f = nested_function_gui_callback(self, obj)
-                    obj.called.connect(f)
-                widget = obj
-            else:
-                obj = convert_function(obj, is_method=False).__get__(self)
-                widget = self._create_widget_from_method(obj)
-
-            method_name = getattr(obj, "__name__", None)
-            if method_name and not hasattr(self, method_name):
-                object.__setattr__(self, method_name, obj)
-        else:
-            widget = obj
+        widget = normalize_insertion(self, obj)
 
         if isinstance(widget, (ValueWidget, ContainerWidget)):
             widget.changed.connect(lambda: self.changed.emit(self))
@@ -366,18 +351,21 @@ class ClassGuiBase(BaseGui):
             needed.
         """
         mcls_parent = self.__magicclass_parent__
-        if mcls_parent is not None and self.parent is None:
+        qt_parent = self.native.parent()
+        if mcls_parent is not None and qt_parent is None:
             # If child magic class is closed before, we have to set parent again.
             self.native.setParent(mcls_parent.native, self.native.windowFlags())
 
         viewer = self.parent_viewer
-        if viewer is not None and self.parent is not None:
-            name = self.parent.objectName()
-            if name in viewer.window._dock_widgets and isinstance(
-                self.parent, QDockWidget
-            ):
-                viewer.window._dock_widgets[name].show()
-            else:
+        if viewer is not None and qt_parent is not None:
+            _dock_found = False
+            if isinstance(qt_parent, QDockWidget):
+                for dock in viewer.window._dock_widgets.values():
+                    if dock is qt_parent:
+                        _dock_found = True
+                        dock.show()
+                        break
+            if not _dock_found:
                 _floating = self._popup_mode == PopUpMode.popup
                 _area = "left" if _floating else "right"
                 dock = viewer.window.add_dock_widget(
@@ -407,7 +395,7 @@ class ClassGuiBase(BaseGui):
         viewer = current_self.parent_viewer
         if viewer is not None:
             try:
-                viewer.window.remove_dock_widget(self.parent)
+                viewer.window.remove_dock_widget(self.native.parent())
             except Exception:
                 pass
 
@@ -504,7 +492,7 @@ def make_gui(
             self._toolbar = None
 
             self.native.setObjectName(self.name)
-            self.native.setWindowTitle(self.name)
+            self.native.setWindowTitle(self.name.replace("_", " ").strip())
 
         close = ClassGuiBase.close
 

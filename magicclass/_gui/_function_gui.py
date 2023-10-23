@@ -1,6 +1,7 @@
 from __future__ import annotations
 from types import GeneratorType
 from typing import Any, TYPE_CHECKING, Callable, TypeVar
+from typing_extensions import ParamSpec
 import re
 from psygnal import Signal
 from magicgui.widgets import PushButton, CheckBox, FunctionGui
@@ -16,18 +17,19 @@ from magicclass.widgets import Separator
 if TYPE_CHECKING:
     from magicgui.widgets import Widget
 
-
+_P = ParamSpec("_P")
 _R = TypeVar("_R")
 
 
-class FunctionGuiPlus(FunctionGui[_R]):
+class FunctionGuiPlus(FunctionGui[_P, _R]):
     """FunctionGui class with a parameter recording functionality etc."""
 
     _dialog_widget = None
     _initialized_for_magicclass = False
     calling = Signal(object)
 
-    def __call__(self, *args: Any, update_widget: bool = False, **kwargs: Any) -> _R:
+    def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _R:
+        update_widget: bool = bool(kwargs.pop("update_widget", False))
         sig = self.__signature__
         try:
             bound = sig.bind(*args, **kwargs)

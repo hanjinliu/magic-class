@@ -14,7 +14,6 @@ from .mgui_ext import (
     WidgetAction,
     ToolButtonPlus,
     PaletteEvents,
-    Action,
 )
 from .keybinding import register_shortcut
 from ._base import (
@@ -22,11 +21,10 @@ from ._base import (
     PopUpMode,
     ErrorMode,
     ContainerLikeGui,
-    convert_function,
+    normalize_insertion,
 )
 from .utils import format_error, connect_magicclasses
 from .menu_gui import ContextMenuGui, MenuGui, MenuGuiBase, insert_action_like
-from ._macro_utils import nested_function_gui_callback
 
 from magicclass.signature import get_additional_option
 from magicclass.widgets import FreeWidget, Separator
@@ -45,7 +43,7 @@ def _check_popupmode(popup_mode: PopUpMode):
         warnings.warn(msg, UserWarning)
     elif popup_mode == PopUpMode.last:
         msg = (
-            f"magictoolbat does not support popup mode {popup_mode.value}."
+            f"magictoolbar does not support popup mode {popup_mode.value}."
             "PopUpMode.parentlast is used instead"
         )
         warnings.warn(msg, UserWarning)
@@ -236,22 +234,7 @@ class ToolBarGui(ContainerLikeGui):
         obj : Callable or AbstractAction
             Object to insert.
         """
-        if isinstance(obj, Callable):
-            # Sometimes users want to dynamically add new functions to GUI.
-            if isinstance(obj, FunctionGui):
-                if obj.parent is None:
-                    f = nested_function_gui_callback(self, obj)
-                    obj.called.connect(f)
-                _obj = obj
-            else:
-                obj = convert_function(obj, is_method=False).__get__(self)
-                _obj = self._create_widget_from_method(obj)
-
-            method_name = getattr(obj, "__name__", None)
-            if method_name and not hasattr(self, method_name):
-                object.__setattr__(self, method_name, obj)
-        else:
-            _obj = obj
+        _obj = normalize_insertion(self, obj)
 
         # _hide_labels should not contain Container because some ValueWidget like widgets
         # are Containers.

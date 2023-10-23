@@ -265,7 +265,7 @@ class MacroEdit(TabbedContainer):
 
     def show(self):
         was_visible = self.visible
-        if self.parent is None:
+        if self.native.parent() is None:
             ui = self.__magicclass_parent__
             self.native.setParent(ui.native, self.native.windowFlags())
         super().show()
