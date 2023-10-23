@@ -492,7 +492,7 @@ def make_gui(
             self._toolbar = None
 
             self.native.setObjectName(self.name)
-            self.native.setWindowTitle(self.name)
+            self.native.setWindowTitle(self.name.replace("_", " ").strip())
 
         close = ClassGuiBase.close
 
