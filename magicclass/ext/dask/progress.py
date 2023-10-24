@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from functools import wraps
 import inspect
-from typing import Any, Callable, TYPE_CHECKING
+from typing import Any, Callable, TYPE_CHECKING, TypeVar
+from typing_extensions import ParamSpec
 from dask.diagnostics import Callback as DaskCallback
 from magicgui import use_app
 from magicgui.widgets import ProgressBar
@@ -20,6 +21,9 @@ from magicclass.utils.qthreading import (
 
 if TYPE_CHECKING:
     from magicclass._gui import BaseGui
+
+_P = ParamSpec("_P")
+_R = TypeVar("_R")
 
 
 class DaskProgressBar(DefaultProgressBar, DaskCallback):
@@ -120,7 +124,7 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         return None
 
 
-class dask_thread_worker(thread_worker):
+class dask_thread_worker(thread_worker[_P, _R]):
     """
     Create a dask's worker in a superqt/napari style.
 

@@ -76,7 +76,7 @@ def _silent(*args, **kwargs):
     return None
 
 
-class thread_worker(Generic[_P]):
+class thread_worker(Callable, Generic[_P, _R]):
     """Create a worker in a superqt/napari style."""
 
     _DEFAULT_PROGRESS_BAR = DefaultProgressBar
@@ -157,7 +157,7 @@ class thread_worker(Generic[_P]):
         total: str | Callable | int | None = None,
         pbar: ProgressBar | _SupportProgress | MagicField | None = None,
         **kwargs,
-    ) -> Callable[[Callable[_P, Any | None]], thread_worker[_P]]:
+    ) -> Callable[[Callable[_P, _R]], thread_worker[_P, _R]]:
         """
         Configure the progressbar.
 
@@ -287,7 +287,7 @@ class thread_worker(Generic[_P]):
         return None
 
     @overload
-    def __call__(self, f: Callable[_P, Any | None]) -> thread_worker[_P]:
+    def __call__(self, f: Callable[_P, _R]) -> thread_worker[_P, _R]:
         ...
 
     @overload
@@ -300,18 +300,18 @@ class thread_worker(Generic[_P]):
         else:
             return self._func(*args, **kwargs)
 
-    def with_func(self, func: Callable[_P, Any | None]) -> thread_worker[_P]:
+    def with_func(self, func: Callable[_P, _R]) -> thread_worker[_P, _R]:
         """Set the function."""
         self._func = func
         wraps(func)(self)  # NOTE: __name__ etc. are updated here.
         return self
 
     @overload
-    def __get__(self, gui: Literal[None], objtype=None) -> thread_worker[_P]:
+    def __get__(self, gui: Literal[None], objtype=None) -> thread_worker[_P, _R]:
         ...
 
     @overload
-    def __get__(self, gui: Any, objtype=None) -> AsyncMethod[_P, Any | None]:
+    def __get__(self, gui: Any, objtype=None) -> AsyncMethod[_P, _R]:
         ...
 
     def __get__(self, gui, objtype=None):
@@ -698,7 +698,9 @@ class thread_worker(Generic[_P]):
                 and _is_main_thread()
             ):
                 # Popup progressbar as a splashscreen if it is not a child widget.
-                _pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
+                _pbar.native.setParent(
+                    gui._search_parent_magicclass().native, self.__class__._WINDOW_FLAG
+                )
 
         else:
             _pbar.max = total

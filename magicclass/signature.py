@@ -233,6 +233,8 @@ else:
 
 
 class ValidatorDict(dict_):
+    """Dictionary of validators"""
+
     def __init__(self, sig: inspect.Signature):
         self._sig = sig
         super().__init__()
@@ -240,6 +242,7 @@ class ValidatorDict(dict_):
     def validate(
         self, obj: Any, *args, **kwargs
     ) -> tuple[tuple[Any, ...], dict[str, Any]]:
+        """Validate arguments and return validated arguments."""
         if self:
             bound = self._sig.bind(*args, **kwargs)
             bound.apply_defaults()
@@ -252,6 +255,7 @@ class ValidatorDict(dict_):
 
 
 def create_validators(sig: inspect.Signature) -> ValidatorDict:
+    """Construct a validator dict from a signature."""
     validators = ValidatorDict(sig)
     for param in sig.parameters.values():
         if is_annotated(param.annotation):
@@ -265,7 +269,12 @@ def _normalize_validator(validator: Callable) -> Callable:
     if not callable(validator):
         raise TypeError("validator must be a callable.")
     sig = inspect.signature(validator)
-    if len(sig.parameters) == 2:
+    if len(sig.parameters) == 1:
+
+        def out(self, value: Any, args: dict[str, Any]):
+            return validator(value)
+
+    elif len(sig.parameters) == 2:
 
         def out(self, value: Any, args: dict[str, Any]):
             return validator(self, value)
@@ -273,7 +282,9 @@ def _normalize_validator(validator: Callable) -> Callable:
     elif len(sig.parameters) == 3:
         out = validator
     else:
-        raise TypeError("validator must have 2 or 3 parameters.")
+        raise TypeError(
+            f"validator must have 1-3 parameters but given function is `{sig}`."
+        )
     return out
 
 
