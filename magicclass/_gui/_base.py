@@ -19,7 +19,7 @@ from typing_extensions import Self
 from abc import ABCMeta
 import inspect
 import warnings
-from weakref import WeakValueDictionary
+from weakref import WeakValueDictionary, WeakSet
 from qtpy import QtWidgets as QtW
 
 from psygnal import Signal
@@ -207,7 +207,7 @@ class MagicTemplate(
 ):
     __doc__ = ""
     __magicclass_parent__: None | MagicTemplate
-    __magicclass_children__: list[MagicTemplate]
+    __magicclass_children__: WeakSet[MagicTemplate]
     _close_on_run: bool
     _component_class: type[Clickable]
     _error_mode: ErrorMode
@@ -877,7 +877,7 @@ class BaseGui(MagicTemplate):
     ):
         self._macro_instance = GuiMacro(self, options=defaults)
         self.__magicclass_parent__: BaseGui | None = None
-        self.__magicclass_children__: list[MagicTemplate] = []
+        self.__magicclass_children__: WeakSet[MagicTemplate] = WeakSet()
         self._close_on_run = close_on_run
         self._popup_mode = popup_mode or PopUpMode.popup
         self._error_mode = error_mode or ErrorMode.msgbox

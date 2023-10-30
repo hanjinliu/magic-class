@@ -282,12 +282,9 @@ class ClassGuiBase(BaseGui):
             if isinstance(widget, ClassGuiBase):
                 if self._remove_child_margins:
                     widget.margins = (0, 0, 0, 0)
-                if (
-                    len(self.__magicclass_children__) > 0
-                    and widget is not self.__magicclass_children__[-1]
-                ):
+                if widget not in self.__magicclass_children__:
                     # nested magic classes are already in the list
-                    self.__magicclass_children__.append(widget)
+                    self.__magicclass_children__.add(widget)
                     widget._my_symbol = Symbol(widget.name)
 
         _widget = widget
@@ -543,7 +540,7 @@ def make_gui(
                 self.native.addDockWidget(QtDockWidget.areas[area], dock)
                 if isinstance(widget, BaseGui):
                     widget.__magicclass_parent__ = self
-                    self.__magicclass_children__.append(widget)
+                    self.__magicclass_children__.add(widget)
                     widget._my_symbol = Symbol(name)
 
             @nogui

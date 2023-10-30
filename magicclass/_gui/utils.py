@@ -92,7 +92,7 @@ def connect_magicclasses(parent: BaseGui, child: BaseGui, child_name: str):
     """Connect magicclass parent/child."""
 
     child.__magicclass_parent__ = parent
-    parent.__magicclass_children__.append(child)
+    parent.__magicclass_children__.add(child)
     child._my_symbol = Symbol(child_name)
 
 
