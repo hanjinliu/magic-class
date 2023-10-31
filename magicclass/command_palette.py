@@ -62,9 +62,9 @@ def exec_command_palette(
     palette = get_palette(name, alignment=alignment)
 
     if title is None:
-        title = lambda mcls, btn: type(mcls).__qualname__
+        title = _default_title
     if desc is None:
-        desc = lambda mcls, btn: btn.text
+        desc = _default_desc
     if filter is None:
         filter = lambda mcls, btn: True
 
@@ -94,6 +94,18 @@ def _define_command(fn: Callable) -> Callable:
 
 def _define_when(wdt: Clickable, parent: BaseGui) -> Callable[[], bool]:
     return lambda: wdt.enabled
+
+
+def _default_title(mcls: BaseGui, btn: Clickable):
+    names: list[str] = []
+    while mcls is not None:
+        names.append(mcls.name)
+        mcls = getattr(mcls, "__magicclass_parent__", None)
+    return " > ".join(reversed(names))
+
+
+def _default_desc(mcls: BaseGui, btn: Clickable):
+    return btn.text
 
 
 def _iter_executable(gui: BaseGui) -> Iterable[tuple[BaseGui, Clickable]]:
