@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.utils._functions &mdash; magic-class 0.7.5 documentation</title>
+  <title>magicclass.utils._functions &mdash; magic-class 0.7.6 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -12,8 +12,9 @@
   <![endif]-->
 
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -31,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.5
+                0.7.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -207,6 +208,13 @@
     <span class="k">return</span> <span class="n">nargs</span>
 
 
+<span class="k">def</span> <span class="nf">get_level</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="n">level</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="vm">__qualname__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">_LOCALS</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">level</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">level</span>
+
+
 <span class="n">_LOCALS</span> <span class="o">=</span> <span class="s2">&quot;&lt;locals&gt;.&quot;</span>
 
 
@@ -220,16 +228,16 @@
     <span class="k">if</span> <span class="n">_LOCALS</span> <span class="ow">in</span> <span class="n">qualname</span><span class="p">:</span>
         <span class="n">qualname</span> <span class="o">=</span> <span class="n">qualname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">_LOCALS</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="o">*</span><span class="n">clsnames</span><span class="p">,</span> <span class="n">funcname</span> <span class="o">=</span> <span class="n">qualname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
-    <span class="n">ins</span> <span class="o">=</span> <span class="bp">self</span>
-    <span class="n">self_cls</span> <span class="o">=</span> <span class="n">ins</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">self_cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">self_cls</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">clsnames</span><span class="p">:</span>
         <span class="n">ns</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">clsnames</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">self_cls</span><span class="si">}</span><span class="s2"> not in </span><span class="si">{</span><span class="n">clsnames</span><span class="si">!r}</span><span class="s2">. &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;Method </span><span class="si">{</span><span class="n">funcname</span><span class="si">}</span><span class="s2"> is in namespace </span><span class="si">{</span><span class="n">ns</span><span class="si">!r}</span><span class="s2">, so it is invisible &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;from class </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">!r}</span><span class="s2">.&quot;</span>
         <span class="p">)</span>
     <span class="n">i</span> <span class="o">=</span> <span class="n">clsnames</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">self_cls</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-
+    <span class="n">ins</span> <span class="o">=</span> <span class="bp">self</span>
     <span class="k">for</span> <span class="n">clsname</span> <span class="ow">in</span> <span class="n">clsnames</span><span class="p">[</span><span class="n">i</span><span class="p">:]:</span>
         <span class="n">ins</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ins</span><span class="p">,</span> <span class="n">clsname</span><span class="p">)</span>
 

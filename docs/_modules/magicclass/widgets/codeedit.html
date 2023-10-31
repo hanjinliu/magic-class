@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.codeedit &mdash; magic-class 0.7.5 documentation</title>
+  <title>magicclass.widgets.codeedit &mdash; magic-class 0.7.6 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -12,8 +12,9 @@
   <![endif]-->
 
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -31,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.5
+                0.7.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -84,6 +85,7 @@
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 <span class="kn">import</span> <span class="nn">weakref</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
 <span class="kn">from</span> <span class="nn">qtpy</span> <span class="kn">import</span> <span class="n">QtWidgets</span> <span class="k">as</span> <span class="n">QtW</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">Signal</span> <span class="k">as</span> <span class="n">pyqtSignal</span>
 
@@ -680,29 +682,16 @@
 
         <span class="n">ndel</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">line_rstripped</span><span class="p">)</span>
         <span class="n">last_char</span> <span class="o">=</span> <span class="n">line_rstripped</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">last_char</span> <span class="ow">in</span> <span class="s2">&quot;([{:&quot;</span><span class="p">:</span>
+        <span class="n">_counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="n">_not_closed</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">_counter</span><span class="p">[</span><span class="s2">&quot;(&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">_counter</span><span class="p">[</span><span class="s2">&quot;)&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="ow">or</span> <span class="n">_counter</span><span class="p">[</span><span class="s2">&quot;[&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">_counter</span><span class="p">[</span><span class="s2">&quot;]&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="ow">or</span> <span class="n">_counter</span><span class="p">[</span><span class="s2">&quot;{&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">_counter</span><span class="p">[</span><span class="s2">&quot;}&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">_not_closed</span> <span class="ow">or</span> <span class="n">last_char</span> <span class="ow">in</span> <span class="s2">&quot;([{:&quot;</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndel</span><span class="p">):</span>
                 <span class="n">cursor</span><span class="o">.</span><span class="n">deletePreviousChar</span><span class="p">()</span>
             <span class="n">cursor</span><span class="o">.</span><span class="n">insertText</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">indent</span> <span class="o">+</span> <span class="n">_TAB</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">setTextCursor</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span>
-            <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">_close</span> <span class="o">:=</span> <span class="p">{</span><span class="s2">&quot;(&quot;</span><span class="p">:</span> <span class="s2">&quot;)&quot;</span><span class="p">,</span> <span class="s2">&quot;{&quot;</span><span class="p">:</span> <span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;[&quot;</span><span class="p">:</span> <span class="s2">&quot;]&quot;</span><span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">last_char</span><span class="p">):</span>
-                <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
-                    <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">EndOfLine</span><span class="p">,</span>
-                    <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveMode</span><span class="o">.</span><span class="n">KeepAnchor</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="k">if</span> <span class="p">(</span><span class="n">idx</span> <span class="o">:=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">selectedText</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">_close</span><span class="p">))</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">cursor</span><span class="o">.</span><span class="n">clearSelection</span><span class="p">()</span>
-                    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
-                        <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
-                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">NextCharacter</span><span class="p">,</span>
-                        <span class="p">)</span>
-                    <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">Left</span><span class="p">)</span>
-                    <span class="n">cursor</span><span class="o">.</span><span class="n">insertText</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">indent</span><span class="p">)</span>
-                    <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">Up</span><span class="p">)</span>
-                    <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">StartOfLine</span><span class="p">)</span>
-                    <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">NextWord</span><span class="p">)</span>
-                <span class="n">cursor</span><span class="o">.</span><span class="n">clearSelection</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">setTextCursor</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">cursor</span><span class="o">.</span><span class="n">insertText</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">indent</span><span class="p">)</span>

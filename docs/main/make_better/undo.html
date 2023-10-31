@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="English" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Implement Undo/Redo &mdash; magic-class 0.7.5 documentation</title>
+  <title>Implement Undo/Redo &mdash; magic-class 0.7.6 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -13,8 +13,9 @@
   <![endif]-->
 
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -34,7 +35,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.5
+                0.7.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -110,7 +111,7 @@
            <div itemprop="articleBody">
 
   <section id="implement-undo-redo">
-<h1>Implement Undo/Redo<a class="headerlink" href="#implement-undo-redo" title="Permalink to this heading">¶</a></h1>
+<h1>Implement Undo/Redo<a class="headerlink" href="#implement-undo-redo" title="Permalink to this headline">¶</a></h1>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 0.7.0.</span></p>
 </div>
@@ -121,7 +122,7 @@ and a <strong>reverse function</strong>. When a forward function converts GUI st
 B, then the reverse function should do the opposite (B to A).</p>
 <p>The undo/redo operations can be executed from the macro instance using
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">ui.macro.undo()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">ui.macro.redo()</span></code>.</p>
-<nav class="contents local" id="contents">
+<div class="contents local topic" id="contents">
 <p class="topic-title">Contents</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#basic-syntax" id="id2">Basic Syntax</a></p></li>
@@ -129,9 +130,9 @@ B, then the reverse function should do the opposite (B to A).</p>
 <li><p><a class="reference internal" href="#custom-redo-action" id="id4">Custom Redo Action</a></p></li>
 <li><p><a class="reference internal" href="#best-practice-of-undo-redo" id="id5">Best Practice of Undo/Redo</a></p></li>
 </ul>
-</nav>
+</div>
 <section id="basic-syntax">
-<h2><a class="toc-backref" href="#id2" role="doc-backlink">Basic Syntax</a><a class="headerlink" href="#basic-syntax" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id2">Basic Syntax</a><a class="headerlink" href="#basic-syntax" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="../../apidoc/magicclass.html#magicclass.undo.undo_callback" title="magicclass.undo.undo_callback"><code class="xref py py-func docutils literal notranslate"><span class="pre">magicclass.undo.undo_callback()</span></code></a> is a decorator that converts a function
 into a callback that can be recognized by magic-classes. Returned callback
 will be properly processed so that the GUI operations can be recorded in the
@@ -142,7 +143,7 @@ undo stack.</p>
 automatically defined using the GUI macro strings.</p>
 </div>
 <section id="standard-methods">
-<h3>Standard methods<a class="headerlink" href="#standard-methods" title="Permalink to this heading">¶</a></h3>
+<h3>Standard methods<a class="headerlink" href="#standard-methods" title="Permalink to this headline">¶</a></h3>
 <p>For standard methods, just return the undo callback.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
 <span class="kn">from</span> <span class="nn">magicclass.undo</span> <span class="kn">import</span> <span class="n">undo_callback</span>
@@ -190,7 +191,7 @@ to the original.</p>
 </div>
 </section>
 <section id="thread-workers">
-<h3>Thread workers<a class="headerlink" href="#thread-workers" title="Permalink to this heading">¶</a></h3>
+<h3>Thread workers<a class="headerlink" href="#thread-workers" title="Permalink to this headline">¶</a></h3>
 <p>When you use <a class="reference internal" href="use_worker.html"><span class="doc">multi threading</span></a>, you'll usually return returned-callbacks,
 which seems to collide with the undo callback. In this case, you can return an undo callback
 from the returned-callback.</p>
@@ -222,7 +223,7 @@ from the returned-callback.</p>
 </section>
 </section>
 <section id="the-undo-stack">
-<h2><a class="toc-backref" href="#id3" role="doc-backlink">The Undo Stack</a><a class="headerlink" href="#the-undo-stack" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">The Undo Stack</a><a class="headerlink" href="#the-undo-stack" title="Permalink to this headline">¶</a></h2>
 <p>Executed undoable operations are all stored in the &quot;undo stack&quot;.
 Suppose you've defined two undoable methods <code class="xref py py-meth docutils literal notranslate"><span class="pre">f()</span></code>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">g()</span></code> and
 a non-undoable method <code class="xref py py-meth docutils literal notranslate"><span class="pre">not_undoable()</span></code> in magic class <code class="docutils literal notranslate"><span class="pre">A</span></code>, the
@@ -263,7 +264,7 @@ stack when get called.</p>
 </div>
 </section>
 <section id="custom-redo-action">
-<span id="id1"></span><h2><a class="toc-backref" href="#id4" role="doc-backlink">Custom Redo Action</a><a class="headerlink" href="#custom-redo-action" title="Permalink to this heading">¶</a></h2>
+<span id="id1"></span><h2><a class="toc-backref" href="#id4">Custom Redo Action</a><a class="headerlink" href="#custom-redo-action" title="Permalink to this headline">¶</a></h2>
 <p>Redo action is defined by the GUI macro string. However, you can also define
 it by yourself. It is useful when the forward function is a long-running task.</p>
 <p>Following GUI can calculate the <code class="docutils literal notranslate"><span class="pre">_very_heavy_task</span></code> with the given <code class="docutils literal notranslate"><span class="pre">x</span></code> and
@@ -326,7 +327,7 @@ getter/setter definition of <code class="docutils literal notranslate"><span cla
 </div>
 </section>
 <section id="best-practice-of-undo-redo">
-<h2><a class="toc-backref" href="#id5" role="doc-backlink">Best Practice of Undo/Redo</a><a class="headerlink" href="#best-practice-of-undo-redo" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id5">Best Practice of Undo/Redo</a><a class="headerlink" href="#best-practice-of-undo-redo" title="Permalink to this headline">¶</a></h2>
 <p>Undo/Redo should be called in GUI in most cases. Many applications map the
 key sequence <code class="docutils literal notranslate"><span class="pre">Ctrl+Z</span></code> to undo and <code class="docutils literal notranslate"><span class="pre">Ctrl+Y</span></code> to redo, or add tool buttons
 to do the same things.</p>

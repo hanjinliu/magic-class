@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.wrappers._misc &mdash; magic-class 0.7.5 documentation</title>
+  <title>magicclass.wrappers._misc &mdash; magic-class 0.7.6 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -12,8 +12,9 @@
   <![endif]-->
 
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -31,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.5
+                0.7.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -90,11 +91,10 @@
 <span class="kn">from</span> <span class="nn">magicclass.signature</span> <span class="kn">import</span> <span class="n">get_additional_option</span><span class="p">,</span> <span class="n">upgrade_signature</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">magicclass._gui</span> <span class="kn">import</span> <span class="n">BaseGui</span>
+    <span class="kn">from</span> <span class="nn">magicclass._gui</span> <span class="kn">import</span> <span class="n">MagicTemplate</span>
+    <span class="kn">from</span> <span class="nn">magicclass.fields</span> <span class="kn">import</span> <span class="n">MagicField</span>
 
-    <span class="n">_T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">BaseGui</span><span class="p">)</span>
-
-<span class="n">_F</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Callable</span><span class="p">)</span>
+<span class="n">_F</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_F&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Callable</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="set_options"><a class="viewcode-back" href="../../../apidoc/magicclass.wrappers.html#magicclass.set_options">[docs]</a><span class="k">def</span> <span class="nf">set_options</span><span class="p">(</span>
@@ -110,19 +110,17 @@
 <span class="sd">    By decorating a method with this function, ``magicgui`` will create a widget with these</span>
 <span class="sd">    options. These codes are similar in appearance.</span>
 
-<span class="sd">    .. code-block:: python</span>
+<span class="sd">    &gt;&gt;&gt; # A magicgui way</span>
+<span class="sd">    &gt;&gt;&gt; @magicgui(a={...})</span>
+<span class="sd">    &gt;&gt;&gt; def func(a):</span>
+<span class="sd">    ...     print(a)</span>
 
-<span class="sd">        # A magicgui way</span>
-<span class="sd">        @magicgui(a={...})</span>
-<span class="sd">        def func(a):</span>
-<span class="sd">            ...</span>
-
-<span class="sd">        # A magicclass way</span>
-<span class="sd">        @magicclass</span>
-<span class="sd">        class A:</span>
-<span class="sd">            @set_options(a={...})</span>
-<span class="sd">            def func(self, a):</span>
-<span class="sd">                ...</span>
+<span class="sd">    &gt;&gt;&gt; # A magicclass way</span>
+<span class="sd">    &gt;&gt;&gt; @magicclass</span>
+<span class="sd">    &gt;&gt;&gt; class A:</span>
+<span class="sd">    ...     @set_options(a={...})</span>
+<span class="sd">    ...     def func(self, a):</span>
+<span class="sd">    ...         print(a)</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -143,13 +141,14 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">_F</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_F</span><span class="p">:</span>
-        <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-        <span class="n">rem</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">-</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">rem</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unknown arguments found in set_options of </span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">rem</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="ne">UserWarning</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">options</span><span class="p">:</span>
+            <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+            <span class="n">rem</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">-</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">rem</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Unknown arguments found in set_options of </span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">rem</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="ne">UserWarning</span><span class="p">,</span>
+                <span class="p">)</span>
 
         <span class="n">upgrade_signature</span><span class="p">(</span>
             <span class="n">func</span><span class="p">,</span>
@@ -174,10 +173,11 @@
     <span class="n">min_height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">max_width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">max_height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">icon</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">icon</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">location</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">MagicTemplate</span><span class="p">]</span> <span class="o">|</span> <span class="n">MagicField</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">font_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">font_family</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">font_family</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">font_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">background_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">visible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -199,21 +199,53 @@
 <span class="sd">        Button maximum width. Call ``button.max_width = max_width``.</span>
 <span class="sd">    max_height : int, optional</span>
 <span class="sd">        Button maximum height. Call ``button.max_height = max_height``.</span>
-<span class="sd">    text : str, optional</span>
-<span class="sd">        Button text. Call ``button.text = text``.</span>
+<span class="sd">    text : str or callable, optional</span>
+<span class="sd">        Button text. Call ``button.text = text``. A function can be given to set the text</span>
+<span class="sd">        from the function name.</span>
 <span class="sd">    icon : str, optional</span>
 <span class="sd">        Path to icon file. ``min_width`` and ``min_height`` will be automatically set to the icon size</span>
 <span class="sd">        if not given.</span>
+<span class="sd">    location : magic-class or magic-field of magic-class, optional</span>
+<span class="sd">        If given, the button will be added to the given magic-class.</span>
 <span class="sd">    font_size : int, optional</span>
 <span class="sd">        Font size of the text.</span>
 <span class="sd">    visible : bool default is True</span>
 <span class="sd">        Button visibility.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">caller_options</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
-    <span class="n">caller_options</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">caller_options</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
+    <span class="n">caller_options</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">width</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">caller_options</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">height</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">caller_options</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">height</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">min_width</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">caller_options</span><span class="p">[</span><span class="s2">&quot;min_width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">min_width</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">min_height</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">caller_options</span><span class="p">[</span><span class="s2">&quot;min_height&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">min_height</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">max_width</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">caller_options</span><span class="p">[</span><span class="s2">&quot;max_width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_width</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">max_height</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">caller_options</span><span class="p">[</span><span class="s2">&quot;max_height&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_height</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">font_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">caller_options</span><span class="p">[</span><span class="s2">&quot;font_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">font_size</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">font_family</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">caller_options</span><span class="p">[</span><span class="s2">&quot;font_family&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">font_family</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">font_color</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">caller_options</span><span class="p">[</span><span class="s2">&quot;font_color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">font_color</span>
+    <span class="k">if</span> <span class="n">background_color</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">caller_options</span><span class="p">[</span><span class="s2">&quot;background_color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">background_color</span>
+    <span class="k">if</span> <span class="n">visible</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">caller_options</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">icon</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">caller_options</span><span class="p">[</span><span class="s2">&quot;icon&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">icon</span>
 
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="n">caller_options</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">caller_options</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">location</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Cannot use location argument on classes.&quot;</span><span class="p">)</span>
             <span class="n">_post_init</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">&quot;__post_init__&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span>
 
             <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -224,6 +256,8 @@
             <span class="n">obj</span><span class="o">.</span><span class="n">__post_init__</span> <span class="o">=</span> <span class="n">__post_init__</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">upgrade_signature</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">caller_options</span><span class="o">=</span><span class="n">caller_options</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">location</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">location</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">obj</span>
 
     <span class="k">return</span> <span class="n">wrapper</span></div>
@@ -268,7 +302,6 @@
 
 <span class="sd">    &gt;&gt;&gt; @bind_key(&quot;Ctrl-A&quot;)         # napari style</span>
 <span class="sd">    &gt;&gt;&gt; @bind_key(&quot;Ctrl+A&quot;)         # Qt style</span>
-
 <span class="sd">    &gt;&gt;&gt; @bind_key(&quot;Ctrl+K, Ctrl+V&quot;) # Key combo</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -323,7 +356,7 @@
 <span class="sd">    ...             gui.x.max = xmax_value</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">setup</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">BaseGui</span><span class="p">,</span> <span class="n">FunctionGui</span><span class="p">],</span> <span class="kc">None</span><span class="p">]):</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">setup</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">FunctionGui</span><span class="p">],</span> <span class="kc">None</span><span class="p">]):</span>
         <span class="n">setup_qualname</span> <span class="o">=</span> <span class="n">setup</span><span class="o">.</span><span class="vm">__qualname__</span>
         <span class="n">target_qualname</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="vm">__qualname__</span>
         <span class="n">setup_qualname_list</span> <span class="o">=</span> <span class="n">setup_qualname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
@@ -332,7 +365,7 @@
             <span class="ow">and</span> <span class="n">setup_qualname_list</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="n">target_qualname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
         <span class="p">):</span>
             <span class="c1"># have to search for the proper parent instance</span>
-            <span class="k">def</span> <span class="nf">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">,</span> <span class="n">mgui</span><span class="p">:</span> <span class="n">FunctionGui</span><span class="p">):</span>
+            <span class="k">def</span> <span class="nf">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">mgui</span><span class="p">:</span> <span class="n">FunctionGui</span><span class="p">):</span>
                 <span class="n">prev_ns</span> <span class="o">=</span> <span class="n">setup_qualname_list</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
                 <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">!=</span> <span class="n">prev_ns</span><span class="p">:</span>
                     <span class="bp">self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__magicclass_parent__</span>

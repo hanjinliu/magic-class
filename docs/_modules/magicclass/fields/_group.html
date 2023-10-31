@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.fields._group &mdash; magic-class 0.7.0rc0 documentation</title>
+  <title>magicclass.fields._group &mdash; magic-class 0.7.6 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -32,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.0rc0
+                0.7.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -90,7 +90,6 @@
     <span class="n">TYPE_CHECKING</span><span class="p">,</span>
     <span class="n">Callable</span><span class="p">,</span>
     <span class="n">Iterator</span><span class="p">,</span>
-    <span class="n">TypeVar</span><span class="p">,</span>
     <span class="n">overload</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span>
@@ -135,36 +134,7 @@
         <span class="k">return</span> <span class="bp">cls</span>
 
 
-<span class="n">_C</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_C&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="nb">type</span><span class="p">)</span>
-
-
-<span class="nd">@overload</span>
-<span class="k">def</span> <span class="nf">dataclass_gui</span><span class="p">(</span>
-    <span class="bp">cls</span><span class="p">:</span> <span class="n">_C</span><span class="p">,</span>
-    <span class="n">init</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="nb">repr</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">eq</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">order</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">unsafe_hash</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">frozen</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_C</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">HasFields</span><span class="p">]:</span>
-    <span class="o">...</span>
-
-
-<span class="nd">@overload</span>
-<span class="k">def</span> <span class="nf">dataclass_gui</span><span class="p">(</span>
-    <span class="bp">cls</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
-    <span class="n">init</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="nb">repr</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">eq</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">order</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">unsafe_hash</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">frozen</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">_C</span><span class="p">],</span> <span class="n">_C</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">HasFields</span><span class="p">]]:</span>
-    <span class="o">...</span>
-
-
-<div class="viewcode-block" id="dataclass_gui"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.dataclass_gui">[docs]</a><span class="k">def</span> <span class="nf">dataclass_gui</span><span class="p">(</span>
+<div class="viewcode-block" id="dataclass_gui"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.dataclass_gui">[docs]</a><span class="k">def</span> <span class="nf">dataclass_gui</span><span class="p">(</span>
     <span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -175,31 +145,6 @@
     <span class="n">unsafe_hash</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">frozen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A dataclass-like decorator for GUI-implemented class.</span>
-
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        @dataclass_gui</span>
-<span class="sd">        class A:</span>
-<span class="sd">            i: int = vfield(int)</span>
-<span class="sd">            s: str = vfield(str)</span>
-
-<span class="sd">    is identical to:</span>
-
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        @dataclass</span>
-<span class="sd">        class A(HasFields):</span>
-<span class="sd">            i: int = vfield(int)</span>
-<span class="sd">            s: str = vfield(str)</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    HasField subtype</span>
-<span class="sd">        GUI implemented class</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">def</span> <span class="nf">_wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">):</span>
         <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">MISSING</span>
 
@@ -267,7 +212,7 @@
     <span class="k">return</span> <span class="n">_wrapper</span> <span class="k">if</span> <span class="bp">cls</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">_wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="HasFields"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.HasFields">[docs]</a><span class="k">class</span> <span class="nc">HasFields</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">_FieldGroupMeta</span><span class="p">):</span>
+<div class="viewcode-block" id="HasFields"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.HasFields">[docs]</a><span class="k">class</span> <span class="nc">HasFields</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">_FieldGroupMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A trait implemented with widgets and signals.</span>
 
@@ -306,7 +251,23 @@
 <span class="c1"># must return a object of same type as itself to guarantee the child fields are</span>
 <span class="c1"># also defined there. Thus, FieldGroup must inherit magicgui Container although</span>
 <span class="c1"># the original container will never be used.</span>
-<div class="viewcode-block" id="FieldGroup"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.FieldGroup">[docs]</a><span class="k">class</span> <span class="nc">FieldGroup</span><span class="p">(</span><span class="n">Container</span><span class="p">,</span> <span class="n">HasFields</span><span class="p">,</span> <span class="n">_FieldObject</span><span class="p">):</span>
+<div class="viewcode-block" id="FieldGroup"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.FieldGroup">[docs]</a><span class="k">class</span> <span class="nc">FieldGroup</span><span class="p">(</span><span class="n">Container</span><span class="p">,</span> <span class="n">HasFields</span><span class="p">,</span> <span class="n">_FieldObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class of field group.</span>
+
+<span class="sd">    Subclasses can contain ``field`` and ``vfield`` as class attributes, which</span>
+<span class="sd">    will be converted into child widgets. A field group is also a field.</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        class A(FieldGroup):</span>
+<span class="sd">            a = field(int)</span>
+<span class="sd">            b = field(str)</span>
+
+<span class="sd">    If you want to use it as a container, use ``self.changed.connect`` instead of</span>
+<span class="sd">    ``self.connect`` to connect callbacks.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">layout</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;vertical&quot;</span><span class="p">,</span>
@@ -363,7 +324,7 @@
     <span class="c1"># Unlike Container, `self.x = value` should be allowed because `x` can be a value field.</span>
     <span class="fm">__setattr__</span> <span class="o">=</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span>
 
-<div class="viewcode-block" id="FieldGroup.copy"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.FieldGroup.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+<div class="viewcode-block" id="FieldGroup.copy"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.FieldGroup.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy widget.&quot;&quot;&quot;</span>
         <span class="n">wdt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__newlike__</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="p">:</span>
@@ -391,13 +352,13 @@
     <span class="k">def</span> <span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot set value to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="FieldGroup.get_widget"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.FieldGroup.get_widget">[docs]</a>    <span class="k">def</span> <span class="nf">get_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Container</span><span class="p">:</span>
+<div class="viewcode-block" id="FieldGroup.get_widget"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.FieldGroup.get_widget">[docs]</a>    <span class="k">def</span> <span class="nf">get_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Container</span><span class="p">:</span>
         <span class="n">_id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
         <span class="n">wdt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_containers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">wdt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">.._gui</span> <span class="kn">import</span> <span class="n">MagicTemplate</span>
+            <span class="kn">from</span> <span class="nn">magicclass._gui</span> <span class="kn">import</span> <span class="n">MagicTemplate</span>
 
-            <span class="n">wdt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">wdt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__newlike__</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_containers</span><span class="p">[</span><span class="n">_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">wdt</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
                 <span class="n">_def</span> <span class="o">=</span> <span class="n">define_callback_gui</span>
@@ -407,7 +368,28 @@
                 <span class="n">wdt</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_def</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">callback</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">wdt</span></div>
 
-<div class="viewcode-block" id="FieldGroup.connect"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.FieldGroup.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+<div class="viewcode-block" id="FieldGroup.connect"><a class="viewcode-back" href="../../../apidoc/magicclass.fields.html#magicclass.FieldGroup.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Connect a callback to this field.</span>
+
+<span class="sd">        This function will NOT directly connect the callback to the field itself.</span>
+<span class="sd">        The connected callback will be present when the field group is used as a</span>
+<span class="sd">        class attribute.</span>
+
+<span class="sd">        &gt;&gt;&gt; class A(FieldGroup):</span>
+<span class="sd">        ...     x = field(int)</span>
+<span class="sd">        &gt;&gt;&gt; a = A()</span>
+<span class="sd">        &gt;&gt;&gt; a.connect(some_callback)</span>
+<span class="sd">        &gt;&gt;&gt; a.x.value = 1  # some_callback will NOT be called</span>
+
+<span class="sd">        &gt;&gt;&gt; class B:</span>
+<span class="sd">        ...     a = A()</span>
+<span class="sd">        &gt;&gt;&gt; b = B()</span>
+<span class="sd">        &gt;&gt;&gt; b.a.value = 1  # some_callback will be called</span>
+
+<span class="sd">        If you want to use it directly as a container, please use</span>
+<span class="sd">        ``self.changed.connect``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># self.changed.connect(callback)  NOTE: the original container doesn&#39;t need signals!</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">callback</span></div></div>

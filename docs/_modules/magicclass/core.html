@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.core &mdash; magic-class 0.7.5 documentation</title>
+  <title>magicclass.core &mdash; magic-class 0.7.6 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -12,8 +12,9 @@
   <![endif]-->
 
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -31,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.5
+                0.7.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -82,7 +83,7 @@
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span> <span class="k">as</span> <span class="n">functools_wraps</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">ModuleType</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">MethodType</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">weakref</span> <span class="kn">import</span> <span class="n">WeakValueDictionary</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Callable</span>
@@ -112,7 +113,7 @@
     <span class="n">ErrorMode</span><span class="p">,</span>
     <span class="n">defaults</span><span class="p">,</span>
     <span class="n">MagicTemplate</span><span class="p">,</span>
-    <span class="n">init_sub_magicclass</span><span class="p">,</span>
+    <span class="n">check_override</span><span class="p">,</span>
     <span class="n">convert_attributes</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">magicclass._gui</span> <span class="kn">import</span> <span class="n">ContextMenuGui</span><span class="p">,</span> <span class="n">MenuGui</span><span class="p">,</span> <span class="n">ToolBarGui</span>
@@ -133,7 +134,7 @@
     <span class="kn">from</span> <span class="nn">magicclass.help</span> <span class="kn">import</span> <span class="n">HelpWidget</span>
     <span class="kn">from</span> <span class="nn">macrokit</span> <span class="kn">import</span> <span class="n">Macro</span>
 
-<span class="n">_BASE_CLASS_SUFFIX</span> <span class="o">=</span> <span class="s2">&quot;.base&quot;</span>
+<span class="n">_BASE_CLASS_SUFFIX</span> <span class="o">=</span> <span class="s2">&quot;:base&quot;</span>
 
 <span class="n">_TYPE_MAP</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">WidgetType</span><span class="p">,</span> <span class="nb">type</span><span class="p">[</span><span class="n">ClassGuiBase</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
     <span class="n">WidgetType</span><span class="o">.</span><span class="n">none</span><span class="p">:</span> <span class="n">ClassGui</span><span class="p">,</span>
@@ -237,7 +238,7 @@
         <span class="n">class_gui</span> <span class="o">=</span> <span class="n">_TYPE_MAP</span><span class="p">[</span><span class="n">widget_type</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
-            <span class="n">init_sub_magicclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+            <span class="n">check_override</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
 
         <span class="c1"># get class attributes first</span>
         <span class="n">doc</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__doc__</span>
@@ -363,7 +364,7 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;magicclass can only wrap classes, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
-            <span class="n">init_sub_magicclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+            <span class="n">check_override</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
 
         <span class="c1"># get class attributes first</span>
         <span class="n">doc</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__doc__</span>
@@ -488,7 +489,7 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;magicclass can only wrap classes, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
-            <span class="n">init_sub_magicclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+            <span class="n">check_override</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
 
         <span class="c1"># get class attributes first</span>
         <span class="n">doc</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__doc__</span>
@@ -579,7 +580,15 @@
     <span class="k">return</span> <span class="n">help_widget</span></div>
 
 
-<div class="viewcode-block" id="get_button"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.get_button">[docs]</a><span class="k">def</span> <span class="nf">get_button</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span> <span class="o">|</span> <span class="n">ModuleType</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Clickable</span><span class="p">:</span>
+<span class="n">_BUTTON_CACHE</span><span class="p">:</span> <span class="n">WeakValueDictionary</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Clickable</span><span class="p">]</span> <span class="o">=</span> <span class="n">WeakValueDictionary</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="get_button"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.get_button">[docs]</a><span class="k">def</span> <span class="nf">get_button</span><span class="p">(</span>
+    <span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span> <span class="o">|</span> <span class="n">MethodType</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Clickable</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the button/action object for the given method.</span>
 
@@ -601,6 +610,10 @@
                 <span class="s2">&quot;The first argument of `get_button() must be a method if &quot;</span>
                 <span class="s2">&quot;the method name is not given.&quot;</span>
             <span class="p">)</span>
+    <span class="n">cache_key</span> <span class="o">=</span> <span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">ui</span><span class="p">),</span> <span class="n">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cache</span> <span class="ow">and</span> <span class="p">(</span><span class="n">btn</span> <span class="o">:=</span> <span class="n">_BUTTON_CACHE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cache_key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">btn</span>
+
     <span class="n">widget</span><span class="p">:</span> <span class="n">Clickable</span> <span class="o">=</span> <span class="n">ui</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;mgui&quot;</span><span class="p">):</span>
@@ -611,17 +624,20 @@
 
         <span class="n">opt</span> <span class="o">=</span> <span class="n">get_additional_option</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">ui</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="s2">&quot;into&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">opt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">child_instance</span> <span class="ow">in</span> <span class="n">ui</span><span class="o">.</span><span class="n">_iter_child_magicclasses</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">child_instance</span> <span class="ow">in</span> <span class="n">ui</span><span class="o">.</span><span class="n">_iter_child_magicclasses</span><span class="p">():</span>
                 <span class="n">_name</span> <span class="o">=</span> <span class="n">child_instance</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
                 <span class="k">if</span> <span class="n">_name</span> <span class="o">==</span> <span class="n">opt</span><span class="p">:</span>
                     <span class="n">widget</span> <span class="o">=</span> <span class="n">child_instance</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
                     <span class="k">return</span> <span class="n">widget</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find </span><span class="si">{</span><span class="n">opt</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">ui</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cache</span><span class="p">:</span>
+        <span class="n">_BUTTON_CACHE</span><span class="p">[</span><span class="n">cache_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">widget</span>
     <span class="k">return</span> <span class="n">widget</span></div>
 
 
 <div class="viewcode-block" id="get_function_gui"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.get_function_gui">[docs]</a><span class="k">def</span> <span class="nf">get_function_gui</span><span class="p">(</span>
-    <span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span> <span class="o">|</span> <span class="n">ModuleType</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span> <span class="o">|</span> <span class="n">MethodType</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FunctionGuiPlus</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the FunctionGui object hidden beneath push button or menu action.</span>

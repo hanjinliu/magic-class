@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="English" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Add Preview Functionalities &mdash; magic-class 0.7.5 documentation</title>
+  <title>Add Preview Functionalities &mdash; magic-class 0.7.6 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -13,8 +13,9 @@
   <![endif]-->
 
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -34,7 +35,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.5
+                0.7.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -108,7 +109,7 @@
            <div itemprop="articleBody">
 
   <section id="add-preview-functionalities">
-<h1>Add Preview Functionalities<a class="headerlink" href="#add-preview-functionalities" title="Permalink to this heading">¶</a></h1>
+<h1>Add Preview Functionalities<a class="headerlink" href="#add-preview-functionalities" title="Permalink to this headline">¶</a></h1>
 <p>It is a very usual case when you want to preview something before actually running a
 function.</p>
 <ol class="arabic simple">
@@ -133,7 +134,7 @@ bottom of the <code class="docutils literal notranslate"><span class="pre">Funct
 <p>In <code class="docutils literal notranslate"><span class="pre">magic-class</span></code>, <code class="docutils literal notranslate"><span class="pre">impl_preview</span></code> decorator is very useful for this purpose. You can
 define a preview function and directly integrate it into another function easily.</p>
 <section id="preview-a-file">
-<h2>1. Preview a File<a class="headerlink" href="#preview-a-file" title="Permalink to this heading">¶</a></h2>
+<h2>1. Preview a File<a class="headerlink" href="#preview-a-file" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@impl_preview</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">_f_prev</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xxx</span><span class="p">):</span>
     <span class="o">...</span>
@@ -202,7 +203,7 @@ the text of preview button using <code class="docutils literal notranslate"><spa
 </div>
 </section>
 <section id="prerun-a-function">
-<h2>2. Prerun a Function<a class="headerlink" href="#prerun-a-function" title="Permalink to this heading">¶</a></h2>
+<h2>2. Prerun a Function<a class="headerlink" href="#prerun-a-function" title="Permalink to this headline">¶</a></h2>
 <p>This is essentially same as 1, except that the preview function will update some parts
 of the GUI. Following example shows an incomplete implementation of a previewable
 Gaussian filtering.</p>
@@ -252,7 +253,7 @@ which defines a context manager for storing/restoring GUI state.</p>
 </pre></div>
 </div>
 <section id="auto-call">
-<h3>Auto call<a class="headerlink" href="#auto-call" title="Permalink to this heading">¶</a></h3>
+<h3>Auto call<a class="headerlink" href="#auto-call" title="Permalink to this headline">¶</a></h3>
 <p>In the example above, it's nicer to auto-call the preview function. <code class="xref py py-meth docutils literal notranslate"><span class="pre">impl_preview()</span></code>
 has an option <code class="docutils literal notranslate"><span class="pre">auto_call=True</span></code> to implement this.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@magicclass</span>
@@ -274,7 +275,7 @@ has an option <code class="docutils literal notranslate"><span class="pre">auto_
 <code class="docutils literal notranslate"><span class="pre">FunctionGui</span></code> widget. Preview will be auto-called if the checkbox in checked.</p>
 </section>
 <section id="use-function-itself-as-the-preview">
-<h3>Use function itself as the preview<a class="headerlink" href="#use-function-itself-as-the-preview" title="Permalink to this heading">¶</a></h3>
+<h3>Use function itself as the preview<a class="headerlink" href="#use-function-itself-as-the-preview" title="Permalink to this headline">¶</a></h3>
 <p>As in this example, preview function is usually the same as the target function.
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">impl_preview()</span></code> can wrap the target function itself if the first argument is not given.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">impl_preview</span><span class="p">,</span> <span class="n">vfield</span>

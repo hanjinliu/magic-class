@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets._union &mdash; magic-class 0.7.1 documentation</title>
+  <title>magicclass.widgets._union &mdash; magic-class 0.7.6 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -32,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.1
+                0.7.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -82,13 +82,11 @@
   <h1>Source code for magicclass.widgets._union</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">_AnnotatedAlias</span>
-
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">create_widget</span><span class="p">,</span> <span class="n">Widget</span><span class="p">,</span> <span class="n">Label</span>
 <span class="kn">from</span> <span class="nn">magicgui.types</span> <span class="kn">import</span> <span class="n">Undefined</span>
 
 <span class="kn">from</span> <span class="nn">magicclass.widgets</span> <span class="kn">import</span> <span class="n">TabbedContainer</span>
-<span class="kn">from</span> <span class="nn">magicclass.signature</span> <span class="kn">import</span> <span class="n">split_annotated_type</span>
+<span class="kn">from</span> <span class="nn">magicclass.signature</span> <span class="kn">import</span> <span class="n">split_annotated_type</span><span class="p">,</span> <span class="n">is_annotated</span>
 
 
 <div class="viewcode-block" id="UnionWidget"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.UnionWidget">[docs]</a><span class="k">class</span> <span class="nc">UnionWidget</span><span class="p">(</span><span class="n">TabbedContainer</span><span class="p">):</span>
@@ -108,7 +106,7 @@
             <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
                     <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span><span class="p">):</span>
+                <span class="k">elif</span> <span class="n">is_annotated</span><span class="p">(</span><span class="n">ann</span><span class="p">):</span>
                     <span class="n">_type</span><span class="p">,</span> <span class="n">_options</span> <span class="o">=</span> <span class="n">split_annotated_type</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span>
                     <span class="n">_name</span> <span class="o">=</span> <span class="n">_options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">_options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">_type</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
                     <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_name</span><span class="p">)</span>
@@ -120,7 +118,7 @@
         <span class="k">for</span> <span class="n">ann</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">opt</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">annotations</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
             <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
             <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">is_annotated</span><span class="p">(</span><span class="n">ann</span><span class="p">):</span>
                 <span class="n">ann</span><span class="p">,</span> <span class="n">_options</span> <span class="o">=</span> <span class="n">split_annotated_type</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span>
                 <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_options</span><span class="p">)</span>
             <span class="n">wdt</span> <span class="o">=</span> <span class="n">create_widget</span><span class="p">(</span><span class="n">annotation</span><span class="o">=</span><span class="n">ann</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">_kwargs</span><span class="p">)</span>

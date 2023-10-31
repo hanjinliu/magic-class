@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.testing._function_gui_test &mdash; magic-class 0.7.5 documentation</title>
+  <title>magicclass.testing._function_gui_test &mdash; magic-class 0.7.6 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -12,8 +12,9 @@
   <![endif]-->
 
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -31,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.5
+                0.7.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -83,10 +84,12 @@
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">ParamSpec</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
 
-<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">PushButton</span><span class="p">,</span> <span class="n">CheckBox</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">PushButton</span><span class="p">,</span> <span class="n">CheckBox</span><span class="p">,</span> <span class="n">FunctionGui</span>
 
 <span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">get_function_gui</span>
+<span class="kn">from</span> <span class="nn">magicclass._exceptions</span> <span class="kn">import</span> <span class="n">unwrap_errors</span>
 <span class="kn">from</span> <span class="nn">magicclass.signature</span> <span class="kn">import</span> <span class="n">get_additional_option</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
@@ -127,6 +130,8 @@
 
 
 <div class="viewcode-block" id="FunctionGuiTester"><a class="viewcode-back" href="../../../apidoc/magicclass.testing.html#magicclass.testing.FunctionGuiTester">[docs]</a><span class="k">class</span> <span class="nc">FunctionGuiTester</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">_P</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Testing class for magicclass-integrated FunctionGui.&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">_P</span><span class="p">,</span> <span class="n">_R</span><span class="p">]):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fgui</span> <span class="o">=</span> <span class="n">get_function_gui</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
         <span class="c1"># NOTE: if the widget is in napari etc., choices depend on the parent.</span>
@@ -167,18 +172,21 @@
         <span class="n">prev_widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fgui</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prev_auto_call</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prev_widget</span><span class="p">,</span> <span class="n">CheckBox</span><span class="p">)</span>
-            <span class="n">prev_widget</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">prev_widget</span><span class="o">.</span><span class="n">value</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_error</span><span class="p">():</span>
+                <span class="n">prev_widget</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">prev_widget</span><span class="o">.</span><span class="n">value</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prev_widget</span><span class="p">,</span> <span class="n">PushButton</span><span class="p">)</span>
-            <span class="n">prev_widget</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_error</span><span class="p">():</span>
+                <span class="n">prev_widget</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FunctionGuiTester.update_parameters"><a class="viewcode-back" href="../../../apidoc/magicclass.testing.html#magicclass.testing.FunctionGuiTester.update_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">update_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the parameters of the function GUI.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_fgui</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_error</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fgui</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FunctionGuiTester.call"><a class="viewcode-back" href="../../../apidoc/magicclass.testing.html#magicclass.testing.FunctionGuiTester.call">[docs]</a>    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">_P</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_P</span><span class="o">.</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Call the method as if it is called from the GUI.&quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_magicclass_gui</span><span class="o">.</span><span class="n">config_context</span><span class="p">(</span><span class="n">error_mode</span><span class="o">=</span><span class="s2">&quot;stderr&quot;</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_error</span><span class="p">():</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_confirmation</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fgui</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="n">cb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conf_dict</span><span class="p">[</span><span class="s2">&quot;callback&quot;</span><span class="p">]</span>
@@ -189,6 +197,15 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_conf_dict</span><span class="p">[</span><span class="s2">&quot;callback&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cb</span>
             <span class="k">return</span> <span class="n">out</span></div>
 
+<div class="viewcode-block" id="FunctionGuiTester.stream_error"><a class="viewcode-back" href="../../../apidoc/magicclass.testing.html#magicclass.testing.FunctionGuiTester.stream_error">[docs]</a>    <span class="nd">@contextmanager</span>
+    <span class="k">def</span> <span class="nf">stream_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stream the error message to stderr not to raise in GUI.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_magicclass_gui</span><span class="o">.</span><span class="n">config_context</span><span class="p">(</span><span class="n">error_mode</span><span class="o">=</span><span class="s2">&quot;stderr&quot;</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">yield</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">unwrap_errors</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">confirm_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of times the confirmation is called.&quot;&quot;&quot;</span>
@@ -198,6 +215,11 @@
     <span class="k">def</span> <span class="nf">call_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of times the method is called.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fgui</span><span class="o">.</span><span class="n">call_count</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">gui</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FunctionGui</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The FunctionGui instance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fgui</span>
 
     <span class="k">def</span> <span class="nf">_mock_confirmation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">,</span> <span class="o">**</span><span class="n">__</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_confirm</span> <span class="o">+=</span> <span class="mi">1</span></div>

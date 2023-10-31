@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="English" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Multi-threading &mdash; magic-class 0.7.5 documentation</title>
+  <title>Multi-threading &mdash; magic-class 0.7.6 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -13,8 +13,9 @@
   <![endif]-->
 
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -34,7 +35,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.5
+                0.7.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -117,8 +118,8 @@
            <div itemprop="articleBody">
 
   <section id="multi-threading">
-<h1>Multi-threading<a class="headerlink" href="#multi-threading" title="Permalink to this heading">¶</a></h1>
-<nav class="contents local" id="contents">
+<h1>Multi-threading<a class="headerlink" href="#multi-threading" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
 <p class="topic-title">Contents</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#basic-usage" id="id1">Basic Usage</a></p></li>
@@ -128,7 +129,7 @@
 <li><p><a class="reference internal" href="#nesting-thread-worker" id="id5">Nesting <code class="docutils literal notranslate"><span class="pre">thread_worker</span></code></a></p></li>
 <li><p><a class="reference internal" href="#asynchronous-valuewidget-callbacks" id="id6">Asynchronous ValueWidget Callbacks</a></p></li>
 </ul>
-</nav>
+</div>
 <p>Multi-threading is an important idea in GUI development. If you want to
 implement background execution or progress bar, you'll usually have to
 rely on multi-threading.</p>
@@ -159,7 +160,7 @@ every time it is accessed via <code class="docutils literal notranslate"><span c
 differently, they share very similar API.</p>
 </div>
 <section id="basic-usage">
-<h2><a class="toc-backref" href="#id1" role="doc-backlink">Basic Usage</a><a class="headerlink" href="#basic-usage" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id1">Basic Usage</a><a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
 <p>Decorate the methods you want to be multi-threaded and that's it!</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
@@ -227,7 +228,7 @@ In the following example:</p>
 </div>
 </section>
 <section id="connect-callbacks">
-<h2><a class="toc-backref" href="#id2" role="doc-backlink">Connect Callbacks</a><a class="headerlink" href="#connect-callbacks" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id2">Connect Callbacks</a><a class="headerlink" href="#connect-callbacks" title="Permalink to this headline">¶</a></h2>
 <p>If you update widgets in a <code class="xref py py-class docutils literal notranslate"><span class="pre">thread_worker</span></code>, GUI crashes.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
@@ -294,7 +295,7 @@ thread so that you can update widgets safely.</p>
 </div>
 </section>
 <section id="better-way-to-define-callbacks">
-<h2><a class="toc-backref" href="#id3" role="doc-backlink">Better Way to Define Callbacks</a><a class="headerlink" href="#better-way-to-define-callbacks" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Better Way to Define Callbacks</a><a class="headerlink" href="#better-way-to-define-callbacks" title="Permalink to this headline">¶</a></h2>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 0.6.7.</span></p>
 </div>
@@ -379,9 +380,9 @@ it as a returned/yielded value.</p>
 </div>
 </section>
 <section id="use-progress-bar">
-<h2><a class="toc-backref" href="#id4" role="doc-backlink">Use Progress Bar</a><a class="headerlink" href="#use-progress-bar" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">Use Progress Bar</a><a class="headerlink" href="#use-progress-bar" title="Permalink to this headline">¶</a></h2>
 <section id="how-to-use-it">
-<h3>How to use it?<a class="headerlink" href="#how-to-use-it" title="Permalink to this heading">¶</a></h3>
+<h3>How to use it?<a class="headerlink" href="#how-to-use-it" title="Permalink to this headline">¶</a></h3>
 <p>Just like <code class="docutils literal notranslate"><span class="pre">napari</span></code>, you can use the embeded progress bar to display the progress
 of the current function call using <code class="docutils literal notranslate"><span class="pre">progress=...</span></code> argument. Same options are
 available in <code class="docutils literal notranslate"><span class="pre">magic-class</span></code> but you can choose which progress bar to use.</p>
@@ -432,7 +433,7 @@ first one will be used.</p>
 </ol>
 </section>
 <section id="how-to-set-proper-total-iteration-numbers">
-<h3>How to set proper total iteration numbers?<a class="headerlink" href="#how-to-set-proper-total-iteration-numbers" title="Permalink to this heading">¶</a></h3>
+<h3>How to set proper total iteration numbers?<a class="headerlink" href="#how-to-set-proper-total-iteration-numbers" title="Permalink to this headline">¶</a></h3>
 <p>I most cases, iteration numbers vary between function calls depending on the widget
 states. In <code class="docutils literal notranslate"><span class="pre">magic-class</span></code>, you can pass a function or an evaluable literal string
 to the &quot;total&quot; argument.</p>
@@ -482,7 +483,7 @@ to the &quot;total&quot; argument.</p>
 </div>
 </section>
 <section id="better-way-to-pass-progress-bar-parameters">
-<h3>Better way to pass progress bar parameters<a class="headerlink" href="#better-way-to-pass-progress-bar-parameters" title="Permalink to this heading">¶</a></h3>
+<h3>Better way to pass progress bar parameters<a class="headerlink" href="#better-way-to-pass-progress-bar-parameters" title="Permalink to this headline">¶</a></h3>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 0.6.13.</span></p>
 </div>
@@ -501,7 +502,7 @@ for the progress bar configuration.</p>
 </section>
 </section>
 <section id="nesting-thread-worker">
-<h2><a class="toc-backref" href="#id5" role="doc-backlink">Nesting <code class="docutils literal notranslate"><span class="pre">thread_worker</span></code></a><a class="headerlink" href="#nesting-thread-worker" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id5">Nesting <code class="docutils literal notranslate"><span class="pre">thread_worker</span></code></a><a class="headerlink" href="#nesting-thread-worker" title="Permalink to this headline">¶</a></h2>
 <p>To reuse thread worker functions, you would want to nest them. However, this should be
 done carefully. If the nested thread worker updates the widget, the outer thread worker
 crashes the GUI.</p>
@@ -524,7 +525,7 @@ crashes the GUI.</p>
 </pre></div>
 </div>
 <section id="a-naive-solution">
-<h3>A naive solution<a class="headerlink" href="#a-naive-solution" title="Permalink to this heading">¶</a></h3>
+<h3>A naive solution<a class="headerlink" href="#a-naive-solution" title="Permalink to this headline">¶</a></h3>
 <p>One way to avoid this is to use <code class="xref py py-meth docutils literal notranslate"><span class="pre">thread_worker.callback()</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@magicclass</span>
 <span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
@@ -541,7 +542,7 @@ crashes the GUI.</p>
 </div>
 </section>
 <section id="better-but-advanced-solution">
-<h3>Better but advanced solution<a class="headerlink" href="#better-but-advanced-solution" title="Permalink to this heading">¶</a></h3>
+<h3>Better but advanced solution<a class="headerlink" href="#better-but-advanced-solution" title="Permalink to this headline">¶</a></h3>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 0.7.5.</span></p>
 </div>
@@ -565,7 +566,7 @@ nested thread worker to the outer thread worker.</p>
 </section>
 </section>
 <section id="asynchronous-valuewidget-callbacks">
-<h2><a class="toc-backref" href="#id6" role="doc-backlink">Asynchronous ValueWidget Callbacks</a><a class="headerlink" href="#asynchronous-valuewidget-callbacks" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id6">Asynchronous ValueWidget Callbacks</a><a class="headerlink" href="#asynchronous-valuewidget-callbacks" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="../basics/use_field.html"><span class="doc">MagicField</span></a> is used to create widgets and connect callbacks to them.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@magicclass</span>
 <span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>

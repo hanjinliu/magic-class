@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="English" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Testing Magic classes &mdash; magic-class 0.7.5 documentation</title>
+  <title>Testing Magic classes &mdash; magic-class 0.7.6 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -13,8 +13,9 @@
   <![endif]-->
 
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -34,7 +35,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.5
+                0.7.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -105,21 +106,21 @@
            <div itemprop="articleBody">
 
   <section id="testing-magic-classes">
-<h1>Testing Magic classes<a class="headerlink" href="#testing-magic-classes" title="Permalink to this heading">¶</a></h1>
+<h1>Testing Magic classes<a class="headerlink" href="#testing-magic-classes" title="Permalink to this headline">¶</a></h1>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 0.7.1.</span></p>
 </div>
 <p><a class="reference internal" href="../../apidoc/magicclass.testing.html#module-magicclass.testing" title="magicclass.testing"><code class="xref py py-mod docutils literal notranslate"><span class="pre">magicclass.testing</span></code></a> contains several functions to test the magic classes.</p>
-<nav class="contents local" id="contents">
+<div class="contents local topic" id="contents">
 <p class="topic-title">Contents</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#testing-function-gui-creation" id="id1">Testing Function GUI Creation</a></p></li>
 <li><p><a class="reference internal" href="#testing-docstrings" id="id2">Testing Docstrings</a></p></li>
 <li><p><a class="reference internal" href="#testing-preview-and-confirmation" id="id3">Testing Preview and Confirmation</a></p></li>
 </ul>
-</nav>
+</div>
 <section id="testing-function-gui-creation">
-<h2><a class="toc-backref" href="#id1" role="doc-backlink">Testing Function GUI Creation</a><a class="headerlink" href="#testing-function-gui-creation" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id1">Testing Function GUI Creation</a><a class="headerlink" href="#testing-function-gui-creation" title="Permalink to this headline">¶</a></h2>
 <p>All the <code class="xref py py-class docutils literal notranslate"><span class="pre">FunctionGui</span></code> s are built lazily, that is, they are built only
 after user clicked the corresponding button. Therefore, the building error
 cannot be detected in the &quot;compile&quot; time.</p>
@@ -142,7 +143,7 @@ cannot be detected in the &quot;compile&quot; time.</p>
 <a class="reference internal" href="use_bind.html"><span class="doc">bind options</span></a> and <a class="reference internal" href="use_choices.html"><span class="doc">choices</span></a>.</p>
 </section>
 <section id="testing-docstrings">
-<h2><a class="toc-backref" href="#id2" role="doc-backlink">Testing Docstrings</a><a class="headerlink" href="#testing-docstrings" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id2">Testing Docstrings</a><a class="headerlink" href="#testing-docstrings" title="Permalink to this headline">¶</a></h2>
 <p>Magic classes can use the python docstring (<code class="docutils literal notranslate"><span class="pre">__doc__</span></code>) to generate the
 tooltips of the corresponding widgets. However, when you renamed some
 of the variables, IDE may not rename the docstrings automatically. This
@@ -170,7 +171,7 @@ will cause the tooltips not matching the actual variables.</p>
 </div>
 </section>
 <section id="testing-preview-and-confirmation">
-<h2><a class="toc-backref" href="#id3" role="doc-backlink">Testing Preview and Confirmation</a><a class="headerlink" href="#testing-preview-and-confirmation" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Testing Preview and Confirmation</a><a class="headerlink" href="#testing-preview-and-confirmation" title="Permalink to this headline">¶</a></h2>
 <p><code class="xref py py-mod docutils literal notranslate"><span class="pre">magic-class</span></code> natively supports method <a class="reference internal" href="use_preview.html"><span class="doc">preview</span></a> and
 <a class="reference internal" href="use_confirm.html"><span class="doc">confirmation</span></a>. These are again a runtime feature, so they
 is hard to be tested.</p>

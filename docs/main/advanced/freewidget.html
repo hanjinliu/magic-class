@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="English" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Convert QtWidgets into a Magic Widget &mdash; magic-class 0.7.5 documentation</title>
+  <title>Convert QtWidgets into a Magic Widget &mdash; magic-class 0.7.6 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -13,8 +13,9 @@
   <![endif]-->
 
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -34,7 +35,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.5
+                0.7.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -94,7 +95,7 @@
            <div itemprop="articleBody">
 
   <section id="convert-qtwidgets-into-a-magic-widget">
-<h1>Convert QtWidgets into a Magic Widget<a class="headerlink" href="#convert-qtwidgets-into-a-magic-widget" title="Permalink to this heading">¶</a></h1>
+<h1>Convert QtWidgets into a Magic Widget<a class="headerlink" href="#convert-qtwidgets-into-a-magic-widget" title="Permalink to this headline">¶</a></h1>
 <p>If your are an experienced GUI developper, you may often want to define your own
 Qt widget classes. Still, it is a good idea to convert it into a <code class="docutils literal notranslate"><span class="pre">magicgui</span></code>'s
 widget in terms of API consistency and simplicity. Especially if you intend to
@@ -105,7 +106,7 @@ is aimed at constructing a <code class="docutils literal notranslate"><span clas
 Qt widget. Actually, many widgets in <code class="docutils literal notranslate"><span class="pre">magicclass.widgets</span></code> are defined in this
 way.</p>
 <section id="basic-usage">
-<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
 <p>Suppose you have a Qt widget defined like:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QWidget</span>
 
@@ -142,7 +143,7 @@ is ready to used as if it is an ordinary <code class="docutils literal notransla
 </div>
 </section>
 <section id="make-it-behave-more-like-a-valuewidget">
-<h2>Make It Behave More Like A ValueWidget<a class="headerlink" href="#make-it-behave-more-like-a-valuewidget" title="Permalink to this heading">¶</a></h2>
+<h2>Make It Behave More Like A ValueWidget<a class="headerlink" href="#make-it-behave-more-like-a-valuewidget" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">magicgui.widgets.ValueWidget</span></code> is widgets that have representative values. You'll have
 to define <code class="docutils literal notranslate"><span class="pre">value</span></code> property to make a <code class="docutils literal notranslate"><span class="pre">FreeWidget</span></code> more like a <code class="docutils literal notranslate"><span class="pre">ValueWidget</span></code>.
 It is better idea to add a value change signal to the class.</p>

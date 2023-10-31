@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.utils.qthreading._progressbar &mdash; magic-class 0.7.5 documentation</title>
+  <title>magicclass.utils.qthreading._progressbar &mdash; magic-class 0.7.6 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -12,8 +12,9 @@
   <![endif]-->
 
         <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/sphinx_highlight.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -31,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.5
+                0.7.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -93,13 +94,13 @@
     <span class="n">TypedDict</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">QThread</span><span class="p">,</span> <span class="n">QCoreApplication</span><span class="p">,</span> <span class="n">Qt</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
 <span class="kn">from</span> <span class="nn">superqt.utils</span> <span class="kn">import</span> <span class="n">GeneratorWorker</span><span class="p">,</span> <span class="n">FunctionWorker</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">ProgressBar</span><span class="p">,</span> <span class="n">Container</span><span class="p">,</span> <span class="n">PushButton</span><span class="p">,</span> <span class="n">Label</span>
 
 <span class="kn">from</span> <span class="nn">magicclass.utils.qt</span> <span class="kn">import</span> <span class="n">move_to_screen_center</span>
 <span class="kn">from</span> <span class="nn">magicclass.utils.qtsignal</span> <span class="kn">import</span> <span class="n">QtSignal</span>
-
+<span class="kn">from</span> <span class="nn">magicclass.utils.qthreading._callback</span> <span class="kn">import</span> <span class="n">NestedCallback</span>
 <span class="kn">from</span> <span class="nn">magicclass.widgets.containers</span> <span class="kn">import</span> <span class="n">FrameContainer</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
@@ -213,6 +214,10 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the progressbar.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
+    <span class="k">def</span> <span class="nf">increment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Increment the progressbar&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
 
 <span class="n">ProgressBarLike</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">ProgressBar</span><span class="p">,</span> <span class="n">_SupportProgress</span><span class="p">]</span>
 
@@ -253,9 +258,15 @@
 
     <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pbar</span><span class="p">)</span><span class="o">.</span><span class="n">_all_instances</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">changed</span><span class="p">(</span><span class="n">added</span><span class="o">=</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_pbar</span><span class="p">},</span> <span class="n">removed</span><span class="o">=</span><span class="p">{})</span>
+        <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pbar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pbar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">increment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yielded</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">yielded</span><span class="p">,</span> <span class="n">NestedCallback</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pbar</span><span class="o">.</span><span class="n">increment_with_overflow</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="Timer"><a class="viewcode-back" href="../../../../apidoc/magicclass.utils.qthreading.html#magicclass.utils.qthreading.Timer">[docs]</a><span class="k">class</span> <span class="nc">Timer</span><span class="p">:</span>
@@ -305,7 +316,7 @@
         <span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">hour</span><span class="p">),</span> <span class="nb">min</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="nb">min</span><span class="p">),</span> <span class="n">sec</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">sec</span><span class="p">))</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">_ProgressBarContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_ProgressBarContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">[</span><span class="s2">&quot;DefaultProgressBar&quot;</span><span class="p">]):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">margins</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
@@ -409,7 +420,7 @@
         <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">_is_main_thread</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">parent</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">parent</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span>
                         <span class="n">parent</span><span class="p">,</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">(),</span>
@@ -433,6 +444,17 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># minimize height</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="DefaultProgressBar.increment"><a class="viewcode-back" href="../../../../apidoc/magicclass.utils.qthreading.html#magicclass.utils.qthreading.DefaultProgressBar.increment">[docs]</a>    <span class="k">def</span> <span class="nf">increment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yielded</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Increment progressbar.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">yielded</span><span class="p">,</span> <span class="n">NestedCallback</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="DefaultProgressBar.hide_footer"><a class="viewcode-back" href="../../../../apidoc/magicclass.utils.qthreading.html#magicclass.utils.qthreading.DefaultProgressBar.hide_footer">[docs]</a>    <span class="k">def</span> <span class="nf">hide_footer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -504,7 +526,7 @@
 
 <span class="k">def</span> <span class="nf">_is_main_thread</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;True if the current thread is the main thread.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">QThread</span><span class="o">.</span><span class="n">currentThread</span><span class="p">()</span> <span class="ow">is</span> <span class="n">QCoreApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">thread</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;MainThread&quot;</span>
 </pre></div>
 
            </div>

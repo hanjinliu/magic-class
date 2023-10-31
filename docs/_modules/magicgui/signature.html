@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicgui.signature &mdash; magic-class 0.7.5 documentation</title>
+  <title>magicgui.signature &mdash; magic-class 0.7.6 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -12,8 +12,9 @@
   <![endif]-->
 
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -31,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.5
+                0.7.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -103,8 +104,12 @@
 <span class="kn">from</span> <span class="nn">magicgui.types</span> <span class="kn">import</span> <span class="n">Undefined</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Unpack</span>
+
     <span class="kn">from</span> <span class="nn">magicgui.application</span> <span class="kn">import</span> <span class="n">AppRef</span>
     <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">Container</span><span class="p">,</span> <span class="n">Widget</span>
+    <span class="kn">from</span> <span class="nn">magicgui.widgets.bases._container_widget</span> <span class="kn">import</span> <span class="n">ContainerKwargs</span>
+
 <span class="n">TZ_EMPTY</span> <span class="o">=</span> <span class="s2">&quot;__no__default__&quot;</span>
 
 
@@ -310,14 +315,14 @@
             <span class="p">{</span><span class="n">n</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">to_widget</span><span class="p">(</span><span class="n">app</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="MagicSignature.to_container"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.signature.MagicSignature.to_container">[docs]</a>    <span class="k">def</span> <span class="nf">to_container</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Container</span><span class="p">:</span>
+<div class="viewcode-block" id="MagicSignature.to_container"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.signature.MagicSignature.to_container">[docs]</a>    <span class="k">def</span> <span class="nf">to_container</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">:</span> <span class="n">AppRef</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Unpack</span><span class="p">[</span><span class="n">ContainerKwargs</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Container</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a ``magicgui.widgets.Container`` for this MagicSignature.&quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">Container</span>
 
-        <span class="k">return</span> <span class="n">Container</span><span class="p">(</span>
-            <span class="n">widgets</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;app&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
-            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-        <span class="p">)</span></div>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;widgets&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="p">(</span><span class="n">app</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">Container</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MagicSignature.replace"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.signature.MagicSignature.replace">[docs]</a>    <span class="k">def</span> <span class="nf">replace</span><span class="p">(</span>  <span class="c1"># type: ignore[override]</span>
         <span class="bp">self</span><span class="p">,</span>

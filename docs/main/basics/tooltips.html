@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="English" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Add Tooltips &mdash; magic-class 0.7.5 documentation</title>
+  <title>Add Tooltips &mdash; magic-class 0.7.6 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -13,8 +13,9 @@
   <![endif]-->
 
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -34,7 +35,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.5
+                0.7.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -95,7 +96,7 @@
            <div itemprop="articleBody">
 
   <section id="add-tooltips">
-<h1>Add Tooltips<a class="headerlink" href="#add-tooltips" title="Permalink to this heading">¶</a></h1>
+<h1>Add Tooltips<a class="headerlink" href="#add-tooltips" title="Permalink to this headline">¶</a></h1>
 <p>Adding tooltips is important for usability. If you are going to add all the tooltip
 naively, you will have to set <code class="docutils literal notranslate"><span class="pre">tooltip</span></code> property for every widget.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@magicclass</span>
@@ -112,7 +113,7 @@ naively, you will have to set <code class="docutils literal notranslate"><span c
 avoid GUI-specific lines to make code clean. This chapter shows how to provide
 tooltips in magic-classes in a tidy way.</p>
 <section id="add-tooltips-to-buttons-and-menus">
-<h2>Add tooltips to buttons and menus<a class="headerlink" href="#add-tooltips-to-buttons-and-menus" title="Permalink to this heading">¶</a></h2>
+<h2>Add tooltips to buttons and menus<a class="headerlink" href="#add-tooltips-to-buttons-and-menus" title="Permalink to this headline">¶</a></h2>
 <p>As explained in previous chapters, methods are converted into buttons in classes
 decorated with <code class="docutils literal notranslate"><span class="pre">&#64;magicclass</span></code> and into menus when <code class="docutils literal notranslate"><span class="pre">&#64;magicmenu</span></code> or
 <code class="docutils literal notranslate"><span class="pre">&#64;magiccontext</span></code> are used. Following <code class="docutils literal notranslate"><span class="pre">magicgui</span></code> tooltip generation procedure,
@@ -141,7 +142,7 @@ documenting a Python code. What's more, these tooltips are compatible with
 auto-documentation using <code class="docutils literal notranslate"><span class="pre">sphinx</span></code>.</p>
 </section>
 <section id="add-tooltips-to-classes">
-<h2>Add tooltips to classes<a class="headerlink" href="#add-tooltips-to-classes" title="Permalink to this heading">¶</a></h2>
+<h2>Add tooltips to classes<a class="headerlink" href="#add-tooltips-to-classes" title="Permalink to this headline">¶</a></h2>
 <p>When magic-classes are nested, you may want to add tooltips to child widgets.
 This time, class docstrings will be used for the purpose.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
@@ -157,7 +158,7 @@ This time, class docstrings will be used for the purpose.</p>
 </div>
 </section>
 <section id="add-tooltips-to-fields">
-<h2>Add tooltips to fields<a class="headerlink" href="#add-tooltips-to-fields" title="Permalink to this heading">¶</a></h2>
+<h2>Add tooltips to fields<a class="headerlink" href="#add-tooltips-to-fields" title="Permalink to this headline">¶</a></h2>
 <p>Another important component of magic-classes are fields. In a naive way, you'll
 have to set <code class="docutils literal notranslate"><span class="pre">&quot;tooltip&quot;</span></code> options for every field.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>

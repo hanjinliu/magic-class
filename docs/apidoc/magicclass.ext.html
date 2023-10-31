@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="English" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext package &mdash; magic-class 0.7.5 documentation</title>
+  <title>magicclass.ext package &mdash; magic-class 0.7.6 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -13,8 +13,9 @@
   <![endif]-->
 
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -34,7 +35,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.5
+                0.7.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -103,288 +104,25 @@
            <div itemprop="articleBody">
 
   <section id="magicclass-ext-package">
-<h1>magicclass.ext package<a class="headerlink" href="#magicclass-ext-package" title="Permalink to this heading">¶</a></h1>
+<h1>magicclass.ext package<a class="headerlink" href="#magicclass-ext-package" title="Permalink to this headline">¶</a></h1>
 <section id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading">¶</a></h2>
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="magicclass.ext.dask.html">magicclass.ext.dask package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.ext.dask.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.dask.html#module-magicclass.ext.dask.progress">magicclass.ext.dask.progress module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.dask.html#magicclass.ext.dask.progress.DaskProgressBar"><code class="docutils literal notranslate"><span class="pre">DaskProgressBar</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.dask.html#magicclass.ext.dask.progress.DaskProgressBar.computed"><code class="docutils literal notranslate"><span class="pre">DaskProgressBar.computed</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.dask.html#magicclass.ext.dask.progress.DaskProgressBar.set_worker"><code class="docutils literal notranslate"><span class="pre">DaskProgressBar.set_worker()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.dask.html#magicclass.ext.dask.progress.dask_thread_worker"><code class="docutils literal notranslate"><span class="pre">dask_thread_worker</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.dask.html#magicclass.ext.dask.progress.dask_thread_worker.computed"><code class="docutils literal notranslate"><span class="pre">dask_thread_worker.computed</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.dask.html#module-magicclass.ext.dask.resource">magicclass.ext.dask.resource module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.dask.html#magicclass.ext.dask.resource.DaskResourceProfiler"><code class="docutils literal notranslate"><span class="pre">DaskResourceProfiler</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.dask.html#magicclass.ext.dask.resource.DaskResourceProfiler.clear"><code class="docutils literal notranslate"><span class="pre">DaskResourceProfiler.clear()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.dask.html#magicclass.ext.dask.resource.EventedTracker"><code class="docutils literal notranslate"><span class="pre">EventedTracker</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.dask.html#magicclass.ext.dask.resource.EventedTracker.run"><code class="docutils literal notranslate"><span class="pre">EventedTracker.run()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.dask.html#module-magicclass.ext.dask">Module contents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.dask.html#magicclass.ext.dask.DaskProgressBar"><code class="docutils literal notranslate"><span class="pre">DaskProgressBar</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.dask.html#magicclass.ext.dask.DaskProgressBar.computed"><code class="docutils literal notranslate"><span class="pre">DaskProgressBar.computed</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.dask.html#magicclass.ext.dask.DaskProgressBar.name"><code class="docutils literal notranslate"><span class="pre">DaskProgressBar.name</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.dask.html#magicclass.ext.dask.DaskProgressBar.set_worker"><code class="docutils literal notranslate"><span class="pre">DaskProgressBar.set_worker()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.dask.html#magicclass.ext.dask.dask_thread_worker"><code class="docutils literal notranslate"><span class="pre">dask_thread_worker</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.dask.html#magicclass.ext.dask.dask_thread_worker.computed"><code class="docutils literal notranslate"><span class="pre">dask_thread_worker.computed</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.dask.html#module-magicclass.ext.dask.progress">magicclass.ext.dask.progress module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.dask.html#module-magicclass.ext.dask.resource">magicclass.ext.dask.resource module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.dask.html#module-magicclass.ext.dask">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="magicclass.ext.napari.html">magicclass.ext.napari package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.ext.napari.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.napari.html#module-magicclass.ext.napari.types">magicclass.ext.napari.types module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.types.FeatureColumn"><code class="docutils literal notranslate"><span class="pre">FeatureColumn</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.types.FeatureInfo"><code class="docutils literal notranslate"><span class="pre">FeatureInfo</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.types.Features"><code class="docutils literal notranslate"><span class="pre">Features</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.types.Features.columns"><code class="docutils literal notranslate"><span class="pre">Features.columns</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.napari.html#module-magicclass.ext.napari.utils">magicclass.ext.napari.utils module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.utils.process_worker"><code class="docutils literal notranslate"><span class="pre">process_worker()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.utils.to_napari"><code class="docutils literal notranslate"><span class="pre">to_napari()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.napari.html#module-magicclass.ext.napari.viewer">magicclass.ext.napari.viewer module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.QtViewerWidget"><code class="docutils literal notranslate"><span class="pre">QtViewerWidget</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget"><code class="docutils literal notranslate"><span class="pre">ViewerWidget</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.add_image"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.add_image()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.add_labels"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.add_labels()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.data"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.multiscale"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.multiscale</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.metadata"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.metadata</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.num_colors"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.num_colors</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.features"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.features</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.properties"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.properties</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.color"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.seed"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.seed</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.opacity"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.opacity</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.contiguous"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.contiguous</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.n_edit_dimensions"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.n_edit_dimensions</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.contour"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.contour</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.brush_size"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.brush_size</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.selected_label"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.selected_label</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.mode"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.mode</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.plane"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.plane</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.experimental_clipping_planes"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.experimental_clipping_planes</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.add_points"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.add_points()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id0"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id1"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.features</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.feature_defaults"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.feature_defaults</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id2"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.properties</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.text"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.text</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.symbol"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.symbol</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.size"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.size</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.edge_width"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_width</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id3"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_width</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.edge_color"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.edge_color_cycle"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_color_cycle</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.edge_colormap"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_colormap</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.edge_contrast_limits"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_contrast_limits</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.face_color"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.face_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.face_color_cycle"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.face_color_cycle</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.face_colormap"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.face_colormap</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.face_contrast_limits"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.face_contrast_limits</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.current_symbol"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.current_symbol</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.current_size"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.current_size</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.current_edge_width"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.current_edge_width</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.current_edge_color"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.current_edge_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.current_face_color"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.current_face_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.out_of_slice_display"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.out_of_slice_display</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.selected_data"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.selected_data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id4"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.mode</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.face_color_mode"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.face_color_mode</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.edge_color_mode"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_color_mode</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.shading"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.shading</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.antialiasing"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.antialiasing</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.canvas_size_limits"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.canvas_size_limits</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.shown"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.shown</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.add_shapes"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.add_shapes()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id5"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id6"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.features</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id7"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.feature_defaults</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id8"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.properties</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id9"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.text</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.shape_type"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.shape_type</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id10"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id11"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.face_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id12"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_width</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.z_index"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.z_index</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id13"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.current_edge_width</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id14"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.current_edge_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id15"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.current_face_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id16"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.selected_data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.nshapes"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.nshapes</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id17"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.mode</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.add_surface"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.add_surface()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id18"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.vertices"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.vertices</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.faces"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.faces</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.vertex_values"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.vertex_values</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.colormap"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.colormap</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.contrast_limits"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.contrast_limits</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id19"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.shading</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.gamma"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.gamma</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.wireframe"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.wireframe</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.normals"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.normals</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.add_tracks"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.add_tracks()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.add_vectors"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.add_vectors()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id20"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id21"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.features</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id22"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.feature_defaults</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id23"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.properties</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id24"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_width</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.vector_style"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.vector_style</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.length"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.length</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id25"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id26"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_color_cycle</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id27"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_colormap</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id28"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_contrast_limits</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id29"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.out_of_slice_display</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.axes"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.axes</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.camera"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.camera</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.cursor"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.cursor</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.dims"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.dims</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.grid"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.grid</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.layers"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.layers</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.scale_bar"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.scale_bar</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.viewer.ViewerWidget.text_overlay"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.text_overlay</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.napari.html#module-magicclass.ext.napari.widgets">magicclass.ext.napari.widgets module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.widgets.NapariCanvas"><code class="docutils literal notranslate"><span class="pre">NapariCanvas</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.napari.html#module-magicclass.ext.napari">Module contents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.NapariCanvas"><code class="docutils literal notranslate"><span class="pre">NapariCanvas</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget"><code class="docutils literal notranslate"><span class="pre">ViewerWidget</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.add_image"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.add_image()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.add_labels"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.add_labels()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.data"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.multiscale"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.multiscale</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.metadata"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.metadata</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.num_colors"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.num_colors</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.features"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.features</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.properties"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.properties</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.color"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.seed"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.seed</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.opacity"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.opacity</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.contiguous"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.contiguous</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.n_edit_dimensions"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.n_edit_dimensions</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.contour"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.contour</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.brush_size"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.brush_size</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.selected_label"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.selected_label</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.mode"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.mode</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.plane"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.plane</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.experimental_clipping_planes"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.experimental_clipping_planes</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.add_points"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.add_points()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id30"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id31"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.features</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.feature_defaults"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.feature_defaults</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id32"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.properties</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.text"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.text</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.symbol"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.symbol</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.size"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.size</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.edge_width"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_width</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id33"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_width</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.edge_color"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.edge_color_cycle"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_color_cycle</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.edge_colormap"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_colormap</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.edge_contrast_limits"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_contrast_limits</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.face_color"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.face_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.face_color_cycle"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.face_color_cycle</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.face_colormap"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.face_colormap</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.face_contrast_limits"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.face_contrast_limits</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.current_symbol"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.current_symbol</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.current_size"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.current_size</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.current_edge_width"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.current_edge_width</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.current_edge_color"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.current_edge_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.current_face_color"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.current_face_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.out_of_slice_display"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.out_of_slice_display</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.selected_data"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.selected_data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id34"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.mode</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.face_color_mode"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.face_color_mode</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.edge_color_mode"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_color_mode</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.shading"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.shading</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.antialiasing"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.antialiasing</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.canvas_size_limits"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.canvas_size_limits</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.shown"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.shown</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.add_shapes"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.add_shapes()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id35"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id36"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.features</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id37"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.feature_defaults</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id38"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.properties</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id39"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.text</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.shape_type"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.shape_type</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id40"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id41"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.face_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id42"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_width</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.z_index"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.z_index</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id43"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.current_edge_width</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id44"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.current_edge_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id45"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.current_face_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id46"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.selected_data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.nshapes"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.nshapes</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id47"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.mode</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.add_surface"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.add_surface()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id48"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.vertices"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.vertices</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.faces"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.faces</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.vertex_values"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.vertex_values</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.colormap"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.colormap</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.contrast_limits"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.contrast_limits</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id49"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.shading</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.gamma"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.gamma</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.wireframe"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.wireframe</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.normals"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.normals</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.add_tracks"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.add_tracks()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.add_vectors"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.add_vectors()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id50"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id51"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.features</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id52"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.feature_defaults</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id53"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.properties</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id54"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_width</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.vector_style"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.vector_style</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.length"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.length</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id55"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id56"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_color_cycle</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id57"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_colormap</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id58"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.edge_contrast_limits</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#id59"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.out_of_slice_display</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.axes"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.axes</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.camera"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.camera</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.cursor"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.cursor</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.dims"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.dims</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.grid"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.grid</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.layers"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.layers</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.scale_bar"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.scale_bar</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.ViewerWidget.text_overlay"><code class="docutils literal notranslate"><span class="pre">ViewerWidget.text_overlay</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.napari.html#magicclass.ext.napari.to_napari"><code class="docutils literal notranslate"><span class="pre">to_napari()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.napari.html#module-magicclass.ext.napari.types">magicclass.ext.napari.types module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.napari.html#module-magicclass.ext.napari.utils">magicclass.ext.napari.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.napari.html#module-magicclass.ext.napari.viewer">magicclass.ext.napari.viewer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.napari.html#module-magicclass.ext.napari.widgets">magicclass.ext.napari.widgets module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.napari.html#module-magicclass.ext.napari">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="magicclass.ext.pandas.html">magicclass.ext.pandas package</a><ul>
@@ -397,10 +135,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.pandas.html#module-magicclass.ext.pandas">Module contents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pandas.html#magicclass.ext.pandas.DataFrameView"><code class="docutils literal notranslate"><span class="pre">DataFrameView</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.pandas.html#module-magicclass.ext.pandas">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="magicclass.ext.polars.html">magicclass.ext.polars package</a><ul>
@@ -413,10 +148,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.polars.html#module-magicclass.ext.polars">Module contents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.polars.html#magicclass.ext.polars.DataFrameView"><code class="docutils literal notranslate"><span class="pre">DataFrameView</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.polars.html#module-magicclass.ext.polars">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="magicclass.ext.pyqtgraph.html">magicclass.ext.pyqtgraph package</a><ul>
@@ -430,328 +162,18 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#module-magicclass.ext.pyqtgraph.components">magicclass.ext.pyqtgraph.components module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.GraphicComponent"><code class="docutils literal notranslate"><span class="pre">GraphicComponent</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.GraphicComponent.native"><code class="docutils literal notranslate"><span class="pre">GraphicComponent.native</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.GraphicComponent.update"><code class="docutils literal notranslate"><span class="pre">GraphicComponent.update()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.GraphicComponent.visible"><code class="docutils literal notranslate"><span class="pre">GraphicComponent.visible</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Grid"><code class="docutils literal notranslate"><span class="pre">Grid</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Grid.native"><code class="docutils literal notranslate"><span class="pre">Grid.native</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Legend"><code class="docutils literal notranslate"><span class="pre">Legend</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Legend.background_color"><code class="docutils literal notranslate"><span class="pre">Legend.background_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Legend.border"><code class="docutils literal notranslate"><span class="pre">Legend.border</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Legend.color"><code class="docutils literal notranslate"><span class="pre">Legend.color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Legend.native"><code class="docutils literal notranslate"><span class="pre">Legend.native</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Legend.size"><code class="docutils literal notranslate"><span class="pre">Legend.size</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Region"><code class="docutils literal notranslate"><span class="pre">Region</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Region.changed"><code class="docutils literal notranslate"><span class="pre">Region.changed</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Region.color"><code class="docutils literal notranslate"><span class="pre">Region.color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Region.enabled"><code class="docutils literal notranslate"><span class="pre">Region.enabled</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Region.native"><code class="docutils literal notranslate"><span class="pre">Region.native</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Region.value"><code class="docutils literal notranslate"><span class="pre">Region.value</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Roi"><code class="docutils literal notranslate"><span class="pre">Roi</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Roi.border"><code class="docutils literal notranslate"><span class="pre">Roi.border</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Roi.native"><code class="docutils literal notranslate"><span class="pre">Roi.native</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.ScaleBar"><code class="docutils literal notranslate"><span class="pre">ScaleBar</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.ScaleBar.color"><code class="docutils literal notranslate"><span class="pre">ScaleBar.color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.ScaleBar.native"><code class="docutils literal notranslate"><span class="pre">ScaleBar.native</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.ScaleBar.unit"><code class="docutils literal notranslate"><span class="pre">ScaleBar.unit</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.TextItem"><code class="docutils literal notranslate"><span class="pre">TextItem</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.TextItem.anchor"><code class="docutils literal notranslate"><span class="pre">TextItem.anchor</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.TextItem.background_color"><code class="docutils literal notranslate"><span class="pre">TextItem.background_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.TextItem.border"><code class="docutils literal notranslate"><span class="pre">TextItem.border</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.TextItem.color"><code class="docutils literal notranslate"><span class="pre">TextItem.color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.TextItem.font_size"><code class="docutils literal notranslate"><span class="pre">TextItem.font_size</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.TextItem.native"><code class="docutils literal notranslate"><span class="pre">TextItem.native</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.TextItem.pos"><code class="docutils literal notranslate"><span class="pre">TextItem.pos</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.TextItem.text"><code class="docutils literal notranslate"><span class="pre">TextItem.text</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#module-magicclass.ext.pyqtgraph.graph_items">magicclass.ext.pyqtgraph.graph_items module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.BarPlot"><code class="docutils literal notranslate"><span class="pre">BarPlot</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.BarPlot.edge_color"><code class="docutils literal notranslate"><span class="pre">BarPlot.edge_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.BarPlot.face_color"><code class="docutils literal notranslate"><span class="pre">BarPlot.face_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.BarPlot.native"><code class="docutils literal notranslate"><span class="pre">BarPlot.native</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.BarPlot.xdata"><code class="docutils literal notranslate"><span class="pre">BarPlot.xdata</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.BarPlot.ydata"><code class="docutils literal notranslate"><span class="pre">BarPlot.ydata</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Curve"><code class="docutils literal notranslate"><span class="pre">Curve</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Curve.antialias"><code class="docutils literal notranslate"><span class="pre">Curve.antialias</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Curve.edge_color"><code class="docutils literal notranslate"><span class="pre">Curve.edge_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Curve.face_color"><code class="docutils literal notranslate"><span class="pre">Curve.face_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Curve.native"><code class="docutils literal notranslate"><span class="pre">Curve.native</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Curve.size"><code class="docutils literal notranslate"><span class="pre">Curve.size</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Curve.symbol"><code class="docutils literal notranslate"><span class="pre">Curve.symbol</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.FillBetween"><code class="docutils literal notranslate"><span class="pre">FillBetween</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.FillBetween.edge_color"><code class="docutils literal notranslate"><span class="pre">FillBetween.edge_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.FillBetween.face_color"><code class="docutils literal notranslate"><span class="pre">FillBetween.face_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.FillBetween.linestyle"><code class="docutils literal notranslate"><span class="pre">FillBetween.linestyle</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.FillBetween.linewidth"><code class="docutils literal notranslate"><span class="pre">FillBetween.linewidth</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.FillBetween.ls"><code class="docutils literal notranslate"><span class="pre">FillBetween.ls</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.FillBetween.lw"><code class="docutils literal notranslate"><span class="pre">FillBetween.lw</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.FillBetween.name"><code class="docutils literal notranslate"><span class="pre">FillBetween.name</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.FillBetween.native"><code class="docutils literal notranslate"><span class="pre">FillBetween.native</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Histogram"><code class="docutils literal notranslate"><span class="pre">Histogram</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Histogram.edge_color"><code class="docutils literal notranslate"><span class="pre">Histogram.edge_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Histogram.face_color"><code class="docutils literal notranslate"><span class="pre">Histogram.face_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Histogram.native"><code class="docutils literal notranslate"><span class="pre">Histogram.native</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Histogram.set_hist"><code class="docutils literal notranslate"><span class="pre">Histogram.set_hist()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfCurve"><code class="docutils literal notranslate"><span class="pre">InfCurve</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfCurve.antialias"><code class="docutils literal notranslate"><span class="pre">InfCurve.antialias</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfCurve.color"><code class="docutils literal notranslate"><span class="pre">InfCurve.color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfCurve.func"><code class="docutils literal notranslate"><span class="pre">InfCurve.func</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfCurve.linestyle"><code class="docutils literal notranslate"><span class="pre">InfCurve.linestyle</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfCurve.linewidth"><code class="docutils literal notranslate"><span class="pre">InfCurve.linewidth</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfCurve.ls"><code class="docutils literal notranslate"><span class="pre">InfCurve.ls</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfCurve.lw"><code class="docutils literal notranslate"><span class="pre">InfCurve.lw</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfCurve.name"><code class="docutils literal notranslate"><span class="pre">InfCurve.name</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfCurve.native"><code class="docutils literal notranslate"><span class="pre">InfCurve.native</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfLine"><code class="docutils literal notranslate"><span class="pre">InfLine</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfLine.angle"><code class="docutils literal notranslate"><span class="pre">InfLine.angle</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfLine.color"><code class="docutils literal notranslate"><span class="pre">InfLine.color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfLine.edge_color"><code class="docutils literal notranslate"><span class="pre">InfLine.edge_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfLine.face_color"><code class="docutils literal notranslate"><span class="pre">InfLine.face_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfLine.intercept"><code class="docutils literal notranslate"><span class="pre">InfLine.intercept</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfLine.linestyle"><code class="docutils literal notranslate"><span class="pre">InfLine.linestyle</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfLine.linewidth"><code class="docutils literal notranslate"><span class="pre">InfLine.linewidth</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfLine.ls"><code class="docutils literal notranslate"><span class="pre">InfLine.ls</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfLine.lw"><code class="docutils literal notranslate"><span class="pre">InfLine.lw</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfLine.name"><code class="docutils literal notranslate"><span class="pre">InfLine.name</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfLine.native"><code class="docutils literal notranslate"><span class="pre">InfLine.native</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfLine.pos"><code class="docutils literal notranslate"><span class="pre">InfLine.pos</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfLine.slope"><code class="docutils literal notranslate"><span class="pre">InfLine.slope</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.LayerItem"><code class="docutils literal notranslate"><span class="pre">LayerItem</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.LayerItem.native"><code class="docutils literal notranslate"><span class="pre">LayerItem.native</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.LayerItem.visible"><code class="docutils literal notranslate"><span class="pre">LayerItem.visible</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.LayerItem.zorder"><code class="docutils literal notranslate"><span class="pre">LayerItem.zorder</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.NativeInfCurve"><code class="docutils literal notranslate"><span class="pre">NativeInfCurve</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.NativeInfCurve.sigViewRangeChanged"><code class="docutils literal notranslate"><span class="pre">NativeInfCurve.sigViewRangeChanged</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.NativeInfCurve.viewRangeChanged"><code class="docutils literal notranslate"><span class="pre">NativeInfCurve.viewRangeChanged()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.PlotDataLayer"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.PlotDataLayer.add"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.add()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.PlotDataLayer.color"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.PlotDataLayer.data"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.PlotDataLayer.linestyle"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.linestyle</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.PlotDataLayer.linewidth"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.linewidth</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.PlotDataLayer.ls"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.ls</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.PlotDataLayer.lw"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.lw</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.PlotDataLayer.name"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.name</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.PlotDataLayer.native"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.native</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.PlotDataLayer.ndata"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.ndata</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.PlotDataLayer.remove"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.remove()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.PlotDataLayer.xdata"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.xdata</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.PlotDataLayer.ydata"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.ydata</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Scatter"><code class="docutils literal notranslate"><span class="pre">Scatter</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Scatter.edge_color"><code class="docutils literal notranslate"><span class="pre">Scatter.edge_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Scatter.face_color"><code class="docutils literal notranslate"><span class="pre">Scatter.face_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Scatter.native"><code class="docutils literal notranslate"><span class="pre">Scatter.native</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Scatter.size"><code class="docutils literal notranslate"><span class="pre">Scatter.size</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Scatter.symbol"><code class="docutils literal notranslate"><span class="pre">Scatter.symbol</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Target"><code class="docutils literal notranslate"><span class="pre">Target</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Target.native"><code class="docutils literal notranslate"><span class="pre">Target.native</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Target.pos"><code class="docutils literal notranslate"><span class="pre">Target.pos</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Target.size"><code class="docutils literal notranslate"><span class="pre">Target.size</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.TextGroup"><code class="docutils literal notranslate"><span class="pre">TextGroup</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.TextGroup.anchor"><code class="docutils literal notranslate"><span class="pre">TextGroup.anchor</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.TextGroup.background_color"><code class="docutils literal notranslate"><span class="pre">TextGroup.background_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.TextGroup.border"><code class="docutils literal notranslate"><span class="pre">TextGroup.border</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.TextGroup.color"><code class="docutils literal notranslate"><span class="pre">TextGroup.color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.TextGroup.size"><code class="docutils literal notranslate"><span class="pre">TextGroup.size</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.TextGroup.text"><code class="docutils literal notranslate"><span class="pre">TextGroup.text</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.TextGroup.text_items"><code class="docutils literal notranslate"><span class="pre">TextGroup.text_items</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.TextGroup.xdata"><code class="docutils literal notranslate"><span class="pre">TextGroup.xdata</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.TextGroup.ydata"><code class="docutils literal notranslate"><span class="pre">TextGroup.ydata</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.TextItemView"><code class="docutils literal notranslate"><span class="pre">TextItemView</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.TextItemView.anchor"><code class="docutils literal notranslate"><span class="pre">TextItemView.anchor</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.TextItemView.background_color"><code class="docutils literal notranslate"><span class="pre">TextItemView.background_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.TextItemView.border"><code class="docutils literal notranslate"><span class="pre">TextItemView.border</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.TextItemView.color"><code class="docutils literal notranslate"><span class="pre">TextItemView.color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.TextItemView.text"><code class="docutils literal notranslate"><span class="pre">TextItemView.text</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#module-magicclass.ext.pyqtgraph.mouse_event">magicclass.ext.pyqtgraph.mouse_event module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent"><code class="docutils literal notranslate"><span class="pre">MouseClickEvent</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent.buttons"><code class="docutils literal notranslate"><span class="pre">MouseClickEvent.buttons()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent.lastPos"><code class="docutils literal notranslate"><span class="pre">MouseClickEvent.lastPos()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent.modifiers"><code class="docutils literal notranslate"><span class="pre">MouseClickEvent.modifiers()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent.pos"><code class="docutils literal notranslate"><span class="pre">MouseClickEvent.pos()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#module-magicclass.ext.pyqtgraph.plot_api">magicclass.ext.pyqtgraph.plot_api module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.plot_api.figure"><code class="docutils literal notranslate"><span class="pre">figure()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.plot_api.gca"><code class="docutils literal notranslate"><span class="pre">gca()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.plot_api.gcf"><code class="docutils literal notranslate"><span class="pre">gcf()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.plot_api.gcw"><code class="docutils literal notranslate"><span class="pre">gcw()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.plot_api.hist"><code class="docutils literal notranslate"><span class="pre">hist()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.plot_api.imshow"><code class="docutils literal notranslate"><span class="pre">imshow()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.plot_api.plot"><code class="docutils literal notranslate"><span class="pre">plot()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.plot_api.scatter"><code class="docutils literal notranslate"><span class="pre">scatter()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.plot_api.show"><code class="docutils literal notranslate"><span class="pre">show()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.plot_api.subplot"><code class="docutils literal notranslate"><span class="pre">subplot()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#module-magicclass.ext.pyqtgraph.widgets">magicclass.ext.pyqtgraph.widgets module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasBackground"><code class="docutils literal notranslate"><span class="pre">HasBackground</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasBackground.background_color"><code class="docutils literal notranslate"><span class="pre">HasBackground.background_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasBackground.to_clipboard"><code class="docutils literal notranslate"><span class="pre">HasBackground.to_clipboard()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems"><code class="docutils literal notranslate"><span class="pre">HasDataItems</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_bar"><code class="docutils literal notranslate"><span class="pre">HasDataItems.add_bar()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_curve"><code class="docutils literal notranslate"><span class="pre">HasDataItems.add_curve()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_fillbetween"><code class="docutils literal notranslate"><span class="pre">HasDataItems.add_fillbetween()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_hist"><code class="docutils literal notranslate"><span class="pre">HasDataItems.add_hist()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_infcurve"><code class="docutils literal notranslate"><span class="pre">HasDataItems.add_infcurve()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_infline"><code class="docutils literal notranslate"><span class="pre">HasDataItems.add_infline()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_scatter"><code class="docutils literal notranslate"><span class="pre">HasDataItems.add_scatter()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_target"><code class="docutils literal notranslate"><span class="pre">HasDataItems.add_target()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_text"><code class="docutils literal notranslate"><span class="pre">HasDataItems.add_text()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.layers"><code class="docutils literal notranslate"><span class="pre">HasDataItems.layers</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasViewBox"><code class="docutils literal notranslate"><span class="pre">HasViewBox</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasViewBox.auto_range"><code class="docutils literal notranslate"><span class="pre">HasViewBox.auto_range()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasViewBox.border"><code class="docutils literal notranslate"><span class="pre">HasViewBox.border</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasViewBox.enabled"><code class="docutils literal notranslate"><span class="pre">HasViewBox.enabled</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasViewBox.interactive"><code class="docutils literal notranslate"><span class="pre">HasViewBox.interactive</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasViewBox.mouse_clicked"><code class="docutils literal notranslate"><span class="pre">HasViewBox.mouse_clicked</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasViewBox.range_changed"><code class="docutils literal notranslate"><span class="pre">HasViewBox.range_changed</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasViewBox.xlim"><code class="docutils literal notranslate"><span class="pre">HasViewBox.xlim</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasViewBox.ylim"><code class="docutils literal notranslate"><span class="pre">HasViewBox.ylim</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ImageItem"><code class="docutils literal notranslate"><span class="pre">ImageItem</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ImageItem.cmap"><code class="docutils literal notranslate"><span class="pre">ImageItem.cmap</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ImageItem.contrast_limits"><code class="docutils literal notranslate"><span class="pre">ImageItem.contrast_limits</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ImageItem.image"><code class="docutils literal notranslate"><span class="pre">ImageItem.image</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ImageItem.lock_contrast_limits"><code class="docutils literal notranslate"><span class="pre">ImageItem.lock_contrast_limits</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ImageItem.scale_bar"><code class="docutils literal notranslate"><span class="pre">ImageItem.scale_bar</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ImageItem.text_overlay"><code class="docutils literal notranslate"><span class="pre">ImageItem.text_overlay</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ImageItem.title"><code class="docutils literal notranslate"><span class="pre">ImageItem.title</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ImageItem.xlabel"><code class="docutils literal notranslate"><span class="pre">ImageItem.xlabel</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ImageItem.ylabel"><code class="docutils literal notranslate"><span class="pre">ImageItem.ylabel</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.LayerList"><code class="docutils literal notranslate"><span class="pre">LayerList</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.LayerList.append"><code class="docutils literal notranslate"><span class="pre">LayerList.append()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.LayerList.clear"><code class="docutils literal notranslate"><span class="pre">LayerList.clear()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.LayerList.insert"><code class="docutils literal notranslate"><span class="pre">LayerList.insert()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.LayerList.move"><code class="docutils literal notranslate"><span class="pre">LayerList.move()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.LayerList.swap"><code class="docutils literal notranslate"><span class="pre">LayerList.swap()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.PlotItem"><code class="docutils literal notranslate"><span class="pre">PlotItem</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.PlotItem.legend"><code class="docutils literal notranslate"><span class="pre">PlotItem.legend</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.PlotItem.region"><code class="docutils literal notranslate"><span class="pre">PlotItem.region</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.PlotItem.show_grid"><code class="docutils literal notranslate"><span class="pre">PlotItem.show_grid()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.PlotItem.title"><code class="docutils literal notranslate"><span class="pre">PlotItem.title</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.PlotItem.xlabel"><code class="docutils literal notranslate"><span class="pre">PlotItem.xlabel</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.PlotItem.ylabel"><code class="docutils literal notranslate"><span class="pre">PlotItem.ylabel</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.Qt2YPlotCanvas"><code class="docutils literal notranslate"><span class="pre">Qt2YPlotCanvas</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.Qt2YPlotCanvas.updateViews"><code class="docutils literal notranslate"><span class="pre">Qt2YPlotCanvas.updateViews()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtImageCanvas"><code class="docutils literal notranslate"><span class="pre">QtImageCanvas</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtImageCanvas.background_color"><code class="docutils literal notranslate"><span class="pre">QtImageCanvas.background_color</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtMultiImageCanvas"><code class="docutils literal notranslate"><span class="pre">QtMultiImageCanvas</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtMultiPlotCanvas"><code class="docutils literal notranslate"><span class="pre">QtMultiPlotCanvas</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtPlotCanvas"><code class="docutils literal notranslate"><span class="pre">QtPlotCanvas</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.SignalCompat"><code class="docutils literal notranslate"><span class="pre">SignalCompat</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.SignalCompat.append"><code class="docutils literal notranslate"><span class="pre">SignalCompat.append()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.SimpleViewBox"><code class="docutils literal notranslate"><span class="pre">SimpleViewBox</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ViewBoxExt"><code class="docutils literal notranslate"><span class="pre">ViewBoxExt</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ViewBoxExt.hoverEvent"><code class="docutils literal notranslate"><span class="pre">ViewBoxExt.hoverEvent()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#module-magicclass.ext.pyqtgraph">Module contents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.Qt2YPlotCanvas"><code class="docutils literal notranslate"><span class="pre">Qt2YPlotCanvas</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.Qt2YPlotCanvas.updateViews"><code class="docutils literal notranslate"><span class="pre">Qt2YPlotCanvas.updateViews()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.QtImageCanvas"><code class="docutils literal notranslate"><span class="pre">QtImageCanvas</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.QtImageCanvas.background_color"><code class="docutils literal notranslate"><span class="pre">QtImageCanvas.background_color</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.QtMultiImageCanvas"><code class="docutils literal notranslate"><span class="pre">QtMultiImageCanvas</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.QtMultiPlotCanvas"><code class="docutils literal notranslate"><span class="pre">QtMultiPlotCanvas</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.QtPlotCanvas"><code class="docutils literal notranslate"><span class="pre">QtPlotCanvas</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#module-magicclass.ext.pyqtgraph.components">magicclass.ext.pyqtgraph.components module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#module-magicclass.ext.pyqtgraph.graph_items">magicclass.ext.pyqtgraph.graph_items module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#module-magicclass.ext.pyqtgraph.mouse_event">magicclass.ext.pyqtgraph.mouse_event module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#module-magicclass.ext.pyqtgraph.plot_api">magicclass.ext.pyqtgraph.plot_api module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#module-magicclass.ext.pyqtgraph.widgets">magicclass.ext.pyqtgraph.widgets module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.pyqtgraph.html#module-magicclass.ext.pyqtgraph">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="magicclass.ext.qtconsole.html">magicclass.ext.qtconsole package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.ext.qtconsole.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.qtconsole.html#module-magicclass.ext.qtconsole.widgets">magicclass.ext.qtconsole.widgets module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.qtconsole.html#magicclass.ext.qtconsole.widgets.QtConsole"><code class="docutils literal notranslate"><span class="pre">QtConsole</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.qtconsole.html#magicclass.ext.qtconsole.widgets.QtConsole.execute"><code class="docutils literal notranslate"><span class="pre">QtConsole.execute()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.qtconsole.html#magicclass.ext.qtconsole.widgets.QtConsole.executed"><code class="docutils literal notranslate"><span class="pre">QtConsole.executed</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.qtconsole.html#magicclass.ext.qtconsole.widgets.QtConsole.update_console"><code class="docutils literal notranslate"><span class="pre">QtConsole.update_console()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.qtconsole.html#magicclass.ext.qtconsole.widgets.QtConsole.value"><code class="docutils literal notranslate"><span class="pre">QtConsole.value</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.qtconsole.html#module-magicclass.ext.qtconsole">Module contents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.qtconsole.html#magicclass.ext.qtconsole.QtConsole"><code class="docutils literal notranslate"><span class="pre">QtConsole</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.qtconsole.html#magicclass.ext.qtconsole.QtConsole.central_widget"><code class="docutils literal notranslate"><span class="pre">QtConsole.central_widget</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.qtconsole.html#magicclass.ext.qtconsole.QtConsole.execute"><code class="docutils literal notranslate"><span class="pre">QtConsole.execute()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.qtconsole.html#magicclass.ext.qtconsole.QtConsole.executed"><code class="docutils literal notranslate"><span class="pre">QtConsole.executed</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.qtconsole.html#magicclass.ext.qtconsole.QtConsole.name"><code class="docutils literal notranslate"><span class="pre">QtConsole.name</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.qtconsole.html#magicclass.ext.qtconsole.QtConsole.update_console"><code class="docutils literal notranslate"><span class="pre">QtConsole.update_console()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.qtconsole.html#magicclass.ext.qtconsole.QtConsole.value"><code class="docutils literal notranslate"><span class="pre">QtConsole.value</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.qtconsole.html#module-magicclass.ext.qtconsole.widgets">magicclass.ext.qtconsole.widgets module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.qtconsole.html#module-magicclass.ext.qtconsole">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="magicclass.ext.vispy.html">magicclass.ext.vispy package</a><ul>
@@ -765,347 +187,30 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vispy.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy.camera">magicclass.ext.vispy.camera module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.camera.Camera"><code class="docutils literal notranslate"><span class="pre">Camera</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.camera.Camera.fov"><code class="docutils literal notranslate"><span class="pre">Camera.fov</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.camera.Camera.scale"><code class="docutils literal notranslate"><span class="pre">Camera.scale</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.camera.Camera.center"><code class="docutils literal notranslate"><span class="pre">Camera.center</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.camera.Camera.angles"><code class="docutils literal notranslate"><span class="pre">Camera.angles</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#id0"><code class="docutils literal notranslate"><span class="pre">Camera.angles</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#id1"><code class="docutils literal notranslate"><span class="pre">Camera.center</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#id2"><code class="docutils literal notranslate"><span class="pre">Camera.fov</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#id3"><code class="docutils literal notranslate"><span class="pre">Camera.scale</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.camera.EulerAngleEdit"><code class="docutils literal notranslate"><span class="pre">EulerAngleEdit</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.camera.EulerAngleEdit.value"><code class="docutils literal notranslate"><span class="pre">EulerAngleEdit.value</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.camera.VispyCamera"><code class="docutils literal notranslate"><span class="pre">VispyCamera</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.camera.VispyCamera.changed"><code class="docutils literal notranslate"><span class="pre">VispyCamera.changed</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.camera.VispyCamera.view_changed"><code class="docutils literal notranslate"><span class="pre">VispyCamera.view_changed()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.camera.VispyCamera.viewbox_key_event"><code class="docutils literal notranslate"><span class="pre">VispyCamera.viewbox_key_event()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.camera.quaternion2euler"><code class="docutils literal notranslate"><span class="pre">quaternion2euler()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy.layer2d">magicclass.ext.vispy.layer2d module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer2d.Curve"><code class="docutils literal notranslate"><span class="pre">Curve</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer2d.Histogram"><code class="docutils literal notranslate"><span class="pre">Histogram</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer2d.Histogram.color"><code class="docutils literal notranslate"><span class="pre">Histogram.color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer2d.Histogram.edge_color"><code class="docutils literal notranslate"><span class="pre">Histogram.edge_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer2d.Histogram.face_color"><code class="docutils literal notranslate"><span class="pre">Histogram.face_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer2d.Histogram.name"><code class="docutils literal notranslate"><span class="pre">Histogram.name</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer2d.PlotDataLayer"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer2d.PlotDataLayer.add"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.add()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer2d.PlotDataLayer.color"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer2d.PlotDataLayer.data"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer2d.PlotDataLayer.edge_color"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.edge_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer2d.PlotDataLayer.face_color"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.face_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer2d.PlotDataLayer.name"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.name</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer2d.PlotDataLayer.ndata"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.ndata</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer2d.PlotDataLayer.remove"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.remove()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer2d.PlotDataLayer.xdata"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.xdata</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer2d.PlotDataLayer.ydata"><code class="docutils literal notranslate"><span class="pre">PlotDataLayer.ydata</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer2d.Scatter"><code class="docutils literal notranslate"><span class="pre">Scatter</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy.layer3d">magicclass.ext.vispy.layer3d module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Arrows3D"><code class="docutils literal notranslate"><span class="pre">Arrows3D</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Arrows3D.arrow_size"><code class="docutils literal notranslate"><span class="pre">Arrows3D.arrow_size</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Arrows3D.arrow_type"><code class="docutils literal notranslate"><span class="pre">Arrows3D.arrow_type</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Arrows3D.blending"><code class="docutils literal notranslate"><span class="pre">Arrows3D.blending</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Arrows3D.color"><code class="docutils literal notranslate"><span class="pre">Arrows3D.color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Arrows3D.data"><code class="docutils literal notranslate"><span class="pre">Arrows3D.data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Arrows3D.width"><code class="docutils literal notranslate"><span class="pre">Arrows3D.width</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Curve3D"><code class="docutils literal notranslate"><span class="pre">Curve3D</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Curve3D.blending"><code class="docutils literal notranslate"><span class="pre">Curve3D.blending</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Curve3D.color"><code class="docutils literal notranslate"><span class="pre">Curve3D.color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Curve3D.data"><code class="docutils literal notranslate"><span class="pre">Curve3D.data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Curve3D.width"><code class="docutils literal notranslate"><span class="pre">Curve3D.width</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Image"><code class="docutils literal notranslate"><span class="pre">Image</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Image.INTERPOLATIONS"><code class="docutils literal notranslate"><span class="pre">Image.INTERPOLATIONS</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Image.RENDERINGS"><code class="docutils literal notranslate"><span class="pre">Image.RENDERINGS</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Image.attenuation"><code class="docutils literal notranslate"><span class="pre">Image.attenuation</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Image.contrast_limits"><code class="docutils literal notranslate"><span class="pre">Image.contrast_limits</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Image.data"><code class="docutils literal notranslate"><span class="pre">Image.data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Image.gamma"><code class="docutils literal notranslate"><span class="pre">Image.gamma</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Image.interpolation"><code class="docutils literal notranslate"><span class="pre">Image.interpolation</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Image.iso_threshold"><code class="docutils literal notranslate"><span class="pre">Image.iso_threshold</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Image.rendering"><code class="docutils literal notranslate"><span class="pre">Image.rendering</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.IsoSurface"><code class="docutils literal notranslate"><span class="pre">IsoSurface</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.IsoSurface.contrast_limits"><code class="docutils literal notranslate"><span class="pre">IsoSurface.contrast_limits</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.IsoSurface.data"><code class="docutils literal notranslate"><span class="pre">IsoSurface.data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.IsoSurface.edge_color"><code class="docutils literal notranslate"><span class="pre">IsoSurface.edge_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.IsoSurface.edge_width"><code class="docutils literal notranslate"><span class="pre">IsoSurface.edge_width</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.IsoSurface.face_color"><code class="docutils literal notranslate"><span class="pre">IsoSurface.face_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.IsoSurface.iso_threshold"><code class="docutils literal notranslate"><span class="pre">IsoSurface.iso_threshold</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.IsoSurface.shading"><code class="docutils literal notranslate"><span class="pre">IsoSurface.shading</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Points3D"><code class="docutils literal notranslate"><span class="pre">Points3D</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Points3D.blending"><code class="docutils literal notranslate"><span class="pre">Points3D.blending</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Points3D.data"><code class="docutils literal notranslate"><span class="pre">Points3D.data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Points3D.edge_color"><code class="docutils literal notranslate"><span class="pre">Points3D.edge_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Points3D.edge_width"><code class="docutils literal notranslate"><span class="pre">Points3D.edge_width</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Points3D.face_color"><code class="docutils literal notranslate"><span class="pre">Points3D.face_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Points3D.size"><code class="docutils literal notranslate"><span class="pre">Points3D.size</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Points3D.spherical"><code class="docutils literal notranslate"><span class="pre">Points3D.spherical</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Surface"><code class="docutils literal notranslate"><span class="pre">Surface</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Surface.data"><code class="docutils literal notranslate"><span class="pre">Surface.data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Surface.edge_color"><code class="docutils literal notranslate"><span class="pre">Surface.edge_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Surface.edge_width"><code class="docutils literal notranslate"><span class="pre">Surface.edge_width</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Surface.face_color"><code class="docutils literal notranslate"><span class="pre">Surface.face_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Surface.shading"><code class="docutils literal notranslate"><span class="pre">Surface.shading</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.SurfaceData"><code class="docutils literal notranslate"><span class="pre">SurfaceData</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.SurfaceData.faces"><code class="docutils literal notranslate"><span class="pre">SurfaceData.faces</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.SurfaceData.values"><code class="docutils literal notranslate"><span class="pre">SurfaceData.values</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.SurfaceData.verts"><code class="docutils literal notranslate"><span class="pre">SurfaceData.verts</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy.layerlist">magicclass.ext.vispy.layerlist module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layerlist.LayerList"><code class="docutils literal notranslate"><span class="pre">LayerList</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.layerlist.LayerList.events"><code class="docutils literal notranslate"><span class="pre">LayerList.events</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy.plot_api">magicclass.ext.vispy.plot_api module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.plot_api.figure"><code class="docutils literal notranslate"><span class="pre">figure()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.plot_api.gca"><code class="docutils literal notranslate"><span class="pre">gca()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.plot_api.gcf"><code class="docutils literal notranslate"><span class="pre">gcf()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.plot_api.hist"><code class="docutils literal notranslate"><span class="pre">hist()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.plot_api.imshow"><code class="docutils literal notranslate"><span class="pre">imshow()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.plot_api.plot"><code class="docutils literal notranslate"><span class="pre">plot()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.plot_api.scatter"><code class="docutils literal notranslate"><span class="pre">scatter()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.plot_api.show"><code class="docutils literal notranslate"><span class="pre">show()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.plot_api.subplot"><code class="docutils literal notranslate"><span class="pre">subplot()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy.widgets2d">magicclass.ext.vispy.widgets2d module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.Has2DViewBox"><code class="docutils literal notranslate"><span class="pre">Has2DViewBox</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.Has2DViewBox.add_curve"><code class="docutils literal notranslate"><span class="pre">Has2DViewBox.add_curve()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.Has2DViewBox.add_hist"><code class="docutils literal notranslate"><span class="pre">Has2DViewBox.add_hist()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.Has2DViewBox.add_scatter"><code class="docutils literal notranslate"><span class="pre">Has2DViewBox.add_scatter()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.Has2DViewBox.xrange"><code class="docutils literal notranslate"><span class="pre">Has2DViewBox.xrange</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.Has2DViewBox.yrange"><code class="docutils literal notranslate"><span class="pre">Has2DViewBox.yrange</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.ImageItem"><code class="docutils literal notranslate"><span class="pre">ImageItem</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.ImageItem.cmap"><code class="docutils literal notranslate"><span class="pre">ImageItem.cmap</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.ImageItem.contrast_limits"><code class="docutils literal notranslate"><span class="pre">ImageItem.contrast_limits</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.ImageItem.image"><code class="docutils literal notranslate"><span class="pre">ImageItem.image</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.ImageItem.title"><code class="docutils literal notranslate"><span class="pre">ImageItem.title</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.ImageItem.xlabel"><code class="docutils literal notranslate"><span class="pre">ImageItem.xlabel</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.ImageItem.ylabel"><code class="docutils literal notranslate"><span class="pre">ImageItem.ylabel</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.PlotItem"><code class="docutils literal notranslate"><span class="pre">PlotItem</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.PlotItem.title"><code class="docutils literal notranslate"><span class="pre">PlotItem.title</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.PlotItem.xlabel"><code class="docutils literal notranslate"><span class="pre">PlotItem.xlabel</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.PlotItem.ylabel"><code class="docutils literal notranslate"><span class="pre">PlotItem.ylabel</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.VispyImageCanvas"><code class="docutils literal notranslate"><span class="pre">VispyImageCanvas</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.VispyMultiImageCanvas"><code class="docutils literal notranslate"><span class="pre">VispyMultiImageCanvas</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.VispyMultiPlotCanvas"><code class="docutils literal notranslate"><span class="pre">VispyMultiPlotCanvas</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.VispyPlotCanvas"><code class="docutils literal notranslate"><span class="pre">VispyPlotCanvas</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy.widgets3d">magicclass.ext.vispy.widgets3d module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Has3DViewBox"><code class="docutils literal notranslate"><span class="pre">Has3DViewBox</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_arrows"><code class="docutils literal notranslate"><span class="pre">Has3DViewBox.add_arrows()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_curve"><code class="docutils literal notranslate"><span class="pre">Has3DViewBox.add_curve()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_image"><code class="docutils literal notranslate"><span class="pre">Has3DViewBox.add_image()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_isosurface"><code class="docutils literal notranslate"><span class="pre">Has3DViewBox.add_isosurface()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_layer"><code class="docutils literal notranslate"><span class="pre">Has3DViewBox.add_layer()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_points"><code class="docutils literal notranslate"><span class="pre">Has3DViewBox.add_points()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_surface"><code class="docutils literal notranslate"><span class="pre">Has3DViewBox.add_surface()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Has3DViewBox.camera"><code class="docutils literal notranslate"><span class="pre">Has3DViewBox.camera</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Has3DViewBox.layers"><code class="docutils literal notranslate"><span class="pre">Has3DViewBox.layers</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Vispy3DCanvas"><code class="docutils literal notranslate"><span class="pre">Vispy3DCanvas</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.VispyMulti3DCanvas"><code class="docutils literal notranslate"><span class="pre">VispyMulti3DCanvas</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy">Module contents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.Vispy3DCanvas"><code class="docutils literal notranslate"><span class="pre">Vispy3DCanvas</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.VispyImageCanvas"><code class="docutils literal notranslate"><span class="pre">VispyImageCanvas</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.VispyMulti3DCanvas"><code class="docutils literal notranslate"><span class="pre">VispyMulti3DCanvas</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.VispyMultiImageCanvas"><code class="docutils literal notranslate"><span class="pre">VispyMultiImageCanvas</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.VispyMultiPlotCanvas"><code class="docutils literal notranslate"><span class="pre">VispyMultiPlotCanvas</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html#magicclass.ext.vispy.VispyPlotCanvas"><code class="docutils literal notranslate"><span class="pre">VispyPlotCanvas</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy.camera">magicclass.ext.vispy.camera module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy.layer2d">magicclass.ext.vispy.layer2d module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy.layer3d">magicclass.ext.vispy.layer3d module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy.layerlist">magicclass.ext.vispy.layerlist module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy.plot_api">magicclass.ext.vispy.plot_api module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy.widgets2d">magicclass.ext.vispy.widgets2d module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy.widgets3d">magicclass.ext.vispy.widgets3d module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="magicclass.ext.vtk.html">magicclass.ext.vtk package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vtk.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vtk.html#module-magicclass.ext.vtk.components">magicclass.ext.vtk.components module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Arrow"><code class="docutils literal notranslate"><span class="pre">Arrow</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Arrows"><code class="docutils literal notranslate"><span class="pre">Arrows</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Box"><code class="docutils literal notranslate"><span class="pre">Box</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.CSpline"><code class="docutils literal notranslate"><span class="pre">CSpline</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Circle"><code class="docutils literal notranslate"><span class="pre">Circle</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Cone"><code class="docutils literal notranslate"><span class="pre">Cone</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Cube"><code class="docutils literal notranslate"><span class="pre">Cube</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Cylinder"><code class="docutils literal notranslate"><span class="pre">Cylinder</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Disc"><code class="docutils literal notranslate"><span class="pre">Disc</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Earth"><code class="docutils literal notranslate"><span class="pre">Earth</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Ellipsoid"><code class="docutils literal notranslate"><span class="pre">Ellipsoid</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.KSpline"><code class="docutils literal notranslate"><span class="pre">KSpline</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Mesh"><code class="docutils literal notranslate"><span class="pre">Mesh</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Mesh.backface_color"><code class="docutils literal notranslate"><span class="pre">Mesh.backface_color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Mesh.backface_culling"><code class="docutils literal notranslate"><span class="pre">Mesh.backface_culling</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Mesh.color"><code class="docutils literal notranslate"><span class="pre">Mesh.color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Mesh.frontface_culling"><code class="docutils literal notranslate"><span class="pre">Mesh.frontface_culling</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Mesh.lines_as_tubes"><code class="docutils literal notranslate"><span class="pre">Mesh.lines_as_tubes</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Mesh.linewidth"><code class="docutils literal notranslate"><span class="pre">Mesh.linewidth</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Mesh.occlusion"><code class="docutils literal notranslate"><span class="pre">Mesh.occlusion</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Mesh.representation"><code class="docutils literal notranslate"><span class="pre">Mesh.representation</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Mesh.scale"><code class="docutils literal notranslate"><span class="pre">Mesh.scale</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Path"><code class="docutils literal notranslate"><span class="pre">Path</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Points"><code class="docutils literal notranslate"><span class="pre">Points</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Points.color"><code class="docutils literal notranslate"><span class="pre">Points.color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Points.occlusion"><code class="docutils literal notranslate"><span class="pre">Points.occlusion</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Points.scale"><code class="docutils literal notranslate"><span class="pre">Points.scale</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Points.size"><code class="docutils literal notranslate"><span class="pre">Points.size</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Points.spherical"><code class="docutils literal notranslate"><span class="pre">Points.spherical</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Ribbon"><code class="docutils literal notranslate"><span class="pre">Ribbon</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Sphere"><code class="docutils literal notranslate"><span class="pre">Sphere</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Spheres"><code class="docutils literal notranslate"><span class="pre">Spheres</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Spline"><code class="docutils literal notranslate"><span class="pre">Spline</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Spring"><code class="docutils literal notranslate"><span class="pre">Spring</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Text"><code class="docutils literal notranslate"><span class="pre">Text</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.Tube"><code class="docutils literal notranslate"><span class="pre">Tube</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.VtkComponent"><code class="docutils literal notranslate"><span class="pre">VtkComponent</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.VtkComponent.visible"><code class="docutils literal notranslate"><span class="pre">VtkComponent.visible</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.components.get_object_type"><code class="docutils literal notranslate"><span class="pre">get_object_type()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vtk.html#module-magicclass.ext.vtk.const">magicclass.ext.vtk.const module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.AxesMode"><code class="docutils literal notranslate"><span class="pre">AxesMode</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.AxesMode.box"><code class="docutils literal notranslate"><span class="pre">AxesMode.box</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.AxesMode.cartesian"><code class="docutils literal notranslate"><span class="pre">AxesMode.cartesian</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.AxesMode.cartesian_pos"><code class="docutils literal notranslate"><span class="pre">AxesMode.cartesian_pos</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.AxesMode.circle"><code class="docutils literal notranslate"><span class="pre">AxesMode.circle</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.AxesMode.corner"><code class="docutils literal notranslate"><span class="pre">AxesMode.corner</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.AxesMode.cube"><code class="docutils literal notranslate"><span class="pre">AxesMode.cube</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.AxesMode.grid"><code class="docutils literal notranslate"><span class="pre">AxesMode.grid</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.AxesMode.none"><code class="docutils literal notranslate"><span class="pre">AxesMode.none</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.AxesMode.polar"><code class="docutils literal notranslate"><span class="pre">AxesMode.polar</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.AxesMode.ruler"><code class="docutils literal notranslate"><span class="pre">AxesMode.ruler</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.AxesMode.ruler1d"><code class="docutils literal notranslate"><span class="pre">AxesMode.ruler1d</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.AxesMode.ruler_axes"><code class="docutils literal notranslate"><span class="pre">AxesMode.ruler_axes</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.AxesMode.triad"><code class="docutils literal notranslate"><span class="pre">AxesMode.triad</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.AxesMode.wall"><code class="docutils literal notranslate"><span class="pre">AxesMode.wall</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.Mode"><code class="docutils literal notranslate"><span class="pre">Mode</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.Mode.iso"><code class="docutils literal notranslate"><span class="pre">Mode.iso</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.Mode.lego"><code class="docutils literal notranslate"><span class="pre">Mode.lego</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.Mode.mesh"><code class="docutils literal notranslate"><span class="pre">Mode.mesh</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.Mode.volume"><code class="docutils literal notranslate"><span class="pre">Mode.volume</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.Mode.wireframe"><code class="docutils literal notranslate"><span class="pre">Mode.wireframe</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.Rendering"><code class="docutils literal notranslate"><span class="pre">Rendering</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.Rendering.additive"><code class="docutils literal notranslate"><span class="pre">Rendering.additive</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.Rendering.average"><code class="docutils literal notranslate"><span class="pre">Rendering.average</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.Rendering.composite"><code class="docutils literal notranslate"><span class="pre">Rendering.composite</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.Rendering.minip"><code class="docutils literal notranslate"><span class="pre">Rendering.minip</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.Rendering.mip"><code class="docutils literal notranslate"><span class="pre">Rendering.mip</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.Representation"><code class="docutils literal notranslate"><span class="pre">Representation</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.Representation.points"><code class="docutils literal notranslate"><span class="pre">Representation.points</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.Representation.surface"><code class="docutils literal notranslate"><span class="pre">Representation.surface</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.Representation.wireframe"><code class="docutils literal notranslate"><span class="pre">Representation.wireframe</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.const.StringEnum"><code class="docutils literal notranslate"><span class="pre">StringEnum</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vtk.html#module-magicclass.ext.vtk.volume">magicclass.ext.vtk.volume module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.volume.Volume"><code class="docutils literal notranslate"><span class="pre">Volume</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.volume.Volume.color"><code class="docutils literal notranslate"><span class="pre">Volume.color</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.volume.Volume.contrast_limits"><code class="docutils literal notranslate"><span class="pre">Volume.contrast_limits</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.volume.Volume.data"><code class="docutils literal notranslate"><span class="pre">Volume.data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.volume.Volume.iso_threshold"><code class="docutils literal notranslate"><span class="pre">Volume.iso_threshold</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.volume.Volume.mode"><code class="docutils literal notranslate"><span class="pre">Volume.mode</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.volume.Volume.rendering"><code class="docutils literal notranslate"><span class="pre">Volume.rendering</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.volume.Volume.visible"><code class="docutils literal notranslate"><span class="pre">Volume.visible</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.volume.split_rgba"><code class="docutils literal notranslate"><span class="pre">split_rgba()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vtk.html#module-magicclass.ext.vtk.widgets">magicclass.ext.vtk.widgets module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.LayerList"><code class="docutils literal notranslate"><span class="pre">LayerList</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.LayerList.events"><code class="docutils literal notranslate"><span class="pre">LayerList.events</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.LayerList.parent"><code class="docutils literal notranslate"><span class="pre">LayerList.parent</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.QtVtkCanvas"><code class="docutils literal notranslate"><span class="pre">QtVtkCanvas</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.QtVtkCanvas.closeEvent"><code class="docutils literal notranslate"><span class="pre">QtVtkCanvas.closeEvent()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.VtkCanvas"><code class="docutils literal notranslate"><span class="pre">VtkCanvas</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.VtkCanvas.add_object"><code class="docutils literal notranslate"><span class="pre">VtkCanvas.add_object()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.VtkCanvas.add_points"><code class="docutils literal notranslate"><span class="pre">VtkCanvas.add_points()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.VtkCanvas.add_surface"><code class="docutils literal notranslate"><span class="pre">VtkCanvas.add_surface()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.VtkCanvas.add_volume"><code class="docutils literal notranslate"><span class="pre">VtkCanvas.add_volume()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.VtkCanvas.axes"><code class="docutils literal notranslate"><span class="pre">VtkCanvas.axes</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.VtkCanvas.layers"><code class="docutils literal notranslate"><span class="pre">VtkCanvas.layers</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.VtkCanvas.screenshot"><code class="docutils literal notranslate"><span class="pre">VtkCanvas.screenshot()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vtk.html#module-magicclass.ext.vtk">Module contents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.VtkCanvas"><code class="docutils literal notranslate"><span class="pre">VtkCanvas</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.VtkCanvas.add_object"><code class="docutils literal notranslate"><span class="pre">VtkCanvas.add_object()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.VtkCanvas.add_points"><code class="docutils literal notranslate"><span class="pre">VtkCanvas.add_points()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.VtkCanvas.add_surface"><code class="docutils literal notranslate"><span class="pre">VtkCanvas.add_surface()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.VtkCanvas.add_volume"><code class="docutils literal notranslate"><span class="pre">VtkCanvas.add_volume()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.VtkCanvas.axes"><code class="docutils literal notranslate"><span class="pre">VtkCanvas.axes</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.VtkCanvas.layers"><code class="docutils literal notranslate"><span class="pre">VtkCanvas.layers</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vtk.html#magicclass.ext.vtk.VtkCanvas.screenshot"><code class="docutils literal notranslate"><span class="pre">VtkCanvas.screenshot()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vtk.html#module-magicclass.ext.vtk.components">magicclass.ext.vtk.components module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vtk.html#module-magicclass.ext.vtk.const">magicclass.ext.vtk.const module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vtk.html#module-magicclass.ext.vtk.volume">magicclass.ext.vtk.volume module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vtk.html#module-magicclass.ext.vtk.widgets">magicclass.ext.vtk.widgets module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.ext.vtk.html#module-magicclass.ext.vtk">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </section>
 <section id="module-magicclass.ext">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-magicclass.ext" title="Permalink to this heading">¶</a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-magicclass.ext" title="Permalink to this headline">¶</a></h2>
 <p>magic-class widgets using external packages.</p>
 </section>
 </section>
