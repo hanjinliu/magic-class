@@ -67,6 +67,8 @@ class OptionalWidget(Container):
         self._checkbox = CheckBox(text=text, value=True)
         # NOTE: Optional[Literal[...]] may add a `choices` argument...
         kwargs.pop("choices", None)
+        # NOTE: Using Optional with Annotated
+        kwargs.pop("bind")
 
         if inner_widget is None:
             annot = kwargs.get("annotation", None)

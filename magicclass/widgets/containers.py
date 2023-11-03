@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Sequence, TypeVar
+from typing import Any, Callable, Sequence, TypeVar, TYPE_CHECKING
 import warnings
 from qtpy import QtWidgets as QtW, QtCore, QtGui
 from qtpy.QtCore import Qt, QSize
@@ -16,6 +16,10 @@ from magicgui.backends._qtpy.widgets import (
 from magicgui.widgets.bases import ContainerWidget
 
 from .utils import merge_super_sigs
+
+if TYPE_CHECKING:
+    from typing import TypeGuard
+    from magicclass._gui import BaseGui
 
 # Container variations that is useful in making GUI designs better.
 
@@ -133,7 +137,10 @@ class _Tab(ContainerBase):
             tabname = widget._label_widget.value
         else:
             tabname = widget.name or widget.label
-        self._tab_widget.insertTab(position, widget.native, tabname)
+        idx = self._tab_widget.insertTab(position, widget.native, tabname)
+        if _is_magicclass(widget):
+            qicon = widget.icon.get_qicon(widget)
+            self._tab_widget.setTabIcon(idx, qicon)
 
     def _mgui_remove_widget(self, widget: Widget):
         for i in range(self._tab_widget.count()):
@@ -485,7 +492,12 @@ class _SubWindowsContainer(ContainerBase):
         # position does not have any effect
         if _is_unwrapped(widget):
             return
-        self._mdiarea.addSubWindow(widget.native, self._NoCloseButtonFlag)
+
+        sub = self._mdiarea.addSubWindow(widget.native, self._NoCloseButtonFlag)
+        if _is_magicclass(widget):
+            # FIXME: icon is not shown in the sub window title bar.
+            qicon = widget.icon.get_qicon(widget)
+            sub.setWindowIcon(qicon)
 
     def _mgui_remove_widget(self, widget: Widget):
         self._mdiarea.removeSubWindow(widget.native)
@@ -808,3 +820,9 @@ class ResizableContainer(ContainerWidget[_W]):
     @y_enabled.setter
     def y_enabled(self, value: bool):
         self._widget._size_grip._y_resizable = value
+
+
+def _is_magicclass(widget) -> TypeGuard[BaseGui]:
+    from magicclass._gui import BaseGui
+
+    return isinstance(widget, BaseGui)
