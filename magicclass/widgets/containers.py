@@ -138,7 +138,7 @@ class _Tab(ContainerBase):
         else:
             tabname = widget.name or widget.label
         idx = self._tab_widget.insertTab(position, widget.native, tabname)
-        if _is_magicclass(widget):
+        if _is_magicclass(widget) and widget.icon is not None:
             qicon = widget.icon.get_qicon(widget)
             self._tab_widget.setTabIcon(idx, qicon)
 
@@ -494,7 +494,7 @@ class _SubWindowsContainer(ContainerBase):
             return
 
         sub = self._mdiarea.addSubWindow(widget.native, self._NoCloseButtonFlag)
-        if _is_magicclass(widget):
+        if _is_magicclass(widget) and widget.icon is not None:
             # FIXME: icon is not shown in the sub window title bar.
             qicon = widget.icon.get_qicon(widget)
             sub.setWindowIcon(qicon)

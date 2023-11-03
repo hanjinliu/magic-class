@@ -68,7 +68,7 @@ class OptionalWidget(Container):
         # NOTE: Optional[Literal[...]] may add a `choices` argument...
         kwargs.pop("choices", None)
         # NOTE: Using Optional with Annotated
-        kwargs.pop("bind")
+        kwargs.pop("bind", None)
 
         if inner_widget is None:
             annot = kwargs.get("annotation", None)
