@@ -147,7 +147,7 @@ class ToolBarGui(ContainerLikeGui):
                         tb = ToolButtonPlus(widget.name, parent=self.native)
                         tb.set_menu(widget.native, widget.icon)
                         widget.native.setParent(tb.native, widget.native.windowFlags())
-                        tb.tooltip = widget.__doc__
+                        tb.tooltip = Tooltips(widget).desc
                         widget = WidgetAction(tb)
 
                     elif isinstance(widget, ContextMenuGui):
@@ -157,7 +157,7 @@ class ToolBarGui(ContainerLikeGui):
 
                     elif isinstance(widget, ToolBarGui):
                         tb = ToolButtonPlus(widget.name, parent=self.native)
-                        tb.tooltip = widget.__doc__
+                        tb.tooltip = Tooltips(widget).desc
                         qmenu = QMenu(self.native)
                         waction = QWidgetAction(qmenu)
                         waction.setDefaultWidget(widget.native)
