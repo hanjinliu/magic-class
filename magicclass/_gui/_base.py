@@ -80,7 +80,7 @@ from magicclass.utils import (
     eval_attribute,
 )
 from magicclass.widgets import Separator, FreeWidget
-from magicclass.fields import MagicField, field, vfield
+from magicclass.fields import MagicField, field, vfield, FieldGroup
 from magicclass.signature import (
     ConfirmDict,
     MagicMethodSignature,
@@ -709,6 +709,18 @@ class MagicTemplate(
                 )
             first_widget.bind(self)  # bind self to the first argument
 
+        elif isinstance(attr, Widget) and not isinstance(attr, FieldGroup):
+            warnings.warn(
+                f"Widget {name!r} is given as a class attribute. This is not "
+                "recommended, as it is shared between all the instances. "
+                "Please use a field or vfield instead.",
+                UserWarning,
+                stacklevel=2,
+            )
+            widget = attr
+
+        elif isinstance(attr, str) and attr == "separator":
+            widget = Separator()
         else:
             # convert class method into instance method
             widget = getattr(self, name, None)

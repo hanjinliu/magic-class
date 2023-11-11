@@ -97,7 +97,7 @@ def test_separator():
             def m1(self): ...
             sep0 = field(Separator)
             i = field(int)
-            sep1 = Separator()
+            sep1 = "separator"
             def m2(self, path: Path): ...
 
     ui = A()
@@ -111,7 +111,7 @@ def test_separator():
             def m1(self): ...
             sep0 = field(Separator)
             i = field(int)
-            sep1 = Separator()
+            sep1 = "separator"
             def m2(self, path: Path): ...
 
     ui = A()
