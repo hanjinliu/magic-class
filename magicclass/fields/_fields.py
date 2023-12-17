@@ -525,14 +525,14 @@ class MagicField(_FieldObject, Generic[_W]):
         ----------
         func : callable
             The callback function
-        timeout : float, default is 0.0
+        timeout : float, default 0.0
             Timeout second. All the callback called within this time will be
             aborted. In other words, callback will only be called every
             ``timeout`` seconds.
-        abort_limit : float, default is inf
+        abort_limit : float, default inf
             If the callback is aborted more than ``abort_limit`` seconds, it
             will not be aborted even after `timeout` seconds for the next call.
-        ignore_errors : bool, default is False
+        ignore_errors : bool, default False
             If true, error will be ignored so that it does not disturb users.
         """
         from magicclass.utils import thread_worker
@@ -582,6 +582,8 @@ class MagicField(_FieldObject, Generic[_W]):
                                 ):
                                     # if j-th call turned out to be out of date,
                                     # don't run anymore.
+                                    if conn.abort_begin < 0:
+                                        conn.abort_begin = now
                                     return thread_worker.callback()
                                 else:
                                     yield next_value
@@ -590,6 +592,8 @@ class MagicField(_FieldObject, Generic[_W]):
                     if _last_run_copy < conn.last_run and not aborted_many_times:
                         # if j-th call turned out to be out of date,
                         # don't run anymore.
+                        if conn.abort_begin < 0:
+                            conn.abort_begin = now
                         return thread_worker.callback()
                 except Exception as exc:
                     conn.quit_worker()
@@ -646,7 +650,7 @@ class MagicField(_FieldObject, Generic[_W]):
             Method of parent class.
         template : Callable, optional
             Function template for signature.
-        copy: bool, default is False
+        copy: bool, default False
             If true, wrapped method is still enabled.
 
         Returns
@@ -920,7 +924,7 @@ def field(
 
     Parameters
     ----------
-    obj : Any, default is Undefined
+    obj : Any, default Undefined
         Reference to determine what type of widget will be created. If Widget
         subclass is given, it will be used as is. If other type of class is given,
         it will used as type annotation. If an object (not type) is given, it will
@@ -934,7 +938,7 @@ def field(
     options : dict, optional
         Widget options. This parameter will be passed to the ``options`` keyword
         argument of ``create_widget``.
-    record : bool, default is True
+    record : bool, default True
         A magic-class specific parameter. If true, record value changes as macro.
     location : magic-class, optional
         Location to put the widget.
@@ -1067,7 +1071,7 @@ def vfield(
 
     Parameters
     ----------
-    obj : Any, default is Undefined
+    obj : Any, default Undefined
         Reference to determine what type of widget will be created. If Widget
         subclass is given, it will be used as is. If other type of class is given,
         it will used as type annotation. If an object (not type) is given, it will
@@ -1081,7 +1085,7 @@ def vfield(
     options : dict, optional
         Widget options. This parameter will be passed to the ``options`` keyword
         argument of ``create_widget``.
-    record : bool, default is True
+    record : bool, default True
         A magic-class specific parameter. If true, record value changes as macro.
 
     Returns
@@ -1178,7 +1182,7 @@ def _is_magicclass(obj: Any):
 class AsyncConnection:
     def __init__(self, timeout: float, abort_limit: float, ignore_errors: bool = False):
         self.running_worker: WorkerBase | None = None  # the running worker
-        self.last_run = 0.0  # last time the worker was started
+        self.last_run = -1.0  # last time the worker was started
         self.last_completed_id = 0.0  # last starting time (= worker ID) that ended
         self.abort_begin = -1.0  # last time the worker started being aborted
         self._timeout = timeout
@@ -1204,75 +1208,3 @@ class AsyncConnection:
     @property
     def abort_requested(self) -> bool:
         return self.running_worker is not None and self.running_worker.abort_requested
-
-
-class AsyncCallback:
-    def __init__(self, func: Callable, conn: AsyncConnection):
-        from magicclass.utils import thread_worker
-
-        self._conn = conn
-        self._func = func
-        self._afunc = thread_worker(
-            func,
-            force_async=True,
-            ignore_errors=conn._ignore_errors,
-        )
-        self._afunc.filter_errors(Aborted)
-        self._empty_callback = thread_worker.callback
-
-    def __call__(self, gui: MagicTemplate, *args, **kwargs):
-        conn = self._conn
-        with conn.lock:
-            now = default_timer()
-            f = self._afunc.__get__(gui)
-            aborted_many_times = conn.is_aborted_many_times(now)
-            if conn.is_timeout(now) and not aborted_many_times:
-                if conn.abort_begin < 0:
-                    conn.abort_begin = now
-                conn.quit_worker()
-                conn.running_worker = f._worker()
-            elif aborted_many_times:
-                conn.abort_begin = -1
-
-            conn.last_run = default_timer()
-            _last_run_copy = conn.last_run
-        # call the original function
-        try:
-            with gui.macro.blocked():
-                out = self._func(gui, *args, **kwargs)
-                if isinstance(out, GeneratorType):
-                    while True:
-                        try:
-                            next_value = next(out)
-                        except StopIteration as exc:
-                            out = exc.value
-                            break
-                        if now < conn.last_completed_id:
-                            # if later function call finished earlier, current call
-                            # should never be run.
-                            return self._empty_callback()
-                        if _last_run_copy < conn.last_run and not aborted_many_times:
-                            # if j-th call turned out to be out of date,
-                            # don't run anymore.
-                            return self._empty_callback()
-                        else:
-                            yield next_value
-            if now < conn.last_completed_id:
-                return self._empty_callback()
-            if _last_run_copy < conn.last_run and not aborted_many_times:
-                # if j-th call turned out to be out of date,
-                # don't run anymore.
-                return self._empty_callback()
-        except Exception as exc:
-            conn.quit_worker()
-            raise exc
-        if not aborted_many_times:
-            if now < conn.last_completed_id:
-                # if j-th call finished after i-th call (i < j),
-                # don't run returned callback.
-                return self._empty_callback()
-        with conn.lock:
-            conn.last_completed_id = now
-            # conn.abort_begin = -1
-        yield self._empty_callback()  # empty callback
-        return out
