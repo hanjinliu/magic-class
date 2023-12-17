@@ -38,6 +38,7 @@ from magicclass.signature import (
     split_annotated_type,
 )
 from magicclass._gui.mgui_ext import Action, WidgetAction
+from magicclass._exceptions import Aborted
 
 if TYPE_CHECKING:
     from typing_extensions import Self, ParamSpec
@@ -609,6 +610,7 @@ class MagicField(_FieldObject, Generic[_W]):
                 force_async=True,
                 ignore_errors=ignore_errors,
             )
+            _afunc.filter_errors(Aborted)
             return self.connect(_afunc)
 
         return _wrapper if func is None else _wrapper(func)
@@ -1174,13 +1176,14 @@ def _is_magicclass(obj: Any):
 
 
 class AsyncConnection:
-    def __init__(self, timeout: float, abort_limit: float):
+    def __init__(self, timeout: float, abort_limit: float, ignore_errors: bool = False):
         self.running_worker: WorkerBase | None = None  # the running worker
         self.last_run = 0.0  # last time the worker was started
         self.last_completed_id = 0.0  # last starting time (= worker ID) that ended
         self.abort_begin = -1.0  # last time the worker started being aborted
         self._timeout = timeout
         self._abort_limit = abort_limit
+        self._ignore_errors = ignore_errors
         self._lock = threading.Lock()
 
     def is_timeout(self, now: float) -> bool:
@@ -1201,3 +1204,75 @@ class AsyncConnection:
     @property
     def abort_requested(self) -> bool:
         return self.running_worker is not None and self.running_worker.abort_requested
+
+
+class AsyncCallback:
+    def __init__(self, func: Callable, conn: AsyncConnection):
+        from magicclass.utils import thread_worker
+
+        self._conn = conn
+        self._func = func
+        self._afunc = thread_worker(
+            func,
+            force_async=True,
+            ignore_errors=conn._ignore_errors,
+        )
+        self._afunc.filter_errors(Aborted)
+        self._empty_callback = thread_worker.callback
+
+    def __call__(self, gui: MagicTemplate, *args, **kwargs):
+        conn = self._conn
+        with conn.lock:
+            now = default_timer()
+            f = self._afunc.__get__(gui)
+            aborted_many_times = conn.is_aborted_many_times(now)
+            if conn.is_timeout(now) and not aborted_many_times:
+                if conn.abort_begin < 0:
+                    conn.abort_begin = now
+                conn.quit_worker()
+                conn.running_worker = f._worker()
+            elif aborted_many_times:
+                conn.abort_begin = -1
+
+            conn.last_run = default_timer()
+            _last_run_copy = conn.last_run
+        # call the original function
+        try:
+            with gui.macro.blocked():
+                out = self._func(gui, *args, **kwargs)
+                if isinstance(out, GeneratorType):
+                    while True:
+                        try:
+                            next_value = next(out)
+                        except StopIteration as exc:
+                            out = exc.value
+                            break
+                        if now < conn.last_completed_id:
+                            # if later function call finished earlier, current call
+                            # should never be run.
+                            return self._empty_callback()
+                        if _last_run_copy < conn.last_run and not aborted_many_times:
+                            # if j-th call turned out to be out of date,
+                            # don't run anymore.
+                            return self._empty_callback()
+                        else:
+                            yield next_value
+            if now < conn.last_completed_id:
+                return self._empty_callback()
+            if _last_run_copy < conn.last_run and not aborted_many_times:
+                # if j-th call turned out to be out of date,
+                # don't run anymore.
+                return self._empty_callback()
+        except Exception as exc:
+            conn.quit_worker()
+            raise exc
+        if not aborted_many_times:
+            if now < conn.last_completed_id:
+                # if j-th call finished after i-th call (i < j),
+                # don't run returned callback.
+                return self._empty_callback()
+        with conn.lock:
+            conn.last_completed_id = now
+            # conn.abort_begin = -1
+        yield self._empty_callback()  # empty callback
+        return out

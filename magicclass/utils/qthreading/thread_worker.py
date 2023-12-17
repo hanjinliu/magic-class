@@ -103,6 +103,7 @@ class thread_worker(Callable, Generic[_P, _R]):
         }
 
         self._ignore_errors = ignore_errors
+        self._error_filter = ()
         self._objects: dict[int, BaseGui] = {}
         self._progressbars: dict[int, ProgressBarLike | None] = {}
         # recordable -> _recorder is a recording function
@@ -130,6 +131,13 @@ class thread_worker(Callable, Generic[_P, _R]):
 
     def __repr__(self) -> str:
         return f"thread_worker<{self.func!r}>"
+
+    def filter_errors(self, *types: type[Exception]):
+        """Set the error filter."""
+        for typ in types:
+            if not (isinstance(typ, type) and issubclass(typ, Exception)):
+                raise TypeError(f"{typ} is not a subclass of Exception.")
+        self._error_filter = types
 
     def replace(
         self,
@@ -412,6 +420,8 @@ class thread_worker(Callable, Generic[_P, _R]):
 
                     @worker.errored.connect
                     def _on_error(err: Exception):
+                        if self._error_filter and isinstance(err, self._error_filter):
+                            return
                         # NOTE: Exceptions are raised in other thread so context manager
                         # cannot catch them. Macro has to be reactived here.
                         gui._error_mode.cleanup_tb(err)
