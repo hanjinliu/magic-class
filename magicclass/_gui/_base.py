@@ -80,7 +80,7 @@ from magicclass.utils import (
     eval_attribute,
 )
 from magicclass.widgets import Separator, FreeWidget
-from magicclass.fields import MagicField, field, vfield
+from magicclass.fields import MagicField, field, vfield, FieldGroup
 from magicclass.signature import (
     ConfirmDict,
     MagicMethodSignature,
@@ -495,9 +495,9 @@ class MagicTemplate(
         copyto: list[str],
     ):
         """
-        This private method converts class methods that are wrapped by its child widget class
-        into widget in child widget. Practically same widget is shared between parent and child,
-        but only visible in the child side.
+        This private method converts class methods that are wrapped by its child widget
+        class into widget in child widget. Practically same widget is shared between
+        parent and child, but only visible in the child side.
 
         Parameters
         ----------
@@ -511,8 +511,8 @@ class MagicTemplate(
         Raises
         ------
         RuntimeError
-            If ``child_clsname`` was not found in child widget list. This error will NEVER be raised
-            in the user's side.
+            If ``child_clsname`` was not found in child widget list. This error will
+            NEVER be raised in the user's side.
         """
         if moveto is not None:
             matcher = copyto + [moveto]
@@ -575,58 +575,6 @@ class MagicTemplate(
                 f"{method_name} not found in any of the nested classes in class "
                 f"{self.__class__.__name__}"
             )
-
-    @classmethod
-    def field(
-        cls,
-        obj=Undefined,
-        *,
-        name=None,
-        label=None,
-        widget_type=None,
-        options={},
-        record=True,
-    ):
-        warnings.warn(
-            "Method 'field' is deprecated. Use field(..., location=...) instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return field(
-            obj,
-            name=name,
-            label=label,
-            widget_type=widget_type,
-            options=options,
-            record=record,
-            location=cls,
-        )
-
-    @classmethod
-    def vfield(
-        cls,
-        obj=Undefined,
-        *,
-        name=None,
-        label=None,
-        widget_type=None,
-        options={},
-        record=True,
-    ):
-        warnings.warn(
-            "Method 'field' is deprecated. Use vfield(..., location=...) instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return vfield(
-            obj,
-            name=name,
-            label=label,
-            widget_type=widget_type,
-            options=options,
-            record=record,
-            location=cls,
-        )
 
     @contextmanager
     def config_context(
@@ -709,6 +657,18 @@ class MagicTemplate(
                 )
             first_widget.bind(self)  # bind self to the first argument
 
+        elif isinstance(attr, Widget) and not isinstance(attr, FieldGroup):
+            warnings.warn(
+                f"Widget {name!r} is given as a class attribute. This is not "
+                "recommended, as it is shared between all the instances. "
+                "Please use a field or vfield instead.",
+                UserWarning,
+                stacklevel=2,
+            )
+            widget = attr
+
+        elif isinstance(attr, str) and attr == "separator":
+            widget = Separator()
         else:
             # convert class method into instance method
             widget = getattr(self, name, None)

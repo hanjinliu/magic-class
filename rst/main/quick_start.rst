@@ -90,8 +90,8 @@ Magic classes can also detect other ``magicgui``'s widgets.
 
 .. note::
 
-    I highly recommend using ``field`` function to create widgets in magic classes.
-    See :doc:`./basics/use_field`.
+    Since 0.7.7, using widgets directly in magic classes as class variables emits a warning,
+    since they should always put in ``field`` functions. See :doc:`./basics/use_field`.
 
 If a method is decorated with ``@magicgui``, it will directly added in the container widget,
 in place of a push button. This is natural because decorated methods are no longer functions,
@@ -263,30 +263,6 @@ widgets. You can prevent macro recording with ``do_not_record`` decorator for me
     ui = Main()
     ui.show()
 
-
-Make Document of Your Widgets Automatically
-===========================================
-
-It is usually time consuming to make a help menu of a widget all the way. You also have to keep
-it updated whenever UI changed.
-
-Magic class has a powerful help widget builder. You can create a help widget using ``build_help``
-function. The widget has a website-like layout and many information such as tooltips of widgets
-and parameter annotations of functions are summerized with rich texts.
-
-.. code-block:: python
-
-    from magicclass import magicclass, build_help
-
-    @magicclass
-    class Main:
-        # many functions and widgets here.
-        ...
-
-    help = build_help(self) # build_help returns a Widget object
-    help.show() # show widget
-
-.. image:: images/fig_1-5.png
 
 Build Command Palette Widget Automatically
 ==========================================
