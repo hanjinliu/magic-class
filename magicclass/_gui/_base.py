@@ -495,9 +495,9 @@ class MagicTemplate(
         copyto: list[str],
     ):
         """
-        This private method converts class methods that are wrapped by its child widget class
-        into widget in child widget. Practically same widget is shared between parent and child,
-        but only visible in the child side.
+        This private method converts class methods that are wrapped by its child widget
+        class into widget in child widget. Practically same widget is shared between
+        parent and child, but only visible in the child side.
 
         Parameters
         ----------
@@ -511,8 +511,8 @@ class MagicTemplate(
         Raises
         ------
         RuntimeError
-            If ``child_clsname`` was not found in child widget list. This error will NEVER be raised
-            in the user's side.
+            If ``child_clsname`` was not found in child widget list. This error will
+            NEVER be raised in the user's side.
         """
         if moveto is not None:
             matcher = copyto + [moveto]
@@ -575,58 +575,6 @@ class MagicTemplate(
                 f"{method_name} not found in any of the nested classes in class "
                 f"{self.__class__.__name__}"
             )
-
-    @classmethod
-    def field(
-        cls,
-        obj=Undefined,
-        *,
-        name=None,
-        label=None,
-        widget_type=None,
-        options={},
-        record=True,
-    ):
-        warnings.warn(
-            "Method 'field' is deprecated. Use field(..., location=...) instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return field(
-            obj,
-            name=name,
-            label=label,
-            widget_type=widget_type,
-            options=options,
-            record=record,
-            location=cls,
-        )
-
-    @classmethod
-    def vfield(
-        cls,
-        obj=Undefined,
-        *,
-        name=None,
-        label=None,
-        widget_type=None,
-        options={},
-        record=True,
-    ):
-        warnings.warn(
-            "Method 'field' is deprecated. Use vfield(..., location=...) instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return vfield(
-            obj,
-            name=name,
-            label=label,
-            widget_type=widget_type,
-            options=options,
-            record=record,
-            location=cls,
-        )
 
     @contextmanager
     def config_context(
