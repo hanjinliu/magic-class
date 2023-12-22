@@ -212,7 +212,7 @@ class QCodeEditor(QtW.QPlainTextEdit):
                         QtGui.QTextCursor.MoveMode.KeepAnchor,
                     )
                     line = _cursor.selectedText()
-                    if line.endswith("    "):
+                    if line.endswith("    ") and not self.textCursor().hasSelection():
                         for _ in range(4):
                             self.textCursor().deletePreviousChar()
                         return True
@@ -543,7 +543,12 @@ class QCodeEditor(QtW.QPlainTextEdit):
             for cursor in self.iter_selected_lines():
                 self.add_at_the_start(_TAB, cursor)
         else:
-            self.textCursor().insertText(_TAB)
+            line = _text_before_cursor(self.textCursor())
+            nspace = line.count(" ")
+            if nspace % 4 == 0:
+                self.textCursor().insertText(_TAB)
+            else:
+                self.textCursor().insertText(" " * 4 - nspace % 4)
         return True
 
     def _back_tab_event(self):
@@ -702,6 +707,15 @@ class QCodeEditor(QtW.QPlainTextEdit):
         self.setTextCursor(cursor)
         return True
 
+    def _text_before_cursor(self) -> str:
+        cursor = self.textCursor()
+        cursor.movePosition(
+            QtGui.QTextCursor.MoveOperation.StartOfLine,
+            QtGui.QTextCursor.MoveMode.KeepAnchor,
+        )
+        line = cursor.selectedText()
+        return line
+
 
 def _get_indents(text: str) -> int:
     chars = []
@@ -839,6 +853,15 @@ def eval_under_cursor(
         return None
     info = WordInfo(widget, words, str(words).split(".")[-1], obj)
     return info
+
+
+def _text_before_cursor(cursor: QtGui.QTextCursor) -> str:
+    cursor.movePosition(
+        QtGui.QTextCursor.MoveOperation.StartOfLine,
+        QtGui.QTextCursor.MoveMode.KeepAnchor,
+    )
+    line = cursor.selectedText()
+    return line
 
 
 # ##############################################################################
