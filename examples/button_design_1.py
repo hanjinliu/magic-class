@@ -14,4 +14,4 @@ class Main:
 
 if __name__ == "__main__":
     ui = Main()
-    ui.show()
+    ui.show(run=True)

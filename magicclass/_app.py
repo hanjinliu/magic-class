@@ -23,11 +23,6 @@ def gui_qt():
     return None
 
 
-def gui_qt_is_active() -> bool:
-    """Check if Qt app is active."""
-    return QApplication.instance() is not None
-
-
 def get_app():
     """Get QApplication."""
     gui_qt()
@@ -41,5 +36,4 @@ def get_app():
 
 def run_app():
     """Start the event loop."""
-    if not gui_qt_is_active():
-        return get_app().exec_()
+    return get_app().exec_()

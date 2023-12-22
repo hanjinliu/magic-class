@@ -24,4 +24,4 @@ class Plot:
 
 if __name__ == "__main__":
     ui = Plot()
-    ui.show()
+    ui.show(run=True)

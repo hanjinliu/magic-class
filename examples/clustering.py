@@ -47,4 +47,4 @@ class Clustering2D:
 
 if __name__ == "__main__":
     ui = Clustering2D()
-    ui.show()
+    ui.show(run=True)

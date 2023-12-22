@@ -62,4 +62,4 @@ if __name__ == "__main__":
     m1 = Main1()
     m1.show()
     m2 = Main2()
-    m2.show()
+    m2.show(run=True)

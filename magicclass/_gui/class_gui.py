@@ -335,17 +335,15 @@ class ClassGuiBase(BaseGui):
                 w.reset_choices()
         return None
 
-    def show(self, run: bool = True) -> None:
+    def show(self, run: bool = False) -> None:
         """
         Show GUI. If any of the parent GUI is a dock widget in napari, then this
         will also show up as a dock widget (floating if in popup mode).
 
         Parameters
         ----------
-        run : bool, default is True
-            *Unlike magicgui, this parameter should always be True* unless you want
-            to close the window immediately. If true, application gets executed if
-            needed.
+        run : bool, default False
+            If true, application gets executed.
         """
         mcls_parent = self.__magicclass_parent__
         qt_parent = self.native.parent()

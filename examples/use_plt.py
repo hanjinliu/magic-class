@@ -17,4 +17,4 @@ class RandomPlot:
 
 if __name__ == "__main__":
     ui = RandomPlot()
-    ui.show()
+    ui.show(run=True)

@@ -29,4 +29,4 @@ class PlotData:
 
 if __name__ == "__main__":
     ui = PlotData()
-    ui.show()
+    ui.show(run=True)

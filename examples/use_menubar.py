@@ -1,7 +1,8 @@
 from magicclass import magicclass, magicmenu, set_options, abstractapi
 from magicgui.widgets import Image
 from pathlib import Path
-from skimage import io, filters
+from skimage.io import imread, imsave
+from skimage.filters import gaussian, sobel
 
 @magicclass
 class Main:
@@ -21,7 +22,7 @@ class Main:
         """
         Open an image and display.
         """
-        self.image.value = io.imread(path)
+        self.image.value = imread(path)
 
     @File.wraps
     @set_options(path={"filter": "*.png;*.jpeg;*.tif;*.tiff", "mode": "w"})
@@ -29,7 +30,7 @@ class Main:
         """
         Save current image.
         """
-        io.imsave(path, self.image.value)
+        imsave(path, self.image.value)
 
     @Filters.wraps
     def Gaussian_filter(self, sigma: float = 1):
@@ -41,7 +42,7 @@ class Main:
         sigma : float, default is 1.0
             Standar deviation of Gaussian filter.
         """
-        out = filters.gaussian(self.image.value, sigma=sigma)
+        out = gaussian(self.image.value, sigma=sigma)
         self.image.value = out
 
     @Filters.wraps
@@ -49,11 +50,11 @@ class Main:
         """
         Apply Sobel filter.
         """
-        out = filters.sobel(self.image.value)
+        out = sobel(self.image.value)
         self.image.value = out
 
     image = Image()
 
 if __name__ == "__main__":
     ui = Main()
-    ui.show()
+    ui.show(run=True)

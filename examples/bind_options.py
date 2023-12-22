@@ -32,9 +32,13 @@ class Main:
     def print_3(self, v: Bound[_get_random_value]):
         print(v)
 
-    def print_parameters(self, mean: Bound[mean], sd: Bound[sd]):
+    def print_parameters(
+        self,
+        mean: Annotated[float, {"bind": mean}],
+        sd: Annotated[float, {"bind": sd}],
+    ):
         print(f"{mean} +/- {sd}")
 
 if __name__ == "__main__":
     ui = Main()
-    ui.show()
+    ui.show(run=True)

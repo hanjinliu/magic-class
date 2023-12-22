@@ -69,4 +69,4 @@ class Viewer(MagicTemplate):
 
 if __name__ == "__main__":
     ui = Viewer()
-    ui.show()
+    ui.show(run=True)

@@ -27,4 +27,4 @@ class Function:
 
 if __name__ == "__main__":
     ui = Function()
-    ui.show()
+    ui.show(run=True)

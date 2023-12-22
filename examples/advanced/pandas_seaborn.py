@@ -1,4 +1,4 @@
-from magicclass import magicclass
+from magicclass import magicclass, abstractapi
 from magicclass.widgets import Table, Figure
 import os
 import pandas as pd
@@ -31,27 +31,27 @@ class Analyzer:
     class Tools:
         @magicclass(widget_type="scrollable")
         class File_Menu:
-            def Open_file(self, path: Path): ...
-            def Save_file(self, path: Path): ...
-            def Save_figure(self, path: Path , transparent: bool): ...
-            def Delete_tab(self): ...
+            Open_file = abstractapi()
+            Save_file = abstractapi()
+            Save_figure = abstractapi()
+            Delete_tab = abstractapi()
 
         @magicclass(widget_type="scrollable")
         class Plot_Menu:
-            def Plot(self): ...
-            def Histogram(self): ...
-            def Box_Plot(self): ...
-            def Swarm_Plot(self): ...
-            def Violin_Plot(self): ...
-            def Boxen_Plot(self): ...
+            Plot = abstractapi()
+            Histogram = abstractapi()
+            Box_Plot = abstractapi()
+            Swarm_Plot = abstractapi()
+            Violin_Plot = abstractapi()
+            Boxen_Plot = abstractapi()
 
         @magicclass(widget_type="scrollable")
         class Plot_Control:
-            def set_title(self, title: str): ...
-            def set_xlabel(self, label: str): ...
-            def set_ylabel(self, label: str): ...
-            def set_xlim(self, xmin: str, xmax: str): ...
-            def set_ylim(self, ymin: str, ymax: str): ...
+            set_title = abstractapi()
+            set_xlabel = abstractapi()
+            set_ylabel = abstractapi()
+            set_xlim = abstractapi()
+            set_ylim = abstractapi()
 
     table_list = TableList()
     canvas = Figure()
@@ -214,4 +214,4 @@ class Analyzer:
 
 if __name__ == "__main__":
     ui = Analyzer()
-    ui.show()
+    ui.show(run=True)

@@ -32,4 +32,4 @@ class Calculator:
 
 if __name__ == "__main__":
     ui = Calculator()
-    ui.show()
+    ui.show(run=True)

@@ -39,4 +39,4 @@ class LaserControl(MagicTemplate):
 if __name__ == "__main__":
     ui = LaserControl()
     ui.macro.widget.show()
-    ui.show()
+    ui.show(run=True)
