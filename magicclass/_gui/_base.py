@@ -20,7 +20,7 @@ from abc import ABCMeta
 import inspect
 import warnings
 from weakref import WeakValueDictionary, WeakSet
-from qtpy import QtWidgets as QtW
+from qtpy import QtWidgets as QtW, QtGui
 
 from psygnal import Signal
 from magicgui.signature import MagicParameter
@@ -1140,7 +1140,10 @@ def _build_mgui(widget_: Clickable, func: Callable, parent: BaseGui):
         )
         # set function GUI.
         widget_.mgui = mgui
-        mgui.native.setWindowTitle(widget_.text or widget_.name or "")
+        qmgui: QtW.QWidget = mgui.native
+        qmgui.setWindowTitle(widget_.text or widget_.name or "")
+        if parent._popup_mode is PopUpMode.popup:
+            QtGui.QShortcut(QtGui.QKeySequence("Esc"), qmgui, activated=mgui.close)
 
         preview_setting = opt.get("preview", None)
         if preview_setting is not None:
