@@ -67,7 +67,12 @@ def _qualname(obj: MethodType | type):
 
 
 def check_function_gui_buildable(ui: MagicTemplate, skips: list = []):
-    """Assert that all methods in ``ui`` can be built into GUI."""
+    """
+    Assert that all methods in ``ui`` can be built into GUI.
+
+    This function can also detect if any of the annotations of a method uses "bind" or
+    "choices" that results in an error.
+    """
 
     failed = []
     for method in _iter_method_with_button(ui):

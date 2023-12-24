@@ -796,3 +796,29 @@ def test_class_annotation():
     ui = A()
     assert ui.x.max == 10
     assert ui["y"].widget_type == "FloatSlider"
+
+def test_using_same_class():
+    @magicclass(layout="horizontal", labels=False)
+    class Laser:
+        bar = vfield(0, widget_type="ProgressBar").with_options(min=0, max=100)
+        percent = vfield(0, widget_type="SpinBox").with_options(min=0, max=100)
+
+        def apply(self, value: Annotated[int, {"bind": percent}]):
+            """Apply laser power."""
+            self.bar = self.percent = value
+
+    @magicclass(labels=False)
+    class LaserControl:
+        laser_blue = field(Laser)
+        laser_green = field(Laser)
+        laser_red = field(Laser)
+
+    ui = LaserControl()
+
+    ui.laser_blue.percent = 15
+    ui.laser_blue["apply"].changed()
+    assert ui.laser_blue.bar == 15
+    assert ui.laser_green.bar == 0
+    assert ui.laser_red.bar == 0
+    ui.laser_green["apply"].changed()
+    ui.laser_red["apply"].changed()

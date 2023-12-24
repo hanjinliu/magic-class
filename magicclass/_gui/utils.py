@@ -49,7 +49,7 @@ def copy_class(cls: _C, ns: str, name: str) -> _C:
     namespace = {}
     qualname = f"{ns}.{name}"
     for key, attr in cls.__dict__.items():
-        if key == ("__original_class__"):
+        if key == "__original_class__":
             continue
         if isinstance(attr, (FunctionType, abstractapi, thread_worker)):
             if attr.__qualname__.split("<locals>.")[-1].count(".") == 0:
