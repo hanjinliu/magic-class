@@ -277,7 +277,7 @@ class MacroEdit(TabbedContainer):
         """Run macro."""
         parent = self._search_parent_magicclass()
         ns = {Symbol.var("ui"): parent}
-        with parent._error_mode.raise_with_handler(self):
+        with parent._error_mode.raise_with_handler(parent):
             if self._attribute_check:
                 strs = [f"- {exc}" for exc in check_attributes(code, ns)]
                 if strs:

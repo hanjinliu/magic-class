@@ -354,8 +354,8 @@ class MagicField(_FieldObject, Generic[_W]):
         """Make a function that get the value of Widget or Action."""
         return lambda w: self._guis[id(obj)].value
 
-    def as_remote_getter(self, obj: Any):
-        """Called when a MagicField is used in Bound method."""
+    def as_remote_getter(self, obj: MagicTemplate):
+        """Called when a MagicField is used in "bind"."""
         qualname = self._parent_class.__qualname__
         _LOCALS = "<locals>."
         if _LOCALS in qualname:
@@ -368,17 +368,21 @@ class MagicField(_FieldObject, Generic[_W]):
             if objname not in clsnames:
                 ns = ".".join(clsnames)
                 raise ValueError(
-                    f"{obj.__class__.__name__!r} not in {clsnames!r}. "
+                    f"{objname!r} not in {clsnames!r}. "
                     f"Method {self.name!r} is in namespace {ns!r}, so it is invisible "
                     f"from magicclass {obj.__class__.__qualname__!r}."
                 )
             i = clsnames.index(objname) + 1
+            # class A:
+            #   class B:
+            #     f = field(...)
+            #   def func(self, a: Bound[B.f]): ...
             ins = obj
             for clsname in clsnames[i:]:
                 ins = getattr(ins, clsname, ins)
 
-            # Now, ins is an instance of parent class.
-            # Extract correct widget from MagicField
+            # Now, ins is an instance of parent class. Extract correct widget from
+            # MagicField
             _field_widget = self.get_widget(ins)
             if not hasattr(_field_widget, "value"):
                 raise TypeError(

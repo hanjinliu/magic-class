@@ -1,4 +1,4 @@
-from magicclass import magicclass, magicmenu, set_options, abstractapi
+from magicclass import magicclass, magicmenu, set_options, abstractapi, field
 from magicgui.widgets import Image
 from pathlib import Path
 from skimage.io import imread, imsave
@@ -53,7 +53,7 @@ class Main:
         out = sobel(self.image.value)
         self.image.value = out
 
-    image = Image()
+    image = field(Image)
 
 if __name__ == "__main__":
     ui = Main()

@@ -765,7 +765,6 @@ class MagicTemplate(
                             title = Separator(
                                 orientation="horizontal", title=text, button=True
                             )
-                            # TODO: should remove mgui from self?
                             title.btn_clicked.connect(mgui.hide)
                             mgui.insert(0, title)
                     mgui._initialized_for_magicclass = True
@@ -1264,13 +1263,6 @@ def convert_attributes(
             _isfunc = callable(obj)
             if isinstance(obj, _MagicTemplateMeta):
                 new_attr = copy_class(obj, cls.__qualname__, name=name)
-            elif isinstance(obj, MagicField) and isinstance(
-                obj.constructor, _MagicTemplateMeta
-            ):
-                obj._constructor = copy_class(
-                    obj.constructor, cls.__qualname__, name=name
-                )
-                new_attr = obj
             elif name.startswith("_") or isinstance(obj, _pass) or not _isfunc:
                 # private method, non-action-like object, not-callable object are passed.
                 new_attr = obj

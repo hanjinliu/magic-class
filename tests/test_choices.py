@@ -1,3 +1,4 @@
+from typing_extensions import Annotated
 from magicclass import magicclass, set_options, field, vfield, get_function_gui
 from magicgui.widgets import Select
 import pytest
@@ -111,6 +112,21 @@ def test_field():
     assert ui[0].choices == (3,)
     assert ui[1].choices == (3,)
     assert ui[2].choices == (0, 1)
+
+def test_field_in_other_class():
+    @magicclass
+    class Sub:
+        def _get_choices(self, w=None):
+            return [0, 1]
+
+        def f(self, x: Annotated[int, {"choices": _get_choices}]):
+            pass
+
+    @magicclass
+    class A:
+        sub = field(Sub)
+
+    ui = A()
 
 def test_multi_gui():
     @magicclass
