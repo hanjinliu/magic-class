@@ -12,7 +12,7 @@ Shared Input Parameters
 =======================
 
 If you want to control input parameters outside each ``magicgui`` widget, the example
-below is the mose naive implementation.
+below is the most naive implementation.
 
 .. code-block:: python
 

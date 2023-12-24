@@ -1,4 +1,4 @@
-from magicclass import magicclass, abstractapi
+from magicclass import magicclass, abstractapi, set_design, field
 from magicclass.widgets import Table, Figure
 import os
 import pandas as pd
@@ -53,10 +53,10 @@ class Analyzer:
             set_xlim = abstractapi()
             set_ylim = abstractapi()
 
-    table_list = TableList()
-    canvas = Figure()
+    table_list = field(TableList)
+    canvas = field(Figure)
 
-    @Tools.File_Menu.wraps
+    @set_design(location=Tools.File_Menu)
     def Open_file(self, path: Path, header: str = ""):
         """
         Load data into table.
@@ -74,13 +74,13 @@ class Analyzer:
         self.table_list.append(table)
         self.table_list.current_index = len(self.table_list) - 1
 
-    @Tools.File_Menu.wraps
+    @set_design(location=Tools.File_Menu)
     def Save_file(self, path: Path):
         """Save current table data as a csv file."""
         df = self._current_df()
         df.to_csv(path)
 
-    @Tools.File_Menu.wraps
+    @set_design(location=Tools.File_Menu)
     def Save_figure(self, path: Path, transparent=True):
         """
         Save current figure as an image file.
@@ -94,7 +94,7 @@ class Analyzer:
         """
         self.canvas.fig.savefig(path, transparent=transparent)
 
-    @Tools.File_Menu.wraps
+    @set_design(location=Tools.File_Menu)
     def Delete_tab(self):
         """Delete current tab"""
         try:
@@ -103,7 +103,7 @@ class Analyzer:
         except IndexError:
             pass
 
-    @Tools.Plot_Menu.wraps
+    @set_design(location=Tools.Plot_Menu)
     def Plot(self):
         """Show plot"""
         self.canvas.figure.clf()
@@ -111,7 +111,7 @@ class Analyzer:
         df.plot(ax=self.canvas.ax)
         self.canvas.draw()
 
-    @Tools.Plot_Menu.wraps
+    @set_design(location=Tools.Plot_Menu)
     def Histogram(self):
         """Show histogram"""
         self.canvas.figure.clf()
@@ -130,27 +130,27 @@ class Analyzer:
         plot_function(data=df, ax=self.canvas.ax, x=x, y=y, hue=hue, dodge=dodge)
         self.canvas.draw()
 
-    @Tools.Plot_Menu.wraps(template=_seaborn_plot)
-    def Box_Plot(self, x, y, hue, dodge):
+    @set_design(location=Tools.Plot_Menu)
+    def Box_Plot(self, x: str, y: str, hue: str, dodge: bool = False):
         """Show box plot"""
         self._seaborn_plot(sns.boxplot, x, y, hue, dodge)
 
-    @Tools.Plot_Menu.wraps(template=_seaborn_plot)
-    def Swarm_Plot(self, x, y, hue, dodge):
+    @set_design(location=Tools.Plot_Menu)
+    def Swarm_Plot(self, x: str, y: str, hue: str, dodge: bool = False):
         """Show (bee)swarm plot"""
         self._seaborn_plot(sns.swarmplot, x, y, hue, dodge)
 
-    @Tools.Plot_Menu.wraps(template=_seaborn_plot)
-    def Violin_Plot(self, x, y, hue, dodge):
+    @set_design(location=Tools.Plot_Menu)
+    def Violin_Plot(self, x: str, y: str, hue: str, dodge: bool = False):
         """Show violin plot"""
         self._seaborn_plot(sns.violinplot, x, y, hue, dodge)
 
-    @Tools.Plot_Menu.wraps(template=_seaborn_plot)
-    def Boxen_Plot(self, x, y, hue, dodge):
+    @set_design(location=Tools.Plot_Menu)
+    def Boxen_Plot(self, x: str, y: str, hue: str, dodge: bool = False):
         """Show boxen plot"""
         self._seaborn_plot(sns.boxenplot, x, y, hue, dodge)
 
-    @Tools.Plot_Control.wraps
+    @set_design(location=Tools.Plot_Control)
     def set_title(self, title: str):
         """
         Set title of the figure.
@@ -163,19 +163,19 @@ class Analyzer:
         self.canvas.ax.set_title(title)
         self.canvas.draw()
 
-    @Tools.Plot_Control.wraps
+    @set_design(location=Tools.Plot_Control)
     def set_xlabel(self, label: str):
         """Set x-label of figure"""
         self.canvas.ax.set_xlabel(label)
         self.canvas.draw()
 
-    @Tools.Plot_Control.wraps
+    @set_design(location=Tools.Plot_Control)
     def set_ylabel(self, label: str):
         """Set y-label of figure"""
         self.canvas.ax.set_ylabel(label)
         self.canvas.draw()
 
-    @Tools.Plot_Control.wraps
+    @set_design(location=Tools.Plot_Control)
     def set_xlim(self, xmin: str, xmax: str):
         """
         Set x-limits of the figure.
@@ -190,7 +190,7 @@ class Analyzer:
         self.canvas.ax.set_xlim(float(xmin), float(xmax))
         self.canvas.draw()
 
-    @Tools.Plot_Control.wraps
+    @set_design(location=Tools.Plot_Control)
     def set_ylim(self, ymin: str, ymax: str):
         """
         Set y-limits of the figure.
