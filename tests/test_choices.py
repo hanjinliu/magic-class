@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing_extensions import Annotated
 from magicclass import magicclass, set_options, field, vfield, get_function_gui
 from magicgui.widgets import Select
 import pytest
