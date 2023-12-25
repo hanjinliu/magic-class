@@ -3,7 +3,7 @@
 Adding tooltips is important for usability. If you are going to add all the tooltip
 naively, you will have to set `tooltip` property for every widget.
 
-```python
+``` python
 @magicclass
 class A:
     ...
@@ -26,7 +26,7 @@ used. Following `magicgui` tooltip generation procedure, function docstrings are
 useful for adding tooltips to the buttons and the widgets appear in the pop-up function
 GUI. In the example below:
 
-```python
+``` python
 from magicclass import magicclass
 
 @magicclass
@@ -55,7 +55,7 @@ documentation using `sphinx` or `mkdocs`.
 When magic-classes are nested, you may want to add tooltips to child widgets.
 This time, class docstrings will be used for the purpose.
 
-```python
+``` python
 from magicclass import magicclass
 
 @magicclass
@@ -72,7 +72,7 @@ class A:
 Another important component of magic-classes are fields. In a naive way, you'll
 have to set `"tooltip"` options for every field.
 
-```python
+``` python
 from magicclass import magicclass, vfield
 
 @magicclass
@@ -83,7 +83,7 @@ class A:
 
 Again, this can also be substituted with docstrings of class itself.
 
-```python
+``` python
 from magicclass import magicclass, vfield
 
 @magicclass

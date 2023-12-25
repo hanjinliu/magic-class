@@ -7,7 +7,8 @@ as `magicgui`'s `Container`. You can use them by importing from
 `magicclass.widgets`:
 
 ``` python
-from magicgui.widgets import LineEdit, ScrollableContainer
+from magicgui.widgets import LineEdit
+from magicclass.widgets import ScrollableContainer
 
 # A container with scroll area
 c = ScrollableContainer()
@@ -16,8 +17,6 @@ for i in range(10):
     c.append(LineEdit())
 c.show()
 ```
-
-![image](../images/fig_5-1.png)
 
 ## Available Containers
 

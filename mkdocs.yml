@@ -52,7 +52,11 @@ nav:
     - visualization/pyqtgraph.md
     - visualization/vispy.md
     - visualization/vtk.md
-  - Advanced Topics: advanced/index.md
+  - Advanced Topics:
+    - Overview: advanced/index.md
+    - advanced/freewidget.md
+    - advanced/customize_macro.md
+    - advanced/inheritance.md
   - Best Practice: best_practice.md
   - API References:
     - api/core.md
@@ -70,6 +74,9 @@ plugins:
             show_source: true
             show_bases: false
             show_signature_annotations: true
+  - gen-files:
+      scripts:
+        - docs/_scripts/_insert_images.py
 
 markdown_extensions:
   - admonition

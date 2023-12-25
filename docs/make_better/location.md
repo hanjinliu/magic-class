@@ -50,7 +50,7 @@ ui = Parent()
 ui.show()
 ```
 
-![image](../images/fig_4-1.png)
+![](../_images/location-0.png)
 
 The `Parent` methods will not appear in the parent widget because they already exist in
 the child widget.
@@ -171,19 +171,23 @@ with `@set_design(location=ParentClass)`. However, there are some cases where us
 
 Same strategy can be used for [fields](../basics/fields.md).
 
-```python
-from magicclass import magicclass, field
+``` python
+from magicclass import magicclass, field, abstractapi
 
 @magicclass
 class A:
-    @magicclass
+    @magicclass(layout="horizontal")
     class Parameters:
         a = abstractapi()
         b = abstractapi()
 
     a = field(int, location=Parameters)
     b = field(int, location=Parameters)
+    def add(self):
+        print(self.a.value + self.b.value)
+
+ui = A()
+ui.show()
 ```
 
-In this example, `a` and `b` will be placed in the `Parameters` widget but can be
-accessed under class `A`.
+![](../_images/location-1.png)

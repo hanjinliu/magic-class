@@ -9,7 +9,7 @@ when running the function from the script.
 
 `magic-class` provides a decorator to add confirmation process to a function.
 
-```python
+``` python
 from magicclass import magicclass, confirm
 
 @magicclass

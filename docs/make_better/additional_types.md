@@ -17,7 +17,7 @@ from magicclass.types import Optional
 @magicgui
 def func(a: Optional[int]):
     print(a)
-func.show(True)
+func
 ```
 
 ![image](../images/fig_8-1.png)
@@ -33,7 +33,7 @@ from magicclass.types import Optional
 @magicgui(a={"text": "Don't need a value", "options": {"min": 1, "max": 10}})
 def func(a: Optional[int]):
     print(a)
-func.show(True)
+func
 ```
 
 ## `Color` type
@@ -51,6 +51,7 @@ from magicclass.types import Color
 @magicgui
 def func(col: Color = "red"):
     print(col)
+func
 ```
 
 ![image](../images/fig_8-2.png)
@@ -114,4 +115,5 @@ namespace = {"np": np}
 @magicgui
 def func(arr: ExprStr.In[namespace]):
     print(ExprStr(arr, namespace).eval())
+func
 ```

@@ -34,7 +34,7 @@ These options are `magicclass` specific:
 
 To avoid writing the same options many times, you can change the default setting via `default` constant:
 
-```python
+``` python
 from magicclass import default
 
 default["close_on_run"] = False

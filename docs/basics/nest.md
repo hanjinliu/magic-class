@@ -5,7 +5,7 @@
 Magic classes can be nested. During magic class construction, when a magic class encountered another
 magic class object, the child object is appended to the parent.
 
-```python
+``` python
 from magicclass import magicclass
 
 @magicclass(layout="horizontal")
@@ -30,7 +30,7 @@ ui.show()
 
 You can also directly define the child classes inside the parent.
 
-```python
+``` python
 from magicclass import magicclass
 
 @magicclass
@@ -50,7 +50,7 @@ ui = Main()
 ui.show()
 ```
 
-![](../images/fig_2-1.png)
+![](../_images/nest-0.png)
 
 
 ## Make Menus Using Nesting Strategy
@@ -58,7 +58,7 @@ ui.show()
 To make multi-functional widgets, we usually want to use a menu bar to categorize functions.
 The ``@magicmenu`` decorator provides a consistent API to implement a menu bar as a standard magic class.
 
-```python
+``` python
 
 from magicclass import magicclass, magicmenu
 
@@ -87,7 +87,7 @@ If multiple menus are defined in tandem, they will all added to the menu bar.
 
 Same strategy also works for right-click context menu.
 
-```python
+``` python
 
 from magicclass import magicclass, magiccontext
 
@@ -115,7 +115,7 @@ ui.show()
 Similar to menus, magic class also provide a toolbar widget with same API.
 `@magictoolbar` is the decorator for toolbar.
 
-```python
+``` python
 from magicclass import magicclass, magictoolbar
 
 @magicclass
@@ -125,8 +125,11 @@ class Main:
         def a(self): ...
         def b(self): ...
         def c(self): ...
+
+ui = Main()
+ui.show()
 ```
 
-![](../images/fig_2-4.png)
+![](../_images/nest-1.png)
 
 If multiple toolbars are defined in tandem, they will split by tabs.

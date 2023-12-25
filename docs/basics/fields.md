@@ -35,18 +35,11 @@ is ready to be converted into a widget.
 from magicclass import field
 
 fld = field(str, options={"value": "initial"})
-fld
+widget = fld.to_widget()
+widget
 ```
 
-``` title="Output"
-MagicField(value='initial', name=None, widget_type=None, record=True, options={})
-```
-
-``` python
-fld.to_widget()
-```
-
-![image](../images/fig_3-1.png)
+![](../_images/fields-0.png)
 
 `field` can be used very similar to the [`create_widget` fucntion in `magicgui`](https://pyapp-kit.github.io/magicgui/#create_widget).
 
@@ -70,7 +63,7 @@ ui = MyClass()
 ui.show()
 ```
 
-![image](../images/fig_3-2.png)
+![](../_images/fields-1.png)
 
 ### Define Callbacks
 
@@ -178,7 +171,7 @@ ui = A()
 ui.show()
 ```
 
-![image](../images/fig_3-3.png)
+![](../_images/fields-2.png)
 
 Here, a `Points` class has two child fields `x` and `y`. Since they are created by
 `vfield`, their values can be simply obtained by `self.points.x`.
@@ -204,6 +197,8 @@ class A:
 
 ui = A()
 ```
+
+![](../_images/fields-3.png)
 
 When you want the values of points, you just have to do what you used to do.
 
@@ -231,18 +226,19 @@ class LabeledLineEdit(FieldGroup):
     def __init__(self, label_text="label"):
         super().__init__(labels=False)
         self.lbl = label_text
-```
 
-Now, `LabeledLineEdit` can be used similar to `field` or `vfield`.
+# Now, `LabeledLineEdit` can be used similar to `field` or `vfield`.
 
-``` python
 @magicclass
 class A:
     text_1 = LabeledLineEdit("First name")
     text_2 = LabeledLineEdit("Last name")
+
+ui = A()
+ui.show()
 ```
 
-![image](../images/fig_3-4.png)
+![](../_images/fields-4.png)
 
 ## (Advanced) Use Fields in Non-GUI Classes
 

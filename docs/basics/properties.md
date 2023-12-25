@@ -2,7 +2,7 @@
 
 In `magicclass`, properties will not be conveted into widgets. The reason for this is
 that properties are usually used to get references to one of the child widgets.
-```python
+``` python
 from magicclass import magicclass, field
 
 @magicclass
@@ -29,7 +29,7 @@ a `FunctionGui`-like widget.
 Basically, it is used exactly the same as the built-in `property` class, except that you
 have to provide at least one type annotation for widget creation.
 
-```python
+``` python
 from magicclass import magicclass, magicproperty
 
 @magicclass
@@ -54,11 +54,11 @@ ui = A()
 ui.show()
 ```
 
-![](../images/fig_9-1.png)
+![](../_images/properties-0.png)
 
 Values are updated after the "Set" button is clicked, or set programmatically.
 
-```python
+``` python
 ui.x = 10  # update the value and the GUI
 ui.string = "Hello"  # update the value and the GUI
 ```
@@ -68,7 +68,7 @@ ui.string = "Hello"  # update the value and the GUI
 `magicproperty` can be configured similar to `magicgui`. Here's some examples of how to
 configure.
 
-```python
+``` python
 @magicclass
 class A:
     # set widget label
@@ -97,7 +97,7 @@ class A:
 Although it's rare, built-in `property` can be setter-only. In this case, you
 can only set a value and getting a value is forbidden.
 
-```python
+``` python
 class A:
     x = property()
 
@@ -118,7 +118,7 @@ a.x  # AttributeError
 Unlike `property`, however, the getter of `magicproperty` doesn't need to be
 defined because widget itself has its own value.
 
-```python
+``` python
 @magicclass
 class A:
     x = magicproperty(widget_type="Slider")
@@ -144,7 +144,7 @@ an additional attribute `_x` for the property `x`.
 
     You can even create a `magicproperty` without any descriptors.
 
-    ```python
+    ``` python
     @magicclass
     class A:
         x = magicproperty(annotation=int)
