@@ -1,0 +1,96 @@
+site_name: magic-class
+site_description: Generate multifunctional and macro recordable GUIs from Python classes
+repo_name: magic-class
+repo_url: https://github.com/hanjinliu/magic-class
+
+copyright: Copyright (c) 2023 - 2024 Hanjin Liu
+
+theme:
+  name: material
+  features:
+    - content.code.annotate
+    - navigation.sections
+    - navigation.indexes
+    - toc.follow
+    - search.suggest
+    - search.share
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+nav:
+  - Overview: index.md
+  - Quick start: quick_start.md
+  - Basics:
+    - Overview: basics/index.md
+    - basics/options.md
+    - basics/fields.md
+    - basics/nest.md
+    - basics/tooltips.md
+    - basics/properties.md
+  - Make Your GUI Better:
+    - Overview: make_better/index.md
+    - make_better/location.md
+    - make_better/keybinding.md
+    - make_better/undo.md
+    - make_better/bind.md
+    - make_better/choices.md
+    - make_better/validator.md
+    - make_better/setup.md
+    - make_better/preview.md
+    - make_better/confirm.md
+    - make_better/workers.md
+    - make_better/icon.md
+    - make_better/logging.md
+    - make_better/additional_types.md
+    - make_better/containers.md
+    - make_better/testing.md
+
+  - Data Visualization:
+    - Overview: visualization/index.md
+    - visualization/matplotlib.md
+    - visualization/pyqtgraph.md
+    - visualization/vispy.md
+    - visualization/vtk.md
+  - Advanced Topics:
+    - Overview: advanced/index.md
+    - advanced/freewidget.md
+    - advanced/customize_macro.md
+    - advanced/inheritance.md
+  - Best Practice: best_practice.md
+  - API References:
+    - api/core.md
+
+plugins:
+  - search
+  - autorefs
+  - mkdocstrings:
+      handlers:
+        python:
+          import:
+            - https://docs.python.org/3/objects.inv
+          options:
+            docstring_style: numpy
+            show_source: true
+            show_bases: false
+            show_signature_annotations: true
+  - gen-files:
+      scripts:
+        - docs/_scripts/_insert_images.py
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.keys
+  - pymdownx.arithmatex:
+      generic: true
+  - attr_list
+  - md_in_html
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra_javascript:
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

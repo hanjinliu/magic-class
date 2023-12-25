@@ -1,4 +1,4 @@
-[![License BSD-3](https://img.shields.io/pypi/l/magic-class.svg?color=green)](https://github.com/hanjinliu/magic-class/raw/main/LICENSE)
+[![BSD 3-Clause License](https://img.shields.io/pypi/l/magic-class.svg?color=green)](https://github.com/hanjinliu/magic-class/raw/main/LICENSE)
 [![Python package index download statistics](https://img.shields.io/pypi/dm/magic-class.svg)](https://pypistats.org/packages/magic-class)
 [![PyPI version](https://badge.fury.io/py/magic-class.svg)](https://badge.fury.io/py/magic-class)
 [![Conda version](https://anaconda.org/conda-forge/magic-class/badges/version.svg)](https://anaconda.org/conda-forge/magic-class/badges/version.svg)
@@ -48,7 +48,7 @@ pip install git+https://github.com/hanjinliu/magic-class.git
 
 Let's make a simple GUI that can load 1-D data and plot it.
 
-```python
+``` python
 from magicclass import magicclass
 from pathlib import Path
 
@@ -75,20 +75,20 @@ class PlotData:
 
 Classes decorated with `@magicclass` are converted to `magicgui`'s `Container` widgets. GUI starts with `show` method.
 
-```python
+``` python
 ui = PlotData(title="Title")
 ui.show()
 ```
 
 You can continue analysis in console.
 
-```python
+``` python
 ui.plot()
 ```
 
 For people doing image analysis, it can be added to a `napari` viewer as a dock widget.
 
-```python
+``` python
 import napari
 viewer = napari.Viewer()
 viewer.window.add_dock_widget(ui)
@@ -96,14 +96,14 @@ viewer.window.add_dock_widget(ui)
 
 Executable Python code (so called "macro" in many GUI tools) is available in `macro` attribute.
 
-```python
+``` python
 print(ui.macro)  # print macro
 ui.macro.widget.show()  # open a text editor widget with macro written in
 ```
 
 To make nicer GUI, you can also nest `magic-class`:
 
-```python
+``` python
 @magicclass
 class PlotData:
     @magicclass
@@ -112,7 +112,7 @@ class PlotData:
 
 add a menubar with `@magicmenu` decorator:
 
-```python
+``` python
 @magicclass
 class PlotData:
     @magicmenu
@@ -123,7 +123,7 @@ class PlotData:
 
 add context menu with `@magiccontext` decorator:
 
-```python
+``` python
 @magicclass
 class PlotData:
     @magiccontext
@@ -135,7 +135,7 @@ class PlotData:
 
 directly integrate `magicgui` and its widgets:
 
-```python
+``` python
 @magicclass
 class PlotData:
     line = LineEdit()

@@ -1,4 +1,4 @@
-from magicclass import magicclass, field, magiccontext, MagicTemplate, nogui, abstractapi
+from magicclass import magicclass, field, magiccontext, set_design, MagicTemplate, nogui, abstractapi
 from magicclass.ext.pyqtgraph import QtPlotCanvas
 from magicclass.ext.qtconsole import QtConsole
 
@@ -15,7 +15,7 @@ class Layer(MagicTemplate):
     def viewer(self):
         return self.find_ancestor(Viewer)
 
-    @ContextMenu.wraps
+    @set_design(location=ContextMenu)
     def Delete_item(self):
         self.viewer.canvas.layers.remove(self.item)
         self.viewer.layerlist.remove(self)

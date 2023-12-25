@@ -1,4 +1,4 @@
-from magicclass import magicclass, magicmenu, set_options, abstractapi, field
+from magicclass import magicclass, magicmenu, set_options, set_design, abstractapi, field
 from magicgui.widgets import Image
 from pathlib import Path
 from skimage.io import imread, imsave
@@ -16,23 +16,23 @@ class Main:
         Gaussian_filter = abstractapi()
         Sobel_filter = abstractapi()
 
-    @File.wraps
     @set_options(path={"filter": "*.png;*.jpeg;*.tif;*.tiff", "mode": "r"})
+    @set_design(location=File)
     def Open_image(self, path: Path):
         """
         Open an image and display.
         """
         self.image.value = imread(path)
 
-    @File.wraps
     @set_options(path={"filter": "*.png;*.jpeg;*.tif;*.tiff", "mode": "w"})
+    @set_design(location=File)
     def Save_image(self, path: Path):
         """
         Save current image.
         """
         imsave(path, self.image.value)
 
-    @Filters.wraps
+    @set_design(location=Filters)
     def Gaussian_filter(self, sigma: float = 1):
         """
         Apply Gaussian filter.
@@ -45,7 +45,7 @@ class Main:
         out = gaussian(self.image.value, sigma=sigma)
         self.image.value = out
 
-    @Filters.wraps
+    @set_design(location=Filters)
     def Sobel_filter(self):
         """
         Apply Sobel filter.
