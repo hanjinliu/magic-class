@@ -1,4 +1,4 @@
-__version__ = "0.7.7.dev0"
+__version__ = "0.7.7"
 
 from .core import (
     magicclass,
@@ -20,7 +20,6 @@ from .wrappers import (
     bind_key,
     confirm,
     nogui,
-    mark_preview,
     impl_preview,
     setup_function_gui,
     mark_on_calling,
@@ -59,7 +58,6 @@ __all__ = [
     "bind_key",
     "confirm",
     "nogui",
-    "mark_preview",
     "impl_preview",
     "setup_function_gui",
     "mark_on_calling",
@@ -134,5 +132,15 @@ def __getattr__(key: str):
         from ._gui.keybinding import Key
 
         return Key
+
+    elif key == "mark_preview":
+        warnings.warn(
+            "Function `mark_preview` is deprecated. Use `impl_preview` instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        from .wrappers import impl_preview
+
+        return impl_preview
 
     raise AttributeError(f"module {__name__!r} has no attribute {key!r}")
