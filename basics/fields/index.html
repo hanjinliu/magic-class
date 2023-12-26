@@ -1556,7 +1556,7 @@ is ready to be converted into a widget.</p>
 <span class="n">widget</span> <span class="o">=</span> <span class="n">fld</span><span class="o">.</span><span class="n">to_widget</span><span class="p">()</span>
 <span class="n">widget</span>
 </code></pre></div>
-<p><img alt="" src="../../_images/fields-0.png" /></p>
+<p><img alt="" src="../../images_autogen/fields-0.png" /></p>
 <p><code>field</code> can be used very similar to the <a href="https://pyapp-kit.github.io/magicgui/#create_widget"><code>create_widget</code> fucntion in <code>magicgui</code></a>.</p>
 <div class="highlight"><pre><span></span><code><span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">widget_type</span><span class="o">=</span><span class="s2">&quot;Slider&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
 </code></pre></div>
@@ -1573,7 +1573,7 @@ is ready to be converted into a widget.</p>
 <span class="n">ui</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">()</span>
 <span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </code></pre></div>
-<p><img alt="" src="../../_images/fields-1.png" /></p>
+<p><img alt="" src="../../images_autogen/fields-1.png" /></p>
 <h3 id="define-callbacks">Define Callbacks</h3>
 <p>Another feature of widgets are their ability to emit signals upon state changes. In
 <code>magicgui</code>, most of them have the same API <code>widget.changed.connect(callback)</code>. Owing to
@@ -1658,7 +1658,7 @@ the type of the output widget.</p>
 <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
 <span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </code></pre></div>
-<p><img alt="" src="../../_images/fields-2.png" /></p>
+<p><img alt="" src="../../images_autogen/fields-2.png" /></p>
 <p>Here, a <code>Points</code> class has two child fields <code>x</code> and <code>y</code>. Since they are created by
 <code>vfield</code>, their values can be simply obtained by <code>self.points.x</code>.</p>
 <h3 id="deal-with-widgets-and-values">Deal with Widgets and Values</h3>
@@ -1678,7 +1678,7 @@ are some benefits to use <code>FieldGroup</code> over creating <code>magicclass<
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
 </code></pre></div>
-<p><img alt="" src="../../_images/fields-3.png" /></p>
+<p><img alt="" src="../../images_autogen/fields-3.png" /></p>
 <p>When you want the values of points, you just have to do what you used to do.</p>
 <div class="highlight"><pre><span></span><code><span class="n">ui</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">x</span>  <span class="c1"># get the value of x</span>
 </code></pre></div>
@@ -1707,7 +1707,7 @@ widget template by subclassing it.</p>
 <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
 <span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </code></pre></div>
-<p><img alt="" src="../../_images/fields-4.png" /></p>
+<p><img alt="" src="../../images_autogen/fields-4.png" /></p>
 <h2 id="advanced-use-fields-in-non-gui-classes">(Advanced) Use Fields in Non-GUI Classes</h2>
 <h3 id="hasfields-trait">HasFields trait</h3>
 <p><code>MagicField</code> and <code>FieldGroup</code> are also designed for general usage of widgets. This means

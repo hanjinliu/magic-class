@@ -49,22 +49,17 @@ class CodeInfo:
         if len(rest) != 1:
             raise ValueError(s)
         dest = next(MKIMAGE.finditer(rest[0].strip())).group(1)
-        if "_images" not in dest:
+        if "images_autogen" not in dest:
             return None
-        return CodeInfo(code.strip(), dest)
+        return CodeInfo(code.strip(), dest.split("images_autogen")[-1][1:])
 
-    def save_images(self, curpath: Path, ns: dict) -> None:
-        if not isinstance(curpath, Path):
-            curpath = Path(curpath)
+    def save_images(self, ns: dict) -> None:
         try:
             exec(self.code, ns, ns)
         except NameError as e:
             e.args = (f"{e}\n\ncaused by:\n{self.code}",)
             raise e
-        while self.dest.startswith("../"):
-            curpath = curpath.parent
-            self.dest = self.dest[3:]
-        path = curpath / self.dest
+
         if "ui" not in ns:
             widget_name = self.code.rsplit("\n", 1)[1]
             ui = ns.pop(widget_name)
@@ -76,7 +71,8 @@ class CodeInfo:
         ui.show(run=False)
         ui.native.activateWindow()
 
-        with mkdocs_gen_files.open(path, "wb") as f:
+        path = f"images_autogen/{self.dest}"
+        with mkdocs_gen_files.FilesEditor.current().open(path, "wb") as f:
             ui.native.grab().save(f.name)
         ui.close()
         _refresh()
@@ -90,7 +86,7 @@ def main() -> None:
             info = CodeInfo.from_string(code)
             if info is None:
                 continue
-            info.save_images(mdfile.parent, ns)
+            info.save_images(ns)
         _refresh()
 
 main()
