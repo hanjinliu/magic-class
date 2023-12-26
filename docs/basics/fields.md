@@ -39,7 +39,7 @@ widget = fld.to_widget()
 widget
 ```
 
-![](../_images/fields-0.png)
+![](../images_autogen/fields-0.png)
 
 `field` can be used very similar to the [`create_widget` fucntion in `magicgui`](https://pyapp-kit.github.io/magicgui/#create_widget).
 
@@ -63,7 +63,7 @@ ui = MyClass()
 ui.show()
 ```
 
-![](../_images/fields-1.png)
+![](../images_autogen/fields-1.png)
 
 ### Define Callbacks
 
@@ -171,7 +171,7 @@ ui = A()
 ui.show()
 ```
 
-![](../_images/fields-2.png)
+![](../images_autogen/fields-2.png)
 
 Here, a `Points` class has two child fields `x` and `y`. Since they are created by
 `vfield`, their values can be simply obtained by `self.points.x`.
@@ -198,7 +198,7 @@ class A:
 ui = A()
 ```
 
-![](../_images/fields-3.png)
+![](../images_autogen/fields-3.png)
 
 When you want the values of points, you just have to do what you used to do.
 
@@ -238,7 +238,7 @@ ui = A()
 ui.show()
 ```
 
-![](../_images/fields-4.png)
+![](../images_autogen/fields-4.png)
 
 ## (Advanced) Use Fields in Non-GUI Classes
 

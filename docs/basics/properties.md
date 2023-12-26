@@ -54,7 +54,7 @@ ui = A()
 ui.show()
 ```
 
-![](../_images/properties-0.png)
+![](../images_autogen/properties-0.png)
 
 Values are updated after the "Set" button is clicked, or set programmatically.
 

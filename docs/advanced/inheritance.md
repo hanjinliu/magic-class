@@ -33,7 +33,7 @@ ui = Main()
 ui.show()
 ```
 
-![](../_images/inheritance-0.png)
+![](../images_autogen/inheritance-0.png)
 
 !!! warning
 
@@ -60,7 +60,7 @@ ui = Main()
 ui.show()
 ```
 
-![](../_images/inheritance-1.png)
+![](../images_autogen/inheritance-1.png)
 
 However, if you want to use ["bind"](../make_better/bind.md) to bind values to method
 or connect callback function to a field, you must re-define fields in the subclasses.
@@ -213,4 +213,4 @@ ui = Main()
 ui.show()
 ```
 
-![](../_images/inheritance-2.png)
+![](../images_autogen/inheritance-2.png)

@@ -35,7 +35,7 @@ ui = MyClass()
 ui.show()
 ```
 
-![](_images/quick_start-0.png)
+![](images_autogen/quick_start-0.png)
 
 !!! note
 
@@ -77,7 +77,7 @@ ui = MyClass()
 ui.show()
 ```
 
-![](_images/quick_start-1.png)
+![](images_autogen/quick_start-1.png)
 
 If a method is decorated with `@magicgui`, it will directly added in the container
 widget, in place of a push button. This is natural because decorated methods are no
@@ -101,7 +101,7 @@ ui = MyClass()
 ui.show()
 ```
 
-![](_images/quick_start-2.png)
+![](images_autogen/quick_start-2.png)
 
 ## GUI-specific Settings
 
@@ -139,7 +139,7 @@ ui = Main()
 ui.show()
 ```
 
-![](_images/quick_start-3.png)
+![](images_autogen/quick_start-3.png)
 
 
 ### Change Button Designs
@@ -160,7 +160,7 @@ ui = Main()
 ui.show()
 ```
 
-![](_images/quick_start-4.png)
+![](images_autogen/quick_start-4.png)
 
 ### Post Initialization
 

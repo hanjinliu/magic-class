@@ -50,7 +50,7 @@ ui = Main()
 ui.show()
 ```
 
-![](../_images/nest-0.png)
+![](../images_autogen/nest-0.png)
 
 
 ## Make Menus Using Nesting Strategy
@@ -130,6 +130,6 @@ ui = Main()
 ui.show()
 ```
 
-![](../_images/nest-1.png)
+![](../images_autogen/nest-1.png)
 
 If multiple toolbars are defined in tandem, they will split by tabs.

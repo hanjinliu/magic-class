@@ -32,7 +32,7 @@ log.print_rst("**bold** *italic* ``code``")  # print the message with reStructur
 log
 ```
 
-![](../_images/logging-0.png)
+![](../images_autogen/logging-0.png)
 
 If you want to use the built-in `print` function but show the message in the logger
 widget, you can use the `set_stdout` context manager.
@@ -70,7 +70,7 @@ log.print_table([[0, 1], [2, 3]])
 log
 ```
 
-![](../_images/logging-1.png)
+![](../images_autogen/logging-1.png)
 
 ## Plotting
 
@@ -88,7 +88,7 @@ with log.set_plt():
 log
 ```
 
-![](../_images/logging-2.png)
+![](../images_autogen/logging-2.png)
 
 # Use `logging` Submodule
 

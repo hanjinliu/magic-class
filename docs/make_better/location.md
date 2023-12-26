@@ -50,7 +50,7 @@ ui = Parent()
 ui.show()
 ```
 
-![](../_images/location-0.png)
+![](../images_autogen/location-0.png)
 
 The `Parent` methods will not appear in the parent widget because they already exist in
 the child widget.
@@ -190,4 +190,4 @@ ui = A()
 ui.show()
 ```
 
-![](../_images/location-1.png)
+![](../images_autogen/location-1.png)

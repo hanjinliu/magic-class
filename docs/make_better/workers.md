@@ -52,7 +52,7 @@ ui = Main()
 ui.show()
 ```
 
-![](../_images/workers-0.png)
+![](../images_autogen/workers-0.png)
 
 During execution of `func`, the GUI window will not get frozen because
 function is running in another thread.
