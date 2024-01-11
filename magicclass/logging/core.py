@@ -39,6 +39,9 @@ class MagicClassLogger(logging.Logger):
         header: bool = True,
         index: bool = True,
         precision: int | None = None,
+        *,
+        width: int | None = None,
+        header_style: str | None = None,
     ):
         """
         Print object as a table in the logger widget.
@@ -53,8 +56,20 @@ class MagicClassLogger(logging.Logger):
             Whether to show the index column.
         precision: int, options
             If given, float value will be rounded by this parameter.
+        width : int, optional
+            The width of the table. If not given, the width will be determined
+            by the table content.
+        header_style : str, optional
+            The style of the header cells. For example, `"{background-color: #eee; }"`.
         """
-        self._widget.print_table(table, header=header, index=index, precision=precision)
+        self._widget.print_table(
+            table,
+            header=header,
+            index=index,
+            precision=precision,
+            width=width,
+            header_style=header_style,
+        )
 
     def print_image(
         self,
