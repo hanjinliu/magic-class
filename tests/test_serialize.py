@@ -35,6 +35,23 @@ def test_serialize_class():
     assert ui.b.left == 1.0
     assert ui.b.right == 2.0
 
+def test_serialize_guiclass():
+    from magicgui.experimental import guiclass, button
+
+    @guiclass
+    class A:
+        x: int = 1
+        y: str = "a"
+        @button
+        def print(self):
+            print(self.x, self.y)
+
+    a = A()
+    assert serialize(a.gui) == {"x": 1, "y": "a"}
+    deserialize(a.gui, {"x": 2, "y": "b"})
+    assert a.x == 2
+    assert a.y == "b"
+
 def test_serialize_value_like_widget():
     @magicclass
     class A(MagicTemplate):

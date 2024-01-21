@@ -39,8 +39,8 @@ def value_widget_callback(
 
     def _set_value(value):
         if not widget.enabled or not gui.macro.active:
-            # If widget is read only, it means that value is set in script (not manually).
-            # Thus this event should not be recorded as a macro.
+            # If widget is read only, it means that value is set in script (not
+            # manually). Thus this event should not be recorded as a macro.
             return None
 
         gui.changed.emit(gui)
@@ -71,8 +71,8 @@ def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui[_R]):
 
     def _after_run(out: _R):
         if not fgui.enabled or not gui.macro.active:
-            # If widget is read only, it means that value is set in script (not manually).
-            # Thus this event should not be recorded as a macro.
+            # If widget is read only, it means that value is set in script (not
+            # manually). Thus this event should not be recorded as a macro.
             return None
         inputs = get_parameters(fgui)
         args = [Expr(head=Head.kw, args=[Symbol(k), v]) for k, v in inputs.items()]
@@ -81,8 +81,8 @@ def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui[_R]):
         expr = Expr(head=Head.call, args=[sub] + args[1:])  # {x}.func(args...)
 
         if fgui._auto_call:
-            # Auto-call will cause many redundant macros. To avoid this, only the last input
-            # will be recorded in magic-class.
+            # Auto-call will cause many redundant macros. To avoid this, only the last
+            # input will be recorded in magic-class.
             last_expr = gui.macro[-1]
             if (
                 last_expr.head == Head.call
@@ -280,8 +280,8 @@ def _define_macro_recorder(sig: inspect.Signature, func: Callable):
             bound = sig.bind(*args, **kwargs)
             expr = Expr.parse_method(bgui, func, *_format_arguments(bound))
             if _auto_call:
-                # Auto-call will cause many redundant macros. To avoid this, only the last
-                # input will be recorded in magic-class.
+                # Auto-call will cause many redundant macros. To avoid this, only the
+                # last input will be recorded in magic-class.
                 last_expr = bgui.macro[-1]
                 if (
                     last_expr.head == Head.call
@@ -309,8 +309,8 @@ def _define_macro_recorder(sig: inspect.Signature, func: Callable):
             _args, _kwargs = _format_arguments(bound)
             expr = Expr.parse_method(bgui, _cname_, (func.__name__,) + _args, _kwargs)
             if _auto_call:
-                # Auto-call will cause many redundant macros. To avoid this, only the last
-                # input will be recorded in magic-class.
+                # Auto-call will cause many redundant macros. To avoid this, only the
+                # last input will be recorded in magic-class.
                 last_expr = bgui.macro[-1]
                 if (
                     last_expr.head == Head.call
@@ -346,8 +346,8 @@ def _define_macro_recorder_for_partial(
             bound.apply_defaults()
             expr = Expr.parse_method(bgui, base_func, *_format_arguments(bound))
             if _auto_call:
-                # Auto-call will cause many redundant macros. To avoid this, only the last
-                # input will be recorded in magic-class.
+                # Auto-call will cause many redundant macros. To avoid this, only the
+                # last input will be recorded in magic-class.
                 last_expr = bgui.macro[-1]
                 if (
                     last_expr.head == Head.call
@@ -379,8 +379,8 @@ def _define_macro_recorder_for_partial(
                 bgui, _cname_, (base_func.__name__,) * _args, _kwargs
             )
             if _auto_call:
-                # Auto-call will cause many redundant macros. To avoid this, only the last
-                # input will be recorded in magic-class.
+                # Auto-call will cause many redundant macros. To avoid this, only the
+                # last input will be recorded in magic-class.
                 last_expr = bgui.macro[-1]
                 if (
                     last_expr.head == Head.call
