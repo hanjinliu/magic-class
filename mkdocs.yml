@@ -11,6 +11,7 @@ theme:
     - content.code.annotate
     - navigation.sections
     - navigation.indexes
+    - navigation.footer
     - toc.follow
     - search.suggest
     - search.share

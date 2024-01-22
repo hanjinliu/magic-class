@@ -91,3 +91,41 @@ class A:
     def __magicclass_deserialize__(self, data):
         self.x.value, self.y.value = data["custom_value"]
 ```
+
+## Skip Serialization for Some Values
+
+Serialized data should be simple and usually JSON serializable. Some widgets may hold
+very complex data such as `numpy.ndarray` or `pandas.DataFrame`. In these cases, you
+may want to skip serialization for these values.
+
+The `skip_if` argument of `serialize` is designed for this purpose. It should be a
+callable that take a value and return `True` if the value should be skipped.
+
+```python
+# A widget that load an image from a path
+from pathlib import Path
+import numpy as np
+from magicgui.widgets import Image
+from magicclass import magicclass, vfield
+from magicclass.serialize import serialize
+
+@magicclass
+class A:
+    img = vfield(Image)
+    path = vfield(Path)
+
+    def load(self):
+        """Load image from path"""
+        from skimage.io import imread
+
+        self.img = imread(self.path)
+
+ui = A()
+ui.path = "path/to/image.png"
+ui.load()
+serialize(ui, skip_if=lambda x: isinstance(x, np.ndarray))
+```
+
+``` title="Output"
+{'path': WindowsPath('path/to/image.png')}
+```

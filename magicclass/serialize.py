@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, Callable
 from magicgui.widgets import PushButton, Container
 from magicgui.widgets.bases import Widget, ValueWidget, CategoricalWidget
 from magicclass._gui import BaseGui, MenuGuiBase, ToolBarGui
@@ -15,6 +15,7 @@ def serialize(
     *,
     skip_empty: bool = True,
     skip_null: bool = True,
+    skip_if: Callable[[Any], bool] | None = None,
 ) -> dict[str, Any]:
     """
     Serialize the GUI.
@@ -33,6 +34,10 @@ def serialize(
     skip_null : bool, default True
         If True, skip the categorical widgets with null values, which happens when
         the choices are empty.
+    skip_if : callable, optional
+        If provided, the widget will be skipped if ``skip_if(widget.value)`` returns
+        True. This is useful when you want to skip the widgets with certain values,
+        such as None or ndarray.
 
     Examples
     --------
@@ -56,19 +61,27 @@ def serialize(
                 out[child.name] = ser
             processed.add(id(child))
 
+    def _serialize_value(widget: ValueWidget | WidgetAction):
+        if _is_null_state(widget) and skip_null:
+            return _missing
+        _value = widget.value
+        if skip_if is not None and skip_if(_value):
+            return _missing
+        return _value
+
     for widget in ui:
         if isinstance(widget, (PushButton, Action)) or id(widget) in processed:
             continue
         if _is_value_widget_like(widget):
-            if _is_null_state(widget) and skip_null:
-                continue
-            out[widget.name] = widget.value
+            if (_value := _serialize_value(widget)) is not _missing:
+                out[widget.name] = _value
         elif isinstance(widget, (Container, MenuGuiBase, ToolBarGui)):
             out[widget.name] = serialize(
                 widget, skip_empty=skip_empty, skip_null=skip_null
             )
         elif isinstance(widget, WidgetAction) and widget.support_value:
-            out[widget.name] = widget.value
+            if (_value := _serialize_value(widget.widget)) is not _missing:
+                out[widget.name] = _value
         processed.add(id(widget))
     return out
 
