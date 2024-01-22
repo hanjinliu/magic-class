@@ -11,22 +11,22 @@
       
       
       
-        <link rel="prev" href="../advanced/inheritance/">
+        <link rel="prev" href="../fields/">
       
       
-        <link rel="next" href="../api/core/">
+        <link rel="next" href="../nest/">
       
       
-      <link rel="icon" href="../assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.2">
     
     
       
-        <title>Best Practice - magic-class</title>
+        <title>Serialize/Deserialize GUI - magic-class</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.50c56a3b.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
       
       
 
@@ -45,9 +45,9 @@
       
     
     
-      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -66,7 +66,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#best-practice" class="md-skip">
+        <a href="#serializedeserialize-gui" class="md-skip">
           Skip to content
         </a>
       
@@ -82,7 +82,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="magic-class" class="md-header__button md-logo" aria-label="magic-class" data-md-component="logo">
+    <a href="../.." title="magic-class" class="md-header__button md-logo" aria-label="magic-class" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -102,7 +102,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Best Practice
+              Serialize/Deserialize GUI
             
           </span>
         </div>
@@ -196,7 +196,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="magic-class" class="md-nav__button md-logo" aria-label="magic-class" data-md-component="logo">
+    <a href="../.." title="magic-class" class="md-nav__button md-logo" aria-label="magic-class" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -226,7 +226,7 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -246,7 +246,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../quick_start/" class="md-nav__link">
+      <a href="../../quick_start/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -263,6 +263,8 @@
       
   
   
+    
+  
   
   
     
@@ -291,17 +293,17 @@
       
       
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../basics/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -318,7 +320,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             Basics
@@ -334,7 +336,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../basics/options/" class="md-nav__link">
+      <a href="../options/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -355,7 +357,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../basics/fields/" class="md-nav__link">
+      <a href="../fields/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -373,10 +375,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../basics/serialize/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Serialize/Deserialize GUI
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -385,6 +407,53 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#basic-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Usage
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-serialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Custom Serialization
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#skip-serialization-for-some-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      Skip Serialization for Some Values
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -397,7 +466,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../basics/nest/" class="md-nav__link">
+      <a href="../nest/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -418,7 +487,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../basics/tooltips/" class="md-nav__link">
+      <a href="../tooltips/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -439,7 +508,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../basics/properties/" class="md-nav__link">
+      <a href="../properties/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -520,7 +589,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../make_better/" class="md-nav__link ">
+            <a href="../../make_better/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -553,7 +622,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../make_better/location/" class="md-nav__link">
+      <a href="../../make_better/location/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -574,7 +643,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../make_better/keybinding/" class="md-nav__link">
+      <a href="../../make_better/keybinding/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -595,7 +664,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../make_better/undo/" class="md-nav__link">
+      <a href="../../make_better/undo/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -616,7 +685,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../make_better/bind/" class="md-nav__link">
+      <a href="../../make_better/bind/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -637,7 +706,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../make_better/choices/" class="md-nav__link">
+      <a href="../../make_better/choices/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -658,7 +727,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../make_better/validator/" class="md-nav__link">
+      <a href="../../make_better/validator/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -679,7 +748,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../make_better/setup/" class="md-nav__link">
+      <a href="../../make_better/setup/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -700,7 +769,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../make_better/preview/" class="md-nav__link">
+      <a href="../../make_better/preview/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -721,7 +790,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../make_better/confirm/" class="md-nav__link">
+      <a href="../../make_better/confirm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -742,7 +811,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../make_better/workers/" class="md-nav__link">
+      <a href="../../make_better/workers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -763,7 +832,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../make_better/icon/" class="md-nav__link">
+      <a href="../../make_better/icon/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -784,7 +853,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../make_better/logging/" class="md-nav__link">
+      <a href="../../make_better/logging/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -805,7 +874,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../make_better/additional_types/" class="md-nav__link">
+      <a href="../../make_better/additional_types/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -826,7 +895,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../make_better/containers/" class="md-nav__link">
+      <a href="../../make_better/containers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -847,7 +916,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../make_better/testing/" class="md-nav__link">
+      <a href="../../make_better/testing/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -906,7 +975,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../visualization/" class="md-nav__link ">
+            <a href="../../visualization/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -939,7 +1008,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../visualization/matplotlib/" class="md-nav__link">
+      <a href="../../visualization/matplotlib/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -960,7 +1029,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../visualization/pyqtgraph/" class="md-nav__link">
+      <a href="../../visualization/pyqtgraph/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -981,7 +1050,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../visualization/vispy/" class="md-nav__link">
+      <a href="../../visualization/vispy/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1002,7 +1071,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../visualization/vtk/" class="md-nav__link">
+      <a href="../../visualization/vtk/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1059,7 +1128,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../advanced/" class="md-nav__link ">
+            <a href="../../advanced/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -1092,7 +1161,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../advanced/freewidget/" class="md-nav__link">
+      <a href="../../advanced/freewidget/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1113,7 +1182,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../advanced/customize_macro/" class="md-nav__link">
+      <a href="../../advanced/customize_macro/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1134,7 +1203,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../advanced/inheritance/" class="md-nav__link">
+      <a href="../../advanced/inheritance/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1159,30 +1228,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Best Practice
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../best_practice/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1191,35 +1240,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#shared-input-parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      Shared Input Parameters
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1275,7 +1295,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/core/" class="md-nav__link">
+      <a href="../../api/core/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1323,9 +1343,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#shared-input-parameters" class="md-nav__link">
+  <a href="#basic-usage" class="md-nav__link">
     <span class="md-ellipsis">
-      Shared Input Parameters
+      Basic Usage
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-serialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Custom Serialization
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#skip-serialization-for-some-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      Skip Serialization for Some Values
     </span>
   </a>
   
@@ -1349,84 +1387,115 @@
   
 
 
-<h1 id="best-practice">Best Practice</h1>
-<p>Here's some tips that will be useful for better GUI design.</p>
-<h2 id="shared-input-parameters">Shared Input Parameters</h2>
-<p>If you want to control input parameters outside each <code>magicgui</code> widget, the example
-below is the most naive implementation.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magicmenu</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">abstractapi</span><span class="p">,</span> <span class="n">set_design</span>
+<h1 id="serializedeserialize-gui">Serialize/Deserialize GUI</h1>
+<p>It is useful in some cases to save the state of the GUI and restore it later. In most
+cases, widget states are defined by the widget values.</p>
+<p>In <code>magic-class</code>, simple <code>serialize</code> and <code>deserialize</code> functions are available. These
+methods can be used to save and load the state of the <code>magicgui</code>'s <code>Container</code> widgets
+or any magic-class widgets. All the value widgets or value-like widgets are recursively
+converted into dictionaries.</p>
+<details class="note">
+<summary>What is a value-like widget?</summary>
+<ol>
+<li><code>ValueWidget</code>, such as <code>SpinBox</code>, <code>Slider</code>, <code>CheckBox</code>, <code>ComboBox</code>, etc.</li>
+<li>Widget class that has a <code>value</code> property with both getter and setter being
+   defined. This includes <code>FileEdit</code> and custom magic-classes that have a proper
+   <code>value</code> property.</li>
+</ol>
+</details>
+<h2 id="basic-usage">Basic Usage</h2>
+<p><code>serialize</code> and <code>deserialize</code> are available in the <code>magicclass.serialize</code> module.
+<code>serialize</code> converts the widget state to a dictionary, and <code>deserialize</code> does the
+opposite.</p>
+<p>Here's an example of serializing a <code>magicgui</code>'s <code>FunctionGui</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicgui</span> <span class="kn">import</span> <span class="n">magicgui</span>
+<span class="kn">from</span> <span class="nn">magicclass.serialize</span> <span class="kn">import</span> <span class="n">serialize</span><span class="p">,</span> <span class="n">deserialize</span>
+
+<span class="nd">@magicgui</span>
+<span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;X&quot;</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="n">serialize</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><span class="filename">Output</span><pre><span></span><code>{&#39;x&#39;: 1, &#39;y&#39;: &#39;X&#39;}
+</code></pre></div>
+<p>And it can be deserialized back to the <code>FunctionGui</code> using <code>deserialize</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="n">deserialize</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="s2">&quot;Y&quot;</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><span class="filename">Output</span><pre><span></span><code>&lt;FunctionGui func(x: int = 2, y: str = &#39;Y&#39;)&gt;
+</code></pre></div>
+<p>Same functions can be used to serialize and deserialize magic-class widgets.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
-    <span class="nd">@magicmenu</span>
-    <span class="k">class</span> <span class="nc">Menu</span><span class="p">:</span>
-        <span class="n">add</span> <span class="o">=</span> <span class="n">abstractapi</span><span class="p">()</span>
-        <span class="n">sub</span> <span class="o">=</span> <span class="n">abstractapi</span><span class="p">()</span>
+<span class="k">class</span> <span class="nc">Parameters</span><span class="p">:</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
 
-    <span class="n">a</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print the parameters&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;x =&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;, y =&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
-    <span class="nd">@set_design</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">Menu</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add two values&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">value</span>
-
-    <span class="nd">@set_design</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">Menu</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Subtract two values&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">value</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">Parameters</span><span class="p">()</span>
+<span class="n">serialize</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 </code></pre></div>
-<p>However, after you calculated "4.0 + 2.0" and "6.0 - 3.0", macro
-will be recorded like</p>
-<div class="highlight"><pre><span></span><code><span class="n">ui</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">4.0</span>
-<span class="n">ui</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">2.0</span>
-<span class="n">ui</span><span class="o">.</span><span class="n">add</span><span class="p">()</span>
-<span class="n">ui</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">6.0</span>
-<span class="n">ui</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">3.0</span>
-<span class="n">ui</span><span class="o">.</span><span class="n">sub</span><span class="p">()</span>
+<div class="highlight"><span class="filename">Output</span><pre><span></span><code>{&#39;x&#39;: 1, &#39;y&#39;: &#39;X&#39;}
 </code></pre></div>
-<p>This is perfectly reproducible but is not user friendly. If users want to run functions
-programmatically, they'll prefer styles like <code>add(1, 2)</code>. Unfriendliness is more obvious
-when you changed the values of <code>a</code> and <code>b</code> alternately many times before adding them and
-saw its macro recorded like</p>
-<div class="highlight"><span class="filename">macro</span><pre><span></span><code><span class="n">ui</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">3.0</span>
-<span class="n">ui</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">1.0</span>
-<span class="n">ui</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">6.0</span>
-<span class="n">ui</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">2.0</span>
-<span class="n">ui</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">9.0</span>
-<span class="n">ui</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">3.0</span>
-<span class="n">ui</span><span class="o">.</span><span class="n">add</span><span class="p">()</span>
-</code></pre></div>
-<p>To avoid this, you can use the <a href="../make_better/bind/">"bind" option</a>.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Annotated</span>
-<span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magicmenu</span><span class="p">,</span> <span class="n">field</span>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You may have noticed that a magic-class widget became very similar to a
+<a href="https://pydantic-docs.helpmanual.io/"><code>pydantic</code></a> model.</p>
+</div>
+<h2 id="custom-serialization">Custom Serialization</h2>
+<p>If a custom <code>Container</code> subclass or a magic-class widget need a special way for
+serialization and deserialization, you can define <code>__magicclass_serialize__</code> and
+<code>__magicclass_deserialize__</code> methods to do this.</p>
+<p>In the following example, widget values are saved as a tuple instead of separate
+dictionary items.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
-    <span class="nd">@magicmenu</span>
-    <span class="k">class</span> <span class="nc">Menu</span><span class="p">:</span>
-        <span class="n">add</span> <span class="o">=</span> <span class="n">abstractapi</span><span class="p">()</span>
-        <span class="n">sub</span> <span class="o">=</span> <span class="n">abstractapi</span><span class="p">()</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
 
-    <span class="n">a</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># &lt;- don&#39;t record</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># &lt;- don&#39;t record</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__magicclass_serialize__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;custom_value&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">value</span><span class="p">)}</span>
 
-    <span class="nd">@set_design</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">Menu</span><span class="p">)</span>
-<span class="hll">    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">a</span><span class="p">}],</span> <span class="n">b</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">b</span><span class="p">}]):</span>
-</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Add two values&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
-
-    <span class="nd">@set_design</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">Menu</span><span class="p">)</span>
-<span class="hll">    <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">a</span><span class="p">}],</span> <span class="n">b</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">b</span><span class="p">}]):</span>
-</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Subtract two values&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span>
+    <span class="k">def</span> <span class="nf">__magicclass_deserialize__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;custom_value&quot;</span><span class="p">]</span>
 </code></pre></div>
-<p>Widget created by this code works completely identical to the previous one. Also, macro
-will be recorded in a better way.</p>
-<div class="highlight"><span class="filename">macro</span><pre><span></span><code><span class="n">ui</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
-<span class="n">ui</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">6.0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
+<h2 id="skip-serialization-for-some-values">Skip Serialization for Some Values</h2>
+<p>Serialized data should be simple and usually JSON serializable. Some widgets may hold
+very complex data such as <code>numpy.ndarray</code> or <code>pandas.DataFrame</code>. In these cases, you
+may want to skip serialization for these values.</p>
+<p>The <code>skip_if</code> argument of <code>serialize</code> is designed for this purpose. It should be a
+callable that take a value and return <code>True</code> if the value should be skipped.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># A widget that load an image from a path</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
+<span class="kn">from</span> <span class="nn">magicclass.serialize</span> <span class="kn">import</span> <span class="n">serialize</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">Image</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">Path</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load image from path&quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">skimage.io</span> <span class="kn">import</span> <span class="n">imread</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">img</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+
+<span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;path/to/image.png&quot;</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<span class="n">serialize</span><span class="p">(</span><span class="n">ui</span><span class="p">,</span> <span class="n">skip_if</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">))</span>
+</code></pre></div>
+<div class="highlight"><span class="filename">Output</span><pre><span></span><code>{&#39;path&#39;: WindowsPath(&#39;path/to/image.png&#39;)}
 </code></pre></div>
 
 
@@ -1457,7 +1526,7 @@ will be recorded in a better way.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../advanced/inheritance/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Inherit Magic Class">
+          <a href="../fields/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Use Fields in magic-class">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
@@ -1467,20 +1536,20 @@ will be recorded in a better way.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Inherit Magic Class
+                Use Fields in magic-class
               </div>
             </div>
           </a>
         
         
           
-          <a href="../api/core/" class="md-footer__link md-footer__link--next" aria-label="Next: magicclass.core">
+          <a href="../nest/" class="md-footer__link md-footer__link--next" aria-label="Next: Nest magic-classes">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                magicclass.core
+                Nest magic-classes
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1518,10 +1587,10 @@ will be recorded in a better way.</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate", "navigation.sections", "navigation.indexes", "navigation.footer", "toc.follow", "search.suggest", "search.share"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate", "navigation.sections", "navigation.indexes", "navigation.footer", "toc.follow", "search.suggest", "search.share"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.d7c377c4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7c377c4.min.js"></script>
       
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
       
