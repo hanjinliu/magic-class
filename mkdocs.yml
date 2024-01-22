@@ -25,6 +25,7 @@ nav:
     - Overview: basics/index.md
     - basics/options.md
     - basics/fields.md
+    - basics/serialize.md
     - basics/nest.md
     - basics/tooltips.md
     - basics/properties.md

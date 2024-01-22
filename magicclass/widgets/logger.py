@@ -8,7 +8,6 @@ from qtpy import QtWidgets as QtW, QtGui, QtCore
 from qtpy.QtCore import Qt, Signal
 from magicgui.backends._qtpy.widgets import QBaseWidget
 from magicgui.widgets import Widget
-import logging
 from typing import TYPE_CHECKING, Any, Union, overload, NamedTuple
 
 from magicclass.utils import rst_to_html
@@ -16,7 +15,7 @@ from magicclass.utils import rst_to_html
 if TYPE_CHECKING:
     import numpy as np
     from matplotlib.figure import Figure as mpl_Figure
-    from matplotlib.backend_bases import FigureManagerBase, RendererBase
+    from matplotlib.backend_bases import FigureManagerBase
 
 
 # See https://stackoverflow.com/questions/28655198/best-way-to-display-logs-in-pyqt

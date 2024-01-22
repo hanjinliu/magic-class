@@ -11,7 +11,6 @@ from magicgui.widgets._concrete import _LabeledWidget
 from magicgui.backends._qtpy.widgets import (
     QBaseWidget,
     Container as ContainerBase,
-    MainWindow as MainWindowBase,
 )
 from magicgui.widgets.bases import ContainerWidget
 
@@ -469,8 +468,8 @@ class _ListContainer(ContainerBase):
 
 
 class _SubWindowsContainer(ContainerBase):
-    # The close button in QMdiArea completely deletes the sub window widget. This accident
-    # can be avoided by defining a custom window flag.
+    # The close button in QMdiArea completely deletes the sub window widget. This
+    # accident can be avoided by defining a custom window flag.
     _NoCloseButtonFlag = (
         Qt.WindowType.CustomizeWindowHint
         | Qt.WindowType.WindowTitleHint
@@ -508,7 +507,7 @@ class _GroupBoxContainer(ContainerBase):
     def __init__(self, layout="vertical", scrollable: bool = False, **kwargs):
         QBaseWidget.__init__(self, QtW.QWidget)
 
-        # To precisely control margins, _layout should not be set to the QGroupBox widget.
+        # To precisely control margins, _layout should not be set to the QGroupBox.
         self._groupbox = QtW.QGroupBox(self._qwidget)
         if layout == "horizontal":
             self._layout: QtW.QLayout = QtW.QHBoxLayout()
@@ -752,7 +751,7 @@ class ListContainer(ContainerWidget[_W]):
 
     def _drag_and_drop_happened(self, e=None):
         """Sort widget list when item drag/drop happens."""
-        l = []
+        _list = []
         for i in range(self._widget._listwidget.count()):
             item = self._widget._listwidget.item(i)
             w = self._widget._listwidget.itemWidget(item)
@@ -761,10 +760,10 @@ class ListContainer(ContainerWidget[_W]):
                 # if widget is a _LabeledWidget, inserted widget item will
                 # be the parent of the widget in "_list".
                 if widget.native is w or widget.native.parent() is w:
-                    l.append(widget)
+                    _list.append(widget)
                     break
 
-        self._list = l
+        self._list = _list
 
     @property
     def current_index(self):

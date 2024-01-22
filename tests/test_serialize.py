@@ -120,3 +120,24 @@ def test_serialize_custom():
     assert serialize(ui) == {"x": 3}
     deserialize(ui, {"x": "4"})
     assert ui.x == 4
+
+def test_serialize_with_empty_choices():
+    @magicclass
+    class A(MagicTemplate):
+        def __init__(self):
+            self._choices = []
+
+        def _get_choices(self, _):
+            return self._choices
+
+        c = field(int).with_choices(_get_choices)
+        i = vfield(1)
+
+        def _set_choices(self, choices):
+            self._choices = choices
+            self.reset_choices()
+
+    ui = A()
+    assert serialize(ui) == {"i": 1}
+    ui._set_choices([1, 2, 3])
+    assert serialize(ui) == {"c": 1, "i": 1}
