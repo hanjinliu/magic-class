@@ -326,8 +326,8 @@ class Figure(FreeWidget):
             labels = self.ax.get_xticklabels()
         else:
             labels = self.ax.set_xticklabels(labels, **kwargs)
-        for l in labels:
-            l.update(kwargs)
+        for _l in labels:
+            _l.update(kwargs)
         self.draw()
         return locs, labels
 
@@ -347,8 +347,8 @@ class Figure(FreeWidget):
             labels = self.ax.get_yticklabels()
         else:
             labels = self.ax.set_yticklabels(labels, **kwargs)
-        for l in labels:
-            l.update(kwargs)
+        for _l in labels:
+            _l.update(kwargs)
         self.draw()
         return locs, labels
 

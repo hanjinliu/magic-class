@@ -6,7 +6,6 @@ from typing import Callable, TYPE_CHECKING
 from enum import Enum
 from pathlib import Path
 import functools
-from qtpy import QtWidgets as QtW
 from magicgui.widgets import Widget
 from .mgui_ext import FunctionGuiPlus
 from magicclass._exceptions import Canceled

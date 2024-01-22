@@ -33,10 +33,8 @@ from magicgui.widgets import (
     Image,
     Table,
     Label,
-    MainWindow,
 )
 from magicgui.application import use_app
-from magicgui.types import Undefined
 from magicgui.widgets.bases import (
     ButtonWidget,
     ValueWidget,
@@ -80,7 +78,7 @@ from magicclass.utils import (
     eval_attribute,
 )
 from magicclass.widgets import Separator, FreeWidget
-from magicclass.fields import MagicField, field, vfield, FieldGroup
+from magicclass.fields import MagicField, FieldGroup
 from magicclass.signature import (
     ConfirmDict,
     MagicMethodSignature,
@@ -386,7 +384,8 @@ class MagicTemplate(
         can import macro recorders for napari types in the appropriate timing.
         """
         try:
-            from . import _napari_type  # load default macro recorder.
+            # load default macro recorder.
+            from . import _napari_type  # noqa: F401
         except Exception:
             pass
         return self.native.objectName()
@@ -454,9 +453,9 @@ class MagicTemplate(
                 into_cls = loc
 
             if predefined is not None:
-                # Update signature to the parent one. This step is necessary when widget design
-                # is defined on the parent side. Parameters should be replaced with a simplest
-                # one to avoid creating useless widgets.
+                # Update signature to the parent one. This step is necessary when widget
+                # design is defined on the parent side. Parameters should be replaced
+                # with a simplest one to avoid creating useless widgets.
                 parent_sig = get_signature(func)
                 _simple_param = inspect.Parameter(
                     "self", inspect.Parameter.POSITIONAL_OR_KEYWORD
@@ -621,8 +620,8 @@ class MagicTemplate(
 
     def _convert_attributes_into_widgets(self):
         """
-        This function is called in dynamically created __init__. Methods, fields and nested
-        classes are converted to magicgui widgets.
+        This function is called in dynamically created __init__. Methods, fields and
+        nested classes are converted to magicgui widgets.
         """
         raise NotImplementedError()
 
@@ -677,7 +676,7 @@ class MagicTemplate(
 
     def _create_widget_from_field(self, name: str, fld: MagicField) -> Widget:
         """
-        This function is called when magic-class encountered a MagicField in its definition.
+        Called when magic-class encountered a MagicField in its definition.
 
         Parameters
         ----------
@@ -689,7 +688,7 @@ class MagicTemplate(
         raise NotImplementedError()
 
     def _create_widget_from_method(self, obj: MethodType):
-        """Convert instance methods into GUI objects, such as push buttons or actions."""
+        """Convert instance methods into GUI, such as push buttons or actions."""
         if isinstance(obj, abstractapi):
             obj.check_resolved()
 
@@ -892,7 +891,8 @@ class ContainerLikeGui(BaseGui, mguiLike):
     def _create_widget_from_field(self, name: str, fld: MagicField):
         if fld.not_ready():
             raise TypeError(
-                f"MagicField {name} does not contain enough information for widget creation"
+                f"MagicField {name} does not contain enough information for widget "
+                "creation"
             )
 
         fld.name = fld.name or name
@@ -927,12 +927,6 @@ class ContainerLikeGui(BaseGui, mguiLike):
             key = self.index(key)
         self.native.removeAction(self[key].native)
         del self._list[key]
-
-    def __iter__(self) -> Iterator[Widget | AbstractAction]:
-        return iter(self._list)
-
-    def __len__(self) -> int:
-        return len(self._list)
 
     def append(self, obj: Callable | ContainerLikeGui | AbstractAction) -> None:
         return self.insert(len(self._list), obj)
@@ -1077,9 +1071,10 @@ def _create_gui_method(self: BaseGui, obj: MethodType):
                     pass
                 else:
                     warnings.warn(
-                        "Binding method name string is deprecated for the safety reason. "
-                        "Please use method itself.",
+                        "Binding method name string is deprecated for the safety "
+                        "reason. Please use method itself.",
                         DeprecationWarning,
+                        stacklevel=2,
                     )
 
             if isinstance(_arg_bind, BoundLiteral):
@@ -1264,7 +1259,8 @@ def convert_attributes(
             if isinstance(obj, _MagicTemplateMeta):
                 new_attr = copy_class(obj, cls.__qualname__, name=name)
             elif name.startswith("_") or isinstance(obj, _pass) or not _isfunc:
-                # private method, non-action-like object, not-callable object are passed.
+                # private method, non-action-like object or not-callable object are
+                # passed.
                 new_attr = obj
             elif _isfunc:
                 new_attr = convert_function(obj, default)

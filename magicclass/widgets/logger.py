@@ -8,7 +8,6 @@ from qtpy import QtWidgets as QtW, QtGui, QtCore
 from qtpy.QtCore import Qt, Signal
 from magicgui.backends._qtpy.widgets import QBaseWidget
 from magicgui.widgets import Widget
-import logging
 from typing import TYPE_CHECKING, Any, Union, overload, NamedTuple
 
 from magicclass.utils import rst_to_html
@@ -16,7 +15,7 @@ from magicclass.utils import rst_to_html
 if TYPE_CHECKING:
     import numpy as np
     from matplotlib.figure import Figure as mpl_Figure
-    from matplotlib.backend_bases import FigureManagerBase, RendererBase
+    from matplotlib.backend_bases import FigureManagerBase
 
 
 # See https://stackoverflow.com/questions/28655198/best-way-to-display-logs-in-pyqt
@@ -421,6 +420,9 @@ class Logger(Widget, logging.Handler):
         header: bool = True,
         index: bool = True,
         precision: int | None = None,
+        *,
+        width: int | None = None,
+        header_style: str | None = None,
     ):
         """
         Print object as a table in the logger widget.
@@ -435,6 +437,9 @@ class Logger(Widget, logging.Handler):
             Whether to show the index column.
         precision: int, options
             If given, float value will be rounded by this parameter.
+        width : int, optional
+            The width of the table. If not given, the width will be determined
+            by the table content.
         """
         import pandas as pd
 
@@ -443,9 +448,18 @@ class Logger(Widget, logging.Handler):
             formatter = None
         else:
             formatter = lambda x: f"{x:.{precision}f}"
-        self.native.appendHtml(
-            df.to_html(header=header, index=index, float_format=formatter)
-        )
+        html = df.to_html(header=header, index=index, float_format=formatter)
+        if html.startswith("<table "):
+            if width is None:
+                html = '<table style="border-collapse: collapse" ' + html[6:]
+            else:
+                html = (
+                    f'<table width="{width}" style="border-collapse: collapse" '
+                    + html[6:]
+                )
+        if header_style is not None:
+            html = f"<style>.dataframe th{header_style}</style>" + html
+        self.native.appendHtml(html)
         return None
 
     def print_image(

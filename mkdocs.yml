@@ -11,6 +11,7 @@ theme:
     - content.code.annotate
     - navigation.sections
     - navigation.indexes
+    - navigation.footer
     - toc.follow
     - search.suggest
     - search.share
@@ -25,6 +26,7 @@ nav:
     - Overview: basics/index.md
     - basics/options.md
     - basics/fields.md
+    - basics/serialize.md
     - basics/nest.md
     - basics/tooltips.md
     - basics/properties.md

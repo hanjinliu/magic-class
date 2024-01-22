@@ -18,7 +18,6 @@ from magicgui.widgets.bases import (
     ButtonWidget,
     ValueWidget,
     ContainerWidget,
-    ContainerWidget,
 )
 from magicgui.types import Undefined
 from magicgui.widgets._concrete import _LabeledWidget
@@ -35,7 +34,7 @@ from ._base import (
     normalize_insertion,
 )
 from .utils import format_error, connect_magicclasses
-from ._macro_utils import value_widget_callback, nested_function_gui_callback
+from ._macro_utils import value_widget_callback
 from magicclass.widgets import (
     ButtonContainer,
     GroupBoxContainer,
@@ -83,7 +82,8 @@ class ClassGuiBase(BaseGui):
     def _create_widget_from_field(self, name: str, fld: MagicField):
         if fld.not_ready():
             raise TypeError(
-                f"MagicField {name} does not contain enough information for widget creation"
+                f"MagicField {name} does not contain enough information for widget "
+                "creation."
             )
 
         fld.name = fld.name or name
@@ -112,8 +112,8 @@ class ClassGuiBase(BaseGui):
 
     def _convert_attributes_into_widgets(self):
         """
-        This function is called in dynamically created __init__. Methods, fields and nested
-        classes are converted to magicgui widgets.
+        This function is called in dynamically created __init__. Methods, fields and
+        nested classes are converted to magicgui widgets.
         """
         cls = self.__class__
 
@@ -154,9 +154,10 @@ class ClassGuiBase(BaseGui):
                                 _layout.setMenuBar(self._menubar)
                             else:
                                 raise RuntimeError(
-                                    "Cannot add menubar after adding a toolbar in a non-main window. "
-                                    "Use maigcclass(widget_type='mainwindow') instead, or define the "
-                                    "menu class before toolbar class."
+                                    "Cannot add menubar after adding a toolbar in a "
+                                    "non-main window. Use maigcclass(widget_type="
+                                    "'mainwindow') instead, or define the menu class "
+                                    "before toolbar class."
                                 )
 
                     widget.native.setParent(self._menubar, widget.native.windowFlags())
@@ -214,10 +215,12 @@ class ClassGuiBase(BaseGui):
                         if isinstance(widget, Signal):
                             continue
                         try:
-                            # Methods or any callable objects, but FunctionGui is not included.
-                            # NOTE: Here any custom callable objects could be given. Some callable
-                            # objects can be incompatible but useful. Those callable objects should
-                            # be passed from widget construction.
+                            # Methods or any callable objects, but FunctionGui is not
+                            # included.
+                            # NOTE: Here any custom callable objects could be given.
+                            # Some callable objects can be incompatible but useful.
+                            # Those callable objects should be passed from widget
+                            # construction.
                             widget = self._create_widget_from_method(widget)
                         except AttributeError as e:
                             warnings.warn(
@@ -238,8 +241,8 @@ class ClassGuiBase(BaseGui):
                         widget.__class__, _MCLS_PAREMT
                     ):
                         # magic-class has to know its parent.
-                        # if __magicclass_parent__ is defined as a property, hasattr must be called
-                        # with a type object (not instance).
+                        # if __magicclass_parent__ is defined as a property, hasattr
+                        # must be called with a type object (not instance).
                         widget.__magicclass_parent__ = self
 
                     else:
@@ -248,8 +251,8 @@ class ClassGuiBase(BaseGui):
                         if hasattr(widget, "text") and not widget.text:
                             widget.text = widget.name.replace("_", " ")
 
-                    # Now, "widget" is a Widget object. Add widget in a way similar to "insert" method
-                    # of Container.
+                    # Now, "widget" is a Widget object. Add widget in a way similar to
+                    # "insert" method of Container.
                     if widget.name.startswith("_"):
                         continue
 
@@ -455,8 +458,9 @@ def make_gui(
 ) -> Callable[[_C2], type[_C | _C2 | ClassGuiBase]]:
     """
     Make a ClassGui class from a Container widget.
-    Because GUI class inherits Container here, functions that need overriden must be defined
-    here, not in ClassGuiBase.
+
+    Because GUI class inherits Container here, functions that need overriden must be
+    defined here, not in ClassGuiBase.
     """
 
     def wrapper(cls_: type[ClassGuiBase]):
@@ -497,8 +501,8 @@ def make_gui(
             # See napari/_qt/widgets/qt_viewer_dock_widget.py
             from magicclass.wrappers import nogui
 
-            # This function will be detected as non-reserved method so that magicclass will
-            # try to convert it into widget. Should decorate with @nogui.
+            # This function will be detected as non-reserved method so that magicclass
+            # will try to convert it into widget. Should decorate with @nogui.
             @nogui
             def add_dock_widget(
                 self: MainWindowClassGui,
@@ -515,8 +519,8 @@ def make_gui(
                 Parameters
                 ----------
                 widget : Widget
-                    Widget that will be converted into a dock widget and added to the main
-                    window.
+                    Widget that will be converted into a dock widget and added to the
+                    main window.
                 name : str, optional
                     Name of the dock widget.
                 area : str, default is "right"
