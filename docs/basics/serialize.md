@@ -5,8 +5,15 @@ cases, widget states are defined by the widget values.
 
 In `magic-class`, simple `serialize` and `deserialize` functions are available. These
 methods can be used to save and load the state of the `magicgui`'s `Container` widgets
-or any magic-class widgets. All the value widgets or value-like widgets (widgets that
-have a `value` attribute) are recursively converted into dictionaries.
+or any magic-class widgets. All the value widgets or value-like widgets are recursively
+converted into dictionaries.
+
+??? note "What is a value-like widget?"
+
+    1. `ValueWidget`, such as `SpinBox`, `Slider`, `CheckBox`, `ComboBox`, etc.
+    2. Widget class that has a `value` property with both getter and setter being
+       defined. This includes `FileEdit` and custom magic-classes that have a proper
+       `value` property.
 
 ## Basic Usage
 

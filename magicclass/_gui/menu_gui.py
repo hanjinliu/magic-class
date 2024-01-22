@@ -21,10 +21,9 @@ from ._base import (
     ContainerLikeGui,
     normalize_insertion,
 )
-from .utils import format_error, connect_magicclasses
+from .utils import format_error
 
 from magicclass.signature import get_additional_option
-from magicclass.fields import MagicField
 from magicclass.widgets import Separator, FreeWidget
 from magicclass.utils import iter_members, Tooltips
 
@@ -131,8 +130,8 @@ class MenuGuiBase(ContainerLikeGui):
                         if isinstance(widget, BaseGui):
                             widget._my_symbol = Symbol(name)
                         # magic-class has to know its parent.
-                        # if __magicclass_parent__ is defined as a property, hasattr must be called
-                        # with a type object (not instance).
+                        # if __magicclass_parent__ is defined as a property, hasattr
+                        # must be called with a type object (not instance).
                         widget.__magicclass_parent__ = self
 
                     if widget.name.startswith("_"):
@@ -231,8 +230,8 @@ def insert_action_like(qmenu: QMenu, key: int, obj):
         Object to be inserted.
     """
     actions = qmenu.actions()
-    l = len(actions)
-    if key in (l, -1):
+    nactions = len(actions)
+    if key in (nactions, -1):
         if isinstance(obj, QMenu):
             qmenu.addMenu(obj).setText(obj.objectName().replace("_", " "))
         elif isinstance(obj, str):

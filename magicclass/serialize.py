@@ -50,16 +50,6 @@ def serialize(
     """
     if hasattr(ui, "__magicclass_serialize__"):
         return ui.__magicclass_serialize__()
-    out: dict[str, Any] = {}
-    processed: set[int] = set()
-    if isinstance(ui, BaseGui):
-        for child in ui.__magicclass_children__:
-            if id(child) in processed:
-                continue
-            ser = serialize(child, skip_empty=skip_empty, skip_null=skip_null)
-            if len(ser) > 0 or not skip_empty:
-                out[child.name] = ser
-            processed.add(id(child))
 
     def _serialize_value(widget: ValueWidget | WidgetAction):
         if _is_null_state(widget) and skip_null:
@@ -68,6 +58,21 @@ def serialize(
         if skip_if is not None and skip_if(_value):
             return _missing
         return _value
+
+    out: dict[str, Any] = {}
+    processed: set[int] = set()
+    if isinstance(ui, BaseGui):
+        for child in ui.__magicclass_children__:
+            if id(child) in processed:
+                continue
+            if _is_value_widget_like(child):
+                if (_value := _serialize_value(child)) is not _missing:
+                    out[child.name] = _value
+            else:
+                ser = serialize(child, skip_empty=skip_empty, skip_null=skip_null)
+                if len(ser) > 0 or not skip_empty:
+                    out[child.name] = ser
+            processed.add(id(child))
 
     for widget in ui:
         if isinstance(widget, (PushButton, Action)) or id(widget) in processed:
@@ -133,8 +138,11 @@ def deserialize(
 
     if isinstance(ui, BaseGui):
         for child in ui.__magicclass_children__:
-            if (d := _dict_get(data, child.name, missing_ok)) is not _missing:
-                deserialize(child, d)
+            if (val := _dict_get(data, child.name, missing_ok)) is not _missing:
+                if _is_value_widget_like(child):
+                    child.value = val
+                else:
+                    deserialize(child, val)
 
     for widget in ui:
         if isinstance(widget, (PushButton, Action)):
@@ -143,8 +151,8 @@ def deserialize(
             if (value := _dict_get(data, widget.name, missing_ok)) is not _missing:
                 widget.value = value
         elif isinstance(widget, (Container, MenuGuiBase, ToolBarGui)):
-            if (d := _dict_get(data, widget.name, missing_ok)) is not _missing:
-                deserialize(widget, d)
+            if (val := _dict_get(data, widget.name, missing_ok)) is not _missing:
+                deserialize(widget, val)
         elif isinstance(widget, WidgetAction) and widget.support_value:
             if (value := _dict_get(data, widget.name, missing_ok)) is not _missing:
                 widget.value = value
@@ -160,8 +168,15 @@ def _dict_get(data: dict[str, Any], key: str, missing_ok: bool) -> Any:
     return out
 
 
-def _is_value_widget_like(obj: Widget):
-    return isinstance(obj, ValueWidget) or hasattr(obj, "value")
+def _is_value_widget_like(obj) -> bool:
+    if isinstance(obj, ValueWidget):
+        return True
+    if isinstance(obj, WidgetAction):
+        return obj.support_value
+    if isinstance(value_property := getattr(type(obj), "value", None), property):
+        # all the value-like containers should have both fget and fset.
+        return value_property.fget is not None and value_property.fset is not None
+    return False
 
 
 def _contains_none(choices: list[Any]) -> bool:

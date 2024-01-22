@@ -141,3 +141,41 @@ def test_serialize_with_empty_choices():
     assert serialize(ui) == {"i": 1}
     ui._set_choices([1, 2, 3])
     assert serialize(ui) == {"c": 1, "i": 1}
+
+def test_serialize_value_like_magicclass():
+    # this is value-like widget
+    @magicclass
+    class Params(MagicTemplate):
+        x = vfield(1)
+        y = vfield("a")
+
+        @property
+        def value(self):
+            return self.x, self.y
+
+        @value.setter
+        def value(self, value):
+            self.x, self.y = value
+
+    # this is not value-like widget
+    @magicclass
+    class X(MagicTemplate):
+        x = vfield(2)
+        y = vfield("b")
+
+        @property
+        def value(self):
+            return self.x, self.y
+
+    @magicclass
+    class Main(MagicTemplate):
+        p = field(Params)
+        x = field(X)
+
+    ui = Main()
+    assert serialize(ui) == {"p": (1, "a"), "x": {"x": 2, "y": "b"}}
+    deserialize(ui, {"p": (3, "c"), "x": {"x": 4, "y": "d"}})
+    assert ui.p.x == 3
+    assert ui.p.y == "c"
+    assert ui.x.x == 4
+    assert ui.x.y == "d"
