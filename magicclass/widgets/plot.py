@@ -7,6 +7,7 @@ from typing import (
     overload,
 )
 from typing_extensions import ParamSpec
+from contextlib import contextmanager
 
 from .utils import FreeWidget
 
@@ -87,10 +88,10 @@ class Figure(FreeWidget):
         style=None,
         **kwargs,
     ):
-        if isinstance(nrows, int):
-            import matplotlib as mpl
-            import matplotlib.pyplot as plt
+        import matplotlib as mpl
+        import matplotlib.pyplot as plt
 
+        if isinstance(nrows, int):
             backend = mpl.get_backend()
             try:
                 mpl.use("Agg")
@@ -107,7 +108,9 @@ class Figure(FreeWidget):
 
         from ._mpl_canvas import InteractiveFigureCanvas
 
+        mgr = fig.canvas.manager
         canvas = InteractiveFigureCanvas(fig)
+        canvas.manager = mgr
         self.canvas = canvas
         super().__init__(**kwargs)
         self.set_widget(canvas)
@@ -191,6 +194,33 @@ class Figure(FreeWidget):
         except IndexError:
             _ax = self.figure.add_subplot(111)
         return _ax
+
+    @contextmanager
+    def use_ax(self, num: int = 0, *, clear: bool = True):
+        """
+        Context manager to use the figure's first axis.
+
+        >>> fig = Figure()
+        >>> with fig.use_ax():
+        ...     plt.plot([1, 2, 3])
+
+        Parameters
+        ----------
+        num : int, default 0
+            The index of the axis to use.
+        clear : bool, default True
+            If True, clear the axis before using it.
+        """
+        import matplotlib.pyplot as plt
+
+        ax = self.axes[num]
+        plt.sca(ax)
+        if clear:
+            ax.cla()
+        try:
+            yield
+        finally:
+            self.canvas.draw()
 
     @_inject_mpl_docs
     def subplots(

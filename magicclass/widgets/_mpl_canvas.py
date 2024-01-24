@@ -7,9 +7,10 @@ from qtpy import QtWidgets as QtW, QtGui
 if TYPE_CHECKING:
     from matplotlib.figure import Figure
     from matplotlib.axes import Axes
+    from matplotlib.backend_bases import FigureCanvasBase
 
-    class FigureCanvas(QtW.QWidget):
-        ...  # fmt: skip
+    class FigureCanvas(QtW.QWidget, FigureCanvasBase):
+        """Just used for typing."""
 
 else:
     from matplotlib.backends.backend_qt5agg import FigureCanvas
@@ -33,8 +34,9 @@ class InteractiveFigureCanvas(FigureCanvas):
 
     def wheelEvent(self, event):
         """
-        Resize figure by changing axes xlim and ylim. If there are subplots, only the subplot
-        in which cursor exists will be resized.
+        Resize figure by changing axes xlim and ylim.
+
+        If there are subplots, only the subplot in which cursor exists will be resized.
         """
         ax = self.last_axis
         if not self._interactive or not ax:
@@ -61,8 +63,10 @@ class InteractiveFigureCanvas(FigureCanvas):
 
     def mouseMoveEvent(self, event):
         """
-        Translate axes focus while dragging. If there are subplots, only the subplot in which
-        cursor exists will be translated.
+        Translate axes focus while dragging.
+
+        If there are subplots, only the subplot in which cursor exists will be
+        translated.
         """
         ax = self.last_axis
         if self.lastx_pressed is None or not self._interactive or not ax:
