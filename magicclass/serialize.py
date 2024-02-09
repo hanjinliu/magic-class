@@ -9,6 +9,9 @@ from magicclass._gui.mgui_ext import WidgetAction, Action
 if TYPE_CHECKING:
     SerializableWidget = Container | MenuGuiBase | ToolBarGui
 
+_IS_SERIALIZING: set[int] = set()
+_IS_DESERIALIZING: set[int] = set()
+
 
 def serialize(
     ui: SerializableWidget,
@@ -48,8 +51,13 @@ def serialize(
     >>> serialize(func)
     {'x': 1, 'y': 't'}
     """
-    if hasattr(ui, "__magicclass_serialize__"):
-        return ui.__magicclass_serialize__()
+    if hasattr(ui, "__magicclass_serialize__") and id(ui) not in _IS_SERIALIZING:
+        _IS_SERIALIZING.add(id(ui))
+        try:
+            out = ui.__magicclass_serialize__()
+        finally:
+            _IS_SERIALIZING.remove(id(ui))
+        return out
 
     def _serialize_value(widget: ValueWidget | WidgetAction):
         if _is_null_state(widget) and skip_null:
@@ -132,8 +140,12 @@ def deserialize(
                 ui, data, missing_ok=missing_ok, record=record, emit=True
             )
 
-    if hasattr(ui, "__magicclass_deserialize__"):
-        ui.__magicclass_deserialize__(data)
+    if hasattr(ui, "__magicclass_deserialize__") and id(ui) not in _IS_DESERIALIZING:
+        _IS_DESERIALIZING.add(id(ui))
+        try:
+            ui.__magicclass_deserialize__(data)
+        finally:
+            _IS_DESERIALIZING.remove(id(ui))
         return
 
     if isinstance(ui, BaseGui):

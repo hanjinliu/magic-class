@@ -121,6 +121,25 @@ def test_serialize_custom():
     deserialize(ui, {"x": "4"})
     assert ui.x == 4
 
+def test_not_recursion():
+    @magicclass
+    class A(MagicTemplate):
+        x = vfield(3)
+        y = vfield("aa")
+        def __magicclass_serialize__(self):
+            out = serialize(self)
+            out["z"] = -1
+            return out
+
+        def __magicclass_deserialize__(self, data):
+            data.pop("z")
+            deserialize(self, data)
+
+    ui = A()
+    assert serialize(ui) == {"x": 3, "y": "aa", "z": -1}
+    deserialize(ui, {"x": 4, "y": "bb", "z": -5})
+    assert ui.x == 4
+
 def test_serialize_with_empty_choices():
     @magicclass
     class A(MagicTemplate):
