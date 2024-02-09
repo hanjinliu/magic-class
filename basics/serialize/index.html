@@ -1466,6 +1466,11 @@ dictionary items.</p>
     <span class="k">def</span> <span class="nf">__magicclass_deserialize__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;custom_value&quot;</span><span class="p">]</span>
 </code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can use <code>serialize</code> in <code>__magicclass_serialize__</code> and <code>deserialize</code> in
+<code>__magicclass_deserialize__</code>, because these functions detects and avoids recursion.</p>
+</div>
 <h2 id="skip-serialization-for-some-values">Skip Serialization for Some Values</h2>
 <p>Serialized data should be simple and usually JSON serializable. Some widgets may hold
 very complex data such as <code>numpy.ndarray</code> or <code>pandas.DataFrame</code>. In these cases, you
