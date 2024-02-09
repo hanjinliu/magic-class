@@ -31,14 +31,14 @@ Documentation is available [here](https://hanjinliu.github.io/magic-class/).
 
 ## Installation
 
-
 - use pip
 
 ```
 pip install magic-class -U
+pip install magic-class[pyqt5] -U  # with pyqt5 backend
 ```
 
-- get latest version
+- get the latest version
 
 ```
 pip install git+https://github.com/hanjinliu/magic-class.git

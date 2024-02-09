@@ -99,6 +99,10 @@ class A:
         self.x.value, self.y.value = data["custom_value"]
 ```
 
+!!! note
+    You can use `serialize` in `__magicclass_serialize__` and `deserialize` in
+    `__magicclass_deserialize__`, because these functions detects and avoids recursion.
+
 ## Skip Serialization for Some Values
 
 Serialized data should be simple and usually JSON serializable. Some widgets may hold
