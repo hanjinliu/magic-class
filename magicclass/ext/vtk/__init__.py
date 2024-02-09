@@ -1,5 +1,4 @@
 """
-VTK (Visualization Toolkit) support in a magicgui/magic-class way.
 This extension submodule depends on ``vedo``.
 
 .. code-block:: shell
@@ -8,6 +7,6 @@ This extension submodule depends on ``vedo``.
 
 """
 
-from .widgets import VtkCanvas
+from .widgets import VedoCanvas
 
-__all__ = ["VtkCanvas"]
+__all__ = ["VedoCanvas"]

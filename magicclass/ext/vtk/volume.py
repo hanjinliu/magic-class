@@ -6,7 +6,7 @@ from vedo.utils import numpy2vtk
 import numpy as np
 from magicgui.widgets import FloatSlider
 
-from .components import VtkComponent
+from .components import VedoComponent
 from .const import Mode, Rendering
 
 from magicclass.fields import vfield
@@ -35,7 +35,7 @@ def split_rgba(col: str | Sequence[float]) -> tuple[str | Sequence[float], float
     return [int(c * 255) for c in rgb], alpha * 255
 
 
-class Volume(VtkComponent, base=vedo.Volume):
+class Volume(VedoComponent, base=vedo.Volume):
     _obj: vedo.Volume
 
     def __init__(self, data, _parent):

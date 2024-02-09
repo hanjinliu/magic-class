@@ -6,32 +6,32 @@ from .const import Representation
 from magicclass.fields import vfield, HasFields
 from magicclass.types import Color
 
-_VtkType = TypeVar("_VtkType", bound=vedo.BaseActor)
+_VedoType = TypeVar("_VedoType", bound=vedo.CommonAlgorithms)
 
 
-class VtkComponent(HasFields):
-    _vtk_type: type[_VtkType] | Callable[..., _VtkType]
+class VedoComponent(HasFields):
+    _vedo_type: type[_VedoType] | Callable[..., _VedoType]
 
     def __init__(
         self, *args, _parent: vedo.Plotter = None, _emit: bool = True, **kwargs
     ):
-        if self._vtk_type is None:
-            raise TypeError("Base VTK type is unknown.")
-        self._obj = self._vtk_type(*args, **kwargs)
+        if self._vedo_type is None:
+            raise TypeError("Base vedo type is unknown.")
+        self._obj = self._vedo_type(*args, **kwargs)
         self._parent_ref = weakref.ref(_parent)
         if _emit:
             self.widgets.emit_all()
 
     @overload
-    def __init_subclass__(cls, base: type[_VtkType] = None) -> None:  # noqa
+    def __init_subclass__(cls, base: type[_VedoType] = None) -> None:  # noqa
         ...
 
     @overload
-    def __init_subclass__(cls, base: Callable[..., _VtkType] = None) -> None:  # noqa
+    def __init_subclass__(cls, base: Callable[..., _VedoType] = None) -> None:  # noqa
         ...
 
     def __init_subclass__(cls, base=None) -> None:
-        cls._vtk_type = base
+        cls._vedo_type = base
 
     visible = vfield(True, name="visibility")
 
@@ -50,12 +50,11 @@ class VtkComponent(HasFields):
         return f"{self.__class__.__name__}<{hex(id(self))}>"
 
 
-class Points(VtkComponent, base=vedo.Points):
+class Points(VedoComponent, base=vedo.Points):
     _obj: vedo.Points
     color = vfield(Color)
     size = vfield(float)
     spherical = vfield(False)
-    occlusion = vfield(float)
     scale = vfield(float)
 
     def __init__(
@@ -86,18 +85,13 @@ class Points(VtkComponent, base=vedo.Points):
         self._obj.render_points_as_spheres(v)
         self._update()
 
-    @occlusion.connect
-    def _on_occlusion_change(self, v):
-        self._obj.occlusion(v)
-        self._update()
-
     @scale.connect
     def _on_scale_change(self, v):
         self._obj.scale(v, reset=True)
         self._update()
 
 
-class Mesh(VtkComponent, base=vedo.Mesh):
+class Mesh(VedoComponent, base=vedo.Mesh):
     _obj: vedo.Mesh
 
     color = vfield(Color)
@@ -115,11 +109,6 @@ class Mesh(VtkComponent, base=vedo.Mesh):
         self._obj.color([v * 255 for v in v[:3]])
         self._update()
 
-    @occlusion.connect
-    def _on_occlusion_change(self, v):
-        self._obj.occlusion(v)
-        self._update()
-
     @scale.connect
     def _on_scale_change(self, v):
         self._obj.scale(v, reset=True)
@@ -132,12 +121,12 @@ class Mesh(VtkComponent, base=vedo.Mesh):
 
     @linewidth.connect
     def _on_linewidth_change(self, v):
-        self._obj.lineWidth(v)
+        self._obj.linewidth(v)
         self._update()
 
     @backface_color.connect
     def _on_backface_color_change(self, v):
-        self._obj.backColor([v * 255 for v in v[:3]])
+        self._obj.backcolor([v * 255 for v in v[:3]])
         self._update()
 
     @frontface_culling.connect
@@ -180,7 +169,7 @@ class Text(Mesh, base=vedo.Text3D): ...
 # fmt: on
 
 
-def get_object_type(name: str) -> type[VtkComponent]:
+def get_object_type(name: str) -> type[VedoComponent]:
     t = globals().get(name, None)
     if not isinstance(t, (type, Generic)):
         raise ValueError(f"Object type {t} not found.")
