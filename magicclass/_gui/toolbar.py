@@ -7,7 +7,6 @@ from macrokit import Symbol
 from psygnal import Signal
 from qtpy.QtWidgets import QToolBar, QMenu, QWidgetAction, QTabWidget
 
-
 from .mgui_ext import (
     AbstractAction,
     _LabeledWidgetAction,
@@ -199,8 +198,8 @@ class ToolBarGui(ContainerLikeGui):
                         if isinstance(widget, BaseGui):
                             widget._my_symbol = Symbol(name)
                         # magic-class has to know its parent.
-                        # if __magicclass_parent__ is defined as a property, hasattr must be called
-                        # with a type object (not instance).
+                        # if __magicclass_parent__ is defined as a property, hasattr
+                        # must be called with a type object (not instance).
                         widget.__magicclass_parent__ = self
 
                     if widget.name.startswith("_"):
@@ -236,8 +235,8 @@ class ToolBarGui(ContainerLikeGui):
         """
         _obj = normalize_insertion(self, obj)
 
-        # _hide_labels should not contain Container because some ValueWidget like widgets
-        # are Containers.
+        # _hide_labels should not contain Container because some ValueWidget like
+        # widgets are Containers.
         if isinstance(_obj, self._component_class):
             insert_action_like(self.native, key, _obj.native)
             self._list.insert(key, _obj)

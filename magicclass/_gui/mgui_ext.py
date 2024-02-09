@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Callable, Iterable, Any, Generic, TypeVar, Union, TYPE_CHECKING
 from typing_extensions import TypeGuard
-from qtpy import QtWidgets as QtW, QtCore
+from qtpy import QtWidgets as QtW, QtCore, QtGui
 from psygnal import Signal
 from magicgui.widgets import PushButton, Widget
 from magicgui.widgets.bases import ValueWidget
@@ -292,6 +292,44 @@ class Action(AbstractAction):
         if self._icon is not None:
             self._icon.install(self)
 
+    def __repr__(self) -> str:
+        return f"Action(name={self.name!r})"
+
+    def _repr_png_(self):
+        from io import BytesIO
+
+        try:
+            from imageio import imwrite
+        except ImportError:
+            print(
+                "(For a nicer magicgui widget representation in "
+                "Jupyter, please `pip install imageio`)"
+            )
+            return None
+
+        try:
+            rendered = self.render()
+        except TypeError:
+            # if action is not a member of a toolbar, skip it.
+            return None
+        if rendered is not None:
+            with BytesIO() as file_obj:
+                imwrite(file_obj, rendered, format="png")
+                file_obj.seek(0)
+                return file_obj.read()
+        return None
+
+    def render(self):
+        qaction = self.native
+        parent = qaction.parent()
+        if parent is None:
+            raise TypeError("Cannot render action without parent.")
+        if isinstance(parent, QtW.QToolBar):
+            tool_button = parent.widgetForAction(qaction)
+            arr = _render_qwidget(tool_button)
+            return arr
+        raise TypeError("Cannot render action without parent toolbar.")
+
     @property
     def clicked(self):
         """Alias of changed signal."""
@@ -315,6 +353,7 @@ class Action(AbstractAction):
 
     @property
     def text(self) -> str:
+        """Text of the action."""
         return self.native.text()
 
     @text.setter
@@ -323,6 +362,7 @@ class Action(AbstractAction):
 
     @property
     def value(self):
+        """Value of the action."""
         return self.native.isChecked()
 
     @value.setter
@@ -331,6 +371,7 @@ class Action(AbstractAction):
 
     @property
     def icon(self):
+        """Get icon object."""
         return self._icon
 
     @icon.setter
@@ -384,6 +425,9 @@ class WidgetAction(AbstractAction, Generic[_W]):
     @property
     def widget_type(self):
         return self.widget.widget_type
+
+    def __repr__(self) -> str:
+        return f"WidgetAction(name={self.name!r}, widget={self.widget!r})"
 
     @property
     def value(self):
@@ -494,3 +538,21 @@ def _stylesheet_to_dict(stylesheet: str) -> dict[str, str]:
 def _dict_to_stylesheet(d: dict):
     stylesheet = [f"{k}: {v}" for k, v in d.items()]
     return ";".join(stylesheet)
+
+
+def _render_qwidget(qwidget: QtW.QWidget):
+    import numpy as np
+    import qtpy
+
+    img = qwidget.grab().toImage()
+    if img.format() != QtGui.QImage.Format.Format_ARGB32:
+        img = img.convertToFormat(QtGui.QImage.Format.Format_ARGB32)
+    bits = img.constBits()
+    h, w, c = img.height(), img.width(), 4
+    if qtpy.API_NAME.startswith("PySide"):
+        arr = np.array(bits).reshape(h, w, c)
+    else:
+        bits.setsize(h * w * c)
+        arr = np.frombuffer(bits, np.uint8).reshape(h, w, c)  # type: ignore
+
+    return arr[:, :, [2, 1, 0, 3]]
