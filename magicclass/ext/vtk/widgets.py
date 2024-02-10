@@ -172,3 +172,12 @@ class VedoCanvas(FreeWidget):
             current_axes.EnabledOff()
         self.vedo_canvas._plt.axes_instances = [None]
         self.vedo_canvas._plt.show(axes=a)
+
+class VtkCanvas(VedoCanvas):
+    """
+    Deprecated. Use `VedoCanvas` instead.
+    """
+    def __init__(self):
+        """Deprecated. Use `VedoCanvas` instead."""
+        print("'VtkCanvas' is deprecated. Use 'VedoCanvas' instead.")
+        super().__init__()

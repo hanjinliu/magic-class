@@ -7,6 +7,6 @@ This extension submodule depends on ``vedo``.
 
 """
 
-from .widgets import VedoCanvas
+from .widgets import VedoCanvas, VtkCanvas
 
-__all__ = ["VedoCanvas"]
+__all__ = ["VedoCanvas", "VtkCanvas"]
