@@ -73,6 +73,7 @@ __all__ = [
     "MagicTemplate",
     "PopUpMode",
     "Icon",
+    # "VtkCanvas",
 ]
 
 
@@ -142,5 +143,14 @@ def __getattr__(key: str):
         from .wrappers import impl_preview
 
         return impl_preview
+    
+    # elif key == "VtkCanvas":
+    #     warnings.warn(
+    #         "Class `VtkCanvas` is deprecated. Use `VedoCanvas` instead.",
+    #         DeprecationWarning,
+    #         stacklevel=2,
+    #     )
+    #     from .ext.vtk import VedoCanvas
+    #     return VedoCanvas
 
     raise AttributeError(f"module {__name__!r} has no attribute {key!r}")

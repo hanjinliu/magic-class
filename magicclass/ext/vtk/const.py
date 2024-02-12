@@ -15,8 +15,7 @@ class StringEnum(Enum):
 
 
 class Rendering(StringEnum):
-    """Volume rendering mode suppored in vtk."""
-
+    """Volume rendering mode supported in vedo."""
     composite = 0
     mip = 1
     minip = 2
