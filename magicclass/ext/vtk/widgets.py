@@ -28,9 +28,7 @@ class QtVedoCanvas(QtW.QWidget):
         self.setLayout(_layout)
         vedo.settings.default_backend = "vtk"  # Avoid using Jupyter backend
         self._vtk_widget = QVTKRenderWindowInteractor(parent=self)
-        self._plt = vedo.Plotter(
-            qt_widget=self._vtk_widget, bg="bb", axes=0
-        )
+        self._plt = vedo.Plotter(qt_widget=self._vtk_widget, bg="bb", axes=0)
         # self._vtk_widget.GetRenderWindow().SetSize(1000, 1000) # no effect
         self._plt.show()
 
@@ -82,7 +80,7 @@ class VedoCanvas(FreeWidget):
         pic: vedo.Image = self.vedo_canvas._plt.toimage()
         img = pic.tonumpy()
         return img
-    
+
     @property
     def plotter(self) -> vedo.Plotter:
         return self.vedo_canvas._plt
@@ -172,12 +170,3 @@ class VedoCanvas(FreeWidget):
             current_axes.EnabledOff()
         self.vedo_canvas._plt.axes_instances = [None]
         self.vedo_canvas._plt.show(axes=a)
-
-class VtkCanvas(VedoCanvas):
-    """
-    Deprecated. Use `VedoCanvas` instead.
-    """
-    def __init__(self):
-        """Deprecated. Use `VedoCanvas` instead."""
-        print("'VtkCanvas' is deprecated. Use 'VedoCanvas' instead.")
-        super().__init__()

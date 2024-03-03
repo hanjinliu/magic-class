@@ -1,4 +1,4 @@
-__version__ = "0.7.8"
+__version__ = "0.7.9"
 
 from .core import (
     magicclass,
@@ -73,7 +73,11 @@ __all__ = [
     "MagicTemplate",
     "PopUpMode",
     "Icon",
-    # "VtkCanvas",
+    "widgets",
+    "utils",
+    "types",
+    "functools",
+    "logging",
 ]
 
 
@@ -143,14 +147,5 @@ def __getattr__(key: str):
         from .wrappers import impl_preview
 
         return impl_preview
-    
-    # elif key == "VtkCanvas":
-    #     warnings.warn(
-    #         "Class `VtkCanvas` is deprecated. Use `VedoCanvas` instead.",
-    #         DeprecationWarning,
-    #         stacklevel=2,
-    #     )
-    #     from .ext.vtk import VedoCanvas
-    #     return VedoCanvas
 
     raise AttributeError(f"module {__name__!r} has no attribute {key!r}")
