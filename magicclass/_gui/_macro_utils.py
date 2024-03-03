@@ -1,8 +1,10 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Callable, TypeVar
+from typing import TYPE_CHECKING, Callable, Generic, TypeVar
+from typing_extensions import ParamSpec
 import inspect
 from functools import partial, partialmethod, wraps as functools_wraps
 import warnings
+import weakref
 from macrokit import Symbol, Expr, Head, symbol
 from magicgui.widgets import FunctionGui
 from magicgui.widgets.bases import ValueWidget
@@ -15,6 +17,7 @@ from magicclass.undo import UndoCallback
 if TYPE_CHECKING:
     from ._base import MagicTemplate
 
+_P = ParamSpec("_P")
 _R = TypeVar("_R")
 
 
@@ -64,12 +67,20 @@ def value_widget_callback(
     return _set_value
 
 
-def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui[_R]):
-    """Define a FunctionGui callback, including macro recording."""
-    fgui_name = Symbol(fgui.name)
-    _qualname = getattr(fgui._function, "__qualname__", None)
+class MagicGuiPostRunCallback(Generic[_P, _R]):
+    def __init__(self, gui: MagicTemplate, fgui: FunctionGui[_P, _R]):
+        self._gui = weakref.ref(gui)
+        self._fgui = weakref.ref(fgui)
+        self._fgui_name = Symbol(fgui.name)
+        # {x}.func
+        self._sub_expr = Expr(head=Head.getattr, args=[symbol(gui), self._fgui_name])
 
-    def _after_run(out: _R):
+    def __call__(self, out: _R):
+        print("called")
+        fgui = self._fgui()
+        gui = self._gui()
+        if fgui is None or gui is None:
+            return None
         if not fgui.enabled or not gui.macro.active:
             # If widget is read only, it means that value is set in script (not
             # manually). Thus this event should not be recorded as a macro.
@@ -77,8 +88,9 @@ def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui[_R]):
         inputs = get_parameters(fgui)
         args = [Expr(head=Head.kw, args=[Symbol(k), v]) for k, v in inputs.items()]
         # args[0] is self
-        sub = Expr(head=Head.getattr, args=[symbol(gui), fgui_name])  # {x}.func
-        expr = Expr(head=Head.call, args=[sub] + args[1:])  # {x}.func(args...)
+        expr = Expr(
+            head=Head.call, args=[self._sub_expr] + args[1:]
+        )  # {x}.func(args...)
 
         if fgui._auto_call:
             # Auto-call will cause many redundant macros. To avoid this, only the last
@@ -96,6 +108,7 @@ def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui[_R]):
                         "User-defined undo operation of auto-call function is not "
                         "supported yet. Ignore the returned undo function.",
                         UserWarning,
+                        stakclevel=2,
                     )
         else:
             if isinstance(out, UndoCallback):
@@ -105,7 +118,16 @@ def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui[_R]):
         gui.macro.append(expr)
         gui.macro._last_setval = None
 
-    return _after_run
+    @classmethod
+    def install(cls, gui: MagicTemplate, fgui: FunctionGui[_P, _R]):
+        """Install the post-run callback to the function gui."""
+        self = cls(gui, fgui)
+        if hasattr(fgui, "_mgui_post_run_callback"):
+            # avoid duplicated call
+            return self
+        fgui.called.connect(self)
+        fgui._mgui_post_run_callback = self
+        return self
 
 
 _SELF = inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD)

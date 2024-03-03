@@ -32,8 +32,6 @@ def _make_class(t: WidgetType):
 
 @pytest.mark.parametrize("wtype", WidgetType._member_names_)
 def test_all_works(wtype):
-    if QT6 and wtype in ("scrollable", "draggable"):
-        pytest.skip("QScrollArea crashes in QT6. Skip for now.")
     ui = _make_class(wtype)()
     ui.show(run=False)
     ui[0]

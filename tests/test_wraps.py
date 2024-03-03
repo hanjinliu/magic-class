@@ -4,8 +4,6 @@ from magicclass import (
 )
 from magicclass.types import Bound
 from unittest.mock import MagicMock
-import pytest
-from qtpy import QT6
 
 def test_single_wraps():
     @magicclass
@@ -108,8 +106,6 @@ def test_field_wraps():
     assert ui.new_attr == 0
 
 def test_wraps_no_predefinition():
-    if QT6:
-        pytest.skip("insertWidget crashes in QT6. Skip for now.")
     @magicclass
     class A:
         a = vfield(int)
@@ -167,8 +163,6 @@ def test_wraps_no_predefinition():
     ui.B.E["any_func"].changed()
 
 def test_wrapped_field():
-    if QT6:
-        pytest.skip("insertWidget crashes in QT6. Skip for now.")
     @magicclass
     class A:
         @magicclass
@@ -195,8 +189,6 @@ def test_wrapped_field():
 
 
 def test_wrapped_vfield():
-    if QT6:
-        pytest.skip("insertWidget crashes in QT6. Skip for now.")
     @magicclass
     class A:
         @magicclass
