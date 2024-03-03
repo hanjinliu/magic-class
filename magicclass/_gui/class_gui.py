@@ -13,6 +13,7 @@ from magicgui.widgets import (
     Image,
     Table,
     Widget,
+    EmptyWidget,
 )
 from magicgui.widgets.bases import (
     ButtonWidget,
@@ -193,8 +194,8 @@ class ClassGuiBase(BaseGui):
                                     alignment=Qt.AlignmentFlag.AlignTop,
                                 )
                                 self._toolbar.setContentsMargins(0, 0, 0, 0)
-                                if not isinstance(self, _USE_OUTER_LAYOUT):
-                                    n_insert += 1
+                                # if not isinstance(self, _USE_OUTER_LAYOUT):
+                                #     n_insert += 1
 
                     widget.native.setParent(self._toolbar, widget.native.windowFlags())
                     self._toolbar.addToolBar(
@@ -304,8 +305,9 @@ class ClassGuiBase(BaseGui):
         if key < 0:
             key += len(self)
         self._list.insert(key, widget)
-        if not remove_label:
-            self._widget._mgui_insert_widget(key, _widget)
+        if remove_label:
+            _widget = EmptyWidget(visible=False)
+        self._widget._mgui_insert_widget(key, _widget)
 
         # NOTE: Function GUI is invisible by some reason...
         # See https://github.com/hanjinliu/magic-class/issues/53

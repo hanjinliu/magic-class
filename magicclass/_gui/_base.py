@@ -63,7 +63,7 @@ from ._macro_utils import (
     inject_silencer,
     inject_validator_only,
     value_widget_callback,
-    nested_function_gui_callback,
+    MagicGuiPostRunCallback,
 )
 from ._icon import get_icon
 from ._gui_modes import PopUpMode, ErrorMode
@@ -1292,8 +1292,7 @@ def normalize_insertion(parent: BaseGui, obj: Callable | Widget | AbstractAction
         # Sometimes users want to dynamically add new functions to GUI.
         if isinstance(obj, FunctionGui):
             if obj.parent is None:
-                f = nested_function_gui_callback(parent, obj)
-                obj.called.connect(f)
+                MagicGuiPostRunCallback.install(parent, obj)
             _obj = obj
         else:
             obj = convert_function(obj, is_method=False).__get__(parent)
@@ -1451,8 +1450,10 @@ def _implement_confirmation(
 
 def _empty_func(name: str) -> Callable[[Any], None]:
     """Create a named function that does nothing."""
+
     def f(x):
         pass
+
     f.__name__ = name
     return f
 
