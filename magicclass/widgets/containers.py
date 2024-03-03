@@ -178,7 +178,7 @@ class _Stack(ContainerBase):
 class _ScrollableContainer(ContainerBase):
     def __init__(self, layout="vertical", scrollable: bool = False, **kwargs):
         QBaseWidget.__init__(self, QtW.QWidget)
-        self._scroll_area = QtW.QScrollArea(self._qwidget)
+        self._scroll_area = QtW.QScrollArea()
         if layout == "horizontal":
             self._layout: QtW.QLayout = QtW.QHBoxLayout()
             self._layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -188,13 +188,14 @@ class _ScrollableContainer(ContainerBase):
 
         self._scroll_area.setWidgetResizable(True)
         self._scroll_area.setContentsMargins(0, 0, 0, 0)
-        self._inner_qwidget = QtW.QWidget(self._scroll_area)
+        self._inner_qwidget = QtW.QWidget()
         self._inner_qwidget.setLayout(self._layout)
         self._scroll_area.setWidget(self._inner_qwidget)
 
-        self._qwidget.setLayout(QtW.QVBoxLayout())
-        self._qwidget.layout().addWidget(self._scroll_area)
-        self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
+        _layout = QtW.QVBoxLayout()
+        _layout.addWidget(self._scroll_area)
+        _layout.setContentsMargins(0, 0, 0, 0)
+        self._qwidget.setLayout(_layout)
 
     def _policy(self, value):
         if value:

@@ -69,7 +69,8 @@ class AsyncMethod(Protocol[_P, _R]):
 if TYPE_CHECKING:
     _async_method: Callable[[Callable[_P, _R]], AsyncMethod[_P, _R]]
 else:
-    _async_method = lambda f: f
+    def _async_method(f):
+        return f
 
 
 def _silent(*args, **kwargs):
@@ -82,7 +83,7 @@ class thread_worker(Callable, Generic[_P, _R]):
     _DEFAULT_PROGRESS_BAR = DefaultProgressBar
     _DEFAULT_TOTAL = 0
     _WINDOW_FLAG = Qt.WindowType.WindowTitleHint | Qt.WindowType.WindowMinimizeButtonHint | Qt.WindowType.Window  # fmt: skip
-    _BLOCKING_SOURCES = []
+    _BLOCKING_SOURCES: list[None] = []
 
     def __init__(
         self,

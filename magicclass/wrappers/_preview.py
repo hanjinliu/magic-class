@@ -131,7 +131,8 @@ def get_arg_filter(
         if prev_params.keys() != tgt_params.keys():
             raise TypeError(f"Arguments mismatch between {prev_sig!r} and {tgt_sig!r}.")
         # If argument names are identical, input arguments don't have to be filtered.
-        _filter = lambda a: a
+        def _filter(a):
+            return a
 
     elif less > 0:
         idx: list[int] = []
@@ -140,7 +141,8 @@ def get_arg_filter(
                 idx.append(i)
         # If argument names are not identical, input arguments have to be filtered so
         # that arguments match the inputs.
-        _filter = lambda _args: (a for i, a in enumerate(_args) if i in idx)
+        def _filter(_args):
+            return tuple(a for i, a in enumerate(_args) if i in idx)
 
     else:
         raise TypeError(

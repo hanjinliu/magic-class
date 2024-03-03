@@ -1451,7 +1451,8 @@ def _implement_confirmation(
 
 def _empty_func(name: str) -> Callable[[Any], None]:
     """Create a named function that does nothing."""
-    f = lambda x: None
+    def f(x):
+        pass
     f.__name__ = name
     return f
 

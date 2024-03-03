@@ -311,7 +311,7 @@ class MagicField(_FieldObject, Generic[_W]):
         if obj_id in self._guis.keys():
             action = self._guis[obj_id]
         else:
-            if type(self.value) is bool or self.annotation is bool:
+            if type(self.value) is bool or self.annotation is bool:  # noqa: E721
                 # we should not use "isinstance" or "issubclass" because subclass
                 # may be mapped to different widget by users.
                 value = False if self.value is Undefined else self.value

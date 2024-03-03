@@ -259,8 +259,9 @@ class ToolBarGui(ContainerLikeGui):
                 if self.labels:
                     if not isinstance(_obj.widget, _hide_labels) and not remove_label:
                         _obj_labeled = _LabeledWidgetAction.from_action(_obj)
-                _obj_labeled.parent = self
-                insert_action_like(self.native, key, _obj_labeled.native)
+                if not remove_label:
+                    _obj_labeled.parent = self
+                    insert_action_like(self.native, key, _obj_labeled.native)
             self._list.insert(key, _obj)
         else:
             raise TypeError(f"{type(_obj)} is not supported.")

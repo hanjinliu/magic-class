@@ -141,7 +141,7 @@ class ClassGuiBase(BaseGui):
                     # Add menubar to container
                     if self._menubar is None:
                         # if widget has no menubar, a new one should be created.
-                        self._menubar = QMenuBar(parent=self.native)
+                        self._menubar = QMenuBar()
                         if issubclass(self.__class__, MainWindow):
                             self.native: QMainWindow
                             self.native.setMenuBar(self._menubar)
@@ -193,7 +193,8 @@ class ClassGuiBase(BaseGui):
                                     alignment=Qt.AlignmentFlag.AlignTop,
                                 )
                                 self._toolbar.setContentsMargins(0, 0, 0, 0)
-                                n_insert += 1
+                                if not isinstance(self, _USE_OUTER_LAYOUT):
+                                    n_insert += 1
 
                     widget.native.setParent(self._toolbar, widget.native.windowFlags())
                     self._toolbar.addToolBar(
@@ -303,7 +304,8 @@ class ClassGuiBase(BaseGui):
         if key < 0:
             key += len(self)
         self._list.insert(key, widget)
-        self._widget._mgui_insert_widget(key, _widget)
+        if not remove_label:
+            self._widget._mgui_insert_widget(key, _widget)
 
         # NOTE: Function GUI is invisible by some reason...
         # See https://github.com/hanjinliu/magic-class/issues/53
@@ -605,35 +607,35 @@ def make_gui(
 
 # fmt: off
 @make_gui(Container)
-class ClassGui: pass
+class ClassGui: pass  # noqa: E701
 @make_gui(SplitterContainer)
-class SplitClassGui: pass
+class SplitClassGui: pass  # noqa: E701
 @make_gui(ScrollableContainer)
-class ScrollableClassGui: pass
+class ScrollableClassGui: pass  # noqa: E701
 @make_gui(DraggableContainer)
-class DraggableClassGui: pass
+class DraggableClassGui: pass  # noqa: E701
 @make_gui(CollapsibleContainer)
-class CollapsibleClassGui: pass
+class CollapsibleClassGui: pass  # noqa: E701
 @make_gui(HCollapsibleContainer)
-class HCollapsibleClassGui: pass
+class HCollapsibleClassGui: pass  # noqa: E701
 @make_gui(ButtonContainer)
-class ButtonClassGui: pass
+class ButtonClassGui: pass  # noqa: E701
 @make_gui(ToolBoxContainer, no_margin=False)
-class ToolBoxClassGui: pass
+class ToolBoxClassGui: pass  # noqa: E701
 @make_gui(TabbedContainer, no_margin=False)
-class TabbedClassGui: pass
+class TabbedClassGui: pass  # noqa: E701
 @make_gui(StackedContainer, no_margin=False)
-class StackedClassGui: pass
+class StackedClassGui: pass  # noqa: E701
 @make_gui(ListContainer, no_margin=False)
-class ListClassGui: pass
+class ListClassGui: pass  # noqa: E701
 @make_gui(SubWindowsContainer, no_margin=False)
-class SubWindowsClassGui: pass
+class SubWindowsClassGui: pass  # noqa: E701
 @make_gui(GroupBoxContainer, no_margin=False)
-class GroupBoxClassGui: pass
+class GroupBoxClassGui: pass  # noqa: E701
 @make_gui(FrameContainer, no_margin=False)
-class FrameClassGui: pass
+class FrameClassGui: pass  # noqa: E701
 @make_gui(ResizableContainer, no_margin=False)
-class ResizableClassGui: pass
+class ResizableClassGui: pass  # noqa: E701
 @make_gui(MainWindow)
-class MainWindowClassGui: pass
+class MainWindowClassGui: pass  # noqa: E701
 # fmt: on

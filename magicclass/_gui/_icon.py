@@ -103,7 +103,7 @@ class IconifyIcon(_IconBase):
         if isinstance(dst.native, QWidget):
             palette = dst.native.palette()
         elif isinstance(dst.native, QAction):
-            if menu := dst.native.parentWidget():
+            if menu := dst.native.parent():
                 palette = menu.palette()
             else:
                 palette = None
