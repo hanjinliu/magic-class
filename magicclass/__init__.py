@@ -1,4 +1,4 @@
-__version__ = "0.7.9"
+__version__ = "0.7.10.dev0"
 
 from .core import (
     magicclass,
@@ -39,7 +39,7 @@ from ._gui._base import defaults, MagicTemplate, PopUpMode
 from ._gui._icon import Icon
 from . import widgets, utils, types, functools, logging
 
-from magicgui import *
+from magicgui import *  # noqa: F403
 
 __all__ = [
     "magicclass",

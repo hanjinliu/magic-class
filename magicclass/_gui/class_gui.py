@@ -176,16 +176,16 @@ class ClassGuiBase(BaseGui):
                     if self._toolbar is None:
                         self._toolbar = QtTabToolBar(widget.name, self.native)
                         if issubclass(self.__class__, MainWindow):
-                            self.native: QMainWindow
+                            assert isinstance(self.native, QMainWindow)
                             self.native.addToolBar(self._toolbar)
                         else:
                             # self is not a main window object
-                            # TODO: these codes are too dirty...
                             if isinstance(self, _USE_OUTER_LAYOUT):
                                 _layout: QBoxLayout = self._widget._qwidget.layout()
                             else:
                                 _layout = self._widget._layout
                             if _layout.menuBar() is None:
+                                # It's better to add toolbar to the area for menubar.
                                 _layout.setMenuBar(self._toolbar)
                             else:
                                 _layout.insertWidget(
@@ -194,8 +194,8 @@ class ClassGuiBase(BaseGui):
                                     alignment=Qt.AlignmentFlag.AlignTop,
                                 )
                                 self._toolbar.setContentsMargins(0, 0, 0, 0)
-                                # if not isinstance(self, _USE_OUTER_LAYOUT):
-                                #     n_insert += 1
+                                if not isinstance(self, _USE_OUTER_LAYOUT):
+                                    n_insert += 1
 
                     widget.native.setParent(self._toolbar, widget.native.windowFlags())
                     self._toolbar.addToolBar(
