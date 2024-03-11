@@ -77,7 +77,7 @@ class QColorSwatch(QtW.QFrame):
 
     def event(self, event: QtCore.QEvent) -> bool:
         if event.type() == QtCore.QEvent.Type.ToolTip:
-            event = QtGui.QHelpEvent(event)
+            assert isinstance(event, QtGui.QHelpEvent)
             QtW.QToolTip.showText(event.globalPos(), self._tooltip(), self)
             return True
         return super().event(event)

@@ -209,7 +209,7 @@ class QEvalLineEdit(QtW.QLineEdit):
 
     def event(self, event: QtCore.QEvent):
         if event.type() == QtCore.QEvent.Type.KeyPress:
-            event = QtGui.QKeyEvent(event)
+            assert isinstance(event, QtGui.QKeyEvent)
             if event.key() == Qt.Key.Key_Tab:
                 self.show_completion()
                 return True
