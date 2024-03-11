@@ -167,7 +167,7 @@ def export_xhtml(html: str, filename: str, image_tag):
         The file to be saved.
 
     image_tag : callable, optional (default None)
-        Used to convert images. See ``default_image_tag()`` for information.
+        Used to convert images. See `default_image_tag()` for information.
     """
     with open(filename, "w", encoding="utf-8") as f:
         # Hack to make xhtml header -- note that we are not doing any check for

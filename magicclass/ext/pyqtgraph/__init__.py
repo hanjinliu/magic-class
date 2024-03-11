@@ -17,7 +17,7 @@ __all__ = [
 
 
 def _join(strs):
-    strs = [f"``{s}``" for s in strs]
+    strs = [f"`{s}`" for s in strs]
     return ", ".join(strs[:-1]) + f" and {strs[-1]}"
 
 
@@ -25,9 +25,9 @@ __doc__ = f"""
 PyQtGraph wrapper classes. Currently supports {_join(__all__)}.
 
 These classes offer unified API between graphical items and components, similar to those
-in ``magicgui`` and ``napari``.
+in `magicgui` and `napari`.
 
-``QtPlotCanvas`` can treat line plot, scatter plot, bar plot and histogram as "layers".
+`QtPlotCanvas` can treat line plot, scatter plot, bar plot and histogram as "layers".
 
 .. code-block:: python
 
@@ -49,7 +49,7 @@ Other components such as axis labels, title and linear region have intuitive int
     canvas.xlabel = "time"        # change label text
     canvas.xlim = [0, 1]          # change limits.
 
-``QtImageCanvas`` is also designed in a similar way as ``QtPlotCanvas`` but aims at 2D image
+`QtImageCanvas` is also designed in a similar way as `QtPlotCanvas` but aims at 2D image
 visualization.
 
 .. code-block:: python

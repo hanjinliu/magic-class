@@ -45,8 +45,8 @@ class FeatureInfo(metaclass=_FeatureInfoAlias):
 
         def func(x: FeatureInfo["x", "y"]): ...
 
-    Type annotation ``FeatureInfo["x", "y"]`` is essentially equivalent to
-    ``tuple[pd.DataFrame, tuple[str, str]]``.
+    Type annotation `FeatureInfo["x", "y"]` is essentially equivalent to
+    `tuple[pd.DataFrame, tuple[str, str]]`.
     """
 
     def __new__(cls, *args, **kwargs):

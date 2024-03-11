@@ -61,7 +61,7 @@ class AsyncMethod(Protocol[_P, _R]):
         """
         Asynchronously run the method.
 
-        Must be used with ``yield from``.
+        Must be used with `yield from`.
         >>> yield from ui.method.arun(...)
         """
 
@@ -69,6 +69,7 @@ class AsyncMethod(Protocol[_P, _R]):
 if TYPE_CHECKING:
     _async_method: Callable[[Callable[_P, _R]], AsyncMethod[_P, _R]]
 else:
+
     def _async_method(f):
         return f
 
@@ -196,13 +197,13 @@ class thread_worker(Callable, Generic[_P, _R]):
         Set the default progressbar class.
 
         This class method is useful when there is an user-defined class that
-        follows ``_SupportProgress`` protocol.
+        follows `_SupportProgress` protocol.
 
         Parameters
         ----------
         pbar_cls : callable or str
             The default class. In principle this parameter does not have to be a
-            class. As long as ``pbar_cls(max=...)`` returns a ``_SupportProgress``
+            class. As long as `pbar_cls(max=...)` returns a `_SupportProgress`
             object it works. Either "default" or "napari" is also accepted.
 
         """
@@ -281,7 +282,7 @@ class thread_worker(Callable, Generic[_P, _R]):
     def _set_recorder(self, recorder: Callable[_P, Any]):
         """
         Set macro recorder function.
-        Must accept ``recorder(bgui, *args, **kwargs)``.
+        Must accept `recorder(bgui, *args, **kwargs)`.
         """
         self._recorder = recorder
         return None
@@ -557,7 +558,8 @@ class thread_worker(Callable, Generic[_P, _R]):
                     count += 1
                     if count > 200:
                         raise RuntimeError(
-                            f"Timeout: cannot find progressbar on calling {self.func.__name__}."
+                            "Timeout: cannot find progressbar on calling "
+                            f"{self.func.__name__}."
                         )
                 yield NestedCallback(close_pbar).with_args(pbar)
 

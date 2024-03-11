@@ -100,7 +100,7 @@ class VedoCanvas(FreeWidget):
             Volume data. Must be 3D array.
         color : Color, optional
             Initial color of the volume.
-        mode : str, default is "iso"
+        mode : str, default "iso"
             Initial visualization mode of the volume.
 
         Returns

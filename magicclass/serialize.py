@@ -38,7 +38,7 @@ def serialize(
         If True, skip the categorical widgets with null values, which happens when
         the choices are empty.
     skip_if : callable, optional
-        If provided, the widget will be skipped if ``skip_if(widget.value)`` returns
+        If provided, the widget will be skipped if `skip_if(widget.value)` returns
         True. This is useful when you want to skip the widgets with certain values,
         such as None or ndarray.
 

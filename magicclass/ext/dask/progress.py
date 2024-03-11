@@ -9,7 +9,6 @@ from magicgui import use_app
 from magicgui.widgets import ProgressBar
 from psygnal import Signal
 from superqt.utils import FunctionWorker, GeneratorWorker, create_worker
-from magicclass._gui import BaseGui
 
 from magicclass.utils import move_to_screen_center, QtSignal
 from magicclass.utils.qthreading import (
@@ -129,11 +128,11 @@ class dask_thread_worker(thread_worker[_P, _R]):
     Create a dask's worker in a superqt/napari style.
 
     This thread worker class can monitor the progress of dask computation.
-    Callback function connected to ``computed`` signal will get called when any one
+    Callback function connected to `computed` signal will get called when any one
     of the tasks are finished. The returned value of the task will be sent to the
     callback argument. The returned value is useful if delayed functions are computed
-    but it is not always meaningful when dask mapping functions such as ``map_blocks``
-    is used. Unlike standard ``thread_worker``, you should not specify ``total``
+    but it is not always meaningful when dask mapping functions such as `map_blocks`
+    is used. Unlike standard `thread_worker`, you should not specify `total`
     parameter since dask progress bar knows it.
 
     Examples

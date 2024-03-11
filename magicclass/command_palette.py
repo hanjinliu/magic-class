@@ -40,7 +40,7 @@ def exec_command_palette(
     ----------
     gui : magic-class
         Magic-class instance.
-    alignment : "parent" or "screen", default is "parent"
+    alignment : "parent" or "screen", default "parent"
         How to align the command palette.
     title : callable, optional
         Formatter function for the title of each command. The function should

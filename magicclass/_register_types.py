@@ -4,6 +4,7 @@ from macrokit import Expr, Head, symbol
 from enum import Enum
 import pathlib
 import datetime
+import magicgui as mgui
 from magicclass.types import Color, Colormap, Path, ExprStr
 from magicclass.widgets import ColorEdit, EvalLineEdit, ColormapEdit
 from magicclass._gui._base import MagicTemplate
@@ -53,8 +54,6 @@ def find_myname(gui: MagicTemplate):
     else:
         return Expr(Head.getattr, [find_myname(parent), gui._my_symbol])
 
-
-import magicgui as mgui
 
 mgui.register_type(Color, widget_type=ColorEdit)
 mgui.register_type(Colormap, widget_type=ColormapEdit)

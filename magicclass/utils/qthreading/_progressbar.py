@@ -38,8 +38,8 @@ class _SupportProgress(Protocol):
     """
     A progress protocol.
 
-    Progressbar must be implemented with methods ``__init__``, ``set_description``,
-    ``show``, ``close`` and properties ``value``, ``max``. Optionally ``set_worker``
+    Progressbar must be implemented with methods `__init__`, `set_description`,
+    `show`, `close` and properties `value`, `max`. Optionally `set_worker`
     can be used so that progressbar has an access to the worker object.
     """
 
@@ -79,21 +79,13 @@ class _SupportProgress(Protocol):
         raise NotImplementedError()
 
 
-class ProgressDict(TypedDict):
-    """Supported keys for the progress argument."""
-
-    desc: str | Callable
-    total: str | Callable
-    pbar: ProgressBar | _SupportProgress | MagicField
-
-
 @runtime_checkable
 class _SupportProgress(Protocol):
     """
     A progress protocol.
 
-    Progressbar must be implemented with methods ``__init__``, ``set_description``,
-    ``show``, ``close`` and properties ``value``, ``max``. Optionally ``set_worker``
+    Progressbar must be implemented with methods `__init__`, `set_description`,
+    `show`, `close` and properties `value`, `max`. Optionally `set_worker`
     can be used so that progressbar has an access to the worker object.
     """
 

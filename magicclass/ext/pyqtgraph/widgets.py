@@ -12,7 +12,7 @@ from typing import (
 )
 import numpy as np
 
-from .components import Grid, Legend, Region, ScaleBar, TextItem
+from .components import Legend, Region, ScaleBar, TextItem
 from .graph_items import (
     BarPlot,
     Curve,
@@ -27,7 +27,7 @@ from .graph_items import (
 )
 from .mouse_event import MouseClickEvent
 
-from psygnal import Signal, SignalInstance
+from psygnal import Signal
 
 from magicclass.ext._shared_utils import convert_color_code, to_rgba
 from magicclass.ext._doc import write_docs
@@ -122,12 +122,12 @@ class HasDataItems:
         antialias: bool = False,
     ) -> Curve:
         """
-        Add a line plot like ``plt.plot(x, y)``.
+        Add a line plot like `plt.plot(x, y)`.
 
         Parameters
         ----------
         {x}{y}{face_color}{edge_color}{color}
-        size: float, default is 7
+        size: float, default 7
             Symbol size.
         {name}{lw}{ls}{symbol}
 
@@ -169,12 +169,12 @@ class HasDataItems:
         symbol="o",
     ) -> Scatter:
         """
-        Add scatter plot like ``plt.scatter(x, y)``.
+        Add scatter plot like `plt.scatter(x, y)`.
 
         Parameters
         ----------
         {x}{y}{face_color}{edge_color}{color}
-        size: float, default is 7
+        size: float, default 7
             Symbol size.
         {name}{lw}{ls}{symbol}
 
@@ -215,18 +215,18 @@ class HasDataItems:
         ls: str = "-",
     ) -> Histogram:
         """
-        Add histogram like ``plt.hist(data)``.
+        Add histogram like `plt.hist(data)`.
 
         Parameters
         ----------
         data : array-like
             Data for histogram constrction.
-        bins : int, sequence of float or str, default is 10
-            Bin numbers. See ``np.histogram`` for detail.
+        bins : int, sequence of float or str, default 10
+            Bin numbers. See `np.histogram` for detail.
         range : two floats, optional
-            Bin ranges. See ``np.histogram`` for detail.
-        density : bool, default is False
-            If true, plot the density instead of the counts. See ``np.histogram`` for
+            Bin ranges. See `np.histogram` for detail.
+        density : bool, default False
+            If true, plot the density instead of the counts. See `np.histogram` for
             detail.
         {face_color}{edge_color}{color}{name}{lw}{ls}
 
@@ -265,12 +265,12 @@ class HasDataItems:
         ls: str = "-",
     ) -> BarPlot:
         """
-        Add a bar plot like ``plt.bar(x, y)``.
+        Add a bar plot like `plt.bar(x, y)`.
 
         Parameters
         ----------
         {x}{y}
-        width : float, default is 0.6
+        width : float, default 0.6
             Width of each bar.
         {face_color}{edge_color}{color}{name}{lw}{ls}
 
@@ -395,8 +395,8 @@ class HasDataItems:
                 angle = arg1
         else:
             raise TypeError(
-                "Arguments of 'add_infline' should be either 'add_infline(slope, intercept)' "
-                "or 'add_infline(pos, degree)'."
+                "Arguments of 'add_infline' should be either 'add_infline(slope, "
+                "intercept)' or 'add_infline(pos, degree)'."
             )
 
         item = InfLine(pos, angle, edge_color=color, name=name, lw=lw, ls=ls)
@@ -425,7 +425,7 @@ class HasDataItems:
         func : callable
             A function that takes a 1-D array and returns a 1-D array.
         {face_color}{edge_color}{color}
-        size: float, default is 7
+        size: float, default 7
             Symbol size.
         {name}{lw}{ls}{symbol}
 
@@ -850,7 +850,7 @@ class ImageItem(HasViewBox):
         """Label of Y-axis."""
         return self._ylabel.text
 
-    @xlabel.setter
+    @ylabel.setter
     def ylabel(self, value: str):
         self._ylabel.text = value
 
@@ -1060,18 +1060,17 @@ class _MultiPlot(HasBackground, Generic[_C]):
         **kwargs,
     ):
         """
-        Multi-axes ``pyqtgraph`` canvas widget. Can contain multiple objects
-        of {cls}.
+        Multi-axes `pyqtgraph` canvas widget. Can contain multiple objects of {cls}.
 
         Parameters
         ----------
-        nrows : int, default is 1
+        nrows : int, default 1
             Initial rows of axes.
-        ncols : int, default is 1
+        ncols : int, default 1
             Initail columns of axes.
-        sharex : bool, default is False
+        sharex : bool, default False
             If true, all the x-axes will be linked.
-        sharey : bool, default is False
+        sharey : bool, default False
             If true, all the y-axes will be linked.
         """
         app = get_app()

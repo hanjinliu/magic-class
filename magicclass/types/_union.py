@@ -53,18 +53,18 @@ else:
 
     class Union(metaclass=_UnionAlias):
         """
-        Make Annotated type similar to ``typing.Union``.
+        Make Annotated type similar to `typing.Union`.
 
-        Arguments annotated with ``Union[int, str]`` will create a
-        ``UnionWidget`` with a ``SpinBox`` and a ``LineEdit`` as inner widgets.
+        Arguments annotated with `Union[int, str]` will create a `UnionWidget` with a
+        `SpinBox` and a `LineEdit` as inner widgets.
 
         >>> from magicclass import magicclass
         >>> from magicclass.types import Union
 
         >>> @magicclass
         >>> class A:
-        >>>     def f(self, a: Union[int, str]):
-        >>>         print(a)
+        ...     def f(self, a: Union[int, str]):
+        ...         print(a)
 
         >>> ui = A()
         >>> ui.show()

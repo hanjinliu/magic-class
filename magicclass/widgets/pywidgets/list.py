@@ -16,7 +16,7 @@ class ListWidget(BaseWidget, MutableSequence):
         value : Iterable, optional
             Initial value of the list widget. Any iterable object that can be passed to
             Python list.
-        dragdrop : bool, default is True
+        dragdrop : bool, default True
             Allow drag and drop of list contents.
         """
         super().__init__(**kwargs)

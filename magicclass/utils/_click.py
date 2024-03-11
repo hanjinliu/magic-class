@@ -27,13 +27,13 @@ def click(
         Enables other button(s) in this list when clicked.
     disables : str or iterable of str, optional
         Disables other button(s) in this list when clicked.
-    enabled : bool, default is True
+    enabled : bool, default True
         The initial clickability state of the button.
     shows : str or iterable of str, optional
         Make other button(s) in this list visible when clicked.
     hides : str or iterable of str, optional
         Make other button(s) in this list invisible when clicked.
-    visible: bool, default is True
+    visible: bool, default True
         The initial visibility of the button.
     """
     enables = _assert_iterable(enables)

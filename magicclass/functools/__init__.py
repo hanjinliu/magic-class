@@ -1,5 +1,5 @@
 """
-A magic-class submodule that mimics the built-in ``functools`` module.
+A magic-class submodule that mimics the built-in `functools` module.
 """
 
 from ._dispatch import singledispatch, singledispatchmethod

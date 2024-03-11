@@ -49,10 +49,10 @@ class MagicClassLogger(logging.Logger):
         Parameters
         ----------
         table : table-like object
-            Any object that can be passed to ``pandas.DataFrame`` can be used.
-        header : bool, default is True
+            Any object that can be passed to `pandas.DataFrame` can be used.
+        header : bool, default True
             Whether to show the header row.
-        index : bool, default is True
+        index : bool, default True
             Whether to show the index column.
         precision: int, options
             If given, float value will be rounded by this parameter.
@@ -117,7 +117,7 @@ def getLogger(name: str | None = None, show: bool = False) -> MagicClassLogger:
     Get a magicclass logger.
 
     The returned logger has a name specific logger widget. Many method of
-    ``magicclass.widgets.Logger`` are also available.
+    `magicclass.widgets.Logger` are also available.
 
     >>> from magicclass import logging
     >>> logger = logging.getLogger("your-app-name")

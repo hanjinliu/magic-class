@@ -36,7 +36,7 @@ def bound(obj: type[_W]) -> type: ...
 
 
 def bound(obj):
-    """Function version of ``Bound[...]``."""
+    """Function version of `Bound[...]`."""
     # NOTE: This could be more useful than Bound??
     from magicclass.fields import MagicField
 
@@ -59,7 +59,7 @@ class BoundLiteral:
     """
     A class used to represent a future evaluable expression.
 
-    This object will be created when a string is passed to the ``Bound[...]`` type.
+    This object will be created when a string is passed to the `Bound[...]` type.
     """
 
     def __init__(self, expr: str):
@@ -73,7 +73,7 @@ class BoundLiteral:
 
 class _BoundAlias(type):
     """
-    This metaclass is necessary for ``mypy`` to reveal type.
+    This metaclass is necessary for `mypy` to reveal type.
 
     For instance, if type annotation is added like this
 
@@ -83,7 +83,7 @@ class _BoundAlias(type):
     >>> def func(self, x: Bound[_get_int]):
     >>>     # do something
 
-    ``x`` will be considered to be ``Bound`` type otherwise.
+    `x` will be considered to be `Bound` type otherwise.
     """
 
     @overload
@@ -119,13 +119,13 @@ class Bound(metaclass=_BoundAlias):
     ...     def func(self, v: Bound[i]):
     ...         ...
 
-    ``Bound[value]`` is identical to ``Annotated[Any, {"bind": value}]``.
+    `Bound[value]` is identical to `Annotated[Any, {"bind": value}]`.
     """
 
     def __new__(cls, *args):
         raise TypeError(
-            "`Bound(...)` is deprecated since 0.5.21. Bound is now a generic alias instead "
-            "of a function. Please use `Bound[...]`."
+            "`Bound(...)` is deprecated since 0.5.21. Bound is now a generic alias "
+            "instead of a function. Please use `Bound[...]`."
         )
 
     def __init_subclass__(cls, *args, **kwargs):

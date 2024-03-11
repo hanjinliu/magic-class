@@ -72,19 +72,19 @@ else:
 
     class Optional(metaclass=_OptionalAlias):
         """
-        Make Annotated type similar to ``typing.Optional``.
+        Make Annotated type similar to `typing.Optional`.
 
-        Arguments annotated with ``Optional[int]`` will create a
-        ``OptionalWidget`` with a ``SpinBox`` as an inner widget.
+        Arguments annotated with `Optional[int]` will create a `OptionalWidget` with a
+        `SpinBox` as an inner widget.
 
         >>> from magicclass import magicclass, set_options
         >>> from magicclass.types import Optional
 
         >>> @magicclass
         >>> class A:
-        >>>     @set_options(a={"options": {"min": -1}})
-        >>>     def f(self, a: Optional[int]):
-        >>>         print(a)
+        ...     @set_options(a={"options": {"min": -1}})
+        ...     def f(self, a: Optional[int]):
+        ...         print(a)
 
         >>> ui = A()
         >>> ui.show()

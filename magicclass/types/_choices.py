@@ -19,7 +19,7 @@ _V = TypeVar("_V", bound=object)
 
 
 class _OneOfAlias(type):
-    """metaclass of ``OneOf``."""
+    """metaclass of `OneOf`."""
 
     @overload
     def __getitem__(cls, value: Callable[..., Iterable[tuple[Any, _V]]]) -> type[_V]:
@@ -89,7 +89,7 @@ class OneOf(metaclass=_OneOfAlias):
     >>>     def func(self, v: OneOf[(1, 2, 3)]):
     >>>         ...
 
-    ``OneOf[value]`` is identical to ``Annotated[Any, {"choices": value}]``.
+    `OneOf[value]` is identical to `Annotated[Any, {"choices": value}]`.
     """
 
     def __new__(cls, *args):
@@ -103,7 +103,7 @@ Choices = OneOf  # alias
 
 
 class _SomeOfAlias(type):
-    """This metaclass is necessary for ``mypy`` to reveal type."""
+    """This metaclass is necessary for `mypy` to reveal type."""
 
     @overload
     def __getitem__(
@@ -153,7 +153,7 @@ class SomeOf(metaclass=_SomeOfAlias):
     >>>     def func(self, v: Choices[(1, 2, 3)]):
     >>>         ...
 
-    ``Choices[value]`` is identical to ``Annotated[Any, {"choices": value}]``.
+    `Choices[value]` is identical to `Annotated[Any, {"choices": value}]`.
     """
 
     def __new__(cls, *args):

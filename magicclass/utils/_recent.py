@@ -18,7 +18,7 @@ def call_recent_menu(
     """
     Create a "call recent" menu.
 
-    This function returns a magicmenu object that calls ``func`` with recent arguments.
+    This function returns a magicmenu object that calls `func` with recent arguments.
 
     >>> @magicclass
     >>> class A:
@@ -34,10 +34,10 @@ def call_recent_menu(
     name : str, optional
         Name of the magicmenu object.
     text : str or Callable[..., str], optional
-        Specify how to display recent arguments when ``func(**kwargs)`` is called. If
-        ``text`` is a string, ``text.format(**kwargs)`` will be used. If ``text`` is a
-        callable, ``text(**kwargs)`` will be used.
-    max : int, default is 12
+        Specify how to display recent arguments when `func(**kwargs)` is called. If
+        `text` is a string, `text.format(**kwargs)` will be used. If `text` is a
+        callable, `text(**kwargs)` will be used.
+    max : int, default 12
         Maximum number of history.
 
     Returns

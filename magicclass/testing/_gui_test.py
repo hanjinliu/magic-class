@@ -68,7 +68,7 @@ def _qualname(obj: MethodType | type):
 
 def check_function_gui_buildable(ui: MagicTemplate, skips: list = []):
     """
-    Assert that all methods in ``ui`` can be built into GUI.
+    Assert that all methods in `ui` can be built into GUI.
 
     This function can also detect if any of the annotations of a method uses "bind" or
     "choices" that results in an error.
@@ -76,7 +76,7 @@ def check_function_gui_buildable(ui: MagicTemplate, skips: list = []):
 
     failed = []
     for method in _iter_method_with_button(ui):
-        if not method in skips:
+        if method not in skips:
             try:
                 fgui = get_function_gui(method)
             except MagicGuiBuildError as e:
@@ -136,12 +136,8 @@ def check_tooltip(ui: MagicTemplate):
                 elif not isinstance(
                     getattr(obj.__class__, attr, None), (Widget, _FieldObject)
                 ):
-                    failed.append(
-                        (
-                            obj,
-                            f"Widget or field named {attr!r} not found in {_qualname(obj)}",
-                        )
-                    )
+                    mg = f"Widget or field named {attr!r} not found in {_qualname(obj)}"
+                    failed.append((obj, mg))
         else:
             for arg in tooltips.parameters:
                 params = set(inspect.signature(obj).parameters.keys())

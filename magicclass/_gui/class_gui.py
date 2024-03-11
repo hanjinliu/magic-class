@@ -527,7 +527,7 @@ def make_gui(
                     main window.
                 name : str, optional
                     Name of the dock widget.
-                area : str, default is "right"
+                area : str, default "right"
                     Initial dock widget area.
                 allowed_areas : sequence of str, optional
                     Allowed dock widget area. Allow all areas by default.

@@ -20,15 +20,15 @@ shared_docs = {
         name: str, optional
             Object name of the plot item.""",
     "lw": """
-        lw: float, default is 1.0
+        lw: float, default 1.0
             Line width of edge.""",
     "ls": """
-        ls: str, default is "-"
+        ls: str, default "-"
             Line style of edge. One of "-", "--", ":" or "-.".""",
     "symbol": """
         symbol: str, optional
             Symbol style. Currently supports circle ("o"), cross ("+", "x"), star ("*"),
-            square ("s", "D") triangle ("^", "<", "v", ">") and others that ``pyqtgraph``
+            square ("s", "D") triangle ("^", "<", "v", ">") and others that `pyqtgraph`
             supports.""",
 }
 

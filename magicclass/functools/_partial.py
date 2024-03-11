@@ -6,7 +6,7 @@ from magicgui.widgets import EmptyWidget
 from magicclass.signature import get_signature, upgrade_signature
 
 if TYPE_CHECKING:
-    from ..signature import MagicMethodSignature
+    from magicclass.signature import MagicMethodSignature
 
 _PARTIALIZE = {"gui_only": True, "widget_type": EmptyWidget, "visible": False}
 
@@ -15,10 +15,10 @@ class partial(functools.partial):
     """
     Partialize a function and its signature.
 
-    This object is similar to ``functools.partial``, but it also update
-    widget options to build magicgui widget with subset of widgets. More
-    precisely, partializing ``x=0`` will add option
-    ``x={"gui_only": True, "widget_type": EmptyWidget, "visible": False}``.
+    This object is similar to `functools.partial`, but it also update widget options to
+    build magicgui widget with subset of widgets. More precisely, partializing `x=0`
+    will add option `x={"gui_only": True, "widget_type": EmptyWidget,
+    "visible": False}`.
 
     Parameters
     ----------
@@ -33,7 +33,7 @@ class partial(functools.partial):
     >>> class A:
     >>>     def f(self, i: int): ...
 
-    You can partialize method ``f``.
+    You can partialize method `f`.
 
     >>> ui = A()
     >>> ui.append(partial(ui.f, i=1))
@@ -71,10 +71,10 @@ class partialmethod(functools.partialmethod):
     """
     Partialize a method and its signature.
 
-    This object is similar to ``functools.partialmethod``, but it also update
-    widget options to build magicgui widget with subset of widgets. More
-    precisely, partializing ``x=0`` will add option
-    ``x={"gui_only": True, "widget_type": EmptyWidget, "visible": False}``.
+    This object is similar to `functools.partialmethod`, but it also update widget
+    options to build magicgui widget with subset of widgets. More precisely,
+    partializing `x=0` will add option `x={"gui_only": True, "widget_type": EmptyWidget,
+    "visible": False}`.
 
     Parameters
     ----------
@@ -86,8 +86,8 @@ class partialmethod(functools.partialmethod):
 
     >>> @magicclass
     >>> class A:
-    >>>     def f(self, i: int): ...
-    >>>     g = partialmethod(f, i=1)
+    ...     def f(self, i: int): ...
+    ...     g = partialmethod(f, i=1)
 
     """
 

@@ -142,7 +142,7 @@ class Key(Enum):
             raise TypeError(f"Unsupported type for a modifier: {type(key)}.")
         return getattr(Qt, key.name.upper())
 
-    # Add method enables expressions like ``Key.Ctrl + Key.A``.
+    # Add method enables expressions like `Key.Ctrl + Key.A`.
     def __add__(self, other: str | Key) -> tuple[Key, Key]:
         cls = self.__class__
         if isinstance(other, str):

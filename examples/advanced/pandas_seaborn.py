@@ -65,7 +65,7 @@ class Analyzer:
         ----------
         path : Path
             csv, txt, dat file
-        header : str, default is ""
+        header : str, default ""
             Where header starts.
         """
         header = None if header == "" else int(header)
@@ -89,7 +89,7 @@ class Analyzer:
         ----------
         path : Path
             File path.
-        transparent : bool, default is True
+        transparent : bool, default True
             Check if you want to save as a transparent image.
         """
         self.canvas.figure.savefig(path, transparent=transparent)

@@ -14,8 +14,8 @@ class abstractapi(Callable):
     """
     Wrapper used for marking abstract APIs.
 
-    This wrapper is intended to be used in combination with the ``wraps`` method
-    of magic-classes.
+    This wrapper is intended to be used in combination with the `location=` argument of
+    `@set_design`, `field` or `vfield`.
 
     Examples
     --------
@@ -52,7 +52,8 @@ class abstractapi(Callable):
 
     def __call__(self, *args, **kwargs) -> NoReturn:
         raise AbstractAPIError(
-            f"Function {self._get_qual_name()} is an abstract API so it cannot be called."
+            f"Function {self._get_qual_name()} is an abstract API so it cannot be "
+            "called."
         )
 
     def __set_name__(self, owner: type, name: str):

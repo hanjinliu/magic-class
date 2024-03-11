@@ -142,7 +142,7 @@ class BoxMagicField(MagicField["SingleWidgetBox[_W]"], Generic[_W]):
             Method of parent class.
         template : Callable, optional
             Function template for signature.
-        copy: bool, default is False
+        copy: bool, default False
             If true, wrapped method is still enabled.
 
         Returns

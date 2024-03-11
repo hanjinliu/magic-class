@@ -94,7 +94,7 @@ class Tooltips:
 
 
 def get_signature(func) -> inspect.Signature:
-    """Similar to ``inspect.signature`` but safely returns ``Signature``."""
+    """Similar to `inspect.signature` but safely returns `Signature`."""
     if hasattr(func, "__signature__"):
         sig = func.__signature__
     else:

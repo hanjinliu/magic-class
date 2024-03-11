@@ -747,16 +747,16 @@ class GuiMacro(BaseMacro):
 
         Parameters
         ----------
-        index : int, default is -1
+        index : int, default -1
             Index of the method call to repeat.
-        same_args : bool, default is False
+        same_args : bool, default False
             If True, method will be called with the same arguments as before. Otherwise,
             magicgui widget will be opened.
-        blocking : bool, default is True
+        blocking : bool, default True
             If True, the method will be called in blocking mode if it is a thread worker.
             Note that programatically calling "repeat_method" in non-blocking mode will
             cause unexpected macro recording.
-        check_nargs : bool, default is False
+        check_nargs : bool, default False
             If False, the method will be called even if it has no arguments. Otherwise,
             raise ValueError. This option is useful to avoid calling long-running commands.
         """

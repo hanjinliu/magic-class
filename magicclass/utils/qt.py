@@ -32,7 +32,7 @@ def show_messagebox(
 
     Parameters
     ----------
-    mode : str or MessageBoxMode, default is MessageBoxMode.INFO
+    mode : str or MessageBoxMode, default MessageBoxMode.INFO
         Mode of message box. Must be "error", "warn", "info", "question" or "about".
     title : str, optional
         Title of messagebox.

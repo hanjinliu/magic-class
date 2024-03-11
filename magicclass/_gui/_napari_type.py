@@ -13,7 +13,7 @@ register_type(Viewer, lambda viewer: VIEWER_SYMBOL)
 
 @register_type(Layer)
 def _get_layer(layer: Layer):
-    """Record layer object as ``viewer.layers["layer-name"]``"""
+    """Record layer object as `viewer.layers["layer-name"]`"""
 
     expr = Expr("getitem", [Expr("getattr", [VIEWER_SYMBOL, "layers"]), layer.name])
     return expr

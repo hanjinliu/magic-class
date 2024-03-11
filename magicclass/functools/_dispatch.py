@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import sys
+import types
+import weakref
 from typing import Callable, Sequence, Any, get_type_hints, overload, TYPE_CHECKING
 from abc import get_cache_token
 import functools
@@ -24,9 +26,8 @@ def singledispatch(func):
     Single dispatch function aware of GUI options in magic-class.
 
     Dispatched functions are converted into a multi-valued widget. GUI configurations
-    are also possible using ``@set_options`` decorator.
+    are also possible using `@set_options` decorator.
     """
-    import types, weakref
 
     registry = {}
     dispatch_cache = weakref.WeakKeyDictionary()
@@ -113,7 +114,7 @@ class singledispatchmethod(functools.singledispatchmethod):
     Single dispatch method aware of GUI options in magic-class.
 
     Dispatched functions are converted into a multi-valued widget. GUI configurations
-    are also possible using ``@set_options`` decorator.
+    are also possible using `@set_options` decorator.
     """
 
     def __init__(self, func):
@@ -130,7 +131,8 @@ class singledispatchmethod(functools.singledispatchmethod):
 
     # fmt: off
     @overload
-    def register(self, cls: type | _AnnotatedAlias, func: Callable | None, *, options: dict = {}): ...
+    def register(self, cls: type | _AnnotatedAlias, func: Callable | None, *,
+                 options: dict = {}): ...
     @overload
     def register(self, cls: Callable, *, options: dict = {}): ...
     # fmt: on

@@ -106,8 +106,8 @@ class Has3DViewBox(HasViewBox):
         """
         Add a 3D array as a iso-surface.
 
-        The difference between this method and the iso-surface rendering of
-        ``add_image`` is that the layer created by this method can be a mesh.
+        The difference between this method and the iso-surface rendering of `add_image`
+        is that the layer created by this method can be a mesh.
 
         Parameters
         ----------
@@ -195,11 +195,11 @@ class Has3DViewBox(HasViewBox):
         ----------
         data : ArrayLike
             Coordinates of the curve.
-        color : Color, default is "white"
+        color : Color, default "white"
             Color of the curve.
-        width : float, default is 1.
+        width : float, default 1.
             Width of the curve line.
-        blending : str, default is "translucent"
+        blending : str, default "translucent"
             Blending mode of the layer.
 
         Returns
@@ -239,13 +239,13 @@ class Has3DViewBox(HasViewBox):
             Face color of the points.
         edge_color : Color, optional
             Edge color of the points.
-        edge_width : float, default is 0.0
+        edge_width : float, default 0.0
             Edge width of the points.
-        size : float, default is 1.0
+        size : float, default 1.0
             Size of the points.
-        blending : str, default is "translucent"
+        blending : str, default "translucent"
             Blending mode of the layer.
-        spherical : bool, default is True
+        spherical : bool, default True
             Whether the points are rendered as spherical objects.
 
         Returns
@@ -279,23 +279,23 @@ class Has3DViewBox(HasViewBox):
         """
         Add a (N, P, 3) array as a set of arrows.
 
-        ``P`` is the number of points in each arrow. If you want to draw simple
+        `P` is the number of points in each arrow. If you want to draw simple
         arrows with lines, the shape of the input array will be (N, 2, 3) and
-        ``data[:, 0]`` is the start points and ``data[:, 1]`` is the end points.
+        `data[:, 0]` is the start points and `data[:, 1]` is the end points.
 
         Parameters
         ----------
         data : ArrayLike
             Arrow coordinates.
-        arrow_type : str, default is "stealth"
+        arrow_type : str, default "stealth"
             Shape of the arrow.
-        arrow_size : float, default is 5.0
+        arrow_size : float, default 5.0
             Size of the arrows.
-        color : str, default is "white"
+        color : str, default "white"
             Color of the arrow and the bodies.
-        width : float, default is 1.0
+        width : float, default 1.0
             Width of the arrow bodies.
-        blending : str, default is "translucent"
+        blending : str, default "translucent"
             Blending mode of the layer.
 
         Returns

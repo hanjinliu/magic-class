@@ -326,7 +326,7 @@ class Logger(Widget, logging.Handler):
     Examples
     --------
 
-    Create widget as other ``magicgui`` or ``magicclass`` widgets.
+    Create widget as other `magicgui` or `magicclass` widgets.
 
     .. code-block:: python
 
@@ -430,10 +430,10 @@ class Logger(Widget, logging.Handler):
         Parameters
         ----------
         table : table-like object
-            Any object that can be passed to ``pandas.DataFrame`` can be used.
-        header : bool, default is True
+            Any object that can be passed to `pandas.DataFrame` can be used.
+        header : bool, default True
             Whether to show the header row.
-        index : bool, default is True
+        index : bool, default True
             Whether to show the index column.
         precision: int, options
             If given, float value will be rounded by this parameter.

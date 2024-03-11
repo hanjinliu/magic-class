@@ -285,10 +285,10 @@ class MagicField(_FieldObject, Generic[_W]):
 
     def get_widget(self, obj: Any) -> _W:
         """
-        Get a widget from ``obj``.
+        Get a widget from `obj`.
 
         This function will be called every time MagicField is referred by
-        ``obj.field``.
+        `obj.field`.
         """
         obj_id = id(obj)
         if (widget := self._guis.get(obj_id, None)) is None:
@@ -304,8 +304,9 @@ class MagicField(_FieldObject, Generic[_W]):
 
     def get_action(self, obj: Any) -> AbstractAction:
         """
-        Get an action from ``obj``. This function will be called every time MagicField is referred
-        by ``obj.field``.
+        Get an action from `obj`.
+
+        This function will be called every time MagicField is referred by `obj.field`.
         """
         obj_id = id(obj)
         if obj_id in self._guis.keys():
@@ -511,8 +512,8 @@ class MagicField(_FieldObject, Generic[_W]):
         """
         Connect a callback function to be called asynchronously.
 
-        This method can be used similarly as ``connect`` but returns
-        a ``thread_worder`` object.
+        This method can be used similarly as `connect` but returns
+        a `thread_worder` object.
 
         >>> @magicclass
         >>> class A:
@@ -532,9 +533,9 @@ class MagicField(_FieldObject, Generic[_W]):
         timeout : float, default 0.0
             Timeout second. All the callback called within this time will be
             aborted. In other words, callback will only be called every
-            ``timeout`` seconds.
+            `timeout` seconds.
         abort_limit : float, default inf
-            If the callback is aborted more than ``abort_limit`` seconds, it
+            If the callback is aborted more than `abort_limit` seconds, it
             will not be aborted even after `timeout` seconds for the next call.
         ignore_errors : bool, default False
             If true, error will be ignored so that it does not disturb users.
@@ -577,8 +578,8 @@ class MagicField(_FieldObject, Generic[_W]):
                                     out = exc.value
                                     break
                                 if now < conn.last_completed_id:
-                                    # if later function call finished earlier, current call
-                                    # should never be run.
+                                    # if later function call finished earlier, current
+                                    # call should never be run.
                                     return thread_worker.callback()
                                 if (
                                     _last_run_copy < conn.last_run
@@ -625,17 +626,19 @@ class MagicField(_FieldObject, Generic[_W]):
 
     # fmt: off
     @overload
-    def wraps(self, method: _F, *, template: Callable | None = None, copy: bool = False) -> _F: ...
+    def wraps(self, method: _F, *, template: Callable | None = None, copy: bool = False
+    ) -> _F: ...
     @overload
-    def wraps(self, method: None = ..., *, template: Callable | None = None, copy: bool = False) -> Callable[[_F], _F]: ...
+    def wraps(self, method: None = ..., *, template: Callable | None = None,
+        copy: bool = False) -> Callable[[_F], _F]: ...
     # fmt: on
 
     def wraps(self, method, *, template=None, copy=False):
         """
-        Call the ``wraps`` class method of magic class.
+        Call the `wraps` class method of magic class.
 
         This method is needed when a child magic class is defined outside the main magic
-        class, and integrated into the main magic class by ``field`` function, like below
+        class, and integrated into the main magic class by `field` function, like below
 
         >>> @magicclass
         >>> class B:
@@ -736,7 +739,7 @@ class MagicValueField(MagicField[ValueWidget[_V]]):
         Define a post-get hook for the field.
 
         If a post-get hook is set, value will always be converted before returned.
-        Following example shows how to convert ``x`` to a float every time it gets
+        Following example shows how to convert `x` to a float every time it gets
         accessed.
 
         >>> class A:
@@ -763,7 +766,7 @@ class MagicValueField(MagicField[ValueWidget[_V]]):
         Define a pre-set hook for the field.
 
         If a pre-set hook is set, value will always be converted before being set
-        to the widget value. Following example shows how to convert ``x`` to a
+        to the widget value. Following example shows how to convert `x` to a
         string before setting the value
 
         >>> class A:
@@ -938,10 +941,10 @@ def field(
     label : str, optional
         Label of the widget.
     widget_type : str, optional
-        Widget type. This argument will be sent to ``create_widget`` function.
+        Widget type. This argument will be sent to `create_widget` function.
     options : dict, optional
-        Widget options. This parameter will be passed to the ``options`` keyword
-        argument of ``create_widget``.
+        Widget options. This parameter will be passed to the `options` keyword
+        argument of `create_widget`.
     record : bool, default True
         A magic-class specific parameter. If true, record value changes as macro.
     location : magic-class, optional
@@ -1085,10 +1088,10 @@ def vfield(
     label : str, optional
         Label of the widget.
     widget_type : str, optional
-        Widget type. This argument will be sent to ``create_widget`` function.
+        Widget type. This argument will be sent to `create_widget` function.
     options : dict, optional
-        Widget options. This parameter will be passed to the ``options`` keyword
-        argument of ``create_widget``.
+        Widget options. This parameter will be passed to the `options` keyword
+        argument of `create_widget`.
     record : bool, default True
         A magic-class specific parameter. If true, record value changes as macro.
 
@@ -1106,7 +1109,7 @@ def widget_property(func: Callable[..., _W]) -> MagicValueField[_W, Any]:
     """
     Create a widget property from a function.
 
-    Generally, this decorator will be used in line with ``HasFields`` trait.
+    Generally, this decorator will be used in line with `HasFields` trait.
     If a widget has to be initialized depending on the state of the instance,
     you can define a field using a method.
 
@@ -1117,8 +1120,8 @@ def widget_property(func: Callable[..., _W]) -> MagicValueField[_W, Any]:
     >>>     def param(self):
     >>>         return SpinBox(value=1, max=self._max)
 
-    In this example, ``param`` is a field object similar to those defined using
-    ``vfield`` but has a variable argument ``max``.
+    In this example, `param` is a field object similar to those defined using
+    `vfield` but has a variable argument `max`.
 
     >>> a = A(max=20)
     >>> a.param  # Out: 1

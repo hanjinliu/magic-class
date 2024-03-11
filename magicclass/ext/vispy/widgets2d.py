@@ -48,12 +48,12 @@ class Has2DViewBox(HasViewBox):
         symbol=None,
     ):
         """
-        Add a line plot like ``plt.plot(x, y)``.
+        Add a line plot like `plt.plot(x, y)`.
 
         Parameters
         ----------
         {x}{y}{face_color}{edge_color}{color}
-        size: float, default is 7
+        size: float, default 7
             Symbol size.
         {name}{lw}{ls}{symbol}
 
@@ -97,12 +97,12 @@ class Has2DViewBox(HasViewBox):
         symbol=None,
     ):
         """
-        Add a scatter plot like ``plt.scatter(x, y)``.
+        Add a scatter plot like `plt.scatter(x, y)`.
 
         Parameters
         ----------
         {x}{y}{face_color}{edge_color}{color}
-        size: float, default is 7
+        size: float, default 7
             Symbol size.
         {name}{symbol}
 
@@ -142,13 +142,13 @@ class Has2DViewBox(HasViewBox):
         name: str | None = None,
     ) -> Histogram:
         """
-        Add a histogram like ``plt.hist(x)``.
+        Add a histogram like `plt.hist(x)`.
 
         Parameters
         ----------
         data: array-like
             Input 1D data.
-        bins: int, default is 10
+        bins: int, default 10
             Number of bins to draw the histogram.
         {face_color}{edge_color}{color}{name}
 

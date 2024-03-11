@@ -53,7 +53,7 @@ class _MultiplePaths(Sequence[pathlib.Path], metaclass=_AnnotatedMultiPathAlias)
 
 class Path(pathlib.Path, metaclass=_AnnotatedPathAlias2):
     """
-    A subclass of ``pathlib.Path`` with additional type annotation variations.
+    A subclass of `pathlib.Path` with additional type annotation variations.
 
     >>> Path  # identical to pathlib.Path for magicgui
     >>> Path.Read  # pathlib.Path with mode "r" (identical to Path)

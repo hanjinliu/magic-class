@@ -22,8 +22,8 @@ def to_napari(
     viewer: napari.Viewer | None = None,
 ):
     """
-    Send magic class to current napari viewer. Classes decorated with ``@magicclass``
-    ``magicmenu`` and ``magictoolbar`` are supported.
+    Send magic class to current napari viewer. Classes decorated with `@magicclass`
+    `magicmenu` and `magictoolbar` are supported.
     """
 
     def wrapper(cls: type[BaseGui]):
@@ -47,8 +47,8 @@ def to_napari(
             _viewer.window._qt_window.addToolBar(ui.native)
         else:
             raise TypeError(
-                f"Class {cls.__name__} is not a magic-class. Maybe you forgot decorating"
-                "the class with '@magicclass'?"
+                f"Class {cls.__name__} is not a magic-class. Maybe you forgot "
+                "decorating the class with '@magicclass'?"
             )
         _viewer.update_console({"ui": ui})
         return cls
@@ -66,13 +66,14 @@ _P = ParamSpec("_P")
 
 def process_worker(f: Callable[_P, Worker]) -> Callable[_P, None]:
     """
-    Process returned worker of ``napari.qt.threading`` in a proper way.
+    Process returned worker of `napari.qt.threading` in a proper way.
 
-    Open a progress bar and start worker in a parallel thread if function is called from GUI.
-    Otherwise (if function is called from script), the worker will be executed as if the
-    function is directly called. This function is useful in napari because when you are
-    running workers in tandem the second one does not wait for the first one to finish, which
-    causes inconsistency between operations on GUI and on Python interpreter.
+    Open a progress bar and start worker in a parallel thread if function is called from
+    GUI. Otherwise (if function is called from script), the worker will be executed as
+    if the function is directly called. This function is useful in napari because when
+    you are running workers in tandem the second one does not wait for the first one to
+    finish, which causes inconsistency between operations on GUI and on Python
+    interpreter.
     """
 
     @wraps(f)

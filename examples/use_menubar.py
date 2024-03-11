@@ -39,7 +39,7 @@ class Main:
 
         Parameters
         ----------
-        sigma : float, default is 1.0
+        sigma : float, default 1.0
             Standar deviation of Gaussian filter.
         """
         out = gaussian(self.image.value, sigma=sigma)

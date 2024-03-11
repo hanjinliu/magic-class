@@ -25,8 +25,8 @@ def set_options(
     """
     Set MagicSignature to functions.
 
-    By decorating a method with this function, ``magicgui`` will create a widget with these
-    options. These codes are similar in appearance.
+    By decorating a method with this function, `magicgui` will create a widget with
+    these options. These codes are similar in appearance.
 
     >>> # A magicgui way
     >>> @magicgui(a={...})
@@ -42,17 +42,17 @@ def set_options(
 
     Parameters
     ----------
-    layout : str, default is "vertical"
-        The type of layout to use in FunctionGui. Must be one of {'horizontal', 'vertical'}.
-    labels : bool, default is True
+    layout : str, default "vertical"
+        The type of layout to use in FunctionGui. Must be 'horizontal' or 'vertical'.
+    labels : bool, default True
         Whether labels are shown in the FunctionGui.
     call_button : bool or str, optional
-        If ``True``, create an additional button that calls the original
-        function when clicked.  If a ``str``, set the button text. If None (the
-        default), it defaults to True when ``auto_call`` is False, and False
+        If `True`, create an additional button that calls the original
+        function when clicked.  If a `str`, set the button text. If None (the
+        default), it defaults to True when `auto_call` is False, and False
         otherwise.
     auto_call : bool, optional
-        If ``True``, changing any parameter in either the GUI or the widget attributes
+        If `True`, changing any parameter in either the GUI or the widget attributes
         will call the original function with the current settings. by default False
     options : dict
         Parameter options.
@@ -106,28 +106,28 @@ def set_design(
     Parameters
     ----------
     width : int, optional
-        Button width. Call ``button.width = width``.
+        Button width. Call `button.width = width`.
     height : int, optional
-        Button height. Call ``button.height = height``.
+        Button height. Call `button.height = height`.
     min_width : int, optional
-        Button minimum width. Call ``button.min_width = min_width``.
+        Button minimum width. Call `button.min_width = min_width`.
     min_height : int, optional
-        Button minimum height. Call ``button.min_height = min_height``.
+        Button minimum height. Call `button.min_height = min_height`.
     max_width : int, optional
-        Button maximum width. Call ``button.max_width = max_width``.
+        Button maximum width. Call `button.max_width = max_width`.
     max_height : int, optional
-        Button maximum height. Call ``button.max_height = max_height``.
+        Button maximum height. Call `button.max_height = max_height`.
     text : str or callable, optional
-        Button text. Call ``button.text = text``. A function can be given to set the text
+        Button text. Call `button.text = text`. A function can be given to set the text
         from the function name.
     icon : str, optional
-        Path to icon file. ``min_width`` and ``min_height`` will be automatically set to the icon size
-        if not given.
+        Path to icon file. `min_width` and `min_height` will be automatically set to the
+        icon size if not given.
     location : magic-class or magic-field of magic-class, optional
         If given, the button will be added to the given magic-class.
     font_size : int, optional
         Font size of the text.
-    visible : bool default is True
+    visible : bool default True
         Button visibility.
     """
     caller_options = {}
@@ -197,7 +197,7 @@ def do_not_record(method=None, recursive=False):
 
     Parameters
     ----------
-    recursive : bool, default is False
+    recursive : bool, default False
         If True, all recordable methods called inside this method will also be
         suppressed.
     """
@@ -257,8 +257,8 @@ def setup_function_gui(target: Callable):
     """
     Mark a function as a setup function for a FunctionGui.
 
-    Function decorated with ``setup_function_gui(func)`` will be called when the
-    FunctionGui widget for method ``func`` was built. This decorator is used to
+    Function decorated with `setup_function_gui(func)` will be called when the
+    FunctionGui widget for method `func` was built. This decorator is used to
     define complicated setting of a FunctionGui, which is not achievable by
     simple configurations.
 

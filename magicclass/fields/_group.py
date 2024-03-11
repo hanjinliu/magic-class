@@ -173,17 +173,15 @@ class FieldGroup(Container, HasFields, _FieldObject):
     """
     Base class of field group.
 
-    Subclasses can contain ``field`` and ``vfield`` as class attributes, which
+    Subclasses can contain `field` and `vfield` as class attributes, which
     will be converted into child widgets. A field group is also a field.
 
-    .. code-block:: python
+    >>> class A(FieldGroup):
+    ...     a = field(int)
+    ...     b = field(str)
 
-        class A(FieldGroup):
-            a = field(int)
-            b = field(str)
-
-    If you want to use it as a container, use ``self.changed.connect`` instead of
-    ``self.connect`` to connect callbacks.
+    If you want to use it as a container, use `self.changed.connect` instead of
+    `self.connect` to connect callbacks.
     """
 
     def __init__(
@@ -239,7 +237,8 @@ class FieldGroup(Container, HasFields, _FieldObject):
         if self.name is None:
             self.name = name
 
-    # Unlike Container, `self.x = value` should be allowed because `x` can be a value field.
+    # Unlike Container, `self.x = value` should be allowed because `x` can be a value
+    # field.
     __setattr__ = object.__setattr__
 
     def copy(self) -> Self:
@@ -306,9 +305,10 @@ class FieldGroup(Container, HasFields, _FieldObject):
         >>> b.a.value = 1  # some_callback will be called
 
         If you want to use it directly as a container, please use
-        ``self.changed.connect``.
+        `self.changed.connect`.
         """
-        # self.changed.connect(callback)  NOTE: the original container doesn't need signals!
+        # NOTE: the original container doesn't need signals!
+        # self.changed.connect(callback)
         self._callbacks.append(callback)
         return callback
 

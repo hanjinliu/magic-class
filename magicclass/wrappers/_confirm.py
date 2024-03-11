@@ -45,21 +45,21 @@ def confirm(f=None, *, text=None, condition=None, callback=None):
     text : str, optional
         Confirmation message, such as "Are you sure to run this function?". _Format
         string can also be used here, in which case arguments will be passed. For
-        instance, to execute confirmation on function ``f(a, b)``, you can use
-        format string ``"Running with a = {a} and b = {b}"`` then confirmation
-        message will be "Running with a = 1, b = 2" if ``f(1, 2)`` is called.
+        instance, to execute confirmation on function `f(a, b)`, you can use
+        format string `"Running with a = {a} and b = {b}"` then confirmation
+        message will be "Running with a = 1, b = 2" if `f(1, 2)` is called.
         By default, message will be "Do you want to run {name}?" where "name" is
         the function name.
     condition : callable or str, optional
         Condition of when confirmation will show up. If callable, it must accept
-        ``condition(self)`` and return boolean object. If string, it must be
+        `condition(self)` and return boolean object. If string, it must be
         evaluable as literal with input arguments as local namespace. For instance,
-        function ``f(a, b)`` decorated by ``confirm(condition="a < b + 1")`` will
-        evaluate ``a < b + 1`` to check if confirmation is needed. Always true by
+        function `f(a, b)` decorated by `confirm(condition="a < b + 1")` will
+        evaluate `a < b + 1` to check if confirmation is needed. Always true by
         default.
     callback : callable, optional
-        Callback function when confirmation is needed. Must take a ``str`` and a
-        ``BaseGui`` object as inputs. By default, message box will be shown. Useful
+        Callback function when confirmation is needed. Must take a `str` and a
+        `BaseGui` object as inputs. By default, message box will be shown. Useful
         for testing.
     """
     if condition is None:

@@ -344,7 +344,7 @@ class MagicTemplate(
         ----------
         ancestor : type of MagicTemplate
             Type of ancestor to search for.
-        cache : bool, default is False
+        cache : bool, default False
             If true, the result will be cached. Caching is not safe if the widget is
             going to be used as a child of other widgets.
 
@@ -420,7 +420,7 @@ class MagicTemplate(
             Method of parent class.
         template : Callable, optional
             Function template for signature.
-        copy: bool, default is False
+        copy: bool, default False
             If true, wrapped method is still enabled.
 
         Returns
@@ -510,7 +510,7 @@ class MagicTemplate(
         Raises
         ------
         RuntimeError
-            If ``child_clsname`` was not found in child widget list. This error will
+            If `child_clsname` was not found in child widget list. This error will
             NEVER be raised in the user's side.
         """
         if moveto is not None:
@@ -1224,10 +1224,9 @@ def convert_attributes(
     """
     Convert class attributes into macro recordable ones.
 
-    Returned dictionary can be directly used for the third argument of
-    ``type`` constructor. To avoid converting all the callables in
-    subclasses, subclasses that will be iterated over can be restricted
-    using ``hide`` argument.
+    Returned dictionary can be directly used for the third argument of `type`
+    constructor. To avoid converting all the callables in subclasses, subclasses that
+    will be iterated over can be restricted using `hide` argument.
 
     Parameters
     ----------

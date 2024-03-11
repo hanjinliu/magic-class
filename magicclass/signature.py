@@ -208,7 +208,7 @@ class MagicMethodSignature(MagicSignature):
     ) -> MagicMethodSignature:
         """Create a customized copy of the Signature.
 
-        Pass ``parameters`` and/or ``return_annotation`` arguments
+        Pass `parameters` and/or `return_annotation` arguments
         to override them in the new copy.
         """
         if parameters is _void:

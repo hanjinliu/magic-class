@@ -57,7 +57,7 @@ def impl_preview(
         decorated function itself will be used as the preview function.
     text : str, optional
         Text of the preview button or checkbox.
-    auto_call : bool, default is False
+    auto_call : bool, default False
         Whether the preview function will be auto-called. If true, a check box will
         appear above the call button, and the preview function is auto-called during
         it is checked.
@@ -130,6 +130,7 @@ def get_arg_filter(
     if less == 0:
         if prev_params.keys() != tgt_params.keys():
             raise TypeError(f"Arguments mismatch between {prev_sig!r} and {tgt_sig!r}.")
+
         # If argument names are identical, input arguments don't have to be filtered.
         def _filter(a):
             return a
@@ -139,6 +140,7 @@ def get_arg_filter(
         for i, param in enumerate(tgt_params.keys()):
             if param in prev_params:
                 idx.append(i)
+
         # If argument names are not identical, input arguments have to be filtered so
         # that arguments match the inputs.
         def _filter(_args):

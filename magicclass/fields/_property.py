@@ -73,7 +73,7 @@ class _ButtonedWidget(Container):
         auto_call=False,
         **kwargs,
     ):
-        """Construct a ButtonedWidget in a ``create_widget`` format."""
+        """Construct a ButtonedWidget in a `create_widget` format."""
         widget = create_widget(
             annotation=annotation,
             widget_type=widget_type,

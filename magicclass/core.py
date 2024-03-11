@@ -104,20 +104,20 @@ def magicclass(
     ----------
     class_ : type, optional
         Class to be decorated.
-    layout : str, "vertical" or "horizontal", default is "vertical"
+    layout : str, "vertical" or "horizontal", default "vertical"
         Layout of the main widget.
-    labels : bool, default is True
+    labels : bool, default True
         If true, magicgui labels are shown.
     name : str, optional
         Name of GUI.
     visible : bool, optional
         Initial visibility of GUI. Useful when magic class is nested.
-    close_on_run : bool, default is True
+    close_on_run : bool, default True
         If True, magicgui created by every method will be deleted after the method is
         completed without exceptions, i.e. magicgui is more like a dialog.
-    popup_mode : str or PopUpMode, default is PopUpMode.popup
+    popup_mode : str or PopUpMode, default PopUpMode.popup
         Option of how to popup FunctionGui widget when a button is clicked.
-    error_mode : str or ErrorMode, default is ErrorMode.msgbox
+    error_mode : str or ErrorMode, default ErrorMode.msgbox
         Option of how to raise errors during function calls.
     widget_type : WidgetType or str, optional
         Widget type of container.
@@ -128,9 +128,9 @@ def magicclass(
     properties : dict, optional
         Set properties to the widget if given. This argument is useful when you want
         to set width, height or margin without defining __post_init__.
-    record : bool, default is True
+    record : bool, default True
         If True, macro recording is enabled.
-    symbol : str, default is "ui"
+    symbol : str, default "ui"
         The identifier used in macro to represent this widget.
 
     Returns
@@ -181,7 +181,7 @@ def magicclass(
         @functools_wraps(oldclass.__init__)
         def __init__(self: MagicTemplate, *args, **kwargs):
             # Without "app = " Jupyter freezes after closing the window!
-            app = get_app()
+            app = get_app()  # noqa: F841
 
             gui_kwargs = dict(
                 layout=layout,
@@ -302,7 +302,7 @@ def magiccontext(
         @functools_wraps(oldclass.__init__)
         def __init__(self: MagicTemplate, *args, **kwargs):
             # Without "app = " Jupyter freezes after closing the window!
-            app = get_app()
+            app = get_app()  # noqa: F841
 
             gui_kwargs = dict(
                 close_on_run=close_on_run,
@@ -375,12 +375,12 @@ def _call_magicmenu(
     ----------
     class_ : type, optional
         Class to be decorated.
-    close_on_run : bool, default is True
-        If True, magicgui created by every method will be deleted after the method is completed without
-        exceptions, i.e. magicgui is more like a dialog.
-    popup_mode : bool, default is True
-        If True, magicgui created by every method will be poped up, else they will be appended as a
-        part of the main widget.
+    close_on_run : bool, default True
+        If True, magicgui created by every method will be deleted after the method is
+        completed without exceptions, i.e. magicgui is more like a dialog.
+    popup_mode : bool, default True
+        If True, magicgui created by every method will be poped up, else they will be
+        appended as a part of the main widget.
 
     Returns
     -------
@@ -427,7 +427,7 @@ def _call_magicmenu(
         @functools_wraps(oldclass.__init__)
         def __init__(self: MagicTemplate, *args, **kwargs):
             # Without "app = " Jupyter freezes after closing the window!
-            app = get_app()
+            app = get_app()  # noqa: F841
 
             gui_kwargs = dict(
                 close_on_run=close_on_run,
@@ -511,7 +511,7 @@ def get_button(
     Get the button/action object for the given method.
 
     This function is a helper function for magicclass. Using this method is
-    always safer than directly accessing it by ``ui["method"]``.
+    always safer than directly accessing it by `ui["method"]`.
     Either of following expression is allowed.
 
     >>> get_button(ui, "method")
@@ -561,7 +561,7 @@ def get_function_gui(
     Get the FunctionGui object hidden beneath push button or menu action.
 
     This function is a helper function for magicclass. Using this method is
-    always safer than directly accessing it by ``ui["method"].mgui``.
+    always safer than directly accessing it by `ui["method"].mgui`.
     Either of following expression is allowed.
 
     >>> get_function_gui(ui, "method")
@@ -603,13 +603,13 @@ def repeat(ui: MagicTemplate, index: int = -1) -> None:
     ----------
     ui : MagicTemplate
         Target magic-class widget.
-    index : int, default is -1
-        Which execution will be repeated. Any object that support list slicing can be used.
-        By default the last operation will be repeated.
+    index : int, default -1
+        Which execution will be repeated. Any object that support list slicing can be
+        used. By default the last operation will be repeated.
     """
     warnings.warn(
-        "repeat() is deprecated and will be removed soon. Use `ui.macro.repeat_method()` "
-        "to specify call options in more detail.",
+        "repeat() is deprecated and will be removed soon. Use "
+        "`ui.macro.repeat_method()` to specify call options in more detail.",
         DeprecationWarning,
     )
     line = ui.macro[index]
@@ -626,9 +626,9 @@ def update_widget_state(ui: MagicTemplate, macro: Macro | str | None = None) -> 
     """
     Update widget values based on a macro.
 
-    This helper function works similar to the ``update_widget`` method of ``FunctionGui``.
-    In most cases, this function will be used for restoring a state from a macro recorded
-    before. Value changed signal will not be emitted within this operation.
+    This helper function works similar to the `update_widget` method of `FunctionGui`.
+    In most cases, this function will be used for restoring a state from a macro
+    recorded before. Value changed signal will not be emitted within this operation.
 
     Parameters
     ----------

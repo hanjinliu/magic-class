@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from typing import Any, TYPE_CHECKING, Callable, TypeVar
 from types import FunctionType
 from magicgui.widgets import FunctionGui, Widget
@@ -12,7 +13,7 @@ from magicclass.signature import split_annotated_type
 
 if TYPE_CHECKING:
     from ._base import BaseGui
-    from magicgui.widgets import FunctionGui, FileEdit
+    from magicgui.widgets import FileEdit
 
 
 def get_parameters(fgui: FunctionGui):
@@ -27,16 +28,16 @@ def copy_class(cls: _C, ns: str, name: str) -> _C:
     Copy a class in a new namespace.
 
     This function not only copies the class object but also update all the
-    ``__qualname__`` recursively.
+    `__qualname__` recursively.
 
     Parameters
     ----------
     cls : type
         Class to be copied.
     ns : type
-        New namespace (the qualname of parent class) of ``cls``.
+        New namespace (the qualname of parent class) of `cls`.
     name : str
-        New name of ``cls``.
+        New name of `cls`.
 
     Returns
     -------
