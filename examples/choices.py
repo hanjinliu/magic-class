@@ -1,15 +1,17 @@
+from typing import Annotated
 from magicclass import magicclass
-from magicclass.types import OneOf
 
 @magicclass
 class A:
     def _get_choices(self, w=None) -> list[int]:
         return [1, 2, 3]
 
-    def f(self, x: OneOf["a", "b"]):
+    # Use the "choices" key to specify the available values.
+    def f(self, x: Annotated[str, {"choices": ["a", "b"]}]):
         print(x.capitalize())
 
-    def g(self, x: OneOf[_get_choices]):
+    # A choice provider function is also supported.
+    def g(self, x: Annotated[int, {"choices": _get_choices}]):
         print(x.to_bytes())
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-from magicclass import magicclass, abstractapi, set_design, field
+from magicclass import magicclass, abstractapi, set_design, field, MagicTemplate
 from magicclass.widgets import Table, Figure
 import os
 import pandas as pd
@@ -22,7 +22,7 @@ class CachedTable(Table):
             return super().to_dataframe()
 
 @magicclass(widget_type="tabbed", labels=False)
-class TableList:
+class TableList(MagicTemplate):
     """List of tables"""
 
 @magicclass(layout="horizontal", widget_type="split")
@@ -92,7 +92,7 @@ class Analyzer:
         transparent : bool, default is True
             Check if you want to save as a transparent image.
         """
-        self.canvas.fig.savefig(path, transparent=transparent)
+        self.canvas.figure.savefig(path, transparent=transparent)
 
     @set_design(location=Tools.File_Menu)
     def Delete_tab(self):
@@ -121,7 +121,6 @@ class Analyzer:
 
     def _seaborn_plot(self, plot_function, x: str, y: str, hue: str, dodge: bool = False):
         # Seaborn plot functions have the same API.
-        # Also, this function can be used as a template of signature with "wraps" method.
         x = x or None
         y = y or None
         hue = hue or None

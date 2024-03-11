@@ -1,4 +1,17 @@
-from magicclass import magicclass, field, magiccontext, set_design, MagicTemplate, nogui, abstractapi
+# In this example, you can use the integrated console to add layers:
+# >>> ui.add_curve(np.linspace(0, 10, 100), np.sin(np.linspace(0, 10, 100)))
+# >>> ui.add_scatter(np.linspace(0, 10, 100), np.sin(np.linspace(0, 10, 100)))
+# The added layers will be displayed in the list on the left.
+
+from magicclass import (
+    magicclass,
+    field,
+    magiccontext,
+    set_design,
+    MagicTemplate,
+    nogui,
+    abstractapi
+)
 from magicclass.ext.pyqtgraph import QtPlotCanvas
 from magicclass.ext.qtconsole import QtConsole
 
@@ -36,13 +49,13 @@ class Viewer(MagicTemplate):
         canvas = abstractapi()
         console = abstractapi()
 
-    canvas = SidePanel.field(QtPlotCanvas)
-    console = SidePanel.field(QtConsole)
+    canvas = field(QtPlotCanvas, location=SidePanel)
+    console = field(QtConsole, location=SidePanel)
 
     def __post_init__(self):
+        import numpy
         self.layerlist.max_width = 250
         self.layerlist.width = 250
-        import numpy
         self.console.update_console({"np": numpy})
 
     @nogui
