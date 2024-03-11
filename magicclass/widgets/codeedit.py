@@ -140,7 +140,7 @@ class QCodeEditor(QtW.QPlainTextEdit):
             if ev.type() == QtCore.QEvent.Type.ToolTip:
                 return self._show_tooltip(ev)
             elif ev.type() == QtCore.QEvent.Type.KeyPress:
-                ev = QtGui.QKeyEvent(ev)
+                assert isinstance(ev, QtGui.QKeyEvent)
                 _key = ev.key()
                 _mod = ev.modifiers()
                 if _key == Qt.Key.Key_Tab and _mod == Mod.No:
