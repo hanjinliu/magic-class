@@ -325,7 +325,7 @@ class QColormapEdit(QtW.QWidget):
 
     def event(self, a0: QtCore.QEvent) -> bool:
         if a0.type() == QtCore.QEvent.Type.ToolTip:
-            a0 = QtGui.QHelpEvent(a0)
+            assert isinstance(a0, QtGui.QHelpEvent)
             pos = self.mapToGlobal(a0.pos())
             localpos = self._qcmap.mapFromGlobal(pos)
             rval = self._rel_value_at(localpos)
