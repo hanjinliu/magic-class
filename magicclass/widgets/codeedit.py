@@ -222,6 +222,12 @@ class QCodeEditor(QtW.QPlainTextEdit):
                     return self._select_line_event()
                 elif _key == Qt.Key.Key_Home and _mod == Mod.No:
                     return self._home_event()
+                elif _key == Qt.Key.Key_V and _mod & Mod.Ctrl:
+                    clip = QtGui.QGuiApplication.clipboard()
+                    text = clip.text().replace("\t", _TAB)
+                    cursor = self.textCursor()
+                    cursor.insertText(text)
+                    return True
                 elif _key in (
                     Qt.Key.Key_ParenLeft,
                     Qt.Key.Key_BracketLeft,
