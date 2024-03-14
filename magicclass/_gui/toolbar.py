@@ -61,7 +61,7 @@ class QtTabToolBar(QToolBar):
         self._tab.setContentsMargins(0, 0, 0, 0)
         self._tab.setTabBarAutoHide(True)
         self._tab.setStyleSheet(
-            "QTabWidget {" "    margin: 0px, 0px, 0px, 0px;" "    padding: 0px;}"
+            "QTabWidget { margin: 0px, 0px, 0px, 0px; padding: 0px;}"
         )
         self.addWidget(self._tab)
         self.installEventFilter(self._palette_event_filter)
