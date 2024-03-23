@@ -1,7 +1,7 @@
 from __future__ import annotations
 from functools import cached_property
 import inspect
-from types import MethodType
+from types import MethodType, UnionType
 from typing import Any, TYPE_CHECKING, Callable, Iterable
 import warnings
 from docstring_parser import parse
@@ -14,7 +14,7 @@ try:
 except ImportError:
     from typing_extensions import _BaseGenericAlias
 
-_type_like = (type, _BaseGenericAlias)
+_type_like = (type, UnionType, _BaseGenericAlias)
 
 try:
     from types import GenericAlias
