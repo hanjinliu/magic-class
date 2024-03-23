@@ -1167,8 +1167,6 @@ def _get_field(
             if len(_args) == 2 and None in _args:
                 tp = _args[0] if _args[0] is not None else _args[1]
                 kwargs.update(annotation=tp)
-            else:
-                raise ValueError(f"Union type must be `T | None`, got {obj}.")
         if _is_magicclass(obj):
             if widget_type is not None:
                 raise ValueError("Cannot specify Widget type twice.")
