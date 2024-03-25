@@ -14,8 +14,14 @@ try:
 except ImportError:
     from typing_extensions import _BaseGenericAlias
 
-_UnionType = type(Union[int, str])
-_type_like = (type, _UnionType, _BaseGenericAlias)
+_type_like = (type, type(Union[int, str]), _BaseGenericAlias)
+
+try:
+    from types import UnionType
+
+    _type_like += (UnionType,)
+except ImportError:
+    pass
 
 try:
     from types import GenericAlias

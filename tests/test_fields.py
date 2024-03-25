@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Union
 from typing_extensions import Annotated
 from magicclass import (
     magicclass,
@@ -825,6 +826,23 @@ def test_using_same_class():
     ui.laser_red["apply"].changed()
 
 def test_union():
+    class E(Enum):
+        a = 1
+        b = 2
+
+    @magicclass
+    class A:
+        x = field(Union[E, None])
+        y = vfield(Union[E, None]).with_options(value=E.a)
+
+    ui = A()
+    assert ui.x.value is None
+    assert ui.y is E.a
+    assert list(ui.x.choices) == [None, E.a, E.b]
+    assert list(ui["y"].choices) == [None, E.a, E.b]
+
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10+")
+def test_union_type():
     class E(Enum):
         a = 1
         b = 2
