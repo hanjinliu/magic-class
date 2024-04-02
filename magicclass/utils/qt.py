@@ -68,7 +68,8 @@ def open_url(link: str) -> None:
 
 def screen_center():
     """Get the center coordinate of the screen."""
-    _screen_rect = QtGui.QGuiApplication.primaryScreen().geometry()
+    pos = QtGui.QCursor.pos()
+    _screen_rect = QtGui.QGuiApplication.screenAt(pos).geometry()
     return _screen_rect.center()
 
 
