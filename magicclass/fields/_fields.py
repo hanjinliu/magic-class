@@ -7,10 +7,11 @@ from typing import (
     Callable,
     Sequence,
     TypeVar,
+    Union,
     overload,
     Generic,
 )
-from typing_extensions import Literal
+from typing_extensions import Literal, get_args, get_origin
 import threading
 from timeit import default_timer
 from functools import wraps
@@ -1161,6 +1162,11 @@ def _get_field(
             tp, widget_option = split_annotated_type(obj)
             kwargs.update(annotation=tp)
             options.update(**widget_option)
+        elif get_origin(obj) is Union:
+            _args = get_args(obj)
+            if len(_args) == 2 and None in _args:
+                tp = _args[0] if _args[0] is not None else _args[1]
+                kwargs.update(annotation=tp)
         if _is_magicclass(obj):
             if widget_type is not None:
                 raise ValueError("Cannot specify Widget type twice.")

@@ -1,3 +1,5 @@
+from enum import Enum
+from typing import Union
 from typing_extensions import Annotated
 from magicclass import (
     magicclass,
@@ -66,7 +68,7 @@ def test_field_types():
     assert b.a_int.value == 0
     assert b.a_float.value == 0.0
     assert b.a_str.value == "0"
-    assert b.a_bool.value == False
+    assert b.a_bool.value is False
 
     b.a_int.value = 1
     len0 = len(b.macro)
@@ -113,7 +115,7 @@ def test_vfield_types():
     assert b.a_int == 0
     assert b.a_float == 0.0
     assert b.a_str == "0"
-    assert b.a_bool == False
+    assert b.a_bool is False
 
     b.a_int = 1
     len0 = len(b.macro)
@@ -822,3 +824,36 @@ def test_using_same_class():
     assert ui.laser_red.bar == 0
     ui.laser_green["apply"].changed()
     ui.laser_red["apply"].changed()
+
+def test_union():
+    class E(Enum):
+        a = 1
+        b = 2
+
+    @magicclass
+    class A:
+        x = field(Union[E, None])
+        y = vfield(Union[E, None]).with_options(value=E.a)
+
+    ui = A()
+    assert ui.x.value is None
+    assert ui.y is E.a
+    assert list(ui.x.choices) == [None, E.a, E.b]
+    assert list(ui["y"].choices) == [None, E.a, E.b]
+
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10+")
+def test_union_type():
+    class E(Enum):
+        a = 1
+        b = 2
+
+    @magicclass
+    class A:
+        x = field(E | None)
+        y = vfield(E | None).with_options(value=E.a)
+
+    ui = A()
+    assert ui.x.value is None
+    assert ui.y is E.a
+    assert list(ui.x.choices) == [None, E.a, E.b]
+    assert list(ui["y"].choices) == [None, E.a, E.b]
