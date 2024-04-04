@@ -66,16 +66,13 @@ def open_url(link: str) -> None:
     QDesktopServices.openUrl(QUrl(link))
 
 
-def screen_center():
-    """Get the center coordinate of the screen."""
-    pos = QtGui.QCursor.pos()
-    _screen_rect = QtGui.QGuiApplication.screenAt(pos).geometry()
-    return _screen_rect.center()
-
-
 def move_to_screen_center(qwidget: QWidget) -> None:
     """Move a QWidget to the center of screen."""
-    point = screen_center() - qwidget.rect().center()
+    if parent := qwidget.parentWidget():
+        screen = parent.screen()
+    else:
+        screen = QtGui.QGuiApplication.screenAt(QtGui.QCursor.pos())
+    point = screen.geometry().center() - qwidget.rect().center()
     qwidget.move(point)
     qwidget.adjustSize()
     return None

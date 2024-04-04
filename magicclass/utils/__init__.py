@@ -18,7 +18,6 @@ from .qt import (
     show_messagebox,
     to_clipboard,
     open_url,
-    screen_center,
     move_to_screen_center,
     screen_scale,
 )
