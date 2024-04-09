@@ -431,6 +431,12 @@ class DefaultProgressBar(FrameContainer, _SupportProgress):
         self.pause_button.enabled = False
         self.abort_button.enabled = False
         self._worker.quit()
+        # NOTE: this is not a perfect solution, but for most of the cases it can close
+        # all the nested progress bars.
+        for pbar in self._CONTAINER:
+            if not hasattr(pbar, "_worker"):
+                # nested callback does not have worker
+                pbar.close()
         return None
 
 
