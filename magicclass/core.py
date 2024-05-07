@@ -88,6 +88,7 @@ def magicclass(
     icon: Any | None = None,
     stylesheet: str | StyleSheet = None,
     properties: dict[str, Any] = None,
+    use_native_menubar: bool = True,
     record: bool = True,
     symbol: str = "ui",
 ):
@@ -128,6 +129,8 @@ def magicclass(
     properties : dict, optional
         Set properties to the widget if given. This argument is useful when you want
         to set width, height or margin without defining __post_init__.
+    use_native_menubar : bool, default True
+        If True, native menubar will be used in such as macOS.
     record : bool, default True
         If True, macro recording is enabled.
     symbol : str, default "ui"
@@ -191,6 +194,7 @@ def magicclass(
                 close_on_run=close_on_run,
                 popup_mode=PopUpMode(popup_mode),
                 error_mode=ErrorMode(error_mode),
+                use_native_menubar=use_native_menubar,
             )
 
             # Inheriting Container's constructor is the most intuitive way.
@@ -261,87 +265,7 @@ def magiccontext(
     record: bool = True,
 ):
     """Decorator that converts a Python class into a context menu."""
-
-    if popup_mode is None:
-        popup_mode = defaults["popup_mode"]
-    if close_on_run is None:
-        close_on_run = defaults["close_on_run"]
-    if error_mode is None:
-        error_mode = defaults["error_mode"]
-
-    if popup_mode in (
-        PopUpMode.above,
-        PopUpMode.below,
-        PopUpMode.first,
-        PopUpMode.last,
-    ):
-        raise ValueError(f"Mode {popup_mode.value} is not compatible with Menu.")
-
-    def wrapper(cls) -> type[ContextMenuGui]:
-        if not isinstance(cls, type):
-            raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
-
-        if not issubclass(cls, MagicTemplate):
-            check_override(cls)
-
-        # get class attributes first
-        doc = cls.__doc__
-        sig = inspect.signature(cls)
-        mod = cls.__module__
-        qualname = cls.__qualname__
-
-        new_attrs = convert_attributes(cls, hide=ContextMenuGui.__mro__, record=record)
-        oldclass = type(cls.__name__ + _BASE_CLASS_SUFFIX, (cls,), {})
-        newclass = type(cls.__name__, (ContextMenuGui, oldclass), new_attrs)
-
-        newclass.__signature__ = sig
-        newclass.__doc__ = doc
-        newclass.__module__ = mod
-        newclass.__qualname__ = qualname
-
-        @functools_wraps(oldclass.__init__)
-        def __init__(self: MagicTemplate, *args, **kwargs):
-            # Without "app = " Jupyter freezes after closing the window!
-            app = get_app()  # noqa: F841
-
-            gui_kwargs = dict(
-                close_on_run=close_on_run,
-                popup_mode=PopUpMode(popup_mode),
-                error_mode=ErrorMode(error_mode),
-                labels=labels,
-                name=name or cls.__name__,
-            )
-
-            # Inheriting Container's constructor is the most intuitive way.
-            if kwargs and "__init__" not in cls.__dict__:
-                gui_kwargs.update(kwargs)
-                kwargs = {}
-
-            ContextMenuGui.__init__(self, **gui_kwargs)
-
-            with self.macro.blocked():
-                super(oldclass, self).__init__(*args, **kwargs)
-
-            self._convert_attributes_into_widgets()
-
-            if icon:
-                self.icon = icon
-            if hasattr(self, "__post_init__"):
-                with self.macro.blocked():
-                    self.__post_init__()
-            if into is not None:
-                from .signature import upgrade_signature
-
-                upgrade_signature(into, additional_options={"context_menu": self})
-
-        newclass.__init__ = __init__
-
-        # Users may want to override repr
-        newclass.__repr__ = oldclass.__repr__
-
-        return newclass
-
-    return wrapper if class_ is None else wrapper(class_)
+    return _call_magicmenu(**locals(), menugui_class=ContextMenuGui)
 
 
 def magictoolbar(
@@ -369,6 +293,7 @@ def _call_magicmenu(
     icon: Any | None = None,
     record: bool = True,
     menugui_class: type[MenuGuiBase] = None,
+    **others,
 ):
     """
     Parameters
@@ -402,7 +327,7 @@ def _call_magicmenu(
     ):
         raise ValueError(f"Mode {popup_mode.value} is not compatible with Menu.")
 
-    def wrapper(cls) -> type[menugui_class]:
+    def wrapper(cls):
         if not isinstance(cls, type):
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
 
@@ -435,6 +360,7 @@ def _call_magicmenu(
                 error_mode=ErrorMode(error_mode),
                 labels=labels,
                 name=name or cls.__name__,
+                **others,
             )
 
             # Inheriting Container's constructor is the most intuitive way.
