@@ -55,6 +55,7 @@ def magicclass(
     icon: Any | None = None,
     stylesheet: str | StyleSheet | None = None,
     properties: dict[str, Any] | None = None,
+    use_native_menubar: bool = True,
     record: bool = True,
 ) -> type[_M]: ...
 @overload
@@ -72,6 +73,7 @@ def magicclass(
     icon: Any | None = None,
     stylesheet: str | StyleSheet | None = None,
     properties: dict[str, Any] | None = None,
+    use_native_menubar: bool = True,
     record: bool = True,
 ) -> type[ClassGuiBase] | _C: ...
 @overload
@@ -88,6 +90,7 @@ def magicclass(
     icon: Any | None = None,
     stylesheet: str | StyleSheet | None = None,
     properties: dict[str, Any] | None = None,
+    use_native_menubar: bool = True,
     record: bool = True,
 ) -> _MagicClassDecorator[ClassGuiBase]: ...
 @overload

@@ -78,6 +78,7 @@ class ClassGuiBase(BaseGui):
     _component_class = PushButtonPlus
     _container_widget: type
     _remove_child_margins: bool
+    _use_native_menubar: bool
     native: QWidget
 
     def _create_widget_from_field(self, name: str, fld: MagicField):
@@ -143,6 +144,7 @@ class ClassGuiBase(BaseGui):
                     if self._menubar is None:
                         # if widget has no menubar, a new one should be created.
                         self._menubar = QMenuBar()
+                        self._menubar.setNativeMenuBar(self._use_native_menubar)
                         if issubclass(self.__class__, MainWindow):
                             self.native: QMainWindow
                             self.native.setMenuBar(self._menubar)
@@ -478,6 +480,7 @@ def make_gui(
             close_on_run: bool = None,
             popup_mode: str | PopUpMode = None,
             error_mode: str | ErrorMode = None,
+            use_native_menubar: bool = True,
             labels: bool = True,
             name: str = None,
             visible: bool = None,
@@ -494,6 +497,7 @@ def make_gui(
 
             self._menubar = None
             self._toolbar = None
+            self._use_native_menubar = use_native_menubar
 
             self.native.setObjectName(self.name)
             self.native.setWindowTitle(self.name.replace("_", " ").strip())

@@ -23,7 +23,7 @@ from ._base import (
 )
 from .utils import format_error
 
-from magicclass.signature import get_additional_option
+from magicclass.signature import get_additional_option, upgrade_signature
 from magicclass.widgets import Separator, FreeWidget
 from magicclass.utils import iter_members, Tooltips
 
@@ -261,6 +261,27 @@ class MenuGui(MenuGuiBase):
 
 class ContextMenuGui(MenuGuiBase):
     """Magic class that will be converted into a context menu."""
+
+    def __init__(
+        self,
+        parent=None,
+        name: str = None,
+        close_on_run: bool = None,
+        popup_mode: str | PopUpMode = None,
+        error_mode: str | ErrorMode = None,
+        labels: bool = True,
+        into: Callable | None = None,
+    ):
+        super().__init__(
+            parent=parent,
+            name=name,
+            close_on_run=close_on_run,
+            popup_mode=popup_mode,
+            error_mode=error_mode,
+            labels=labels,
+        )
+        if into is not None:
+            upgrade_signature(into, additional_options={"context_menu": self})
 
     def _set_magic_context_menu(self, parent: Widget | BaseGui) -> None:
         parent.native.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
