@@ -33,6 +33,7 @@ from ._base import (
     PopUpMode,
     ErrorMode,
     normalize_insertion,
+    defaults,
 )
 from .utils import format_error, connect_magicclasses
 from ._macro_utils import value_widget_callback
@@ -227,10 +228,13 @@ class ClassGuiBase(BaseGui):
                             # construction.
                             widget = self._create_widget_from_method(widget)
                         except AttributeError as e:
+                            if defaults["raise-conversion-error"]:
+                                raise
                             warnings.warn(
                                 f"Could not convert {widget!r} into a widget "
                                 f"due to AttributeError: {e}",
                                 UserWarning,
+                                stacklevel=2,
                             )
                             continue
 

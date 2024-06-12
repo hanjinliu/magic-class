@@ -41,8 +41,8 @@ from magicgui.widgets.bases import (
 )
 from macrokit import Symbol
 
-from .keybinding import as_shortcut
-from .mgui_ext import (
+from magicclass._gui.keybinding import as_shortcut
+from magicclass._gui.mgui_ext import (
     AbstractAction,
     FunctionGuiPlus,
     Action,
@@ -51,22 +51,22 @@ from .mgui_ext import (
     _LabeledWidgetAction,
     mguiLike,
 )
-from .utils import (
+from magicclass._gui.utils import (
     copy_class,
     callable_to_classes,
     show_dialog_from_mgui,
     connect_magicclasses,
 )
-from ._macro import GuiMacro, DummyMacro
-from ._macro_utils import (
+from magicclass._gui._macro import GuiMacro, DummyMacro
+from magicclass._gui._macro_utils import (
     inject_recorder,
     inject_silencer,
     inject_validator_only,
     value_widget_callback,
     MagicGuiPostRunCallback,
 )
-from ._icon import get_icon
-from ._gui_modes import PopUpMode, ErrorMode
+from magicclass._gui._icon import get_icon
+from magicclass._gui._gui_modes import PopUpMode, ErrorMode
 
 from magicclass.utils import (
     get_signature,
@@ -107,6 +107,7 @@ defaults = {
     "macro-signature-check": True,
     "macro-name-check": True,
     "undo-max-history": 100,
+    "raise-conversion-error": False,
 }
 
 _RESERVED = frozenset(
@@ -1053,15 +1054,9 @@ def _create_gui_method(self: BaseGui, obj: MethodType):
             )
 
         if isinstance(param, MagicParameter):
-            _param = MagicParameter(
-                name=param.name,
-                kind=param.kind,
-                default=param.default,
-                annotation=split_annotated_type(param.annotation)[0],
-                gui_options=param.options.copy(),
-            )
-            _arg_bind = _param.options.get("bind", None)
-            _arg_choices = _param.options.get("choices", None)
+            _arg_bind = param.options.get("bind", None)
+            _arg_choices = param.options.get("choices", None)
+            _new_option = param.options.copy()
 
             # If bound method is a class method, use self.method(widget).
             if isinstance(_arg_bind, str):
@@ -1081,19 +1076,26 @@ def _create_gui_method(self: BaseGui, obj: MethodType):
                 _arg_bind = _arg_bind.eval(type(self))
 
             if is_instance_method(_arg_bind):
-                _param.options["bind"] = method_as_getter(self, _arg_bind)
+                _new_option["bind"] = method_as_getter(self, _arg_bind)
 
             # If a MagicFiled is bound, bind the value of the connected widget.
             elif isinstance(_arg_bind, MagicField):
-                _param.options["bind"] = _arg_bind.as_remote_getter(self)
+                _new_option["bind"] = _arg_bind.as_remote_getter(self)
 
             # If choices are provided by a class method, use self.method(widget).
             if isinstance(_arg_choices, str):
                 _arg_choices = eval_attribute(type(self), _arg_choices)
 
             if is_instance_method(_arg_choices):
-                _param.options["choices"] = method_as_getter(self, _arg_choices)
-
+                _new_option["choices"] = method_as_getter(self, _arg_choices)
+            
+            _param = MagicParameter(
+                name=param.name,
+                kind=param.kind,
+                default=param.default,
+                annotation=split_annotated_type(param.annotation)[0],
+                gui_options=_new_option,
+            )
         else:
             _param = param
 
