@@ -201,6 +201,21 @@ def _typeof(current_self) -> type:
     return getattr(tp, "__original_class__", tp)
 
 
+def _find_gui_class(self) -> type[BaseGui] | None:
+    """
+    Find a superclass of BaseGui.
+
+    At the time of class construction, the magicclass is not a subclass of BaseGui.
+    By using this function, MagicTemplate can find the correct class to call the method.
+    """
+    for superclass in type(self).__mro__[1:]:
+        if issubclass(superclass, BaseGui):
+            return superclass
+        elif superclass is Container:
+            return superclass
+    return None
+
+
 class MagicTemplate(
     MutableSequence["Widget | AbstractAction"], metaclass=_MagicTemplateMeta
 ):
@@ -252,18 +267,26 @@ class MagicTemplate(
         ...
 
     def __getitem__(self, key):
+        if cls := _find_gui_class(self):
+            return cls.__getitem__(self, key)
         raise NotImplementedError()
 
     def __setitem__(self, key: int, value: Any):
         raise NotImplementedError()
 
     def __delitem__(self, key: int) -> None:
+        if cls := _find_gui_class(self):
+            return cls.__delitem__(self, key)
         raise NotImplementedError()
 
     def __len__(self) -> int:
+        if cls := _find_gui_class(self):
+            return cls.__len__(self)
         raise NotImplementedError()
 
     def __dir__(self) -> list[str]:
+        if cls := _find_gui_class(self):
+            return cls.__dir__(self)
         return super().__dir__()
 
     if TYPE_CHECKING:
@@ -277,13 +300,19 @@ class MagicTemplate(
         def remove(self, value: Widget | AbstractAction | str):
             raise NotImplementedError()
 
-    def show(self, run: bool = True) -> None:
+    def show(self, run: bool = False) -> None:
+        if cls := _find_gui_class(self):
+            return cls.show(self, run)
         raise NotImplementedError()
 
     def hide(self) -> None:
+        if cls := _find_gui_class(self):
+            return cls.hide(self)
         raise NotImplementedError()
 
     def close(self) -> None:
+        if cls := _find_gui_class(self):
+            return cls.close(self)
         raise NotImplementedError()
 
     def _fast_insert(
@@ -296,12 +325,16 @@ class MagicTemplate(
         self._unify_label_widths()
 
     def render(self) -> np.ndarray:
+        if cls := _find_gui_class(self):
+            return cls.render(self)
         raise NotImplementedError()
 
     def _unify_label_widths(self):
         raise NotImplementedError()
 
     def reset_choices(self, *args):
+        if cls := _find_gui_class(self):
+            return cls.reset_choices(self, *args)
         raise NotImplementedError()
 
     @property
@@ -986,7 +1019,7 @@ class ContainerLikeGui(BaseGui, mguiLike):
         from io import BytesIO
 
         try:
-            from imageio import imsave
+            from imageio import imwrite
         except ImportError:
             print(
                 "(For a nicer magicmenu widget representation in "
@@ -995,7 +1028,7 @@ class ContainerLikeGui(BaseGui, mguiLike):
             return None
 
         with BytesIO() as file_obj:
-            imsave(file_obj, self.render(), format="png")
+            imwrite(file_obj, self.render(), format="png")
             file_obj.seek(0)
             return file_obj.read()
 
@@ -1088,7 +1121,7 @@ def _create_gui_method(self: BaseGui, obj: MethodType):
 
             if is_instance_method(_arg_choices):
                 _new_option["choices"] = method_as_getter(self, _arg_choices)
-            
+
             _param = MagicParameter(
                 name=param.name,
                 kind=param.kind,
@@ -1264,7 +1297,11 @@ def convert_attributes(
                 # passed.
                 new_attr = obj
             elif _isfunc:
-                new_attr = convert_function(obj, default)
+                if hasattr(Container, name):
+                    # Container methods should not be converted.
+                    new_attr = obj
+                else:
+                    new_attr = convert_function(obj, default)
             else:
                 new_attr = obj
 
