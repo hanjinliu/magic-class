@@ -234,6 +234,7 @@ class ClassGuiBase(BaseGui):
                                 f"Could not convert {widget!r} into a widget "
                                 f"due to AttributeError: {e}",
                                 UserWarning,
+                                stacklevel=2,
                             )
                             continue
 
