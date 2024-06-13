@@ -302,3 +302,27 @@ def test_contextmenu_injection():
     ui = A()
     ui.X.g()
     assert str(ui.macro[-1]) == "ui.X.g()"
+
+def test_super():
+    @magicclass
+    class A(MagicTemplate):
+        def __init__(self):
+            self._hist = []
+
+        def f(self):
+            pass
+
+        def show(self):
+            self._hist.append("show")
+            super().show()
+
+        def __getitem__(self, key):
+            self._hist.append("getitem")
+            return super().__getitem__(key)
+
+    ui = A()
+    ui.show()
+    ui.close()
+    ui[0]
+    assert ui._hist == ["show", "getitem"]
+    assert len(ui.macro) == 1
