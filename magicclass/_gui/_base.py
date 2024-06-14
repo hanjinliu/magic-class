@@ -35,10 +35,8 @@ from magicgui.widgets import (
     Label,
 )
 from magicgui.application import use_app
-from magicgui.widgets.bases import (
-    ButtonWidget,
-    ValueWidget,
-)
+from magicgui.widgets.bases import ButtonWidget, ValueWidget
+from magicgui import types as _mgui_types
 from macrokit import Symbol
 
 from magicclass._gui.keybinding import as_shortcut
@@ -700,7 +698,7 @@ class MagicTemplate(
             )
             widget = attr
 
-        elif isinstance(attr, str) and attr == "separator":
+        elif _is_separator(attr):
             widget = Separator()
         else:
             # convert class method into instance method
@@ -1436,6 +1434,17 @@ def _define_popup(self: BaseGui, obj, widget: Clickable):
     else:
         raise RuntimeError(popup_mode)
     return _prep
+
+
+_void = object()
+
+
+def _is_separator(attr) -> bool:
+    if isinstance(attr, str) and attr == "separator":
+        return True
+    if attr is getattr(_mgui_types, "Separator", _void):
+        return True
+    return False
 
 
 def _implement_confirmation(
