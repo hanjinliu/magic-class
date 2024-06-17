@@ -90,6 +90,7 @@ def test_toolbar():
 
 def test_separator():
     from magicclass.widgets import Separator
+    from magicgui.types import Separator as mgui_Separator
     @magicclass
     class A:
         @magicmenu
@@ -99,10 +100,12 @@ def test_separator():
             i = field(int)
             sep1 = "separator"
             def m2(self, path: Path): ...
+            sep2 = mgui_Separator
 
     ui = A()
     assert type(ui.Menu[1].widget) is Separator
     assert type(ui.Menu[3].widget) is Separator
+    assert type(ui.Menu[5].widget) is Separator
 
     @magicclass
     class A:
@@ -113,10 +116,12 @@ def test_separator():
             i = field(int)
             sep1 = "separator"
             def m2(self, path: Path): ...
+            sep2 = mgui_Separator
 
     ui = A()
     assert type(ui.Menu[1].widget) is Separator
     assert type(ui.Menu[3].widget) is Separator
+    assert type(ui.Menu[5].widget) is Separator
 
 
 def test_tooltip():
