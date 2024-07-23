@@ -8,7 +8,7 @@ from qtpy import QtWidgets as QtW, QtGui, QtCore
 from qtpy.QtCore import Qt, Signal
 from magicgui.backends._qtpy.widgets import QBaseWidget
 from magicgui.widgets import Widget
-from typing import TYPE_CHECKING, Any, Union, overload, NamedTuple
+from typing import TYPE_CHECKING, Any, Mapping, Union, overload, NamedTuple
 
 from magicclass.utils import rst_to_html
 
@@ -434,29 +434,81 @@ class Logger(Widget, logging.Handler):
         header : bool, default True
             Whether to show the header row.
         index : bool, default True
-            Whether to show the index column.
+            Whether to show the index column. Only used when the table is a pandas
+            DataFrame.
         precision: int, options
             If given, float value will be rounded by this parameter.
         width : int, optional
             The width of the table. If not given, the width will be determined
             by the table content.
         """
-        import pandas as pd
-
-        df = pd.DataFrame(table)
-        if precision is None:
-            formatter = None
-        else:
-            formatter = lambda x: f"{x:.{precision}f}"
-        html = df.to_html(header=header, index=index, float_format=formatter)
-        if html.startswith("<table "):
-            if width is None:
-                html = '<table style="border-collapse: collapse" ' + html[6:]
+        if "pandas" in sys.modules and isinstance(
+            table, sys.modules["pandas"].DataFrame
+        ):
+            if precision is None:
+                formatter = None
             else:
-                html = (
-                    f'<table width="{width}" style="border-collapse: collapse" '
-                    + html[6:]
-                )
+                formatter = lambda x: f"{x:.{precision}f}"
+            html = table.to_html(header=header, index=index, float_format=formatter)
+            if html.startswith("<table "):
+                if width is None:
+                    html = '<table style="border-collapse: collapse" ' + html[6:]
+                else:
+                    html = (
+                        f'<table width="{width}" style="border-collapse: collapse" '
+                        + html[6:]
+                    )
+        else:
+
+            def _str(val: Any):
+                if precision is not None and isinstance(val, float):
+                    return f"{val:.{precision}f}"
+                return str(val)
+
+            if isinstance(table, Mapping):
+                header = list(table.keys())
+                columns = list(table.values())
+                rows: list[list[str]] = []
+                nrows = max(len(col) for col in columns)
+                for i in range(nrows):
+                    row = [_str(col[i]) if i < len(col) else "" for col in columns]
+                    rows.append(row)
+            else:
+                if not hasattr(table, "__iter__"):
+                    raise TypeError(f"Input table must be iterable, got {type(table)}.")
+                rows: list[list[str]] = []
+                ncols = 0
+                for i, row in enumerate(table):
+                    if not hasattr(row, "__iter__"):
+                        raise TypeError(
+                            f"Input table must be 2D iterable, got {type(table)} "
+                            f"(row {i})."
+                        )
+                    row = [_str(r) for r in row]
+                    rows.append(row)
+                    ncols = max(len(row), ncols)
+
+                header = list(range(ncols))
+                # fill empty cells
+                for row in rows:
+                    if len(row) < ncols:
+                        row.extend([""] * (ncols - len(row)))
+            # make HTML table
+            _head_html = (
+                '<tr style="text-align: right;">'
+                + "".join(f"<th>{h}</th>" for h in header)
+                + "</tr>"
+            )
+            _body_html = "".join(
+                f"<tr>{''.join(f'<td>{c}</td>' for c in row)}</tr>" for row in rows
+            )
+            html = (
+                f'<table width="{width}" style="border-collapse: collapse" border="1" class="dataframe">'
+                f'<thead>{_head_html}</thead>'
+                f'<tbody>{_body_html}</tbody>'
+                f'</table>'
+            )  # fmt: skip
+
         if header_style is not None:
             html = f"<style>.dataframe th{header_style}</style>" + html
         self.native.appendHtml(html)
