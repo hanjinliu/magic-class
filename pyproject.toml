@@ -44,7 +44,6 @@ testing = [
     "pytest",
     "pytest-qt",
     "pyqtgraph>=0.13.2",
-    "numpy<2.0",
     "vispy>=0.11.0",
     "dask",
     "numpy",
