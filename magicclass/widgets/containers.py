@@ -100,7 +100,7 @@ class _ToolBox(ContainerBase):
         self._layout = self._qwidget.layout()
 
     def _mgui_insert_widget(self, position: int, widget: Widget):
-        if _is_pushbuttonplus(widget):
+        if _should_not_insert(widget):
             return
         self._qwidget.insertItem(position, widget.native, widget.name)
 
@@ -130,7 +130,7 @@ class _Tab(ContainerBase):
         self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
 
     def _mgui_insert_widget(self, position: int, widget: Widget):
-        if _is_pushbuttonplus(widget):
+        if _should_not_insert(widget):
             return
         if isinstance(widget, _LabeledWidget):
             tabname = widget._label_widget.value
@@ -490,7 +490,7 @@ class _SubWindowsContainer(ContainerBase):
 
     def _mgui_insert_widget(self, position: int, widget: Widget):
         # position does not have any effect
-        if _is_pushbuttonplus(widget):
+        if _should_not_insert(widget):
             return
 
         sub = self._mdiarea.addSubWindow(widget.native, self._NoCloseButtonFlag)
@@ -598,8 +598,8 @@ class _ResizableContainer(ContainerBase):
         self._size_grip = _size_grip
 
 
-def _is_pushbuttonplus(widget: Widget) -> bool:
-    return widget.widget_type == "PushButtonPlus"
+def _should_not_insert(widget: Widget) -> bool:
+    return widget.widget_type in ["PushButtonPlus", "EmptyWidget"]
 
 
 # Container Widgets
