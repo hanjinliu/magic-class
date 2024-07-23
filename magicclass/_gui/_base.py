@@ -182,11 +182,11 @@ class _MagicTemplateMeta(ABCMeta):
     """This metaclass enables type checking of nested magicclasses."""
 
     @overload
-    def __get__(self, obj: Literal[None], objtype=None) -> Self:
+    def __get__(self: type[_T], obj: Any | None, objtype=None) -> _T:
         ...
 
     @overload
-    def __get__(self: type[_T], obj: Any, objtype=None) -> _T:
+    def __get__(self, obj: Literal[None], objtype=None) -> Self:
         ...
 
     def __get__(self, obj, objtype=None):
@@ -281,11 +281,6 @@ class MagicTemplate(
         if cls := _find_gui_class(self):
             return cls.__len__(self)
         raise NotImplementedError()
-
-    def __dir__(self) -> list[str]:
-        if cls := _find_gui_class(self):
-            return cls.__dir__(self)
-        return super().__dir__()
 
     if TYPE_CHECKING:
 
