@@ -328,52 +328,50 @@ class Logger(Widget, logging.Handler):
 
     Create widget as other `magicgui` or `magicclass` widgets.
 
-    .. code-block:: python
+    ```python
+    logger = Logger(name="my logger")  # magicgui way
 
-        logger = Logger(name="my logger")  # magicgui way
+    # magicclass way
+    @magicclass
+    class Main:
+        logger = field(Logger, name="my logger")
 
-        # magicclass way
-        @magicclass
-        class Main:
-            logger = field(Logger, name="my logger")
-
-        # This is OK
-        @magicclass
-        class Main:
-            logger = Logger()
+    # This is OK
+    @magicclass
+    class Main:
+        logger = Logger()
+    ```
 
 
     Print something in the widget
 
-    .. code-block:: python
+    ```python
+    # print something in the widget.
+    logger.print("text")
 
-        # print something in the widget.
-        logger.print("text")
+    # a context manager that change the destination of print function.
+    with logger.set_stdout():
+        print("text")
+        function_that_print_something()
 
-        # a context manager that change the destination of print function.
-        with logger.set_stdout():
-            print("text")
-            function_that_print_something()
-
-        # permanently change the destination of print function
-        sys.stdout = logger
+    # permanently change the destination of print function
+    sys.stdout = logger
+    ```
 
     Logging in the widget
 
-    .. code-block:: python
+    ```python
+    with logger.set_logger():
+        function_that_log_something()
 
-        with logger.set_logger():
-            function_that_log_something()
-
-        logging.getLogger(__name__).addHandler(logger)
+    logging.getLogger(__name__).addHandler(logger)
+    ```
 
     Inline plot in the widget
 
-    .. code-block:: python
-
-        with logger.set_plt():
-            plt.plot(np.random.random(100))
-
+    ```python
+    with logger.set_plt():
+        plt.plot(np.random.random(100))
     """
 
     current_logger: Logger | None = None
@@ -458,6 +456,17 @@ class Logger(Widget, logging.Handler):
                         f'<table width="{width}" style="border-collapse: collapse" '
                         + html[6:]
                     )
+        elif "polars" in sys.modules and isinstance(
+            table, sys.modules["polars"].DataFrame
+        ):
+            return self.print_table(
+                table.to_dict(),
+                header=header,
+                index=index,
+                precision=precision,
+                width=width,
+                header_style=header_style,
+            )
         else:
 
             def _str(val: Any):
