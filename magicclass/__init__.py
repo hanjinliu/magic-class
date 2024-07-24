@@ -1,6 +1,6 @@
 __version__ = "0.7.11"
 
-from .core import (
+from magicclass.core import (
     magicclass,
     magicmenu,
     magiccontext,
@@ -13,7 +13,7 @@ from .core import (
     update_widget_state,
 )
 
-from .wrappers import (
+from magicclass.wrappers import (
     set_options,
     set_design,
     do_not_record,
@@ -27,7 +27,7 @@ from .wrappers import (
     abstractapi,
 )
 
-from .fields import (
+from magicclass.fields import (
     field,
     vfield,
     widget_property,
@@ -35,9 +35,9 @@ from .fields import (
     FieldGroup,
     HasFields,
 )
-from ._gui._base import defaults, MagicTemplate, PopUpMode
-from ._gui._icon import Icon
-from . import widgets, utils, types, functools, logging
+from magicclass._gui._base import defaults, MagicTemplate, PopUpMode
+from magicclass._gui._icon import Icon
+from magicclass import widgets, utils, types, functools, logging
 
 from magicgui import *  # noqa: F403
 
