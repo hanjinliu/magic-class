@@ -677,7 +677,7 @@ class MagicTemplate(
         elif isinstance(attr, FunctionGui):
             widget = attr.copy()
             first_widget = widget[0]
-            if not isinstance(first_widget, ValueWidget):
+            if not hasattr(first_widget, "bind"):  # TODO: instance check in the future
                 raise TypeError(
                     f"The first widget of FunctionGui {attr!r} must be ValueWidget."
                 )

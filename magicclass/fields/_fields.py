@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import inspect
 from types import GeneratorType
 from typing import (
@@ -23,7 +24,6 @@ from magicgui.widgets.bases import (
     CategoricalWidget,
 )
 from magicgui.types import Undefined
-from magicclass.types import MGUI_SIMPLE_TYPES
 
 from ._define import define_callback, define_callback_gui
 
@@ -42,6 +42,9 @@ from magicclass._gui.mgui_ext import Action, WidgetAction
 from magicclass._exceptions import Aborted
 
 if TYPE_CHECKING:
+    import datetime
+    import pathlib
+    from enum import Enum
     from typing_extensions import Self, ParamSpec
     from superqt.utils import WorkerBase
     from magicclass.utils import thread_worker
@@ -49,7 +52,8 @@ if TYPE_CHECKING:
     from magicclass._gui.mgui_ext import AbstractAction
 
     _M = TypeVar("_M", bound=MagicTemplate)
-    _X = TypeVar("_X", bound=MGUI_SIMPLE_TYPES)
+    _X = TypeVar("_X", int, float, bool, str, pathlib.Path, datetime.datetime, Enum,
+                 datetime.date, datetime.time, range, slice, list, tuple)  # fmt: skip
     _P = ParamSpec("_P")
 
 
