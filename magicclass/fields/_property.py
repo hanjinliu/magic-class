@@ -7,8 +7,8 @@ from magicgui.signature import magic_signature
 from magicgui.widgets import create_widget, Container, PushButton
 from magicgui.widgets.bases import ValueWidget
 from magicclass.signature import split_annotated_type
-from ._fields import MagicField
-from ._define import define_callback
+from magicclass.fields._fields import MagicField
+from magicclass.fields._define import define_callback
 
 _V = TypeVar("_V")
 
