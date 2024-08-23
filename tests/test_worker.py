@@ -320,7 +320,8 @@ def test_nested_worker_macro():
             self.f2()
 
     ui = A()
-    ui.f12()
+    with thread_worker.no_progress_mode():
+        ui.f12()
     mock1.assert_called_with("f1")
     mock2.assert_called_with("f2")
     assert len(ui.macro) == 2

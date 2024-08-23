@@ -85,6 +85,7 @@ class thread_worker(Callable, Generic[_P, _R]):
     _DEFAULT_TOTAL = 0
     _WINDOW_FLAG = Qt.WindowType.WindowTitleHint | Qt.WindowType.WindowMinimizeButtonHint | Qt.WindowType.Window  # fmt: skip
     _BLOCKING_SOURCES: list[None] = []
+    _SHOW_PROGRESS = True
 
     def __init__(
         self,
@@ -261,6 +262,17 @@ class thread_worker(Callable, Generic[_P, _R]):
         finally:
             cls._BLOCKING_SOURCES.pop()
 
+    @classmethod
+    @contextmanager
+    def no_progress_mode(cls):
+        """Always hide progressbar."""
+        old = cls._SHOW_PROGRESS
+        cls._SHOW_PROGRESS = False
+        try:
+            yield
+        finally:
+            cls._SHOW_PROGRESS = old
+
     @property
     def is_generator(self) -> bool:
         """True if bound function is a generator function."""
@@ -407,14 +419,15 @@ class thread_worker(Callable, Generic[_P, _R]):
             worker = self._create_qt_worker(gui, *args, **kwargs)
             _create_worker._worker = weakref.ref(worker)
             pbar: _SupportProgress | None = None
-            if self._progress:
+            need_pbar = bool(self._progress) and self._SHOW_PROGRESS
+            if need_pbar:
                 _desc, _total = self._normalize_pbar_config(gui, args, kwargs)
                 pbar = self._create_pbar(gui, _desc, _total)
                 worker.started.connect(init_pbar.__get__(pbar))
 
             self._bind_callbacks(worker, gui, args, kwargs)
 
-            if self._progress:
+            if need_pbar:
                 self._init_pbar_post(pbar, worker)
 
             if _is_non_blocking:
@@ -491,11 +504,11 @@ class thread_worker(Callable, Generic[_P, _R]):
     def _create_generator(self, gui: BaseGui):
         def _gen(*args, **kwargs):
             pbar: _SupportProgress | None = None  # the child pbar
-            has_pbar = self._progress
+            need_pbar = bool(self._progress) and self._SHOW_PROGRESS
             _calc_finished = False
 
             # started
-            if has_pbar:
+            if need_pbar:
                 _desc, _total = self._normalize_pbar_config(gui, args, kwargs)
 
                 def _init_pbar_and_show():
@@ -547,7 +560,7 @@ class thread_worker(Callable, Generic[_P, _R]):
             # finished
             yield from self.finished._iter_as_nested_cb(gui)
             _calc_finished = True
-            if has_pbar:
+            if need_pbar:
                 if _calc_finished:
                     if pbar is not None:
                         yield NestedCallback(close_pbar).with_args(pbar)

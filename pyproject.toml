@@ -52,12 +52,12 @@ testing = [
 ]
 docs = [
     "mkdocs",
-    "mkdocs-autorefs==0.5.0",
-    "mkdocs-material==9.5.2",
+    "mkdocs-autorefs==1.0.1",
+    "mkdocs-material==9.5.23",
     "mkdocs-material-extensions==1.3.1",
-    "mkdocstrings==0.24.0",
-    "mkdocstrings-python==1.7.5",
-    "mkdocs-gen-files",
+    "mkdocstrings==0.25.2",
+    "mkdocstrings-python==1.10.8",
+    "mkdocs-gen-files==0.5.0",
     "numpy",
     "pyqt5>=5.12.0",
     "docutils>=0.17.1",
