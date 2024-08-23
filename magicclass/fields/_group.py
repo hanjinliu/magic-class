@@ -14,8 +14,8 @@ from abc import ABCMeta
 from magicgui.widgets import Container, Widget
 from psygnal import SignalInstance
 
-from ._fields import MagicField, MagicValueField, _FieldObject
-from ._define import define_callback, define_callback_gui
+from magicclass.fields._fields import MagicField, MagicValueField, _FieldObject
+from magicclass.fields._define import define_callback, define_callback_gui
 from magicclass.utils import Tooltips
 
 if TYPE_CHECKING:

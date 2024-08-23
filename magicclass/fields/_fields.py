@@ -25,8 +25,7 @@ from magicgui.widgets.bases import (
 )
 from magicgui.types import Undefined
 
-from ._define import define_callback, define_callback_gui
-
+from magicclass.fields._define import define_callback, define_callback_gui
 from magicclass.utils import (
     is_instance_method,
     method_as_getter,

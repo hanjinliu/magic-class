@@ -1166,6 +1166,11 @@ def _build_mgui(widget_: Clickable, func: Callable, parent: BaseGui):
         qmgui.setWindowTitle(widget_.text or widget_.name or "")
         if parent._popup_mode is PopUpMode.popup:
             QtGui.QShortcut(QtGui.QKeySequence("Esc"), qmgui, activated=mgui.close)
+            QtGui.QShortcut(
+                QtGui.QKeySequence("Shift+Return"),
+                qmgui,
+                activated=lambda: mgui(),
+            )
 
         preview_setting = opt.get("preview", None)
         if preview_setting is not None:
