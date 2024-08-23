@@ -1169,7 +1169,7 @@ def _build_mgui(widget_: Clickable, func: Callable, parent: BaseGui):
             QtGui.QShortcut(
                 QtGui.QKeySequence("Shift+Return"),
                 qmgui,
-                activated=mgui.call_button.changed.emit,
+                activated=lambda: mgui(),
             )
 
         preview_setting = opt.get("preview", None)
