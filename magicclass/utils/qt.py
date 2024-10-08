@@ -48,7 +48,7 @@ def show_messagebox(
     """
     show_dialog = _QMESSAGE_MODES[MessageBoxMode(mode)]
     result = show_dialog(parent, title, text)
-    return result in (QMessageBox.Ok, QMessageBox.Yes)
+    return result in (QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.Yes)
 
 
 def open_url(link: str) -> None:

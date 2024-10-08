@@ -12,6 +12,8 @@ from magicgui.backends._qtpy.widgets import QBaseStringWidget
 from magicgui.widgets.bases import ValueWidget
 from magicclass.widgets._const import FONT
 
+_BUILTINS = "__builtins__"
+
 
 def _get_last_group(text: str) -> str | None:
     if text.endswith(" "):
@@ -96,6 +98,19 @@ class QCompletionPopup(QtW.QListWidget):
         self.setCurrentRow(0)
 
 
+_EVENTS_TO_HIDE = frozenset(
+    [QtCore.QEvent.Type.Move, QtCore.QEvent.Type.Resize, QtCore.QEvent.Type.Hide]
+)
+
+
+def _is_int(s: str) -> bool:
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
+
+
 class QEvalLineEdit(QtW.QLineEdit):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -111,7 +126,7 @@ class QEvalLineEdit(QtW.QLineEdit):
 
     def setNamespace(self, ns: Mapping[str, Any]):
         self._namespace = dict(ns)
-        self._namespace["__builtins__"] = {}  # for safety
+        self._namespace.setdefault(_BUILTINS, {})  # for safety
 
     def setAutoSuggest(self, auto_suggest: bool):
         self._auto_suggest = auto_suggest
@@ -149,6 +164,11 @@ class QEvalLineEdit(QtW.QLineEdit):
         self._list_widget.setCurrentRow(0)
         self.setFocus()
 
+    def _has_completion(self) -> bool:
+        if self._list_widget is None:
+            return False
+        return self._list_widget.count() > 0
+
     def _get_completion_list(self, text: str) -> tuple[str, list[str]]:
         last_found = _get_last_group(text)
         if last_found is None:
@@ -156,12 +176,14 @@ class QEvalLineEdit(QtW.QLineEdit):
 
         ns = self._namespace
         if len(last_found) == 0:
-            return "", list(k for k in ns.keys() if k != "__builtins__")
+            return "", list(k for k in ns.keys() if k != _BUILTINS)
         *strs, last = last_found.split(".")
         if len(strs) == 0:
             return last, [
-                k for k in ns.keys() if k.startswith(last_found) and k != "__builtins__"
+                k for k in ns.keys() if k.startswith(last_found) and k != _BUILTINS
             ]
+        elif len(strs) == 1 and _is_int(strs[0]):
+            return last, []
         else:
             try:
                 val = eval(".".join(strs), self.namespace(), {})
@@ -211,8 +233,9 @@ class QEvalLineEdit(QtW.QLineEdit):
         if event.type() == QtCore.QEvent.Type.KeyPress:
             assert isinstance(event, QtGui.QKeyEvent)
             if event.key() == Qt.Key.Key_Tab:
-                self.show_completion()
-                return True
+                if self._has_completion():
+                    self.show_completion()
+                    return True
             elif event.key() == Qt.Key.Key_Down:
                 if self._list_widget is not None:
                     if event.modifiers() == Qt.KeyboardModifier.NoModifier:
@@ -248,7 +271,7 @@ class QEvalLineEdit(QtW.QLineEdit):
                     self._list_widget.deleteLater()
                     self._list_widget = None
                     return True
-        elif event.type() == QtCore.QEvent.Type.Move:
+        elif event.type() in _EVENTS_TO_HIDE:
             if self._list_widget is not None:
                 self._list_widget.close()
                 self._list_widget = None
