@@ -24,19 +24,19 @@ from magicgui.types import Undefined
 from magicgui.widgets._concrete import _LabeledWidget
 from macrokit import Symbol
 
-from .keybinding import register_shortcut
-from .mgui_ext import PushButtonPlus
-from .toolbar import ToolBarGui, QtTabToolBar
-from .menu_gui import MenuGui, ContextMenuGui
-from ._base import (
+from magicclass._gui.keybinding import register_shortcut
+from magicclass._gui.mgui_ext import PushButtonPlus
+from magicclass._gui.toolbar import ToolBarGui, QtTabToolBar
+from magicclass._gui.menu_gui import MenuGui, ContextMenuGui
+from magicclass._gui._base import (
     BaseGui,
     PopUpMode,
     ErrorMode,
     normalize_insertion,
     defaults,
 )
-from .utils import format_error, connect_magicclasses
-from ._macro_utils import value_widget_callback
+from magicclass._gui.utils import format_error, connect_magicclasses, TYPES_IGNORE
+from magicclass._gui._macro_utils import value_widget_callback
 from magicclass.widgets import (
     ButtonContainer,
     GroupBoxContainer,
@@ -131,10 +131,9 @@ class ClassGuiBase(BaseGui):
 
         _hist: list[tuple[str, str, str]] = []  # for traceback
         _annot = ClassGuiBase.__annotations__.keys()
-        _ignore_types = (property, classmethod, staticmethod)
 
         for name, attr in filter(lambda x: x[0] not in base_members, iter_members(cls)):
-            if name in _annot or isinstance(attr, _ignore_types):
+            if name in _annot or isinstance(attr, TYPES_IGNORE):
                 continue
 
             try:

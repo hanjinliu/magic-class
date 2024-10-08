@@ -7,23 +7,28 @@ from macrokit import Symbol
 from psygnal import Signal
 from qtpy.QtWidgets import QToolBar, QMenu, QWidgetAction, QTabWidget
 
-from .mgui_ext import (
+from magicclass._gui.mgui_ext import (
     AbstractAction,
     _LabeledWidgetAction,
     WidgetAction,
     ToolButtonPlus,
     PaletteEvents,
 )
-from .keybinding import register_shortcut
-from ._base import (
+from magicclass._gui.keybinding import register_shortcut
+from magicclass._gui._base import (
     BaseGui,
     PopUpMode,
     ErrorMode,
     ContainerLikeGui,
     normalize_insertion,
 )
-from .utils import format_error, connect_magicclasses
-from .menu_gui import ContextMenuGui, MenuGui, MenuGuiBase, insert_action_like
+from magicclass._gui.utils import TYPES_IGNORE, format_error, connect_magicclasses
+from magicclass._gui.menu_gui import (
+    ContextMenuGui,
+    MenuGui,
+    MenuGuiBase,
+    insert_action_like,
+)
 
 from magicclass.signature import get_additional_option
 from magicclass.widgets import FreeWidget, Separator
@@ -132,10 +137,9 @@ class ToolBarGui(ContainerLikeGui):
         base_members = {x[0] for x in iter_members(ToolBarGui)}
 
         _hist: list[tuple[str, str, str]] = []  # for traceback
-        _ignore_types = (property, classmethod, staticmethod)
 
         for name, attr in filter(lambda x: x[0] not in base_members, iter_members(cls)):
-            if isinstance(attr, _ignore_types):
+            if isinstance(attr, TYPES_IGNORE):
                 continue
 
             try:

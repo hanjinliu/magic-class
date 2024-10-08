@@ -7,21 +7,21 @@ from macrokit import Symbol
 from psygnal import Signal
 from qtpy.QtCore import Qt
 
-from .mgui_ext import (
+from magicclass._gui.mgui_ext import (
     AbstractAction,
     WidgetAction,
     _LabeledWidgetAction,
     QMenu,
 )
-from .keybinding import register_shortcut
-from ._base import (
+from magicclass._gui.keybinding import register_shortcut
+from magicclass._gui._base import (
     BaseGui,
     PopUpMode,
     ErrorMode,
     ContainerLikeGui,
     normalize_insertion,
 )
-from .utils import format_error
+from magicclass._gui.utils import TYPES_IGNORE, format_error
 
 from magicclass.signature import get_additional_option, upgrade_signature
 from magicclass.widgets import Separator, FreeWidget
@@ -85,10 +85,9 @@ class MenuGuiBase(ContainerLikeGui):
         base_members = {x[0] for x in iter_members(MenuGuiBase)}
 
         _hist: list[tuple[str, str, str]] = []  # for traceback
-        _ignore_types = (property, classmethod, staticmethod)
 
         for name, attr in filter(lambda x: x[0] not in base_members, iter_members(cls)):
-            if isinstance(attr, _ignore_types):
+            if isinstance(attr, TYPES_IGNORE):
                 continue
 
             try:

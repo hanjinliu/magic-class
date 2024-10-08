@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, TYPE_CHECKING, Callable, TypeVar
+from typing_extensions import deprecated
 from types import FunctionType
 from magicgui.widgets import FunctionGui, Widget
 from magicgui.types import Undefined
@@ -21,6 +22,8 @@ def get_parameters(fgui: FunctionGui):
 
 
 _C = TypeVar("_C", bound=type)
+
+TYPES_IGNORE: tuple[type, ...] = (property, classmethod, staticmethod, deprecated)
 
 
 def copy_class(cls: _C, ns: str, name: str) -> _C:
