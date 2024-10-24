@@ -1,11 +1,12 @@
 import sys
 import numpy as np
 from numpy.testing import assert_allclose
-from magicclass.ext.vispy import VispyPlotCanvas
 import pytest
 
 @pytest.mark.skipif(not (sys.version_info < (3, 13)), reason="requires python<3.13")
 def test_add_and_delete_data():
+    from magicclass.ext.vispy import VispyPlotCanvas
+
     canvas = VispyPlotCanvas()
     curve = canvas.add_curve(np.random.random(100), color="blue")
     assert len(canvas.layers) == 1
