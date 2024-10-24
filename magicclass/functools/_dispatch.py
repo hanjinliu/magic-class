@@ -118,11 +118,8 @@ class singledispatchmethod(functools.singledispatchmethod):
     """
 
     def __init__(self, func):
-        if not callable(func) and not hasattr(func, "__get__"):
-            raise TypeError(f"{func!r} is not callable or a descriptor")
-
+        super().__init__(func)
         self.dispatcher = singledispatch(func)
-        self.func = func
         if sys.version_info < (3, 10):
             self._wrapped_func = func
         functools.update_wrapper(
