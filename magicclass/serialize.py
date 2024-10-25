@@ -77,7 +77,12 @@ def serialize(
                 if (_value := _serialize_value(child)) is not _missing:
                     out[child.name] = _value
             else:
-                ser = serialize(child, skip_empty=skip_empty, skip_null=skip_null)
+                ser = serialize(
+                    child,
+                    skip_empty=skip_empty,
+                    skip_null=skip_null,
+                    skip_if=skip_if,
+                )
                 if len(ser) > 0 or not skip_empty:
                     out[child.name] = ser
             processed.add(id(child))
@@ -90,7 +95,10 @@ def serialize(
                 out[widget.name] = _value
         elif isinstance(widget, (Container, MenuGuiBase, ToolBarGui)):
             out[widget.name] = serialize(
-                widget, skip_empty=skip_empty, skip_null=skip_null
+                widget,
+                skip_empty=skip_empty,
+                skip_null=skip_null,
+                skip_if=skip_if,
             )
         elif isinstance(widget, WidgetAction) and widget.support_value:
             if (_value := _serialize_value(widget.widget)) is not _missing:
@@ -154,7 +162,9 @@ def deserialize(
                 if _is_value_widget_like(child):
                     child.value = val
                 else:
-                    deserialize(child, val)
+                    deserialize(
+                        child, val, missing_ok=missing_ok, record=record, emit=emit
+                    )
 
     for widget in ui:
         if isinstance(widget, (PushButton, Action)):
@@ -164,7 +174,9 @@ def deserialize(
                 widget.value = value
         elif isinstance(widget, (Container, MenuGuiBase, ToolBarGui)):
             if (val := _dict_get(data, widget.name, missing_ok)) is not _missing:
-                deserialize(widget, val)
+                deserialize(
+                    widget, val, missing_ok=missing_ok, record=record, emit=emit
+                )
         elif isinstance(widget, WidgetAction) and widget.support_value:
             if (value := _dict_get(data, widget.name, missing_ok)) is not _missing:
                 widget.value = value

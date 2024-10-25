@@ -198,3 +198,18 @@ def test_serialize_value_like_magicclass():
     assert ui.p.y == "c"
     assert ui.x.x == 4
     assert ui.x.y == "d"
+
+def test_serialize_with_skip_if():
+    @magicclass
+    class A(MagicTemplate):
+        x = vfield(3)
+        y = vfield("aa")
+
+        @magicclass
+        class B(MagicTemplate):
+            z = vfield(4)
+            w = vfield("bb")
+
+    ui = A()
+    d = serialize(ui, skip_if=lambda x: isinstance(x, str))
+    assert d == {"x": 3, "B": {"z": 4}}
