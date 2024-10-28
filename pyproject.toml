@@ -49,6 +49,7 @@ testing = [
     "numpy",
     "pandas>=1.5.0",
     "polars>=0.17.10",
+    "matplotlib>=3.8.2",
 ]
 docs = [
     "mkdocs",

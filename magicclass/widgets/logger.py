@@ -628,7 +628,7 @@ class Logger(Widget, logging.Handler):
         ...
 
     @contextmanager
-    def set_plt(self, style: str = None, rc_context: dict[str, Any] = {}):
+    def set_plt(self, style: str | None = None, rc_context: dict[str, Any] = {}):
         """A context manager for inline plot in the logger widget."""
         try:
             import matplotlib as mpl
@@ -657,7 +657,9 @@ class Logger(Widget, logging.Handler):
         backend = mpl.get_backend()
         show._called = False
         try:
-            mpl.use("module://magicclass.widgets.logger")
+            if backend != "module://magicclass.widgets.logger":
+                plt.close("all")
+                mpl.use("module://magicclass.widgets.logger")
             with plt.style.context(style), plt.rc_context(rc_context):
                 yield self
         finally:
