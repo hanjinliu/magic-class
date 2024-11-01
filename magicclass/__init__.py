@@ -36,7 +36,6 @@ from magicclass.fields import (
     HasFields,
 )
 from magicclass._gui._base import defaults, MagicTemplate, PopUpMode
-from magicclass._gui._icon import Icon
 from magicclass import widgets, utils, types, functools, logging
 
 from magicgui import *  # noqa: F403
@@ -72,7 +71,6 @@ __all__ = [
     "defaults",
     "MagicTemplate",
     "PopUpMode",
-    "Icon",
     "widgets",
     "utils",
     "types",

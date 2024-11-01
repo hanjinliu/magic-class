@@ -1,12 +1,11 @@
 from __future__ import annotations
-import os
+
 import warnings
-from types import SimpleNamespace
 from typing import TYPE_CHECKING, Any
 from pathlib import Path
-from qtpy.QtWidgets import QStyle, QApplication, QWidget, QAction
-from qtpy.QtGui import QIcon, QImage, QPixmap, QPalette
-from qtpy.QtCore import Qt, QSize
+from qtpy import QtWidgets as QtW
+from qtpy import QtCore, QtGui
+from qtpy.QtSvg import QSvgRenderer
 
 import superqt
 
@@ -21,24 +20,12 @@ class _IconBase:
     def __repr__(self) -> str:
         return f"{type(self).__name__}({self._source!r})"
 
-    def get_qicon(self, dst: Widget | AbstractAction) -> QIcon:
+    def get_qicon(self, dst: Widget | AbstractAction) -> QtGui.QIcon:
         raise NotImplementedError()
 
     def install(self, dst: PushButtonPlus | AbstractAction) -> None:
         icon = self.get_qicon(dst)
         dst.native.setIcon(icon)
-
-
-class StandardIcon(_IconBase):
-    """An object of a standard icon."""
-
-    def __init__(self, source: Any):
-        if isinstance(source, str):
-            source = getattr(Icon, source)
-        self._source = source
-
-    def get_qicon(self, dst) -> QIcon:
-        return QApplication.style().standardIcon(self._source)
 
 
 class IconPath(_IconBase):
@@ -47,17 +34,88 @@ class IconPath(_IconBase):
     def __init__(self, source: Any):
         self._source = str(source)
 
-    def __str__(self) -> str:
-        return self._source
+    def get_qicon(self, dst) -> QtGui.QIcon:
+        return QtGui.QIcon(self._source)
 
-    def get_qicon(self, dst) -> QIcon:
-        return QIcon(self._source)
+
+def _color_for_palette(dst: Widget | AbstractAction) -> str:
+    if isinstance(dst.native, QtW.QWidget):
+        palette = dst.native.palette()
+    elif isinstance(dst.native, QtW.QAction):
+        if menu := dst.native.parent():
+            palette = menu.palette()
+        else:
+            palette = None
+    else:
+        return "#333333"
+
+    if palette is None:
+        color = "#333333"
+    else:
+        # use foreground color
+        color = palette.color(QtGui.QPalette.ColorRole.WindowText).name()
+        # don't use full black or white
+        color = {"#000000": "#333333", "#ffffff": "#cccccc"}.get(color, color)
+    return color
+
+
+class SVGBufferIconEngine(QtGui.QIconEngine):
+    def __init__(self, xml: str | bytes) -> None:
+        if isinstance(xml, str):
+            xml = xml.encode("utf-8")
+        self.data = QtCore.QByteArray(xml)
+        super().__init__()
+
+    def paint(self, painter: QtGui.QPainter, rect, mode, state):
+        """Paint the icon int ``rect`` using ``painter``."""
+        renderer = QSvgRenderer(self.data)
+        renderer.setAspectRatioMode(QtCore.Qt.AspectRatioMode.KeepAspectRatio)
+        renderer.render(painter, QtCore.QRectF(rect))
+
+    def clone(self):
+        """Required to subclass abstract QIconEngine."""
+        return SVGBufferIconEngine(self.data)
+
+    def pixmap(self, size, mode, state):
+        """Return the icon as a pixmap with requested size, mode, and state."""
+        img = QtGui.QImage(size, QtGui.QImage.Format.Format_ARGB32)
+        img.fill(QtCore.Qt.GlobalColor.transparent)
+        pixmap = QtGui.QPixmap.fromImage(
+            img, QtCore.Qt.ImageConversionFlag.NoFormatConversion
+        )
+        painter = QtGui.QPainter(pixmap)
+        self.paint(painter, QtCore.QRect(QtCore.QPoint(0, 0), size), mode, state)
+        return pixmap
+
+
+class SvgIcon(IconPath):
+    def __init__(self, source: Any):
+        self._svg_text = Path(source).read_text()
+        self._svg_text_orig = self._svg_text
+        if "#000000" in self._svg_text:
+            self._svg_text = self._svg_text.replace("#000000", "{color}")
+            self._need_format = True
+        elif "#FFFFFF" in self._svg_text:
+            self._svg_text = self._svg_text.replace("#FFFFFF", "{color}")
+            self._need_format = True
+        else:
+            self._need_format = False
+
+    def get_qicon(self, dst: Widget | AbstractAction) -> QtGui.QIcon:
+        if not self._need_format:
+            return QtGui.QIcon(SVGBufferIconEngine(self._svg_text_orig))
+        color = _color_for_palette(dst)
+        try:
+            return QtGui.QIcon(SVGBufferIconEngine(self._svg_text.format(color=color)))
+        except (OSError, ValueError) as e:
+            warnings.warn(f"Could not format icon: {e}", stacklevel=2)
+            return QtGui.QIcon(SVGBufferIconEngine(self._svg_text_orig))
 
 
 class ArrayIcon(_IconBase):
     """An object of an icon from numpy array."""
 
-    _source: QImage
+    _source: QtGui.QImage
 
     def __init__(self, source: Any):
         import numpy as np
@@ -69,21 +127,21 @@ class ArrayIcon(_IconBase):
 
         val: np.ndarray = img.make_image()
         h, w, _ = val.shape
-        self._source = QImage(val, w, h, QImage.Format.Format_RGBA8888)
+        self._source = QtGui.QImage(val, w, h, QtGui.QImage.Format.Format_RGBA8888)
 
-    def get_qicon(self, dst) -> QIcon:
+    def get_qicon(self, dst) -> QtGui.QIcon:
         if hasattr(dst.native, "size"):
             qsize = dst.native.size()
         else:
-            qsize = QSize(32, 32)
+            qsize = QtCore.QSize(32, 32)
         qimg = self._source.scaled(
             qsize,
-            Qt.AspectRatioMode.KeepAspectRatio,
-            Qt.TransformationMode.SmoothTransformation,
+            QtCore.Qt.AspectRatioMode.KeepAspectRatio,
+            QtCore.Qt.TransformationMode.SmoothTransformation,
         )
 
-        qpix = QPixmap.fromImage(qimg)
-        return QIcon(qpix)
+        qpix = QtGui.QPixmap.fromImage(qimg)
+        return QtGui.QIcon(qpix)
 
 
 class IconifyIcon(_IconBase):
@@ -99,153 +157,29 @@ class IconifyIcon(_IconBase):
 
         self._source = source
 
-    def get_qicon(self, dst) -> QIcon:
-        if isinstance(dst.native, QWidget):
-            palette = dst.native.palette()
-        elif isinstance(dst.native, QAction):
-            if menu := dst.native.parent():
-                palette = menu.palette()
-            else:
-                palette = None
-        else:
-            return QIcon()
-
-        if palette is None:
-            color = "#333333"
-        else:
-            # use foreground color
-            color = palette.color(QPalette.ColorRole.WindowText).name()
-            # don't use full black or white
-            color = {"#000000": "#333333", "#ffffff": "#cccccc"}.get(color, color)
+    def get_qicon(self, dst) -> QtGui.QIcon:
+        color = _color_for_palette(dst)
         try:
             return superqt.QIconifyIcon(self._source, color=color)
         except (OSError, ValueError) as e:
             warnings.warn(f"Could not set iconify icon: {e}", stacklevel=2)
-            return QIcon()
+            return QtGui.QIcon()
 
 
 def get_icon(val: Any) -> _IconBase:
     """Get a proper icon object from a value."""
     if isinstance(val, _IconBase):
         icon = val
-    elif isinstance(val, Path) or os.path.exists(val):
-        icon = IconPath(val)
+    elif isinstance(val, Path) or Path(val).exists():
+        icon_path = Path(val)
+        if icon_path.suffix == ".svg":
+            icon = SvgIcon(icon_path)
+        else:
+            icon = IconPath(icon_path)
     elif hasattr(val, "__array__"):
         icon = ArrayIcon(val)
     elif isinstance(val, str):
-        if hasattr(Icon, val):
-            warnings.warn(
-                "Qt Standard icons will not be supported anymore. Please use "
-                "iconify icons instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-            icon = StandardIcon(val)
-        else:
-            icon = IconifyIcon(val)
+        icon = IconifyIcon(val)
     else:
-        if isinstance(val, int):
-            warnings.warn(
-                "Qt Standard icons will not be supported anymore. Please use "
-                "iconify icons instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-            icon = StandardIcon(val)
-        else:
-            raise TypeError(f"Input {val!r} cannot be converted to an icon.")
+        raise TypeError(f"Input {val!r} cannot be converted to an icon.")
     return icon
-
-
-class _StandardPixmap:
-    """To avoid version dependency."""
-
-    def __getattr__(self, name) -> QStyle.StandardPixmap:
-        return getattr(QStyle.StandardPixmap, name, None)
-
-
-sp = _StandardPixmap()
-
-
-class Icon(SimpleNamespace):
-    # fmt: off
-    TitleBarMenuButton = sp.SP_TitleBarMenuButton
-    TitleBarMinButton = sp.SP_TitleBarMinButton
-    TitleBarMaxButton = sp.SP_TitleBarMaxButton
-    TitleBarCloseButton = sp.SP_TitleBarCloseButton
-    TitleBarNormalButton = sp.SP_TitleBarNormalButton
-    TitleBarShadeButton = sp.SP_TitleBarShadeButton
-    TitleBarUnshadeButton = sp.SP_TitleBarUnshadeButton
-    TitleBarContextHelpButton = sp.SP_TitleBarContextHelpButton
-    MessageBoxInformation = sp.SP_MessageBoxInformation
-    MessageBoxWarning = sp.SP_MessageBoxWarning
-    MessageBoxCritical = sp.SP_MessageBoxCritical
-    MessageBoxQuestion = sp.SP_MessageBoxQuestion
-    DockWidgetCloseButton = sp.SP_DockWidgetCloseButton
-    DesktopIcon = sp.SP_DesktopIcon
-    TrashIcon = sp.SP_TrashIcon
-    ComputerIcon = sp.SP_ComputerIcon
-    DriveFDIcon = sp.SP_DriveFDIcon
-    DriveHDIcon = sp.SP_DriveHDIcon
-    DriveCDIcon = sp.SP_DriveCDIcon
-    DriveDVDIcon = sp.SP_DriveDVDIcon
-    DriveNetIcon = sp.SP_DriveNetIcon
-    DirOpenIcon = sp.SP_DirOpenIcon
-    DirClosedIcon = sp.SP_DirClosedIcon
-    DirLinkIcon = sp.SP_DirLinkIcon
-    FileIcon = sp.SP_FileIcon
-    FileLinkIcon = sp.SP_FileLinkIcon
-    ToolBarHorizontalExtensionButton = sp.SP_ToolBarHorizontalExtensionButton
-    ToolBarVerticalExtensionButton = sp.SP_ToolBarVerticalExtensionButton
-    FileDialogStart = sp.SP_FileDialogStart
-    FileDialogEnd = sp.SP_FileDialogEnd
-    FileDialogToParent = sp.SP_FileDialogToParent
-    FileDialogNewFolder = sp.SP_FileDialogNewFolder
-    FileDialogDetailedView = sp.SP_FileDialogDetailedView
-    FileDialogInfoView = sp.SP_FileDialogInfoView
-    FileDialogContentsView = sp.SP_FileDialogContentsView
-    FileDialogListView = sp.SP_FileDialogListView
-    FileDialogBack = sp.SP_FileDialogBack
-    DirIcon = sp.SP_DirIcon
-    DialogOkButton = sp.SP_DialogOkButton
-    DialogCancelButton = sp.SP_DialogCancelButton
-    DialogHelpButton = sp.SP_DialogHelpButton
-    DialogOpenButton = sp.SP_DialogOpenButton
-    DialogSaveButton = sp.SP_DialogSaveButton
-    DialogCloseButton = sp.SP_DialogCloseButton
-    DialogApplyButton = sp.SP_DialogApplyButton
-    DialogResetButton = sp.SP_DialogResetButton
-    DialogDiscardButton = sp.SP_DialogDiscardButton
-    DialogYesButton = sp.SP_DialogYesButton
-    DialogNoButton = sp.SP_DialogNoButton
-    ArrowUp = sp.SP_ArrowUp
-    ArrowDown = sp.SP_ArrowDown
-    ArrowLeft = sp.SP_ArrowLeft
-    ArrowRight = sp.SP_ArrowRight
-    ArrowBack = sp.SP_ArrowBack
-    ArrowForward = sp.SP_ArrowForward
-    DirHomeIcon = sp.SP_DirHomeIcon
-    CommandLink = sp.SP_CommandLink
-    VistaShield = sp.SP_VistaShield
-    BrowserReload = sp.SP_BrowserReload
-    BrowserStop = sp.SP_BrowserStop
-    MediaPlay = sp.SP_MediaPlay
-    MediaStop = sp.SP_MediaStop
-    MediaPause = sp.SP_MediaPause
-    MediaSkipForward = sp.SP_MediaSkipForward
-    MediaSkipBackward = sp.SP_MediaSkipBackward
-    MediaSeekForward = sp.SP_MediaSeekForward
-    MediaSeekBackward = sp.SP_MediaSeekBackward
-    MediaVolume = sp.SP_MediaVolume
-    MediaVolumeMuted = sp.SP_MediaVolumeMuted
-    DirLinkOpenIcon = sp.SP_DirLinkOpenIcon
-    LineEditClearButton = sp.SP_LineEditClearButton
-    DialogYesToAllButton = sp.SP_DialogYesToAllButton
-    DialogNoToAllButton = sp.SP_DialogNoToAllButton
-    DialogSaveAllButton = sp.SP_DialogSaveAllButton
-    DialogAbortButton = sp.SP_DialogAbortButton
-    DialogRetryButton = sp.SP_DialogRetryButton
-    DialogIgnoreButton = sp.SP_DialogIgnoreButton
-    RestoreDefaultsButton = sp.SP_RestoreDefaultsButton
-    CustomBase = sp.SP_CustomBase
-    # fmt: on
