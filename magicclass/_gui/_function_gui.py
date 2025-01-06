@@ -5,14 +5,11 @@ from typing_extensions import ParamSpec
 import re
 from psygnal import Signal
 from magicgui.widgets import PushButton, CheckBox, FunctionGui
-from magicgui.widgets.bases import (
-    ValueWidget,
-    ButtonWidget,
-    ContainerWidget,
-)
+from magicgui.widgets.bases import ButtonWidget
 from magicgui.widgets._concrete import _LabeledWidget
 
 from magicclass.widgets import Separator
+from magicclass._compat import has_changed_signal
 
 if TYPE_CHECKING:
     from magicgui.widgets import Widget
@@ -92,7 +89,7 @@ class FunctionGuiPlus(FunctionGui[_P, _R]):
 
     def insert(self, key: int, widget: Widget):
         """Insert widget at `key`."""
-        if isinstance(widget, (ValueWidget, ContainerWidget)):
+        if has_changed_signal(widget):
             widget.changed.connect(lambda: self.changed.emit(self))
         _widget = widget
 

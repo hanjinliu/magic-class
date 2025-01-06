@@ -61,6 +61,7 @@ from magicclass.utils import iter_members, Tooltips
 from magicclass.fields import MagicField
 from magicclass.signature import get_additional_option
 from magicclass._app import run_app
+from magicclass._compat import is_value_widget, has_changed_signal
 
 # For Containers that belong to these classes, menubar must be set to _qwidget.layout().
 _USE_OUTER_LAYOUT = (
@@ -92,7 +93,7 @@ class ClassGuiBase(BaseGui):
         fld.name = fld.name or name
         widget = fld.get_widget(self)
 
-        if isinstance(widget, (ValueWidget, ContainerWidget)):
+        if is_value_widget(widget) or has_changed_signal(widget):
             # If the field has callbacks, connect it to the newly generated widget.
             if fld.record:
                 getvalue = type(fld) in (MagicField, BoxMagicField)
@@ -284,7 +285,7 @@ class ClassGuiBase(BaseGui):
     ) -> None:
         widget = normalize_insertion(self, obj)
 
-        if isinstance(widget, (ValueWidget, ContainerWidget)):
+        if has_changed_signal(widget):
             widget.changed.connect(lambda: self.changed.emit(self))
 
         if hasattr(widget, _MCLS_PAREMT) or hasattr(widget.__class__, _MCLS_PAREMT):

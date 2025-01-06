@@ -495,7 +495,7 @@ class HistoryLineEdit(LineEdit):
         return [self.native.itemText(i) for i in range(self.native.count())]
 
 
-class HistoryFileEdit(FileEdit):
+class HistoryFileEdit(Container):
     def __init__(
         self,
         mode: FileDialogMode = FileDialogMode.EXISTING_FILE,
@@ -514,7 +514,7 @@ class HistoryFileEdit(FileEdit):
         kwargs["widgets"] = [self.line_edit, self.choose_btn]
         kwargs["labels"] = False
         kwargs["layout"] = "horizontal"
-        Container.__init__(self, **kwargs)
+        super().__init__(**kwargs)
         self.margins = (0, 0, 0, 0)
         self._show_file_dialog = use_app().get_obj("show_file_dialog")
         self.choose_btn.changed.disconnect()
@@ -561,3 +561,65 @@ class HistoryFileEdit(FileEdit):
     def get_history(self) -> list[Path]:
         """Return the history as a list"""
         return [Path(p) for p in self.line_edit.get_history()]
+
+    @property
+    def mode(self) -> FileDialogMode:
+        """Mode for the FileDialog."""
+        return self._mode
+
+    @mode.setter
+    def mode(self, value: FileDialogMode | str) -> None:
+        self._mode = FileDialogMode(value)
+        self.choose_btn.text = self._btn_text
+
+    @property
+    def _btn_text(self) -> str:
+        if self.mode is FileDialogMode.EXISTING_DIRECTORY:
+            return "Choose directory"
+        else:
+            return "Select file" + ("s" if self.mode.name.endswith("S") else "")
+
+    def _on_choose_clicked(self) -> None:
+        _p = self.value
+        if _p:
+            start_path: Path = _p[0] if isinstance(_p, tuple) else _p
+            _start_path: str | None = os.fspath(start_path.expanduser().absolute())
+        else:
+            _start_path = None
+        result = self._show_file_dialog(
+            self.mode,
+            caption=self._btn_text,
+            start_path=_start_path,
+            filter=self.filter,
+        )
+        if result:
+            self.value = result
+
+    def get_value(self) -> tuple[Path, ...] | Path | None:
+        """Return current value."""
+        text = self.line_edit.value
+        if self._nullable and not text:
+            return None
+        if self.mode is FileDialogMode.EXISTING_FILES:
+            return tuple(Path(p) for p in text.split(", ") if p.strip())
+        return Path(text)
+
+    def set_value(self, value: list[Path] | Path | None) -> None:
+        """Set current file path."""
+        if value is None and self._nullable:
+            value = ""
+        elif isinstance(value, (list, tuple)):
+            value = ", ".join(os.fspath(Path(p).expanduser().absolute()) for p in value)
+        elif isinstance(value, (str, Path)):
+            value = os.fspath(Path(value).expanduser().absolute())
+        else:
+            raise TypeError(
+                f"value must be a string, or list/tuple of strings, got {type(value)}"
+            )
+        self.line_edit.value = value
+
+    value = property(get_value, set_value)
+
+    def __repr__(self) -> str:
+        """Return string representation."""
+        return f"HistoryFileEdit(mode={self.mode.value!r}, value={self.value!r})"
