@@ -10,9 +10,10 @@ from typing import (
     overload,
 )
 from typing_extensions import Concatenate, ParamSpec
-from magicgui.widgets.bases import Widget, ValueWidget, ContainerWidget
+from magicgui.widgets.bases import Widget, ValueWidget
 from magicclass.fields import MagicField, MagicValueField, field
 from magicclass.fields._define import define_callback, define_callback_gui
+from magicclass._compat import has_changed_signal
 
 if TYPE_CHECKING:
     from magicclass._gui import MagicTemplate
@@ -99,7 +100,7 @@ class BoxMagicField(MagicField["SingleWidgetBox[_W]"], Generic[_W]):
             self._guis[obj_id] = box = self.construct(obj)
             box.name = self.name
             inner = box.widget
-            if isinstance(inner, (ValueWidget, ContainerWidget)):
+            if has_changed_signal(inner):
                 if isinstance(obj, MagicTemplate):
                     _def = define_callback_gui
                 else:

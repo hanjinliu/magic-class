@@ -18,11 +18,7 @@ from timeit import default_timer
 from functools import wraps
 import warnings
 from magicgui.widgets import create_widget, Widget
-from magicgui.widgets.bases import (
-    ValueWidget,
-    ContainerWidget,
-    CategoricalWidget,
-)
+from magicgui.widgets.bases import ValueWidget, CategoricalWidget
 from magicgui.types import Undefined
 
 from magicclass.fields._define import define_callback, define_callback_gui
@@ -39,6 +35,7 @@ from magicclass.signature import (
 )
 from magicclass._gui.mgui_ext import Action, WidgetAction
 from magicclass._exceptions import Aborted
+from magicclass._compat import has_changed_signal
 
 if TYPE_CHECKING:
     import datetime
@@ -299,7 +296,7 @@ class MagicField(_FieldObject, Generic[_W]):
             self._guis[obj_id] = widget = self.construct(obj)
             widget.name = self.name or ""
 
-            if isinstance(widget, (ValueWidget, ContainerWidget)):
+            if has_changed_signal(widget):
                 _def = self._get_define_callback(obj)
                 for callback in self._callbacks:
                     widget.changed.connect(_def(obj, callback))
