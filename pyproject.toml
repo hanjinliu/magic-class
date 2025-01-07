@@ -21,7 +21,7 @@ readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.9"
 authors = [
-    { name = "Hanjin Liu", email = "liuhanjin-sc@g.ecc.u-tokyo.ac.jp" },
+    { name = "Hanjin Liu", email = "liuha@med.kobe-u.ac.jp" },
 ]
 dependencies = [
     "macro-kit>=0.4.6",
