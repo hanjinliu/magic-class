@@ -1380,17 +1380,17 @@ constructing a <code>magicgui.widgets.Widget</code> object with custom Qt widget
 widgets in <code>magicclass.widgets</code> are defined in this way.</p>
 <h2 id="basic-usage">Basic Usage</h2>
 <p>Suppose you have a Qt widget defined like:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QWidget</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">qtpy.QtWidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">QWidget</span>
 
-<span class="k">class</span> <span class="nc">MyQWidget</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyQWidget</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
     <span class="o">...</span>
 </code></pre></div>
 <p>To convert it into a <code>magicgui</code>'s widget, you'll have to call
 <code>set_widget</code> method after initializing the super class.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass.widgets</span> <span class="kn">import</span> <span class="n">FreeWidget</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">FreeWidget</span>
 
-<span class="k">class</span> <span class="nc">MyWidget</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyWidget</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>  <span class="c1"># initialize</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wdt</span> <span class="o">=</span> <span class="n">MyQWidget</span><span class="p">()</span>  <span class="c1"># construct Qt widget</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wdt</span><span class="p">)</span>  <span class="c1"># set widget</span>
@@ -1406,7 +1406,7 @@ ready to used as if it is an ordinary <code>magicgui</code>'s widget.</p>
 <span class="n">x</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
 
 <span class="c1"># append into a container</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">Container</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicgui.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Container</span>
 <span class="n">container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">()</span>
 <span class="n">container</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </code></pre></div>
@@ -1417,25 +1417,25 @@ better idea to add a value change signal to the class.</p>
 <p>Following example shows how to define value getter/setter and value change signal,
 suppose the <code>MyQWidget</code> has methods <code>value</code>, <code>setValue</code> and the corresponding signal
 <code>valueChanged</code>.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">psygnal</span> <span class="kn">import</span> <span class="n">Signal</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">psygnal</span><span class="w"> </span><span class="kn">import</span> <span class="n">Signal</span>
 
-<span class="k">class</span> <span class="nc">MyWidget</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyWidget</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
     <span class="c1"># you should restrict the type of signal emission according to the Qt widget,</span>
     <span class="c1"># such as Signal(str)</span>
     <span class="n">changed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>  <span class="c1"># initialize</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wdt</span> <span class="o">=</span> <span class="n">MyQWidget</span><span class="p">()</span>  <span class="c1"># construct Qt widget</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wdt</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">emit</span><span class="p">)</span>  <span class="c1"># relay signal</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wdt</span><span class="p">)</span>  <span class="c1"># set widget</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wdt</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
 
     <span class="nd">@value</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wdt</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
 </code></pre></div>
 

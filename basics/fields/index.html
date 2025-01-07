@@ -1557,10 +1557,10 @@ considered as "fields". The concept of fields was actually introduced in Python 
 standard library <code>dataclasses</code> as a <code>Field</code> object. A field is in a state of "ready to
 be converted into a object", i.e., a new object is created for every instance
 construction.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">C</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">C</span><span class="p">:</span>
     <span class="n">i</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
     <span class="n">s</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
 
@@ -1573,7 +1573,7 @@ construction.</p>
 and "type annotation" in <code>magicgui</code>. To apply the concept of field to widget
 construction, <code>magic-class</code> has <code>MagicField</code>, which can store defaults as an object that
 is ready to be converted into a widget.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">field</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">field</span>
 
 <span class="n">fld</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;initial&quot;</span><span class="p">})</span>
 <span class="n">widget</span> <span class="o">=</span> <span class="n">fld</span><span class="o">.</span><span class="n">to_widget</span><span class="p">()</span>
@@ -1584,11 +1584,11 @@ is ready to be converted into a widget.</p>
 <div class="highlight"><pre><span></span><code><span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">widget_type</span><span class="o">=</span><span class="s2">&quot;Slider&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
 </code></pre></div>
 <p>The first argument of <code>field</code> can be type, value or widget type.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">Table</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicgui.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
     <span class="n">i</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="s2">&quot;abc&quot;</span><span class="p">)</span>
     <span class="n">table</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">Table</span><span class="p">)</span>
@@ -1602,14 +1602,14 @@ is ready to be converted into a widget.</p>
 <code>magicgui</code>, most of them have the same API <code>widget.changed.connect(callback)</code>. Owing to
 the simplicity, callback functions can be safely bound to <code>MagicField</code> with <code>connect</code>
 method.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
     <span class="nd">@a</span><span class="o">.</span><span class="n">connect</span>
-    <span class="k">def</span> <span class="nf">_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;value changed!&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="make-fields-more-property-like">Make Fields More Property-like</h3>
@@ -1618,45 +1618,45 @@ of a field, you might not want to get the value via <code>self.widget.value</cod
 <p>Magic-class provides another field class called <code>MagicValueField</code>, which returns the
 value itself when the field get accessed. You can create <code>MagicValueField</code> object using
 <code>vfield</code> function. You can also defined callbacks similar to <code>MagicField</code>.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
 <span class="hll">    <span class="n">a</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 </span>
     <span class="nd">@a</span><span class="o">.</span><span class="n">connect</span>
-    <span class="k">def</span> <span class="nf">_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;value changed!&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">print_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;a = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># instead of &quot;self.a.value&quot;!</span>
 </code></pre></div>
 <h3 id="even-better-widget-configuration">Even better widget configuration</h3>
 <p><code>MagicField</code> and <code>MagicValueField</code> can be configured with <code>options</code> keyword argument.
 However, passing a <code>dict</code> is not good for code readability and typing.</p>
 <p>An alternative but more recommended way is to use <code>with_options</code> method.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
 
     <span class="n">a</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>  <span class="c1"># instead of this</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">with_options</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>  <span class="c1"># use this</span>
 
-    <span class="k">def</span> <span class="nf">print_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;a = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
 <p>If you only want to set <code>choices</code>, <code>with_choices</code> method is provided for this purpose.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
 
     <span class="n">a</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]})</span>  <span class="c1"># instead of this</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">()</span><span class="o">.</span><span class="n">with_options</span><span class="p">(</span><span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>  <span class="c1"># or this</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">()</span><span class="o">.</span><span class="n">with_choices</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>  <span class="c1"># you can use this</span>
 
-    <span class="k">def</span> <span class="nf">print_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;a = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
 <p>Using <code>with_choices</code> is not just a shortcut. It also properly predicts
@@ -1664,18 +1664,18 @@ the type of the output widget.</p>
 <h2 id="advanced-fieldgroup">(Advanced) FieldGroup</h2>
 <p>A <code>FieldGroup</code> is a class that is used as a container of field objects and behave like a
 <code>field</code> or <code>vfield</code> function itself.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">FieldGroup</span><span class="p">,</span> <span class="n">vfield</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">FieldGroup</span><span class="p">,</span> <span class="n">vfield</span>
 
-<span class="k">class</span> <span class="nc">Points</span><span class="p">(</span><span class="n">FieldGroup</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Points</span><span class="p">(</span><span class="n">FieldGroup</span><span class="p">):</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="c1"># FieldGroup is a direct subclass of Container</span>
     <span class="n">points</span> <span class="o">=</span> <span class="n">Points</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_point</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_point</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
@@ -1689,14 +1689,14 @@ the type of the output widget.</p>
 are some benefits to use <code>FieldGroup</code> over creating <code>magicclass</code>.</p>
 <p>A <code>FieldGroup</code> is aware of its child fields. Even if you defined all the fields using
 <code>vfield</code> you can still retrieve the widgets via <code>widgets</code> property.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">FieldGroup</span><span class="p">,</span> <span class="n">vfield</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">FieldGroup</span><span class="p">,</span> <span class="n">vfield</span>
 
-<span class="k">class</span> <span class="nc">Points</span><span class="p">(</span><span class="n">FieldGroup</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Points</span><span class="p">(</span><span class="n">FieldGroup</span><span class="p">):</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="n">points</span> <span class="o">=</span> <span class="n">Points</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
@@ -1712,18 +1712,18 @@ following code works.</p>
 <h3 id="create-many-similar-containers">Create Many Similar Containers</h3>
 <p>Since a <code>FieldGroup</code> can be considered as a "widget creator", you can easily define a
 widget template by subclassing it.</p>
-<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">LabeledLineEdit</span><span class="p">(</span><span class="n">FieldGroup</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LabeledLineEdit</span><span class="p">(</span><span class="n">FieldGroup</span><span class="p">):</span>
     <span class="n">lbl</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">widget_type</span><span class="o">=</span><span class="s2">&quot;Label&quot;</span><span class="p">)</span>
     <span class="n">txt</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_text</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_text</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lbl</span> <span class="o">=</span> <span class="n">label_text</span>
 
 <span class="c1"># Now, `LabeledLineEdit` can be used similar to `field` or `vfield`.</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="n">text_1</span> <span class="o">=</span> <span class="n">LabeledLineEdit</span><span class="p">(</span><span class="s2">&quot;First name&quot;</span><span class="p">)</span>
     <span class="n">text_2</span> <span class="o">=</span> <span class="n">LabeledLineEdit</span><span class="p">(</span><span class="s2">&quot;Last name&quot;</span><span class="p">)</span>
 
@@ -1736,7 +1736,7 @@ widget template by subclassing it.</p>
 <p><code>MagicField</code> and <code>FieldGroup</code> are also designed for general usage of widgets. This means
 that essentially you can use <code>vfield</code> instead of <code>property</code> for getting or setting
 parameters.</p>
-<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
 <span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
@@ -1749,9 +1749,9 @@ will have to get the value from <code>a.x.value</code>, which is not elegant.</p
 <p>As mentioned above, this problem is solved in <code>FieldGroup</code> by <code>widgets</code> property.
 Therefore, the inaccessibility of widgets can generally be solved in a similar way.</p>
 <p>The <code>widgets</code> interface becomes available by subclassing <code>HasFields</code> class.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">HasFields</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">HasFields</span>
 
-<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="n">HasFields</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">(</span><span class="n">HasFields</span><span class="p">):</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
 <span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>

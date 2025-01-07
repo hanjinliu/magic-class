@@ -1526,10 +1526,10 @@
 <h1 id="quick-start">Quick Start</h1>
 <h2 id="basics">Basics</h2>
 <p>In <code>magicgui</code>, you can convert functions into widgets. For instance,</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicgui</span> <span class="kn">import</span> <span class="n">magicgui</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicgui</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicgui</span>
 
 <span class="nd">@magicgui</span>
-<span class="k">def</span> <span class="nf">print_text</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_text</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 
 <span class="n">print_text</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -1538,14 +1538,14 @@
 and a call button.</p>
 <p>Similarly, with <code>magicclass</code> decorator, you can convert a Python class into a <code>magicgui</code>'s <code>Container</code> widget and its methods appear as push buttons. When a button is
 clicked, the corresponding magicgui will be popped up.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="k">def</span> <span class="nf">print_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">()</span>
@@ -1561,7 +1561,7 @@ will not be converted into widgets.</p>
 <p class="admonition-title">Note</p>
 <p><code>ui.print_value</code> is a method, and <code>ui["print_value"]</code> is a button widget. To get the
 <code>FunctionGui</code> widget, use <code>get_function_gui</code> function.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">get_function_gui</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_function_gui</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">get_function_gui</span><span class="p">(</span><span class="n">ui</span><span class="o">.</span><span class="n">print_value</span><span class="p">))</span>
 </code></pre></div>
@@ -1571,15 +1571,15 @@ a tool bar, using <code>@magicmenu</code>, <code>@magiccontext</code> and <code>
 See <a href="../basics/nest/">here</a> for more details.</p>
 <h2 id="use-other-widgets-in-magic-class">Use Other Widgets in magic-class</h2>
 <p>Other <code>magicgui</code>'s widgets can also be used inside magic-classes by using <code>field</code>.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">LineEdit</span><span class="p">,</span> <span class="n">Slider</span>
-<span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicgui.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">LineEdit</span><span class="p">,</span> <span class="n">Slider</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">LineEdit</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Name:&quot;</span><span class="p">)</span>
     <span class="n">i</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">Slider</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Age:&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">})</span>
 
-    <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">()</span>
@@ -1589,17 +1589,17 @@ See <a href="../basics/nest/">here</a> for more details.</p>
 <p>If a method is decorated with <code>@magicgui</code>, it will directly added in the container
 widget, in place of a push button. This is natural because decorated methods are no
 longer functions, but <code>FunctionGui</code> widgets.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicgui</span> <span class="kn">import</span> <span class="n">magicgui</span>
-<span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicgui</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicgui</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
     <span class="nd">@magicgui</span>
-    <span class="k">def</span> <span class="nf">input_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">s</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="n">i</span>
 
-    <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">()</span>
@@ -1617,16 +1617,16 @@ longer functions, but <code>FunctionGui</code> widgets.</p>
 <h3 id="parameter-options">Parameter Options</h3>
 <p>In <code>magicgui</code> you can define parameter options with keyword arguments:</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicgui</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;widget_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Slider&quot;</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
-<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span> <span class="o">...</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span> <span class="o">...</span>
 </code></pre></div>
 <p>However, magic classes need another way to do this because <code>magicgui</code> will never be called by users.</p>
 <p><code>magicclass</code> uses <code>set_options</code> decorator instead.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">set_options</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">set_options</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="nd">@set_options</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;widget_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Slider&quot;</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
-    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span> <span class="o">...</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
 <span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -1636,12 +1636,12 @@ longer functions, but <code>FunctionGui</code> widgets.</p>
 <p>Aside from those options of <code>magicgui</code> popup widget to run functions, you may also
 want to change the design of button itself. <code>magicclass</code> uses <code>set_design</code> decorator
 to do this.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">set_design</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">set_design</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="nd">@set_design</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Click (if you want)&quot;</span><span class="p">,</span> <span class="n">min_height</span><span class="o">=</span><span class="mi">120</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
 <span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -1654,15 +1654,15 @@ constructed yet.</p>
 <p>Similar to the builtin <code>dataclass</code>, <code>__post_init__</code> method is used as the post
 initalization procedure. It is called after widget is completely built.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># self[&quot;func&quot;] &lt;-- this is not correct. Button &quot;func&quot; is not ready!</span>
         <span class="o">...</span>
 
-<span class="hll">    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="hll">    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span class="hll">        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min_height</span> <span class="o">=</span> <span class="mi">100</span>
 </span>
-    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
 </code></pre></div>
 <h2 id="code-completion">Code Completion</h2>
 <p>A problem of using decorators to overwrite classes is code completion. When you are
@@ -1671,10 +1671,10 @@ they will have attributes such as <code>self.parent_viewer</code> or <code>self.
 <p>All the magic classes inherits <code>MagicTemplate</code> class. This class is designed in a
 way which does not interfere with magic class decorators, while provides enough
 information of typings and annotations.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">MagicTemplate</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">MagicTemplate</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">MyClass</span><span class="p">(</span><span class="n">MagicTemplate</span><span class="p">):</span> <span class="c1"># inherit here</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">(</span><span class="n">MagicTemplate</span><span class="p">):</span> <span class="c1"># inherit here</span>
     <span class="o">...</span>
 </code></pre></div>
 <h2 id="macro-recording">Macro Recording</h2>
@@ -1697,12 +1697,12 @@ updated whenever macro itself is updated.</p>
 some information). It could also be redundant to record value changes of some widgets.
 You can prevent macro recording with <code>do_not_record</code> decorator for methods
 (or <code>record=False</code> argument for <a href="../basics/fields/">fields</a>).</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">do_not_record</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">do_not_record</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="nd">@do_not_record</span>
-    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;this function will never be recorded&quot;&quot;&quot;</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
@@ -1718,20 +1718,20 @@ widget without any additional effort.</p>
 </code></pre></div>
 <p>You may want to use the command palette with the <a href="../make_better/keybinding/"><code>bind_key</code></a>
 decorator.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magicmenu</span><span class="p">,</span> <span class="n">bind_key</span>
-<span class="kn">from</span> <span class="nn">magicclass.command_palette</span> <span class="kn">import</span> <span class="n">exec_command_palette</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magicmenu</span><span class="p">,</span> <span class="n">bind_key</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.command_palette</span><span class="w"> </span><span class="kn">import</span> <span class="n">exec_command_palette</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="c1"># many functions and widgets here.</span>
     <span class="nd">@magicmenu</span>
-    <span class="k">class</span> <span class="nc">SubClass</span><span class="p">:</span>
-        <span class="k">def</span> <span class="nf">func_sub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">SubClass</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">func_sub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
 
-    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
 
     <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Ctrl+Shift+P&quot;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_show_palette</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_show_palette</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">exec_command_palette</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </code></pre></div>
 <p>In the example above, two commands <code>Main: func</code> and <code>Main.SubClass: func sub</code> will be
@@ -1741,7 +1741,7 @@ registered.</p>
 have a UI platform but you still want some extensions like plugin system. You don't have
 to worry about that since magic class construction itself is dynamic. Just <code>append</code>
 well-typed functions to magic class object.</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">new_function</span><span class="p">(</span><span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">new_function</span><span class="p">(</span><span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="o">...</span>
 
 <span class="n">ui</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_function</span><span class="p">)</span> <span class="c1"># then a proper widget appears in the GUI</span>
@@ -1751,9 +1751,9 @@ well-typed functions to magic class object.</p>
 <p>If you want to convert the function into a <a href="../basics/nest/">menu</a> action, your code
 will look like this.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="nd">@magicmenu</span>
-    <span class="k">class</span> <span class="nc">Menu</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Menu</span><span class="p">:</span>
         <span class="o">...</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>

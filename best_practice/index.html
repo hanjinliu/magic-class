@@ -1354,12 +1354,12 @@
 <h2 id="shared-input-parameters">Shared Input Parameters</h2>
 <p>If you want to control input parameters outside each <code>magicgui</code> widget, the example
 below is the most naive implementation.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magicmenu</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">abstractapi</span><span class="p">,</span> <span class="n">set_design</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magicmenu</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">abstractapi</span><span class="p">,</span> <span class="n">set_design</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="nd">@magicmenu</span>
-    <span class="k">class</span> <span class="nc">Menu</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Menu</span><span class="p">:</span>
         <span class="n">add</span> <span class="o">=</span> <span class="n">abstractapi</span><span class="p">()</span>
         <span class="n">sub</span> <span class="o">=</span> <span class="n">abstractapi</span><span class="p">()</span>
 
@@ -1368,12 +1368,12 @@ below is the most naive implementation.</p>
     <span class="n">result</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="nd">@set_design</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">Menu</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add two values&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">value</span>
 
     <span class="nd">@set_design</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">Menu</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Subtract two values&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">value</span>
 </code></pre></div>
@@ -1399,13 +1399,13 @@ saw its macro recorded like</p>
 <span class="n">ui</span><span class="o">.</span><span class="n">add</span><span class="p">()</span>
 </code></pre></div>
 <p>To avoid this, you can use the <a href="../make_better/bind/">"bind" option</a>.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Annotated</span>
-<span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magicmenu</span><span class="p">,</span> <span class="n">field</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magicmenu</span><span class="p">,</span> <span class="n">field</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="nd">@magicmenu</span>
-    <span class="k">class</span> <span class="nc">Menu</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Menu</span><span class="p">:</span>
         <span class="n">add</span> <span class="o">=</span> <span class="n">abstractapi</span><span class="p">()</span>
         <span class="n">sub</span> <span class="o">=</span> <span class="n">abstractapi</span><span class="p">()</span>
 
@@ -1414,12 +1414,12 @@ saw its macro recorded like</p>
     <span class="n">result</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="nd">@set_design</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">Menu</span><span class="p">)</span>
-<span class="hll">    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">a</span><span class="p">}],</span> <span class="n">b</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">b</span><span class="p">}]):</span>
+<span class="hll">    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">a</span><span class="p">}],</span> <span class="n">b</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">b</span><span class="p">}]):</span>
 </span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Add two values&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
 
     <span class="nd">@set_design</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">Menu</span><span class="p">)</span>
-<span class="hll">    <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">a</span><span class="p">}],</span> <span class="n">b</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">b</span><span class="p">}]):</span>
+<span class="hll">    <span class="k">def</span><span class="w"> </span><span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">a</span><span class="p">}],</span> <span class="n">b</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">b</span><span class="p">}]):</span>
 </span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Subtract two values&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span>
 </code></pre></div>

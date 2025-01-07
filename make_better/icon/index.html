@@ -1394,33 +1394,33 @@ especially in a tool bar.</p>
 There are several ways to do that in <code>magic-class</code>.</p>
 <h2 id="image-file-as-an-icon">Image File as an Icon</h2>
 <p>If you have your icon file in such as .jpg or .svg format, you can use the path.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magictoolbar</span><span class="p">,</span> <span class="n">set_design</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magictoolbar</span><span class="p">,</span> <span class="n">set_design</span>
 
 <span class="n">icon_path</span> <span class="o">=</span> <span class="s2">&quot;path/to/icon.png&quot;</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="nd">@magictoolbar</span>
-    <span class="k">class</span> <span class="nc">toolbar</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">toolbar</span><span class="p">:</span>
         <span class="nd">@set_design</span><span class="p">(</span><span class="n">icon</span><span class="o">=</span><span class="n">icon_path</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="o">...</span>
 </code></pre></div>
 <h2 id="array-as-an-icon">Array as an Icon</h2>
 <p>You may want to apply some transformation to an icon image. In this case, an array-like
 object can be used.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magictoolbar</span><span class="p">,</span> <span class="n">set_design</span>
-<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">io</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magictoolbar</span><span class="p">,</span> <span class="n">set_design</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">skimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">io</span>
 
 <span class="n">img</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s2">&quot;path/to/image.png&quot;</span><span class="p">)</span>  <span class="c1"># read image as a np.ndarray</span>
 <span class="n">icon</span> <span class="o">=</span> <span class="o">-</span><span class="n">img</span>  <span class="c1"># invert image</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="nd">@magictoolbar</span>
-    <span class="k">class</span> <span class="nc">toolbar</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">toolbar</span><span class="p">:</span>
         <span class="nd">@set_design</span><span class="p">(</span><span class="n">icon</span><span class="o">=</span><span class="n">icon</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="o">...</span>
 </code></pre></div>
 <h2 id="iconify-icons">Iconify icons</h2>
@@ -1429,14 +1429,14 @@ object can be used.</p>
 <li><a href="https://github.com/pyapp-kit/pyconify">pyconify</a></li>
 <li><a href="https://github.com/iconify/iconify">iconify</a></li>
 </ul>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magictoolbar</span><span class="p">,</span> <span class="n">set_design</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magictoolbar</span><span class="p">,</span> <span class="n">set_design</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="nd">@magictoolbar</span>
-    <span class="k">class</span> <span class="nc">toolbar</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">toolbar</span><span class="p">:</span>
         <span class="nd">@set_design</span><span class="p">(</span><span class="n">icon</span><span class="o">=</span><span class="s2">&quot;mdi:bell&quot;</span><span class="p">)</span>  <span class="c1"># &lt;-- string to icon</span>
-        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="o">...</span>
 </code></pre></div>
 

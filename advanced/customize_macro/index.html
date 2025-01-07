@@ -1360,15 +1360,15 @@ could be very long (such as an image data). To define a rule of how to record a 
 type of objects, you can use <code>register_type</code> function (actually this is how
 <code>magic-class</code> registers <code>Path</code> and <code>Enum</code> to make macro compatible with type mapping
 rules of <code>magicgui</code>).</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">macrokit</span> <span class="kn">import</span> <span class="n">register_type</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">macrokit</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_type</span>
 </code></pre></div>
 <p><code>register_type</code> takes two arguments: a type to register and a function. You have to
 define the conversion rule in the second argument. The example below shows how to
 record <code>numpy.ndarray</code> in the standard <code>np.array([...])</code> style.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">numpy</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">numpy</span>
 
 <span class="nd">@register_type</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">numpy_to_str</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">numpy_to_str</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
     <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;np.array(</span><span class="si">{</span><span class="n">arr</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span>
 </code></pre></div>
 

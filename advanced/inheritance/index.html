@@ -1466,15 +1466,15 @@ and which is lower.</p>
 <p>In magic-class, methods defined in base classes will appear <strong>upper</strong> than those in
 subclasses. In the case of the example below, buttons will be arranged in order "common
 function", "main function".</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span>
 
-<span class="k">class</span> <span class="nc">Base</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">common_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">common_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Do some common things.&quot;&quot;&quot;</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">main_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">main_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Main one.&quot;&quot;&quot;</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
@@ -1490,13 +1490,13 @@ raise <code>TypeError</code>. You only have to decorate the final concrete class
 <p>You may want to add widgets using <a href="../../basics/fields/">fields</a>. Fields behave
 similarly as methods. In the following example, Two widgets, <code>x</code> and <code>y</code> will be packed
 in the <code>Main</code> GUI, in order <code>x</code>, <code>y</code>.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
 
-<span class="k">class</span> <span class="nc">Base</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="p">:</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="s2">&quot;this is x, appearing first&quot;</span><span class="p">)</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="s2">&quot;this is y, appearing second&quot;</span><span class="p">)</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
@@ -1507,56 +1507,56 @@ in the <code>Main</code> GUI, in order <code>x</code>, <code>y</code>.</p>
 or connect callback function to a field, you must re-define fields in the subclasses.</p>
 <h3 id="1-bind-methods-or-fields">1. Bind methods or fields</h3>
 <p><em>This will not work</em></p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Annotated</span>
-<span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
 
-<span class="k">class</span> <span class="nc">Base</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="p">:</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">}]):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">}]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
 </code></pre></div>
 <p><em>This will work</em></p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
-<span class="kn">from</span> <span class="nn">magicclass.types</span> <span class="kn">import</span> <span class="n">Bound</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bound</span>
 
-<span class="k">class</span> <span class="nc">Base</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="p">:</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">}]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">}]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
 </code></pre></div>
 <h2 id="1-define-callbacks">1. Define Callbacks</h2>
 <p><em>This will not work</em></p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
 
-<span class="k">class</span> <span class="nc">Base</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="p">:</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
     <span class="nd">@x</span><span class="o">.</span><span class="n">connect</span>
-    <span class="k">def</span> <span class="nf">_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
 </code></pre></div>
 <p><em>This will work</em></p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
 
-<span class="k">class</span> <span class="nc">Base</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="p">:</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
     <span class="nd">@x</span><span class="o">.</span><span class="n">connect</span>
-    <span class="k">def</span> <span class="nf">_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
 </code></pre></div>
 <div class="admonition note">
@@ -1564,9 +1564,9 @@ or connect callback function to a field, you must re-define fields in the subcla
 <p>These caveats are quite natural considering the concept of scope in Python. When
 you define a variable in a class, it is not available from other classes until
 class definition finishes.</p>
-<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">B</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><span class="filename">Output</span><pre><span></span><code>NameError: name &#39;x&#39; is not defined
@@ -1576,22 +1576,22 @@ class definition finishes.</p>
 <h2 id="nesting-magic-classes">Nesting Magic Classes</h2>
 <p><a href="../../basics/nest/">Nesting magic classes</a> is useful for designing layout of widgets.
 You don't have to worry about inheriting base class with a nested magic class.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">set_design</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">set_design</span>
 
-<span class="k">class</span> <span class="nc">Base</span><span class="p">(</span><span class="n">MagicTemplate</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="p">(</span><span class="n">MagicTemplate</span><span class="p">):</span>
     <span class="c1"># All of these widgets and their layout will be inherited to subclasses</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
 
     <span class="nd">@magicclass</span>
-    <span class="k">class</span> <span class="nc">X</span><span class="p">(</span><span class="n">MagicTemplate</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">X</span><span class="p">(</span><span class="n">MagicTemplate</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
 
     <span class="nd">@set_design</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">X</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
     <span class="k">pass</span>
 </code></pre></div>
 <h2 id="predefinition-of-methods-and-fields">Predefinition of Methods and Fields</h2>
@@ -1602,24 +1602,24 @@ the subclasses share same header and footer and make the middle widgets variable
 <p>Just like <a href="../../make_better/location/">using <code>location=...</code> argument</a>, the
 pre-definition strategy is also useful here. First arrange all the widgets in the base
 class, and specifically define the real widgets in the subclasses.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">set_design</span><span class="p">,</span> <span class="n">abstractapi</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">set_design</span><span class="p">,</span> <span class="n">abstractapi</span>
 
-<span class="k">class</span> <span class="nc">Base</span><span class="p">(</span><span class="n">MagicTemplate</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="p">(</span><span class="n">MagicTemplate</span><span class="p">):</span>
     <span class="n">header</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="s2">&quot;this is header&quot;</span><span class="p">,</span> <span class="n">widget_type</span><span class="o">=</span><span class="s2">&quot;Label&quot;</span><span class="p">)</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">abstractapi</span><span class="p">()</span>  <span class="c1"># pre-definition</span>
     <span class="n">footer</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="s2">&quot;this is footer&quot;</span><span class="p">,</span> <span class="n">widget_type</span><span class="o">=</span><span class="s2">&quot;Label&quot;</span><span class="p">)</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">B</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
 <span class="nd">@magicclass</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">(</span><span class="n">MagicTemplate</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">(</span><span class="n">MagicTemplate</span><span class="p">):</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
     <span class="n">b</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
 

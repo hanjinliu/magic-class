@@ -1424,27 +1424,27 @@ other locations.</p>
 </ol>
 <p>Following example shows how to call <code>set_param</code> and <code>print_param</code> functions from its
 child class <code>Child</code>.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">set_design</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">set_design</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Parent</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Parent</span><span class="p">:</span>
     <span class="n">param</span> <span class="o">=</span> <span class="mf">0.1</span>
 
     <span class="nd">@magicclass</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">)</span>
-    <span class="k">class</span> <span class="nc">Child</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">:</span>
         <span class="c1"># A frame of buttons</span>
-        <span class="k">def</span> <span class="nf">set_param</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
-        <span class="k">def</span> <span class="nf">print_param</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">set_param</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">print_param</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
 
     <span class="c1"># a result widget</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">widget_type</span><span class="o">=</span><span class="s2">&quot;LineEdit&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;enabled&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
 
     <span class="nd">@set_design</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">Child</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">set_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">param</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="nd">@set_design</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">Child</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">print_param</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_param</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">Parent</span><span class="p">()</span>
@@ -1470,13 +1470,13 @@ several reasons:</p>
 a method with misspelled name, or you forgot to re-define a method, the GUI will have an
 button that does nothing with no warning nor error.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Parent</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Parent</span><span class="p">:</span>
     <span class="nd">@magicclass</span>
-    <span class="k">class</span> <span class="nc">Child</span><span class="p">:</span>
-        <span class="k">def</span> <span class="nf">run_fucntion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>  <span class="c1"># &lt;------ misspelled!!</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">run_fucntion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>  <span class="c1"># &lt;------ misspelled!!</span>
 
     <span class="nd">@set_design</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">Child</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">run_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">Parent</span><span class="p">()</span>
@@ -1486,13 +1486,13 @@ button that does nothing with no warning nor error.</p>
 will be resolve only if the function is re-defined in the parent widget or overriden by
 such as its subclass.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Parent</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Parent</span><span class="p">:</span>
     <span class="nd">@magicclass</span>
-    <span class="k">class</span> <span class="nc">Child</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">:</span>
         <span class="n">run_fucntion</span> <span class="o">=</span> <span class="n">abstractapi</span><span class="p">()</span>  <span class="c1"># &lt;------ misspelled!!</span>
 
     <span class="nd">@set_design</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">Child</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">run_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">Parent</span><span class="p">()</span>  <span class="c1"># AbstracAPIError will be raised here</span>
@@ -1500,9 +1500,9 @@ such as its subclass.</p>
 <p><code>abstractapi</code> is not necessarily used as a decorator. It can be instantiated as if a
 field object.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Parent</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Parent</span><span class="p">:</span>
     <span class="nd">@magicclass</span>
-    <span class="k">class</span> <span class="nc">Child</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">:</span>
         <span class="n">run_fucntion</span> <span class="o">=</span> <span class="n">abstractapi</span><span class="p">()</span>  <span class="c1"># &lt;------ like this</span>
 </code></pre></div>
 <h2 id="find-ancestor-widgets">Find Ancestor Widgets</h2>
@@ -1510,10 +1510,10 @@ field object.</p>
 instead. <code>self.find_ancestor(X)</code> will iteratively search for the widget parent until it
 reaches an instance of <code>X</code>.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="nd">@magicclass</span>
-    <span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
-        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="n">ancestor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_ancestor</span><span class="p">(</span><span class="n">Main</span><span class="p">)</span>
             <span class="c1"># do something on the ancestor widget</span>
 </code></pre></div>
@@ -1524,19 +1524,19 @@ with <code>@set_design(location=ParentClass)</code>. However, there are some cas
 <li>
 <p>You can define child widget class outside the parent widget class (even in a
   separate file).</p>
-<div class="highlight"><span class="filename">child.py</span><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicmenu</span>
+<div class="highlight"><span class="filename">child.py</span><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicmenu</span>
 
 <span class="nd">@magicmenu</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">ancestor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_ancestor</span><span class="p">(</span><span class="n">Main</span><span class="p">)</span>
         <span class="c1"># do something on the ancestor widget</span>
 </code></pre></div>
-<div class="highlight"><span class="filename">main.py</span><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
-<span class="kn">from</span> <span class="nn">.child</span> <span class="kn">import</span> <span class="n">A</span>
+<div class="highlight"><span class="filename">main.py</span><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.child</span><span class="w"> </span><span class="kn">import</span> <span class="n">A</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="n">A</span> <span class="o">=</span> <span class="n">A</span>
 </code></pre></div>
 </li>
@@ -1554,18 +1554,18 @@ the function will be repeatitively called.</p>
 </div>
 <h2 id="field-locations">Field Locations</h2>
 <p>Same strategy can be used for <a href="../../basics/fields/">fields</a>.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">abstractapi</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">abstractapi</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="nd">@magicclass</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">)</span>
-    <span class="k">class</span> <span class="nc">Parameters</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Parameters</span><span class="p">:</span>
         <span class="n">a</span> <span class="o">=</span> <span class="n">abstractapi</span><span class="p">()</span>
         <span class="n">b</span> <span class="o">=</span> <span class="n">abstractapi</span><span class="p">()</span>
 
     <span class="n">a</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="n">Parameters</span><span class="p">)</span>
     <span class="n">b</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="n">Parameters</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>

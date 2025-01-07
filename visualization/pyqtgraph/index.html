@@ -1444,14 +1444,14 @@ to provide a  consistent, <code>magicgui</code>-like API.</p>
 <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>pyqtgraph
 </code></pre></div>
 <p>Then several <code>pyqtgraph</code> canvases are now available.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtPlotCanvas</span>  <span class="c1"># 1-D plot, like plt.plot</span>
-<span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtMultiPlotCanvas</span>  <span class="c1"># multiple QtPlotCanvas</span>
-<span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtImageCanvas</span>  <span class="c1"># 2-D image, like plt.imshow</span>
-<span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtMultiImageCanvas</span>  <span class="c1"># multiple QtImageCanvas</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.ext.pyqtgraph</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtPlotCanvas</span>  <span class="c1"># 1-D plot, like plt.plot</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.ext.pyqtgraph</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtMultiPlotCanvas</span>  <span class="c1"># multiple QtPlotCanvas</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.ext.pyqtgraph</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtImageCanvas</span>  <span class="c1"># 2-D image, like plt.imshow</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.ext.pyqtgraph</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtMultiImageCanvas</span>  <span class="c1"># multiple QtImageCanvas</span>
 </code></pre></div>
 <h2 id="qtplotcanvas">QtPlotCanvas</h2>
 <p><code>QtPlotCanvas</code> is a canvas for 1-D plotting.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtPlotCanvas</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.ext.pyqtgraph</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtPlotCanvas</span>
 
 <span class="n">canvas</span> <span class="o">=</span> <span class="n">QtPlotCanvas</span><span class="p">()</span>
 <span class="n">canvas</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -1529,7 +1529,7 @@ differently.</p>
 </ol>
 <h2 id="qtmultiplotcanvas">QtMultiPlotCanvas</h2>
 <p><code>QtMultiPlotCanvas</code> is a collection of <code>QtPlotCanvas</code>.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtMultiPlotCanvas</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.ext.pyqtgraph</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtMultiPlotCanvas</span>
 
 <span class="n">canvas</span> <span class="o">=</span> <span class="n">QtMultiPlotCanvas</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># 1 x 2 canvases</span>
 <span class="n">canvas</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>

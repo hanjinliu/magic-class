@@ -1644,8 +1644,8 @@
 <span class="normal">650</span>
 <span class="normal">651</span>
 <span class="normal">652</span>
-<span class="normal">653</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Parameters</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">653</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Parameters</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__qualname__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span>
 
@@ -1675,12 +1675,12 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">1</span><span class="p">:]</span>
         <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert parameter fields into a dictionary.</span>
 
@@ -1746,7 +1746,7 @@ p.as_dict() # {"i": 1, "j": 2}</p>
 <span class="normal">650</span>
 <span class="normal">651</span>
 <span class="normal">652</span>
-<span class="normal">653</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="normal">653</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert parameter fields into a dictionary.</span>
 
@@ -1865,7 +1865,7 @@ p.as_dict() # {"i": 1, "j": 2}</p>
 <span class="normal">421</span>
 <span class="normal">422</span>
 <span class="normal">423</span>
-<span class="normal">424</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">build_help</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HelpWidget</span><span class="p">:</span>
+<span class="normal">424</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_help</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HelpWidget</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Build a widget for user guide. Once it is built, widget will be cached.</span>
 
@@ -1883,7 +1883,7 @@ p.as_dict() # {"i": 1, "j": 2}</p>
     <span class="k">if</span> <span class="n">ui_id</span> <span class="ow">in</span> <span class="n">_HELPS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="n">help_widget</span> <span class="o">=</span> <span class="n">_HELPS</span><span class="p">[</span><span class="n">ui_id</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">.help</span> <span class="kn">import</span> <span class="n">HelpWidget</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.help</span><span class="w"> </span><span class="kn">import</span> <span class="n">HelpWidget</span>
 
         <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">parent</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">native</span>
@@ -1971,7 +1971,7 @@ get_button(ui.method)</p>
 <span class="normal">476</span>
 <span class="normal">477</span>
 <span class="normal">478</span>
-<span class="normal">479</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_button</span><span class="p">(</span>
+<span class="normal">479</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_button</span><span class="p">(</span>
     <span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span> <span class="o">|</span> <span class="n">MethodType</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -2008,7 +2008,7 @@ get_button(ui.method)</p>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Widget </span><span class="si">{</span><span class="n">widget</span><span class="si">}</span><span class="s2"> does not have FunctionGui inside it.&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">widget</span><span class="o">.</span><span class="n">_unwrapped</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">magicclass.signature</span> <span class="kn">import</span> <span class="n">get_additional_option</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.signature</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_additional_option</span>
 
         <span class="n">opt</span> <span class="o">=</span> <span class="n">get_additional_option</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">ui</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="s2">&quot;into&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">opt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -2092,7 +2092,7 @@ get_function_gui(ui.method)</p>
 <span class="normal">518</span>
 <span class="normal">519</span>
 <span class="normal">520</span>
-<span class="normal">521</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_function_gui</span><span class="p">(</span>
+<span class="normal">521</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_function_gui</span><span class="p">(</span>
     <span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span> <span class="o">|</span> <span class="n">MethodType</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FunctionGuiPlus</span><span class="p">:</span>
@@ -2127,7 +2127,7 @@ get_function_gui(ui.method)</p>
     <span class="k">if</span> <span class="n">widget</span><span class="o">.</span><span class="n">mgui</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">widget</span><span class="o">.</span><span class="n">mgui</span>
 
-    <span class="kn">from</span> <span class="nn">._gui._base</span> <span class="kn">import</span> <span class="n">_build_mgui</span><span class="p">,</span> <span class="n">_create_gui_method</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">._gui._base</span><span class="w"> </span><span class="kn">import</span> <span class="n">_build_mgui</span><span class="p">,</span> <span class="n">_create_gui_method</span>
 
     <span class="n">func</span> <span class="o">=</span> <span class="n">_create_gui_method</span><span class="p">(</span><span class="n">ui</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
     <span class="n">mgui</span> <span class="o">=</span> <span class="n">_build_mgui</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">ui</span><span class="p">)</span>
@@ -2574,7 +2574,7 @@ to set width, height or margin without defining <strong>post_init</strong>.</p>
 <span class="normal">234</span>
 <span class="normal">235</span>
 <span class="normal">236</span>
-<span class="normal">237</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">magicclass</span><span class="p">(</span>
+<span class="normal">237</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">magicclass</span><span class="p">(</span>
     <span class="n">class_</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">layout</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;vertical&quot;</span><span class="p">,</span>
@@ -2652,7 +2652,7 @@ to set width, height or margin without defining <strong>post_init</strong>.</p>
 
     <span class="n">widget_type</span> <span class="o">=</span> <span class="n">WidgetType</span><span class="p">(</span><span class="n">widget_type</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">ClassGui</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">ClassGui</span><span class="p">]:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;magicclass can only wrap classes, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -2682,7 +2682,7 @@ to set width, height or margin without defining <strong>post_init</strong>.</p>
         <span class="n">newclass</span><span class="o">.</span><span class="vm">__annotations__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">annot</span><span class="p">)</span>
 
         <span class="nd">@functools_wraps</span><span class="p">(</span><span class="n">oldclass</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
-        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="c1"># Without &quot;app = &quot; Jupyter freezes after closing the window!</span>
             <span class="n">app</span> <span class="o">=</span> <span class="n">get_app</span><span class="p">()</span>  <span class="c1"># noqa: F841</span>
 
@@ -2769,7 +2769,7 @@ to set width, height or margin without defining <strong>post_init</strong>.</p>
 <span class="normal">265</span>
 <span class="normal">266</span>
 <span class="normal">267</span>
-<span class="normal">268</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">magiccontext</span><span class="p">(</span>
+<span class="normal">268</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">magiccontext</span><span class="p">(</span>
     <span class="n">class_</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">into</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2816,7 +2816,7 @@ to set width, height or margin without defining <strong>post_init</strong>.</p>
 <span class="normal">249</span>
 <span class="normal">250</span>
 <span class="normal">251</span>
-<span class="normal">252</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">magicmenu</span><span class="p">(</span>
+<span class="normal">252</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">magicmenu</span><span class="p">(</span>
     <span class="n">class_</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">close_on_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2862,7 +2862,7 @@ to set width, height or margin without defining <strong>post_init</strong>.</p>
 <span class="normal">280</span>
 <span class="normal">281</span>
 <span class="normal">282</span>
-<span class="normal">283</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">magictoolbar</span><span class="p">(</span>
+<span class="normal">283</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">magictoolbar</span><span class="p">(</span>
     <span class="n">class_</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">close_on_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2964,7 +2964,7 @@ used. By default the last operation will be repeated.</p>
 <span class="normal">545</span>
 <span class="normal">546</span>
 <span class="normal">547</span>
-<span class="normal">548</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">repeat</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">548</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">repeat</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Repeat last operation on GUI using recorded macro.</span>
 
@@ -3107,7 +3107,7 @@ recorded before. Value changed signal will not be emitted within this operation.
 <span class="normal">599</span>
 <span class="normal">600</span>
 <span class="normal">601</span>
-<span class="normal">602</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">update_widget_state</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">macro</span><span class="p">:</span> <span class="n">Macro</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">602</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_widget_state</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">macro</span><span class="p">:</span> <span class="n">Macro</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Update widget values based on a macro.</span>
 
@@ -3122,7 +3122,7 @@ recorded before. Value changed signal will not be emitted within this operation.
 <span class="sd">    macro : Macro or str, optional</span>
 <span class="sd">        An executable macro or string that dictates how GUI will be updated.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">macrokit</span> <span class="kn">import</span> <span class="n">Head</span><span class="p">,</span> <span class="n">Macro</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">macrokit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Head</span><span class="p">,</span> <span class="n">Macro</span>
 
     <span class="k">if</span> <span class="n">macro</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">macro</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">macro</span>

@@ -1394,12 +1394,12 @@
 clicked the corresponding button. Therefore, the building error cannot be detected
 in the "compile" time.</p>
 <p>To test if all the <code>FunctionGui</code>s can be built successfully, you can use <code>check_function_gui_buildable</code>.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
-<span class="kn">from</span> <span class="nn">magicclass.testing</span> <span class="kn">import</span> <span class="n">check_function_gui_buildable</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_function_gui_buildable</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">MyGui</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>  <span class="c1"># x is not annotated, so @magicgui will fail</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyGui</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>  <span class="c1"># x is not annotated, so @magicgui will fail</span>
         <span class="o">...</span>          <span class="c1"># to build a functional GUI.</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">MyGui</span><span class="p">()</span>
@@ -1413,12 +1413,12 @@ corresponding widgets. However, when you renamed some of the variables, IDE may 
 rename the docstrings automatically. This will cause the tooltips not matching the
 actual variables.</p>
 <p>To test if all the docstrings are correct, you can use <code>check_tooltip</code>.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
-<span class="kn">from</span> <span class="nn">magicclass.testing</span> <span class="kn">import</span> <span class="n">check_tooltip</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_tooltip</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">MyGui</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyGui</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        ......</span>
 
@@ -1435,23 +1435,23 @@ actual variables.</p>
 <h2 id="testing-preview-and-confirmation">Testing Preview and Confirmation</h2>
 <p><code>magic-class</code> natively supports method <a href="../preview/">preview</a> and <a href="../confirm/">confirmation</a>. These are again a runtime feature, so they is hard to be tested.</p>
 <p><code>FunctionGuiTester</code> is the class for this purpose.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">confirm</span><span class="p">,</span> <span class="n">impl_preview</span><span class="p">,</span> <span class="n">vfield</span>
-<span class="kn">from</span> <span class="nn">magicclass.testing</span> <span class="kn">import</span> <span class="n">FunctionGuiTester</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">confirm</span><span class="p">,</span> <span class="n">impl_preview</span><span class="p">,</span> <span class="n">vfield</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FunctionGuiTester</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">MyGui</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyGui</span><span class="p">:</span>
     <span class="c1"># confirm before run if x is too large</span>
     <span class="nd">@confirm</span><span class="p">(</span><span class="n">condition</span><span class="o">=</span><span class="s2">&quot;x&gt;100&quot;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
     <span class="c1"># method g has a preview function &quot;_g_preview&quot;</span>
-    <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">g</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
 
     <span class="nd">@impl_preview</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_g_preview</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_g_preview</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="n">old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># prerun</span>
         <span class="k">yield</span>

@@ -1391,7 +1391,7 @@
 <p>Adding tooltips is important for usability. If you are going to add all the tooltip
 naively, you will have to set <code>tooltip</code> property for every widget.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="o">...</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
@@ -1408,11 +1408,11 @@ decorated with <code>@magicclass</code> and into menus when <code>@magicmenu</co
 used. Following <code>magicgui</code> tooltip generation procedure, function docstrings are very
 useful for adding tooltips to the buttons and the widgets appear in the pop-up function
 GUI. In the example below:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Description of the function.</span>
 
@@ -1431,31 +1431,31 @@ documentation using <code>sphinx</code> or <code>mkdocs</code>.</p>
 <h2 id="add-tooltips-to-classes">Add tooltips to classes</h2>
 <p>When magic-classes are nested, you may want to add tooltips to child widgets.
 This time, class docstrings will be used for the purpose.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Description of A.&quot;&quot;&quot;</span>
 
     <span class="nd">@magicclass</span>
-    <span class="k">class</span> <span class="nc">B</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">B</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Description of B.&quot;&quot;&quot;</span>
 </code></pre></div>
 <h2 id="add-tooltips-to-fields">Add tooltips to fields</h2>
 <p>Another important component of magic-classes are fields. In a naive way, you'll
 have to set <code>"tooltip"</code> options for every field.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;tooltip&quot;</span><span class="p">:</span> <span class="s2">&quot;Description of what x is.&quot;</span><span class="p">})</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;tooltip&quot;</span><span class="p">:</span> <span class="s2">&quot;Description of what y is.&quot;</span><span class="p">})</span>
 </code></pre></div>
 <p>Again, this can also be substituted with docstrings of class itself.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Description of this class.</span>
 

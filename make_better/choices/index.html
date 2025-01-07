@@ -1392,10 +1392,10 @@
 <p>Some <code>magicgui</code> widgets, such as <code>ComboBox</code> and <code>Select</code>, support <code>"choices"</code> option.
 This option not only accept static choices like <code>choices=["a", "b", "c"]</code> but choices
 that can be dynamically changed are also supported by giving a choice-getter function.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">ComboBox</span>
-<span class="kn">import</span> <span class="nn">random</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicgui.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">ComboBox</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
 
-<span class="k">def</span> <span class="nf">_get_choices</span><span class="p">(</span><span class="n">widget</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_choices</span><span class="p">(</span><span class="n">widget</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="c1"># prepare choices randomly.</span>
     <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">choices</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
@@ -1404,10 +1404,10 @@ that can be dynamically changed are also supported by giving a choice-getter fun
 <p>In the example above, choices of the <code>ComboBox</code> widget are defined by the <code>_get_choices</code>
 function and will be resampled when <code>reset_choices</code> is called.</p>
 <p>If you want to create <code>FunctionGui</code> with dynamic choices, your code will look like this.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicgui</span> <span class="kn">import</span> <span class="n">magicgui</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicgui</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicgui</span>
 
 <span class="nd">@magicgui</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="n">_get_choices</span><span class="p">})</span>
-<span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;do something&quot;&quot;&quot;</span>
 </code></pre></div>
 <p>To resample choices, you only have to call the <code>reset_choices</code> method on the parent
@@ -1422,28 +1422,28 @@ set using <code>set_options</code> wrapper as usual.</p>
 <p>Following example is a simple file explorer made of <code>magicclass</code>. Since you have to
 reset choices every time current directory is changed, the <code>"chocies"</code> options is very
 important.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">set_options</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">set_options</span>
 
 <span class="n">RETURN</span> <span class="o">=</span> <span class="s2">&quot;../&quot;</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>  <span class="c1"># get current directory</span>
 
-    <span class="k">def</span> <span class="nf">_get_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cd</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">RETURN</span><span class="p">]</span>
 
     <span class="nd">@set_options</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="n">_get_files</span><span class="p">})</span>
-    <span class="k">def</span> <span class="nf">set_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">f</span> <span class="o">==</span> <span class="n">RETURN</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_cd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cd</span><span class="p">)</span>  <span class="c1"># move back to the parent directory</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_cd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cd</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>  <span class="c1"># go to new directory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_choices</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">show_current_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_current_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cd</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="choices-in-magicfield">Choices in MagicField</h2>
@@ -1452,21 +1452,21 @@ important.</p>
 field objects.</p>
 <p>Following example is a file explorer similar to the previous one but defined using
 fields.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">set_options</span><span class="p">,</span> <span class="n">field</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">RadioButtons</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">set_options</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicgui.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">RadioButtons</span>
 
 <span class="n">RETURN</span> <span class="o">=</span> <span class="s2">&quot;../&quot;</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">_get_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cd</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">RETURN</span><span class="p">]</span>
 
     <span class="n">cd</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">enabled</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">files</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">RadioButtons</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="n">_get_files</span><span class="p">})</span>
 
-    <span class="k">def</span> <span class="nf">goto</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">goto</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">value</span>
         <span class="k">if</span> <span class="n">f</span> <span class="o">==</span> <span class="n">RETURN</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cd</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cd</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># move back to the parent directory</span>

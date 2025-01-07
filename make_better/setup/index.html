@@ -1297,15 +1297,15 @@
 
 <h1 id="complicated-settings-of-dialogs">Complicated Settings of Dialogs</h1>
 <p>GUIs built by <code>@magicgui</code> can be customized later.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicgui</span> <span class="kn">import</span> <span class="n">magicgui</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicgui</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicgui</span>
 
 <span class="nd">@magicgui</span>
-<span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
 
 <span class="c1"># connect signals</span>
 <span class="nd">@func</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span>
-<span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
     <span class="n">func</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">val</span>
 
 <span class="c1"># add widgets</span>
@@ -1313,39 +1313,39 @@
 </code></pre></div>
 <p>Of course, you can do this customization by calling <code>get_function_gui</code> inside
 <code>__post_init__</code>.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">get_function_gui</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">get_function_gui</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">gui</span> <span class="o">=</span> <span class="n">get_function_gui</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">)</span>
         <span class="n">gui</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="nb">print</span><span class="p">)</span>  <span class="c1"># setup the dialog for `func`</span>
 
-    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
 </code></pre></div>
 <p>But the better solution is to use <code>@setup_function_gui</code> decorator.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">setup_function_gui</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">setup_function_gui</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
     <span class="nd">@setup_function_gui</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_setup_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mgui</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mgui</span><span class="p">):</span>
         <span class="n">mgui</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="nb">print</span><span class="p">)</span>
 </code></pre></div>
 <p>This can be done outside the class.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">setup_function_gui</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">setup_function_gui</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
 <span class="nd">@setup_function_gui</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">func</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_setup_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mgui</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_setup_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mgui</span><span class="p">):</span>
     <span class="n">mgui</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="nb">print</span><span class="p">)</span>
 </code></pre></div>
 

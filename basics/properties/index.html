@@ -1390,16 +1390,16 @@
 <h1 id="use-magicproperty-in-magic-class">Use magicproperty in magic-class</h1>
 <p>In <code>magicclass</code>, properties will not be conveted into widgets. The reason for this is
 that properties are usually used to get references to one of the child widgets.
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="nd">@magicclass</span>
-    <span class="k">class</span> <span class="nc">B</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">B</span><span class="p">:</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">bx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="o">.</span><span class="n">x</span>
 </code></pre></div></p>
 <p>However, another property-like class <code>magicproperty</code> is available to build
@@ -1411,24 +1411,24 @@ a <code>FunctionGui</code>-like widget.</p>
 <h2 id="how-to-use-magicproperty">How to Use <code>magicproperty</code></h2>
 <p>Basically, it is used exactly the same as the built-in <code>property</code> class, except that you
 have to provide at least one type annotation for widget creation.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magicproperty</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magicproperty</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="nd">@magicproperty</span>
-    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span>
 
     <span class="nd">@x</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">val</span>
 
     <span class="nd">@magicproperty</span>
-    <span class="k">def</span> <span class="nf">string</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">string</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_s</span>
 
     <span class="nd">@string</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_s</span> <span class="o">=</span> <span class="n">val</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
@@ -1443,40 +1443,40 @@ have to provide at least one type annotation for widget creation.</p>
 <p><code>magicproperty</code> can be configured similar to <code>magicgui</code>. Here's some examples of how to
 configure.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="c1"># set widget label</span>
     <span class="nd">@magicproperty</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="o">...</span>
 
     <span class="c1"># widget type and options</span>
     <span class="nd">@magicproperty</span><span class="p">(</span><span class="n">widget_type</span><span class="o">=</span><span class="s2">&quot;Slider&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
-    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="o">...</span>
 
     <span class="c1"># auto-calling</span>
     <span class="nd">@magicproperty</span><span class="p">(</span><span class="n">auto_call</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="o">...</span>
 
     <span class="c1"># customize the button text</span>
     <span class="nd">@magicproperty</span><span class="p">(</span><span class="n">call_button</span><span class="o">=</span><span class="s2">&quot;update x value&quot;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="o">...</span>
 </code></pre></div>
 <h2 id="setter-only-property">Setter-only property</h2>
 <p>Although it's rare, built-in <code>property</code> can be setter-only. In this case, you
 can only set a value and getting a value is forbidden.</p>
-<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="n">x</span> <span class="o">=</span> <span class="nb">property</span><span class="p">()</span>
 
     <span class="nd">@x</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;set x to&quot;</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
 
     <span class="c1"># python &gt;= 3.9</span>
     <span class="nd">@property</span><span class="p">()</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;set x to&quot;</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
 
 <span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
@@ -1486,16 +1486,16 @@ can only set a value and getting a value is forbidden.</p>
 <p>Unlike <code>property</code>, however, the getter of <code>magicproperty</code> doesn't need to be
 defined because widget itself has its own value.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">magicproperty</span><span class="p">(</span><span class="n">widget_type</span><span class="o">=</span><span class="s2">&quot;Slider&quot;</span><span class="p">)</span>
 
     <span class="nd">@x</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;set x to&quot;</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
 
     <span class="c1"># python &gt;= 3.9</span>
     <span class="nd">@magicproperty</span><span class="p">(</span><span class="n">widget_type</span><span class="o">=</span><span class="s2">&quot;Slider&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;set x to&quot;</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
 
 <span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
@@ -1508,7 +1508,7 @@ an additional attribute <code>_x</code> for the property <code>x</code>.</p>
 <p class="admonition-title">Note</p>
 <p>You can even create a <code>magicproperty</code> without any descriptors.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">magicproperty</span><span class="p">(</span><span class="n">annotation</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">magicproperty</span><span class="p">(</span><span class="n">widget_type</span><span class="o">=</span><span class="s2">&quot;RangeEdit&quot;</span><span class="p">)</span>
 </code></pre></div>

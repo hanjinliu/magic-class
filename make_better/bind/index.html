@@ -1391,14 +1391,14 @@
 <p>In <code>magicgui</code>, you can bind values to function arguments instead of annotating them. The
 <code>"bind"</code> option is useful when the parameter is determined programatically, such as
 time, random value or parameters in other widgets.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicgui</span> <span class="kn">import</span> <span class="n">magicgui</span>
-<span class="kn">import</span> <span class="nn">time</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicgui</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicgui</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 
-<span class="k">def</span> <span class="nf">get_time</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_time</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
 <span class="nd">@magicgui</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">get_time</span><span class="p">})</span>
-<span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 </code></pre></div>
 <p>Same grammar also works in magic-class. Furthermore, there are more options here. Since
@@ -1409,20 +1409,20 @@ works with these options.</p>
 <p>If a method defined in a class is given as a bind option, magic-class calls it as an
 instance method every time the value is accessed. A bind option should be set using
 <code>set_options</code> wrapper as usual.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">set_options</span>
-<span class="kn">import</span> <span class="nn">time</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">set_options</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">t_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_get_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
         <span class="c1"># To avoid being added as a widget, make this method private.</span>
         <span class="k">return</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_start</span>
 
     <span class="nd">@set_options</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">_get_time</span><span class="p">})</span>
-    <span class="k">def</span> <span class="nf">print_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 </code></pre></div>
 <p>One of the advantages of this method is reproducibility of macro. In the example above,
@@ -1444,8 +1444,8 @@ ui.print_time(2.3758413791656494)
 widgets. If a function need some information from the viewer, you can
 record the viewer's state.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Plugin</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">_get_last_shapes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Plugin</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_last_shapes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
         <span class="n">viewer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_viewer</span>
         <span class="c1"># ndarray will not be recorded as concrete values by default, to avoid recording very</span>
         <span class="c1"># large arrays. You have to convert it to a list, or use &quot;register_type&quot; function in</span>
@@ -1453,7 +1453,7 @@ record the viewer's state.</p>
         <span class="k">return</span> <span class="n">viewer</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s2">&quot;Shapes&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
     <span class="nd">@set_options</span><span class="p">(</span><span class="n">rectangle</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">_get_last_shapes</span><span class="p">})</span>
-    <span class="k">def</span> <span class="nf">read_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rectangle</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rectangle</span><span class="p">):</span>
         <span class="o">...</span>
 </code></pre></div>
 </div>
@@ -1471,38 +1471,38 @@ want to do this like:</p>
 <p>An option to solve this problem is to define getter methods like <code>get_a_value</code> and
 <code>get_b_value</code> and bind them to the <code>call</code> method. But there is a way that is much
 simpler: bind field objects directly (See also <a href="../../basics/fields/">field</a>).</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">set_options</span><span class="p">,</span> <span class="n">field</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">set_options</span><span class="p">,</span> <span class="n">field</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Add</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Add</span><span class="p">:</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">b</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
 
     <span class="nd">@set_options</span><span class="p">(</span><span class="n">x0</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">a</span><span class="p">},</span> <span class="n">x1</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">b</span><span class="p">})</span>
-    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">x0</span> <span class="o">+</span> <span class="n">x1</span><span class="p">)</span>
 </code></pre></div>
 <p>In this example, values <code>x0</code> and <code>x1</code> is determined by refering to <code>a.value</code> and
 <code>b.value</code>.</p>
 <h2 id="use-annotated-type">Use Annotated Type</h2>
 <p><code>magicgui</code> supports <code>Annotated</code> type, which makes GUI configurations much clearer.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Annotated</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span>
 <span class="c1"># from typing_extensions import Annotated  &lt;--- for Python 3.8</span>
 
 <span class="nd">@magicgui</span>
-<span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">i</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">i</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}]):</span>
     <span class="o">...</span>
 </code></pre></div>
 <p>In magic-class, you can also use <code>Annotated</code> for bind options.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Annotated</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Add</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Add</span><span class="p">:</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">b</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">x0</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">a</span><span class="p">}],</span>
         <span class="n">x1</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">b</span><span class="p">}],</span>

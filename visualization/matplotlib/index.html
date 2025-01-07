@@ -1391,7 +1391,7 @@
 <p><a href="https://matplotlib.org">matplotlib</a> is one of the most widely used data visualization
 libraries. I guess most  of the Python users know the basics of the library.</p>
 <p>For data visualization of simple data set, your can use the <code>Figure</code> widget.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass.widgets</span> <span class="kn">import</span> <span class="n">Figure</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Figure</span>
 </code></pre></div>
 <p>It has very simple API inherited from the original functions, such as <code>plt.plot(x, y)</code>
 or <code>plt.xlim(0, 100)</code>. It also support interactive plot.</p>
@@ -1416,13 +1416,13 @@ or <code>plt.xlim(0, 100)</code>. It also support interactive plot.</p>
 </code></pre></div>
 <h2 id="use-figure-widget-in-magic-class">Use Figure Widget in Magic Class</h2>
 <p>In most cases, you'll use <code>field</code> to create a <code>matplotlib</code> figure widget in your GUI.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="n">plt</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">Figure</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span>
 </code></pre></div>
 <h2 id="use-multiple-axes">Use Multiple Axes</h2>
@@ -1439,14 +1439,14 @@ itself, you'll have to call <code>draw</code> method to update the figure.</p>
 <span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>  <span class="c1"># update</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="n">plt</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">Figure</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;nrows&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;ncols&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">})</span>
 </code></pre></div>
 <h1 id="plot-api">Plot API</h1>
 <p>For the simplest usage, you can use <code>plot_api</code> submodule. Its API is almost identical to
 those in <code>matplotlib.pyplot</code>.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># instead of import matplotlib.pyplot as plt</span>
-<span class="kn">import</span> <span class="nn">magicclass.plot_api</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">magicclass.plot_api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
@@ -1455,7 +1455,7 @@ those in <code>matplotlib.pyplot</code>.</p>
 <p>The current figure widget is available with <code>gcw()</code> function. It returns the
 <code>magicclass.widgets.Figure</code> widget.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># add figure to a widget.</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">Container</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicgui.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Container</span>
 
 <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcw</span><span class="p">()</span>
 <span class="n">cnt</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span><span class="n">widgets</span><span class="o">=</span><span class="p">[</span><span class="n">fig</span><span class="p">])</span>

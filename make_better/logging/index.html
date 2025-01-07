@@ -1410,14 +1410,14 @@
 science, it is also helpful to show the results with rich text, tables,
 and figures.</p>
 <p>In <code>magicclass</code>, you can use the logger widget to show the rich messages.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass.widgets</span> <span class="kn">import</span> <span class="n">Logger</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>  <span class="c1"># create a logger widget.</span>
 <span class="n">log</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>  <span class="c1"># show the logger widget.</span>
 </code></pre></div>
 <h2 id="print-texts">Print texts</h2>
 <p>There are several ways to show text messages.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass.widgets</span> <span class="kn">import</span> <span class="n">Logger</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>  <span class="c1"># create a logger widget.</span>
 
@@ -1433,7 +1433,7 @@ widget, you can use the <code>set_stdout</code> context manager.</p>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">)</span>  <span class="c1"># print the message.</span>
 </code></pre></div>
 <p><code>set_logger</code> context manager works similarly.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">logging</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
 <span class="k">with</span> <span class="n">log</span><span class="o">.</span><span class="n">set_logger</span><span class="p">():</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">)</span>
@@ -1453,7 +1453,7 @@ widget, you can use the <code>set_stdout</code> context manager.</p>
 <h2 id="plotting">Plotting</h2>
 <p>The <code>set_plt</code> context manager can be used to show the <code>matplotlib</code> plots in the logger
 widget.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
 
@@ -1466,7 +1466,7 @@ widget.</p>
 <h1 id="use-logging-submodule">Use <code>logging</code> Submodule</h1>
 <p><code>magicclass</code> provides a submodule <code>logging</code> to use the logger widget easily. Most of
 the methods are the same as the standard <code>logging</code> module.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">logging</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">logging</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;your-app-name&quot;</span><span class="p">)</span>
 <span class="n">logger</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>  <span class="c1"># show the logger widget.</span>

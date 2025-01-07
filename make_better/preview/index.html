@@ -1412,25 +1412,25 @@ or <code>magic-class</code>.</p>
 define a preview function and directly integrate it into another function easily.</p>
 <h2 id="preview-a-file">Preview a File</h2>
 <div class="highlight"><pre><span></span><code><span class="nd">@impl_preview</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_f_prev</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xxx</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_f_prev</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xxx</span><span class="p">):</span>
     <span class="o">...</span>
 </code></pre></div>
 <p>will define a previewer <code>_f_prev</code> for function <code>f</code>. Arguments of <code>_f_prev</code> must be
 composed of those in <code>f</code>. The <code>_f_prev</code> can be called from the <code>FunctionGui</code> created by
 <code>f</code>, as a preview button above the call button.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">Table</span>  <span class="c1"># for preview</span>
-<span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">impl_preview</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicgui.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>  <span class="c1"># for preview</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">impl_preview</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">summarize_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">summarize_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">]))</span>  <span class="c1"># print summary</span>
 
     <span class="nd">@impl_preview</span><span class="p">(</span><span class="n">summarize_csv</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_preview_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_preview_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">Table</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>  <span class="c1"># open table widget as the preview</span>
 </code></pre></div>
@@ -1438,38 +1438,38 @@ composed of those in <code>f</code>. The <code>_f_prev</code> can be called from
 <code>calc_something</code> that calculate something using a data frame and a input parameter like
 <code>calc_something(df, param)</code>, the <code>param</code> in not needed for preview.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">calc_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calc_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">calc_something</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
     <span class="nd">@impl_preview</span><span class="p">(</span><span class="n">calc_csv</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_preview_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>  <span class="c1"># &quot;param&quot; is not needed here</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_preview_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>  <span class="c1"># &quot;param&quot; is not needed here</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">Table</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </code></pre></div>
 <p>You can mark the same function as a previewer for multiple functions.
 You can also set the text of preview button using <code>text=...</code> argument.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">summarize_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">summarize_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">]))</span>
 
-    <span class="k">def</span> <span class="nf">calc_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calc_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">calc_something</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">plot_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 
     <span class="nd">@impl_preview</span><span class="p">(</span><span class="n">summarize_csv</span><span class="p">)</span>
     <span class="nd">@impl_preview</span><span class="p">(</span><span class="n">calc_csv</span><span class="p">)</span>
     <span class="nd">@impl_preview</span><span class="p">(</span><span class="n">plot_csv</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;preview CSV&quot;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_preview_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>  <span class="c1"># &quot;param&quot; is not needed here</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_preview_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>  <span class="c1"># &quot;param&quot; is not needed here</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">Table</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </code></pre></div>
@@ -1477,26 +1477,26 @@ You can also set the text of preview button using <code>text=...</code> argument
 <p>This is essentially same as 1, except that the preview function will update some parts
 of the GUI. Following example shows an incomplete implementation of a previewable
 Gaussian filtering.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">impl_preview</span><span class="p">,</span> <span class="n">vfield</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">ndimage</span> <span class="k">as</span> <span class="n">ndi</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">impl_preview</span><span class="p">,</span> <span class="n">vfield</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicgui.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">ndimage</span> <span class="k">as</span> <span class="n">ndi</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="n">img</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">Image</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># sample image</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
         <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;img&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min_width</span> <span class="o">=</span> <span class="mi">100</span>
         <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;img&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min_height</span> <span class="o">=</span> <span class="mi">100</span>
 
-    <span class="k">def</span> <span class="nf">gaussian_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gaussian_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run Gaussian filter inplace&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">img</span> <span class="o">=</span> <span class="n">ndi</span><span class="o">.</span><span class="n">gaussian_filter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
 
     <span class="nd">@impl_preview</span><span class="p">(</span><span class="n">gaussian_filter</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_prerun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prerun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gaussian_filter</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
@@ -1506,11 +1506,11 @@ Gaussian filtering.</p>
 second preview and the actual run are affected by the previous previews.</p>
 <p>To restore the original GUI state, you can use a generator function.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="o">...</span>
 
     <span class="nd">@impl_preview</span><span class="p">(</span><span class="n">gaussian_filter</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_prerun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prerun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
         <span class="n">old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">img</span>  <span class="c1"># store current image</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gaussian_filter</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>  <span class="c1"># run preview</span>
         <span class="k">yield</span>  <span class="c1"># prerun called here</span>
@@ -1524,11 +1524,11 @@ state. The logic of the preview function is up to you.</p>
 <h2 id="auto-call">Auto call</h2>
 <p>In the example above, it's nicer to auto-call the preview function. <code>impl_preview</code> has an option <code>auto_call=True</code> to implement this.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="o">...</span>
 
     <span class="nd">@impl_preview</span><span class="p">(</span><span class="n">gaussian_filter</span><span class="p">,</span> <span class="n">auto_call</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_prerun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prerun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
         <span class="n">old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">img</span>  <span class="c1"># store current image</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gaussian_filter</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>  <span class="c1"># run preview</span>
         <span class="k">yield</span>  <span class="c1"># prerun called here</span>

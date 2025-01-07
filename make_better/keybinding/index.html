@@ -1413,16 +1413,16 @@ action in the menu so that bound function will be accessible via GUI.</p>
 keybindings, and like other wrappers, you don\'t have to worry about reducing code readability.</p>
 <h2 id="how-to-define-keybindings">How to Define Keybindings</h2>
 <p>All you have to do is to wrap methods with <code>bind_key</code> function.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">bind_key</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">bind_key</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Ctrl+A&quot;</span><span class="p">)</span> <span class="c1"># Qt-style</span>
-    <span class="k">def</span> <span class="nf">function_1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">function_1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Ctrl-B&quot;</span><span class="p">)</span> <span class="c1"># napari-style</span>
-    <span class="k">def</span> <span class="nf">function_2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">function_2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 </code></pre></div>
 <div class="admonition note">
@@ -1435,62 +1435,62 @@ sure there is no collision between your keybindings and those in
 <p>Although private functions (functions whose names start with "_") will not be converted
 into widgets, it is very useful to define "invisible" shortcuts. A typical case is when
 you want to change widget values with shortcut.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">bind_key</span><span class="p">,</span> <span class="n">do_not_record</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">bind_key</span><span class="p">,</span> <span class="n">do_not_record</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">button</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">button</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Click this button to remove focus from the spin box.&quot;&quot;&quot;</span>
 
     <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Up&quot;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_increment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_increment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>
 
     <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Down&quot;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_decrement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_decrement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
 </code></pre></div>
 <p>Widget defined by this class is equipped with shortcuts that can change
 the value of <code>a</code> without clicking the spin box.</p>
 <h2 id="key-combos">Key combos</h2>
 <p>As Qt supports it, you can also define key combos.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">bind_key</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">bind_key</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Ctrl+K, Ctrl+L&quot;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">function_1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">function_1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="compatibility-with-other-features">Compatibility with Other Features</h2>
 <p>Keybindings are compatible with other functions in magic class.</p>
 <p>You can call parent methods by combining with <code>wraps</code> method (see
 <code class="interpreted-text" role="doc">/main/make_better/use_wraps</code>).</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magicmenu</span><span class="p">,</span> <span class="n">bind_key</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magicmenu</span><span class="p">,</span> <span class="n">bind_key</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="nd">@magicmenu</span>
-    <span class="k">class</span> <span class="nc">Menu</span><span class="p">:</span>
-        <span class="k">def</span> <span class="nf">some_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Menu</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">some_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
 
     <span class="nd">@Menu</span><span class="o">.</span><span class="n">wraps</span>
     <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Ctrl+A&quot;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">some_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">some_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="c1"># should be &quot;Main&quot;</span>
 </code></pre></div>
 <p>In this example, shortcut description appears in the menu.</p>
 <p><img alt="image" src="../../images/fig_6-1.png" /></p>
 <p>You can also bind values of fields or other methods (see <a href="../bind/">how to bind values</a>).</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">bind_key</span><span class="p">,</span> <span class="n">field</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Annotated</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">bind_key</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
     <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Ctrl-A&quot;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">print_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">a</span><span class="p">}]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">a</span><span class="p">}]):</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
 </code></pre></div>
 <p>Function calls triggered by shortcut are also recorded in macro.</p>

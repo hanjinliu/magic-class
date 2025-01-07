@@ -1413,11 +1413,11 @@ that were not available in <code>magicgui</code>.</p>
 type annotation <code>@magicgui</code> can create an <code>OptionalWidget</code>, which has a
 checkbox and an widget of any type. It represents <code>None</code> if the checkbox
 is checked.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicgui</span> <span class="kn">import</span> <span class="n">magicgui</span>
-<span class="kn">from</span> <span class="nn">magicclass.types</span> <span class="kn">import</span> <span class="n">Optional</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicgui</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicgui</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="nd">@magicgui</span>
-<span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
 <span class="n">func</span>
 </code></pre></div>
@@ -1425,11 +1425,11 @@ is checked.</p>
 <p>The "Use default value" text can be changed by "text" option.
 Options of the inner widget (<code>SpinBox</code> in this example) can be set by
 "options" option.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicgui</span> <span class="kn">import</span> <span class="n">magicgui</span>
-<span class="kn">from</span> <span class="nn">magicclass.types</span> <span class="kn">import</span> <span class="n">Optional</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicgui</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicgui</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="nd">@magicgui</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Don&#39;t need a value&quot;</span><span class="p">,</span> <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}})</span>
-<span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
 <span class="n">func</span>
 </code></pre></div>
@@ -1439,11 +1439,11 @@ Options of the inner widget (<code>SpinBox</code> in this example) can be set by
 is an alias of <code>Union[Iterable[float], str]</code> and is converted into
 <code>ColorEdit</code> widget. <code>ColorEdit</code> behaves very similar to the color editor
 in <code>napari</code>'s layer control.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicgui</span> <span class="kn">import</span> <span class="n">magicgui</span>
-<span class="kn">from</span> <span class="nn">magicclass.types</span> <span class="kn">import</span> <span class="n">Color</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicgui</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicgui</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Color</span>
 
 <span class="nd">@magicgui</span>
-<span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">col</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">col</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
 <span class="n">func</span>
 </code></pre></div>
@@ -1451,35 +1451,35 @@ in <code>napari</code>'s layer control.</p>
 <h2 id="path-type"><code>Path</code> type</h2>
 <p><code>pathlib.Path</code> is a type supported by <code>magicgui</code> by default. However, you usually have
 to specify the <code>mode</code> and <code>filter</code> parameters.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicgui</span> <span class="kn">import</span> <span class="n">magicgui</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicgui</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicgui</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="nd">@magicgui</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;mode&quot;</span><span class="p">:</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="s2">&quot;filter&quot;</span><span class="p">:</span> <span class="s2">&quot;Image files (*.png)&quot;</span><span class="p">})</span>
-<span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 </code></pre></div>
 <p>In <code>magicclass</code> you can use <code>magicclass.types.Path</code> type instead. It is identical to
 <code>pathlib.Path</code> when used as a constructor, but supports many other advanced annotations.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass.types</span> <span class="kn">import</span> <span class="n">Path</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="c1"># mode=&quot;r&quot; and filter=&quot;Image files (*.png)</span>
 <span class="nd">@magicgui</span>
-<span class="k">def</span> <span class="nf">func1</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="o">.</span><span class="n">Read</span><span class="p">[</span><span class="s2">&quot;Image files (*.png)&quot;</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">func1</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="o">.</span><span class="n">Read</span><span class="p">[</span><span class="s2">&quot;Image files (*.png)&quot;</span><span class="p">]):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;reading:&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
 
 <span class="c1"># mode=&quot;w&quot; and filter=&quot;Image files (*.png)</span>
 <span class="nd">@magicgui</span>
-<span class="k">def</span> <span class="nf">func2</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="o">.</span><span class="n">Save</span><span class="p">[</span><span class="s2">&quot;Image files (*.png)&quot;</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">func2</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="o">.</span><span class="n">Save</span><span class="p">[</span><span class="s2">&quot;Image files (*.png)&quot;</span><span class="p">]):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;saving at:&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
 
 <span class="c1"># mode=&quot;rm&quot; and filter=&quot;Image files (*.png)</span>
 <span class="nd">@magicgui</span>
-<span class="k">def</span> <span class="nf">func3</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="o">.</span><span class="n">Multiple</span><span class="p">[</span><span class="s2">&quot;Image files (*.png)&quot;</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">func3</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="o">.</span><span class="n">Multiple</span><span class="p">[</span><span class="s2">&quot;Image files (*.png)&quot;</span><span class="p">]):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;selected files:&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
 
 <span class="c1"># mode=&quot;d&quot;</span>
 <span class="nd">@magicgui</span>
-<span class="k">def</span> <span class="nf">func4</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="o">.</span><span class="n">Dir</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">func4</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="o">.</span><span class="n">Dir</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;selected directory =&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="exprstr-type"><code>ExprStr</code> type</h2>
@@ -1487,14 +1487,14 @@ to specify the <code>mode</code> and <code>filter</code> parameters.</p>
 type will be mapped to <code>EvalLineEdit</code>, which supports evaluation in any namespace.</p>
 <p>To activate auto-completion, you can use <code>ExprStr.In</code> for the type annotation. <code>ExprStr</code>
 instance has <code>eval</code> method to evaluate the expression.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">magicgui</span> <span class="kn">import</span> <span class="n">magicgui</span>
-<span class="kn">from</span> <span class="nn">magicclass.types</span> <span class="kn">import</span> <span class="n">ExprStr</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicgui</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicgui</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExprStr</span>
 
 <span class="n">namespace</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="n">np</span><span class="p">}</span>
 
 <span class="nd">@magicgui</span>
-<span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">ExprStr</span><span class="o">.</span><span class="n">In</span><span class="p">[</span><span class="n">namespace</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">ExprStr</span><span class="o">.</span><span class="n">In</span><span class="p">[</span><span class="n">namespace</span><span class="p">]):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">ExprStr</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">namespace</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
 <span class="n">func</span>
 </code></pre></div>

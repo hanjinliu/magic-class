@@ -1472,19 +1472,19 @@ defined using the GUI macro strings.</p>
 </div>
 <h3 id="standard-methods">Standard methods</h3>
 <p>For standard methods, just return the undo callback.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
-<span class="kn">from</span> <span class="nn">magicclass.undo</span> <span class="kn">import</span> <span class="n">undo_callback</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.undo</span><span class="w"> </span><span class="kn">import</span> <span class="n">undo_callback</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="o">...</span>
 
-    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
         <span class="c1">########################</span>
         <span class="c1">#   forward function   #</span>
         <span class="c1">########################</span>
         <span class="nd">@undo_callback</span>
-        <span class="k">def</span> <span class="nf">undo</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">undo</span><span class="p">():</span>
             <span class="c1">########################</span>
             <span class="c1">#   reverse function   #</span>
             <span class="c1">########################</span>
@@ -1497,19 +1497,19 @@ function is that the reverse function usually needs the local variables
 of the forward function to return the GUI state to the original.</p>
 </div>
 <p>An example of undoable setter method is like this:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
-<span class="kn">from</span> <span class="nn">magicclass.undo</span> <span class="kn">import</span> <span class="n">undo_callback</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.undo</span><span class="w"> </span><span class="kn">import</span> <span class="n">undo_callback</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="k">def</span> <span class="nf">set_x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="n">old_state</span> <span class="o">=</span> <span class="n">x</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">x</span>
         <span class="nd">@undo_callback</span>
-        <span class="k">def</span> <span class="nf">undo</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">undo</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">old_state</span>
         <span class="k">return</span> <span class="n">undo</span>
 </code></pre></div>
@@ -1517,24 +1517,24 @@ of the forward function to return the GUI state to the original.</p>
 <p>When you use <a href="../workers/">multi-threading</a>, you'll usually return returned-callbacks,
 which seems to collide with the undo callback. In this case, you can return an undo
 callback from the returned-callback.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass.utils</span> <span class="kn">import</span> <span class="n">thread_worker</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">thread_worker</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="nd">@thread_worker</span>
-    <span class="k">def</span> <span class="nf">long_running_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">long_running_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
         <span class="c1">########################</span>
         <span class="c1">#   forward function   #</span>
         <span class="c1">########################</span>
 
         <span class="nd">@undo_callback</span>
-        <span class="k">def</span> <span class="nf">undo</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">undo</span><span class="p">():</span>
             <span class="c1">########################</span>
             <span class="c1">#   reverse function   #</span>
             <span class="c1">########################</span>
 
         <span class="nd">@thread_worker</span><span class="o">.</span><span class="n">callback</span>
-        <span class="k">def</span> <span class="nf">out</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">out</span><span class="p">():</span>
             <span class="c1">########################</span>
             <span class="c1">#   returned-callback  #</span>
             <span class="c1">########################</span>
@@ -1560,13 +1560,13 @@ two undoable methods <code>f</code>, <code>g</code> and a non-undoable method <c
 <p>Since undo operation is tightly connected to the macro, non-recordable methods will not
 added to undo stack, nor will they clear the undo stack when get called.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="nd">@do_not_record</span>
-    <span class="k">def</span> <span class="nf">non_recordable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">non_recordable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
 
-    <span class="k">def</span> <span class="nf">undoable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">undoable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nd">@undo_callback</span>
-        <span class="k">def</span> <span class="nf">out</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">out</span><span class="p">():</span>
             <span class="o">...</span>
         <span class="k">return</span> <span class="n">out</span>
                      <span class="c1"># Undo list / redo list</span>
@@ -1581,20 +1581,20 @@ added to undo stack, nor will they clear the undo stack when get called.</p>
 yourself. It is useful when the forward function is a long-running task.</p>
 <p>Following GUI can calculate the <code>_very_heavy_task</code> with the given <code>x</code> and show the
 result in the <code>self.result</code> widget.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
-<span class="kn">from</span> <span class="nn">magicclass.undo</span> <span class="kn">import</span> <span class="n">undo_callback</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.undo</span><span class="w"> </span><span class="kn">import</span> <span class="n">undo_callback</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="n">old_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_very_heavy_task</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">result</span>
 
         <span class="nd">@undo_callback</span>
-        <span class="k">def</span> <span class="nf">out</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">out</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">old_result</span>  <span class="c1"># undo</span>
 
         <span class="k">return</span> <span class="n">out</span>
@@ -1608,20 +1608,20 @@ result in the <code>self.result</code> widget.</p>
 <p>Function decorated by <code>magicclass.undo.undo_callback</code> has an attribute <code>with_redo</code>, which allows you to define the redo action similar to the getter/setter definition of
 <code>property</code>.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="n">old_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_very_heavy_task</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">result</span>
 
         <span class="nd">@undo_callback</span>
-        <span class="k">def</span> <span class="nf">out</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">out</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">old_result</span>  <span class="c1"># undo</span>
 
         <span class="nd">@out</span><span class="o">.</span><span class="n">with_redo</span>
-        <span class="k">def</span> <span class="nf">out</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">out</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">result</span>  <span class="c1"># redo</span>
 
         <span class="k">return</span> <span class="n">out</span>
@@ -1641,19 +1641,19 @@ place. However, there are some points that you have to be careful about.</p>
 <p>Do not macro-record undo/redo methods themselves.</p>
 <p>Recording undo/redo methods will block the undo stack from
 undo/redo execution.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">do_not_record</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">do_not_record</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># do some undoable stuff</span>
 
     <span class="nd">@do_not_record</span>  <span class="c1"># use this decorator to avoid recording</span>
-    <span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">undo</span><span class="p">()</span>
 
     <span class="nd">@do_not_record</span>
-    <span class="k">def</span> <span class="nf">redo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">redo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">redo</span><span class="p">()</span>
 </code></pre></div>
 </li>
@@ -1661,20 +1661,20 @@ undo/redo execution.</p>
 <p>Do not rely on the GUI state within the method.</p>
 <p>GUI state is the global state. Relying on the global state is very
 error prone. There's a bug in following code.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
-<span class="kn">from</span> <span class="nn">magicclass.undo</span> <span class="kn">import</span> <span class="n">undo_callback</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.undo</span><span class="w"> </span><span class="kn">import</span> <span class="n">undo_callback</span>
 
 <span class="c1"># widget that set &quot;value&quot; to &quot;inner_value&quot; when clicked.</span>
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="n">inner_value</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">value</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">apply_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">old_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inner_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
         <span class="nd">@undo_callback</span>
-        <span class="k">def</span> <span class="nf">out</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">out</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">inner_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">old_value</span>
         <span class="k">return</span> <span class="n">out</span>
 </code></pre></div>
@@ -1688,20 +1688,20 @@ error prone. There's a bug in following code.</p>
 <p>The reason is that <code>value</code> is a global state, which changes during undo/redo. To fix
 this, you can provide the value as a parameter to the method. The best way is to use
 <a href="../bind/">the bind options</a>.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
-<span class="kn">from</span> <span class="nn">magicclass.undo</span> <span class="kn">import</span> <span class="n">undo_callback</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Annotated</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.undo</span><span class="w"> </span><span class="kn">import</span> <span class="n">undo_callback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="n">inner_value</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">value</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">apply_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}]):</span>
         <span class="n">old_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inner_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
         <span class="nd">@undo_callback</span>
-        <span class="k">def</span> <span class="nf">out</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">out</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">inner_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">old_value</span>
         <span class="k">return</span> <span class="n">out</span>
 </code></pre></div>
@@ -1711,23 +1711,23 @@ this, you can provide the value as a parameter to the method. The best way is to
 <p>If you don't use <a href="#custom-redo-action">custom redo actions</a>, the redo operation
 fully relies on the macro string. If the macro string is not executable, the redo
 operation will fail. In following example, redo does not work.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">set_options</span><span class="p">,</span> <span class="n">vfield</span>
-<span class="kn">from</span> <span class="nn">magicclass.undo</span> <span class="kn">import</span> <span class="n">undo_callback</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">set_options</span><span class="p">,</span> <span class="n">vfield</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.undo</span><span class="w"> </span><span class="kn">import</span> <span class="n">undo_callback</span>
 
-<span class="k">def</span> <span class="nf">get_array</span><span class="p">(</span><span class="o">*</span><span class="n">_</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_array</span><span class="p">(</span><span class="o">*</span><span class="n">_</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="n">array</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="nd">@set_options</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">get_array</span><span class="p">})</span>
-    <span class="k">def</span> <span class="nf">show_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">old_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">array</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="nd">@undo_callback</span>
-        <span class="k">def</span> <span class="nf">out</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">out</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">old_str</span>
         <span class="k">return</span> <span class="n">out</span>
 </code></pre></div>
@@ -1735,19 +1735,19 @@ operation will fail. In following example, redo does not work.</p>
 can pass a list to the method.</p>
 <div class="highlight"><pre><span></span><code><span class="o">...</span>
 
-<span class="k">def</span> <span class="nf">get_array</span><span class="p">(</span><span class="o">*</span><span class="n">_</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_array</span><span class="p">(</span><span class="o">*</span><span class="n">_</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
 
 <span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="n">array</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="nd">@set_options</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">get_array</span><span class="p">})</span>
-    <span class="k">def</span> <span class="nf">show_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">old_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">array</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
         <span class="nd">@undo_callback</span>
-        <span class="k">def</span> <span class="nf">out</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">out</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">old_str</span>
         <span class="k">return</span> <span class="n">out</span>
 </code></pre></div>
