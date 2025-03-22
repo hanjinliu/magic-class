@@ -143,9 +143,9 @@ class QtLogger(QtW.QTextEdit):
             if menu:
                 menu.exec_(self.mapToGlobal(point))
 
-        self._last_save_path = None
-        self._finder_widget = None
-        self._anchor = None
+        self._last_save_path: Path | None = None
+        self._finder_widget: QFinderWidget | None = None
+        self._anchor: str | None = None
 
     def update(self, output: tuple[int, Printable]):
         output_type, obj = output
@@ -448,14 +448,6 @@ class Logger(Widget, logging.Handler):
             else:
                 formatter = lambda x: f"{x:.{precision}f}"
             html = table.to_html(header=header, index=index, float_format=formatter)
-            if html.startswith("<table "):
-                if width is None:
-                    html = '<table style="border-collapse: collapse" ' + html[6:]
-                else:
-                    html = (
-                        f'<table width="{width}" style="border-collapse: collapse" '
-                        + html[6:]
-                    )
         elif "polars" in sys.modules and isinstance(
             table, sys.modules["polars"].DataFrame
         ):
@@ -512,7 +504,7 @@ class Logger(Widget, logging.Handler):
                 f"<tr>{''.join(f'<td>{c}</td>' for c in row)}</tr>" for row in rows
             )
             html = (
-                f'<table width="{width}" style="border-collapse: collapse" border="1" class="dataframe">'
+                f'<table width="{width}" border="1" class="dataframe">'
                 f'<thead>{_head_html}</thead>'
                 f'<tbody>{_body_html}</tbody>'
                 f'</table>'
@@ -620,12 +612,10 @@ class Logger(Widget, logging.Handler):
                     logger.addHandler(hd)
 
     @overload
-    def set_plt(self, style: str | None) -> None:
-        ...
+    def set_plt(self, style: str | None) -> None: ...
 
     @overload
-    def set_plt(self, rc_context: dict[str, Any]) -> None:
-        ...
+    def set_plt(self, rc_context: dict[str, Any]) -> None: ...
 
     @contextmanager
     def set_plt(self, style: str | None = None, rc_context: dict[str, Any] = {}):
