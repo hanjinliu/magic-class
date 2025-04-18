@@ -2,7 +2,8 @@ from __future__ import annotations
 import numpy as np
 
 from vispy import scene
-from vispy.scene import visuals, ViewBox
+from vispy.scene import ViewBox
+from vispy.scene.visuals import Image as visuals_Image
 
 from .layer2d import Curve, Scatter, Histogram
 from ._base import HasViewBox, SceneCanvas, MultiPlot
@@ -260,7 +261,8 @@ class ImageItem(Has2DViewBox):
         self._viewbox.camera.aspect = 1.0
         self._viewbox.camera.flip = (False, True, False)
 
-        self._image = visuals.Image(cmap="gray", parent=self._viewbox.scene)
+        self._image = visuals_Image(cmap="gray", parent=self._viewbox.scene)
+        self._image.set_data(np.zeros((0, 0), dtype=np.float32))
         self._lock_contrast_limits = lock_contrast_limits
 
         title = scene.Label("", color="white", font_size=7)
@@ -407,6 +409,10 @@ def _check_xy(x, y):
 
 def _check_colors(face_color, edge_color, color):
     if color is None:
+        if face_color is None:
+            face_color = "white"
+        if edge_color is None:
+            edge_color = "black"
         return face_color, edge_color
     else:
         if face_color is None and edge_color is None:
