@@ -3,7 +3,8 @@ from __future__ import annotations
 from typing import Sequence
 import numpy as np
 from numpy.typing import ArrayLike
-from vispy.scene import visuals, ViewBox
+from vispy.scene import ViewBox
+from vispy.scene.visuals import LinePlot, Markers, Histogram
 from vispy.visuals import LinePlotVisual, MarkersVisual, HistogramVisual
 from vispy.color import get_color_dict
 from ._base import LayerItem
@@ -129,7 +130,7 @@ class Curve(PlotDataLayer):
         if symbol is None:
             face_color = None
         self._viewbox = viewbox
-        self._visual = visuals.LinePlot(
+        self._visual = LinePlot(
             np.stack([x, y], axis=1),
             color=edge_color,
             symbol=symbol,
@@ -157,7 +158,7 @@ class Scatter(PlotDataLayer):
     ) -> None:
         symbol = _SYMBOL_MAP.get(symbol, symbol)
         self._viewbox = viewbox
-        self._visual = visuals.Markers(
+        self._visual = Markers(
             pos=np.stack([x, y], axis=1),
             symbol=symbol,
             parent=self._viewbox.scene,
@@ -180,7 +181,7 @@ class Histogram(LayerItem):
         name: str | None = None,
     ) -> None:
         self._viewbox = viewbox
-        self._visual: HistogramVisual = visuals.Histogram(
+        self._visual: HistogramVisual = Histogram(
             data,
             bins=bins,
             parent=self._viewbox.scene,
