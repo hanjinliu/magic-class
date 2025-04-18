@@ -214,6 +214,20 @@ def test_callable_desc():
     a.f(1, "a")
     a.g(1, "a")
 
+def test_progress_desc_in_callback():
+    @magicclass
+    class A:
+        @thread_worker.with_progress()
+        def f(self, i: int):
+            for i in range(3):
+                time.sleep(0.01)
+                yield thread_worker.description(f"test {i}")
+                time.sleep(0.01)
+            return thread_worker.callback(lambda: 0).with_desc("test finished")
+
+    a = A()
+    a.f(1)
+
 def test_error(qtbot: QtBot):
     @magicclass(error_mode="stderr")
     class A:

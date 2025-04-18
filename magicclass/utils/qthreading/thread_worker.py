@@ -231,23 +231,26 @@ class thread_worker(Callable, Generic[_P, _R]):
 
         Should be used as follow.
 
-        >>> @thread_worker
-        >>> def func(self):
-        ...     @thread_worker.callback
-        ...     def cb():
-        ...         # update GUI
-        ...     yield cb
+        ```python
+        @thread_worker
+        def func(self):
+            @thread_worker.callback
+            def cb():
+                # update GUI
+            yield cb
+        ```
 
         You can call `arun` to run the callback in a similar syntax as a
         `thread_worker`.
 
-        >>> @thread_worker
-        >>> def func(self):
-        ...     @thread_worker.callback
-        ...     def cb():
-        ...         # update GUI
-        ...     yield from cb.arun()
-
+        ```python
+        @thread_worker
+        def func(self):
+            @thread_worker.callback
+            def cb():
+                # update GUI
+            yield from cb.arun()
+        ```
         """
         if not callable(callback):
             raise TypeError(f"{callback} is not callable.")
@@ -262,12 +265,14 @@ class thread_worker(Callable, Generic[_P, _R]):
         This function is a shorthand for `thread_worker.callback` only with description.
         It is useful when you want to set the description of the progressbar.
 
-        >>> @thread_worker
-        >>> def func(self):
-        ...     time.sleep(1)
-        ...     yield thread_worker.description("step 1")
-        ...     time.sleep(1)
-        ...     return thread_worker.description("step 1")
+        ````python
+        @thread_worker
+        def func(self):
+            time.sleep(1)
+            yield thread_worker.description("step 1")
+            time.sleep(1)
+            return thread_worker.description("step 1")
+        ```
         """
         return Callback(_do_nothing, desc=desc)
 

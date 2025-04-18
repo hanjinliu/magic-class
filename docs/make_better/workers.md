@@ -378,8 +378,42 @@ class Main:
     # instead of `@thread_worker(progress={"total": 10})`
     @thread_worker.with_progress(total=10)
     def func(self):
-    for i in range(10):
-        time.sleep(0.1)
+        for i in range(10):
+            time.sleep(0.1)
+```
+
+## Updating Progress Description
+
+You can set progress description as an attribute to the callback function by the
+`with_desc` method.
+
+``` python
+@magicclass
+class Main:
+    @thread_worker.with_progress(total=10)
+    def func(self):
+        @thread_worker.callback
+        def callback():
+            # do something
+            return
+        for i in range(10):
+            time.sleep(0.1)
+            yield callback.with_desc(f"Step {i + 1} of 10")
+        return callback.with_desc("Finished!")
+```
+
+If nothing to be done in the callback function, you can just use the `description`
+helper function.
+
+``` python
+@magicclass
+class Main:
+    @thread_worker.with_progress(total=10)
+    def func(self):
+        for i in range(10):
+            time.sleep(0.1)
+            yield thread_worker.description(f"Step {i + 1} of 10")
+        return thread_worker.description("Finished!")
 ```
 
 ## Nesting `thread_worker`
