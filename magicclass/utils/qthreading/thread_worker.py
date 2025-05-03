@@ -439,13 +439,15 @@ class thread_worker(Callable, Generic[_P, _R]):
             worker = self._create_qt_worker(gui, *args, **kwargs)
             _create_worker._worker = weakref.ref(worker)
             pbar: _SupportProgress | None = None
+            pbar_ref = _do_nothing
             need_pbar = bool(self._progress) and self._SHOW_PROGRESS
             if need_pbar:
                 _desc, _total = self._normalize_pbar_config(gui, args, kwargs)
                 pbar = self._create_pbar(gui, _desc, _total)
                 worker.started.connect(init_pbar.__get__(pbar))
+                pbar_ref = weakref.ref(pbar)
 
-            self._bind_callbacks(worker, gui, args, kwargs, pbar)
+            self._bind_callbacks(worker, gui, args, kwargs, pbar_ref)
 
             if need_pbar:
                 self._init_pbar_post(pbar, worker)
@@ -557,8 +559,7 @@ class thread_worker(Callable, Generic[_P, _R]):
                             yield from self.yielded._iter_as_nested_cb(
                                 gui, _val, filtered=True
                             )
-                            cb_yielded = self._create_cb_yielded(gui)
-                            # FIXME: cb_yielded = self._create_cb_yielded(gui, pbar)
+                            cb_yielded = self._create_cb_yielded(gui, pbar)
                             ncb = NestedCallback(cb_yielded).with_args(_val)
                             yield ncb
                             ncb.await_call()
@@ -574,8 +575,7 @@ class thread_worker(Callable, Generic[_P, _R]):
             else:
                 # returned
                 yield from self.returned._iter_as_nested_cb(gui, out)
-                cb_returned = self._create_cb_returned(gui, args, kwargs)
-                # FIXME: cb_returned = self._create_cb_returned(gui, args, kwargs, pbar)
+                cb_returned = self._create_cb_returned(gui, args, kwargs, pbar)
                 ncb = NestedCallback(cb_returned).with_args(out)
                 yield ncb
                 ncb.await_call()
@@ -681,7 +681,7 @@ class thread_worker(Callable, Generic[_P, _R]):
         gui: BaseGui,
         args,
         kwargs,
-        pbar: _SupportProgress | None = None,
+        pbar_ref: Callable[[], _SupportProgress | None] = _do_nothing,
     ):
         # bind callbacks
         is_generator = isinstance(worker, GeneratorWorker)
@@ -689,8 +689,7 @@ class thread_worker(Callable, Generic[_P, _R]):
             worker.started.connect(c)
         for c in self.returned._iter_as_method(gui):
             worker.returned.connect(c)
-        cb_returned = self._create_cb_returned(gui, args, kwargs)
-        # FIXME: cb_returned = self._create_cb_returned(gui, args, kwargs, pbar)
+        cb_returned = self._create_cb_returned(gui, args, kwargs, pbar_ref)
         worker.returned.connect(cb_returned)
         for c in self.errored._iter_as_method(gui):
             worker.errored.connect(c)
@@ -700,8 +699,7 @@ class thread_worker(Callable, Generic[_P, _R]):
         if is_generator:
             for c in self.yielded._iter_as_method(gui, filtered=True):
                 worker.yielded.connect(c)
-            cb_yielded = self._create_cb_yielded(gui)
-            # FIXME: cb_yielded = self._create_cb_yielded(gui, pbar)
+            cb_yielded = self._create_cb_yielded(gui, pbar_ref)
             worker.yielded.connect(cb_yielded)
 
     @property
@@ -803,11 +801,15 @@ class thread_worker(Callable, Generic[_P, _R]):
             )
         return self._callback_dict_["aborted"]
 
-    def _create_cb_yielded(self, gui: BaseGui, pbar: _SupportProgress | None = None):
+    def _create_cb_yielded(
+        self,
+        gui: BaseGui,
+        pbar_ref: Callable[[], _SupportProgress | None] = _do_nothing,
+    ):
         def cb(out: Any | None):
             with self._call_context(gui):
                 if isinstance(out, (NestedCallback, Callback)):
-                    out = out.update_pbar_and_unwrap(pbar)
+                    out = out.update_pbar_and_unwrap(pbar_ref())
             return out
 
         return cb
@@ -817,12 +819,12 @@ class thread_worker(Callable, Generic[_P, _R]):
         gui: BaseGui,
         args,
         kwargs,
-        pbar: _SupportProgress | None = None,
+        pbar_ref: Callable[[], _SupportProgress | None] = _do_nothing,
     ):
         def cb(out: Any | None):
             with self._call_context(gui):
                 if isinstance(out, Callback):
-                    out = out.update_pbar_and_unwrap(pbar)
+                    out = out.update_pbar_and_unwrap(pbar_ref())
             if gui.macro.active and self._recorder is not None:
                 self._recorder(gui, out, *args, **kwargs)
             return out
