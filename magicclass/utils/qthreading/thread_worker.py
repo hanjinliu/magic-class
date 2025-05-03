@@ -557,7 +557,8 @@ class thread_worker(Callable, Generic[_P, _R]):
                             yield from self.yielded._iter_as_nested_cb(
                                 gui, _val, filtered=True
                             )
-                            cb_yielded = self._create_cb_yielded(gui, pbar)
+                            cb_yielded = self._create_cb_yielded(gui)
+                            # FIXME: cb_yielded = self._create_cb_yielded(gui, pbar)
                             ncb = NestedCallback(cb_yielded).with_args(_val)
                             yield ncb
                             ncb.await_call()
@@ -573,7 +574,8 @@ class thread_worker(Callable, Generic[_P, _R]):
             else:
                 # returned
                 yield from self.returned._iter_as_nested_cb(gui, out)
-                cb_returned = self._create_cb_returned(gui, args, kwargs, pbar)
+                cb_returned = self._create_cb_returned(gui, args, kwargs)
+                # FIXME: cb_returned = self._create_cb_returned(gui, args, kwargs, pbar)
                 ncb = NestedCallback(cb_returned).with_args(out)
                 yield ncb
                 ncb.await_call()
@@ -687,7 +689,8 @@ class thread_worker(Callable, Generic[_P, _R]):
             worker.started.connect(c)
         for c in self.returned._iter_as_method(gui):
             worker.returned.connect(c)
-        cb_returned = self._create_cb_returned(gui, args, kwargs, pbar)
+        cb_returned = self._create_cb_returned(gui, args, kwargs)
+        # FIXME: cb_returned = self._create_cb_returned(gui, args, kwargs, pbar)
         worker.returned.connect(cb_returned)
         for c in self.errored._iter_as_method(gui):
             worker.errored.connect(c)
@@ -697,7 +700,8 @@ class thread_worker(Callable, Generic[_P, _R]):
         if is_generator:
             for c in self.yielded._iter_as_method(gui, filtered=True):
                 worker.yielded.connect(c)
-            cb_yielded = self._create_cb_yielded(gui, pbar)
+            cb_yielded = self._create_cb_yielded(gui)
+            # FIXME: cb_yielded = self._create_cb_yielded(gui, pbar)
             worker.yielded.connect(cb_yielded)
 
     @property
@@ -809,7 +813,11 @@ class thread_worker(Callable, Generic[_P, _R]):
         return cb
 
     def _create_cb_returned(
-        self, gui: BaseGui, args, kwargs, pbar: _SupportProgress | None = None
+        self,
+        gui: BaseGui,
+        args,
+        kwargs,
+        pbar: _SupportProgress | None = None,
     ):
         def cb(out: Any | None):
             with self._call_context(gui):

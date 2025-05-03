@@ -197,9 +197,14 @@ class _AwaitableCallback(Generic[_P, _R1]):
             raise RuntimeError(f"Callback {self} raised an error.")
         return None
 
+    @property
+    def progress_desc(self) -> str | None:
+        """Get the progress description."""
+        return self._progress_desc
+
     def update_pbar_and_unwrap(self, pbar: _SupportProgress | None) -> _R1:
-        if self._progress_desc is not None and pbar is not None:
-            pbar.set_description(self._progress_desc)
+        if self.progress_desc is not None and pbar is not None:
+            pbar.set_description(self.progress_desc)
         return self()
 
 
