@@ -809,7 +809,7 @@ class thread_worker(Callable, Generic[_P, _R]):
         def cb(out: Any | None):
             with self._call_context(gui):
                 if isinstance(out, (NestedCallback, Callback)):
-                    out = out.update_pbar_and_unwrap(pbar_ref())
+                    out = out.update_pbar_and_unwrap(pbar_ref)
             return out
 
         return cb
@@ -824,7 +824,7 @@ class thread_worker(Callable, Generic[_P, _R]):
         def cb(out: Any | None):
             with self._call_context(gui):
                 if isinstance(out, Callback):
-                    out = out.update_pbar_and_unwrap(pbar_ref())
+                    out = out.update_pbar_and_unwrap(pbar_ref)
             if gui.macro.active and self._recorder is not None:
                 self._recorder(gui, out, *args, **kwargs)
             return out

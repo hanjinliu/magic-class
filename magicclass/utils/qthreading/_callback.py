@@ -202,8 +202,11 @@ class _AwaitableCallback(Generic[_P, _R1]):
         """Get the progress description."""
         return self._progress_desc
 
-    def update_pbar_and_unwrap(self, pbar: _SupportProgress | None) -> _R1:
-        if self.progress_desc is not None and pbar is not None:
+    def update_pbar_and_unwrap(
+        self,
+        pbar_ref: Callable[[], _SupportProgress | None],
+    ) -> _R1:
+        if self.progress_desc is not None and (pbar := pbar_ref()) is not None:
             pbar.set_description(self.progress_desc)
         return self()
 
