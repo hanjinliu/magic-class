@@ -859,6 +859,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#updating-progress-description" class="md-nav__link">
+    <span class="md-ellipsis">
+      Updating Progress Description
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#nesting-thread_worker" class="md-nav__link">
     <span class="md-ellipsis">
       Nesting thread_worker
@@ -1496,6 +1505,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#updating-progress-description" class="md-nav__link">
+    <span class="md-ellipsis">
+      Updating Progress Description
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#nesting-thread_worker" class="md-nav__link">
     <span class="md-ellipsis">
       Nesting thread_worker
@@ -1884,8 +1902,35 @@ for the progress bar configuration.</p>
     <span class="c1"># instead of `@thread_worker(progress={&quot;total&quot;: 10})`</span>
     <span class="nd">@thread_worker</span><span class="o">.</span><span class="n">with_progress</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="updating-progress-description">Updating Progress Description</h2>
+<p>You can set progress description as an attribute to the callback function by the
+<code>with_desc</code> method.</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
+    <span class="nd">@thread_worker</span><span class="o">.</span><span class="n">with_progress</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nd">@thread_worker</span><span class="o">.</span><span class="n">callback</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">callback</span><span class="p">():</span>
+            <span class="c1"># do something</span>
+            <span class="k">return</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">callback</span><span class="o">.</span><span class="n">with_desc</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Step </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> of 10&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">callback</span><span class="o">.</span><span class="n">with_desc</span><span class="p">(</span><span class="s2">&quot;Finished!&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>If nothing to be done in the callback function, you can just use the <code>description</code>
+helper function.</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
+    <span class="nd">@thread_worker</span><span class="o">.</span><span class="n">with_progress</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">thread_worker</span><span class="o">.</span><span class="n">description</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Step </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> of 10&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">thread_worker</span><span class="o">.</span><span class="n">description</span><span class="p">(</span><span class="s2">&quot;Finished!&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="nesting-thread_worker">Nesting <code>thread_worker</code></h2>
 <p>To reuse thread worker functions, you would want to nest them. However,
