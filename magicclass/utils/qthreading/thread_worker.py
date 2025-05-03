@@ -51,8 +51,7 @@ _R = TypeVar("_R")
 class AsyncMethod(Protocol[_P, _R]):
     """A protocol for async method."""
 
-    def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _R:
-        ...
+    def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _R: ...
 
     __thread_worker__: thread_worker[_P]
     _worker: weakref.ReferenceType[FunctionWorker | GeneratorWorker]
@@ -76,6 +75,10 @@ else:
 
 def _silent(*args, **kwargs):
     return None
+
+
+def _do_nothing():
+    """Do nothing."""
 
 
 class thread_worker(Callable, Generic[_P, _R]):
@@ -222,35 +225,56 @@ class thread_worker(Callable, Generic[_P, _R]):
         return pbar_cls
 
     @staticmethod
-    def callback(callback: Callable[_P, _R] = lambda: None) -> Callback[_P, _R]:
+    def callback(callback: Callable[_P, _R] = _do_nothing) -> Callback[_P, _R]:
         """
         Convert a function to a callback object.
 
         Should be used as follow.
 
-        >>> @thread_worker
-        >>> def func(self):
-        ...     @thread_worker.callback
-        ...     def cb():
-        ...         # update GUI
-        ...     yield cb
+        ```python
+        @thread_worker
+        def func(self):
+            @thread_worker.callback
+            def cb():
+                # update GUI
+            yield cb
+        ```
 
         You can call `arun` to run the callback in a similar syntax as a
         `thread_worker`.
 
-        >>> @thread_worker
-        >>> def func(self):
-        ...     @thread_worker.callback
-        ...     def cb():
-        ...         # update GUI
-        ...     yield from cb.arun()
-
+        ```python
+        @thread_worker
+        def func(self):
+            @thread_worker.callback
+            def cb():
+                # update GUI
+            yield from cb.arun()
+        ```
         """
         if not callable(callback):
             raise TypeError(f"{callback} is not callable.")
         if isinstance(callback, Callback):
             return callback
         return Callback(callback)
+
+    @staticmethod
+    def description(desc: str) -> Callback[..., None]:
+        """Set the description of the progressbar.
+
+        This function is a shorthand for `thread_worker.callback` only with description.
+        It is useful when you want to set the description of the progressbar.
+
+        ````python
+        @thread_worker
+        def func(self):
+            time.sleep(1)
+            yield thread_worker.description("step 1")
+            time.sleep(1)
+            return thread_worker.description("step 1")
+        ```
+        """
+        return Callback(_do_nothing, desc=desc)
 
     @classmethod
     @contextmanager
@@ -309,12 +333,10 @@ class thread_worker(Callable, Generic[_P, _R]):
         return None
 
     @overload
-    def __call__(self, f: Callable[_P, _R]) -> thread_worker[_P, _R]:
-        ...
+    def __call__(self, f: Callable[_P, _R]) -> thread_worker[_P, _R]: ...
 
     @overload
-    def __call__(self, bgui: BaseGui, *args, **kwargs) -> Any:
-        ...
+    def __call__(self, bgui: BaseGui, *args, **kwargs) -> Any: ...
 
     def __call__(self, *args, **kwargs):
         if self._func is None:
@@ -329,12 +351,10 @@ class thread_worker(Callable, Generic[_P, _R]):
         return self
 
     @overload
-    def __get__(self, gui: Literal[None], objtype=None) -> thread_worker[_P, _R]:
-        ...
+    def __get__(self, gui: Literal[None], objtype=None) -> thread_worker[_P, _R]: ...
 
     @overload
-    def __get__(self, gui: Any, objtype=None) -> AsyncMethod[_P, _R]:
-        ...
+    def __get__(self, gui: Any, objtype=None) -> AsyncMethod[_P, _R]: ...
 
     def __get__(self, gui, objtype=None):
         if gui is None:
@@ -419,13 +439,15 @@ class thread_worker(Callable, Generic[_P, _R]):
             worker = self._create_qt_worker(gui, *args, **kwargs)
             _create_worker._worker = weakref.ref(worker)
             pbar: _SupportProgress | None = None
+            pbar_ref = _do_nothing
             need_pbar = bool(self._progress) and self._SHOW_PROGRESS
             if need_pbar:
                 _desc, _total = self._normalize_pbar_config(gui, args, kwargs)
                 pbar = self._create_pbar(gui, _desc, _total)
                 worker.started.connect(init_pbar.__get__(pbar))
+                pbar_ref = weakref.ref(pbar)
 
-            self._bind_callbacks(worker, gui, args, kwargs)
+            self._bind_callbacks(worker, gui, args, kwargs, pbar_ref)
 
             if need_pbar:
                 self._init_pbar_post(pbar, worker)
@@ -451,7 +473,7 @@ class thread_worker(Callable, Generic[_P, _R]):
 
         _create_worker.__self__ = gui
         _create_worker.__thread_worker__ = self
-        _create_worker._worker = lambda: None  # will be replaced with weakref.ref
+        _create_worker._worker = _do_nothing  # will be replaced with weakref.ref
         _create_worker.arun = self._create_generator(gui)
         return _create_worker
 
@@ -537,7 +559,7 @@ class thread_worker(Callable, Generic[_P, _R]):
                             yield from self.yielded._iter_as_nested_cb(
                                 gui, _val, filtered=True
                             )
-                            cb_yielded = self._create_cb_yielded(gui)
+                            cb_yielded = self._create_cb_yielded(gui, pbar)
                             ncb = NestedCallback(cb_yielded).with_args(_val)
                             yield ncb
                             ncb.await_call()
@@ -553,7 +575,7 @@ class thread_worker(Callable, Generic[_P, _R]):
             else:
                 # returned
                 yield from self.returned._iter_as_nested_cb(gui, out)
-                cb_returned = self._create_cb_returned(gui, args, kwargs)
+                cb_returned = self._create_cb_returned(gui, args, kwargs, pbar)
                 ncb = NestedCallback(cb_returned).with_args(out)
                 yield ncb
                 ncb.await_call()
@@ -659,6 +681,7 @@ class thread_worker(Callable, Generic[_P, _R]):
         gui: BaseGui,
         args,
         kwargs,
+        pbar_ref: Callable[[], _SupportProgress | None] = _do_nothing,
     ):
         # bind callbacks
         is_generator = isinstance(worker, GeneratorWorker)
@@ -666,7 +689,7 @@ class thread_worker(Callable, Generic[_P, _R]):
             worker.started.connect(c)
         for c in self.returned._iter_as_method(gui):
             worker.returned.connect(c)
-        cb_returned = self._create_cb_returned(gui, args, kwargs)
+        cb_returned = self._create_cb_returned(gui, args, kwargs, pbar_ref)
         worker.returned.connect(cb_returned)
         for c in self.errored._iter_as_method(gui):
             worker.errored.connect(c)
@@ -676,7 +699,7 @@ class thread_worker(Callable, Generic[_P, _R]):
         if is_generator:
             for c in self.yielded._iter_as_method(gui, filtered=True):
                 worker.yielded.connect(c)
-            cb_yielded = self._create_cb_yielded(gui)
+            cb_yielded = self._create_cb_yielded(gui, pbar_ref)
             worker.yielded.connect(cb_yielded)
 
     @property
@@ -778,20 +801,30 @@ class thread_worker(Callable, Generic[_P, _R]):
             )
         return self._callback_dict_["aborted"]
 
-    def _create_cb_yielded(self, gui: BaseGui):
+    def _create_cb_yielded(
+        self,
+        gui: BaseGui,
+        pbar_ref: Callable[[], _SupportProgress | None] = _do_nothing,
+    ):
         def cb(out: Any | None):
             with self._call_context(gui):
                 if isinstance(out, (NestedCallback, Callback)):
-                    out = out()
+                    out = out.update_pbar_and_unwrap(pbar_ref)
             return out
 
         return cb
 
-    def _create_cb_returned(self, gui: BaseGui, args, kwargs):
+    def _create_cb_returned(
+        self,
+        gui: BaseGui,
+        args,
+        kwargs,
+        pbar_ref: Callable[[], _SupportProgress | None] = _do_nothing,
+    ):
         def cb(out: Any | None):
-            if isinstance(out, Callback):
-                with self._call_context(gui):
-                    out = out()
+            with self._call_context(gui):
+                if isinstance(out, Callback):
+                    out = out.update_pbar_and_unwrap(pbar_ref)
             if gui.macro.active and self._recorder is not None:
                 self._recorder(gui, out, *args, **kwargs)
             return out

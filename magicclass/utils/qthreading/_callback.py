@@ -17,6 +17,7 @@ from typing_extensions import ParamSpec
 
 if TYPE_CHECKING:
     from magicclass._gui import BaseGui
+    from magicclass.utils.qthreading._progressbar import _SupportProgress
 
 _P = ParamSpec("_P")
 _R1 = TypeVar("_R1")
@@ -129,12 +130,13 @@ class CallState(Enum):
 
 
 class _AwaitableCallback(Generic[_P, _R1]):
-    def __init__(self, f: Callable[_P, _R1]):
+    def __init__(self, f: Callable[_P, _R1], desc: str | None = None):
         if not callable(f):
             raise TypeError(f"{f} is not callable.")
         self._func = f
         wraps(f)(self)
         self._called = CallState.NOT_CALLED
+        self._progress_desc = desc
 
     def __repr__(self) -> str:
         fname = getattr(self._func, "__name__", repr(self._func))
@@ -162,13 +164,16 @@ class _AwaitableCallback(Generic[_P, _R1]):
         """Return a partial callback."""
         return self.__class__(_partial(self._func, *args, **kwargs))
 
+    def with_desc(self, desc: str) -> _AwaitableCallback[_P, _R1]:
+        """Set progress description."""
+        return self.__class__(self._func, desc=desc)
+
     def copy(self) -> _AwaitableCallback[_P, _R1]:
         """Return a copy of the callback."""
         return self.__class__(self._func)
 
     def await_call(self, timeout: float = 60.0) -> None:
-        """
-        Await the callback to be called.
+        """Await the callback to be called.
 
         Usage
         -----
@@ -192,17 +197,28 @@ class _AwaitableCallback(Generic[_P, _R1]):
             raise RuntimeError(f"Callback {self} raised an error.")
         return None
 
+    @property
+    def progress_desc(self) -> str | None:
+        """Get the progress description."""
+        return self._progress_desc
+
+    def update_pbar_and_unwrap(
+        self,
+        pbar_ref: Callable[[], _SupportProgress | None],
+    ) -> _R1:
+        if self.progress_desc is not None and (pbar := pbar_ref()) is not None:
+            pbar.set_description(self.progress_desc)
+        return self()
+
 
 class Callback(_AwaitableCallback[_P, _R1]):
     """Callback object that can be recognized by thread_worker."""
 
     @overload
-    def __get__(self, obj: Any, type=None) -> Callback[..., _R1]:
-        ...
+    def __get__(self, obj: Any, type=None) -> Callback[..., _R1]: ...
 
     @overload
-    def __get__(self, obj: Literal[None], type=None) -> Callback[_P, _R1]:
-        ...
+    def __get__(self, obj: Literal[None], type=None) -> Callback[_P, _R1]: ...
 
     def __get__(self, obj, type=None):
         if obj is None:
