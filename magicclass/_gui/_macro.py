@@ -3,7 +3,6 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from typing import TYPE_CHECKING, Any, Callable, Iterable, overload
-import warnings
 from datetime import datetime
 from qtpy import QtWidgets as QtW, QtCore
 from macrokit import Symbol, Expr, Head, BaseMacro, parse, symbol
@@ -219,26 +218,6 @@ class MacroEdit(TabbedContainer):
             geometry.moveTopLeft(geometry.topLeft() + QtCore.QPoint(20, 20))
             new.native.setGeometry(geometry)
         return new
-
-    def duplicate(self, name: str = None):
-        warnings.warn(
-            "duplicate() is deprecated. MacroEdit is now a tabbed widget. "
-            "Use 'new_window()' or 'new_tab()' instead.",
-            DeprecationWarning,
-        )
-        current = self.textedit
-        text = current.value
-        new = self.new_window(name=name)
-        new.textedit.value = text
-        return new
-
-    def new(self, name: str = None):
-        warnings.warn(
-            "new() is deprecated. MacroEdit is now a tabbed widget. "
-            "Use 'new_window()' or 'new_tab()' instead.",
-            DeprecationWarning,
-        )
-        return self.new_window(name=name)
 
     def _new_tab(self, e=None):
         self.new_tab()
@@ -669,12 +648,10 @@ class GuiMacro(BaseMacro):
         return BaseMacro(deepcopy(self.args))
 
     @overload
-    def __getitem__(self, key: int) -> Expr:
-        ...
+    def __getitem__(self, key: int) -> Expr: ...
 
     @overload
-    def __getitem__(self, key: slice) -> BaseMacro:
-        ...
+    def __getitem__(self, key: slice) -> BaseMacro: ...
 
     def __getitem__(self, key):
         if isinstance(key, slice):

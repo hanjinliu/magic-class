@@ -2,7 +2,6 @@ from __future__ import annotations
 from functools import wraps as functools_wraps
 import inspect
 from types import MethodType
-import warnings
 from weakref import WeakValueDictionary
 from typing import Any, TYPE_CHECKING, Callable
 from macrokit import Symbol, Expr
@@ -519,33 +518,6 @@ def get_function_gui(
     func = _create_gui_method(ui, func)
     mgui = _build_mgui(widget, func, ui)
     return mgui
-
-
-def repeat(ui: MagicTemplate, index: int = -1) -> None:
-    """
-    Repeat last operation on GUI using recorded macro.
-
-    Parameters
-    ----------
-    ui : MagicTemplate
-        Target magic-class widget.
-    index : int, default -1
-        Which execution will be repeated. Any object that support list slicing can be
-        used. By default the last operation will be repeated.
-    """
-    warnings.warn(
-        "repeat() is deprecated and will be removed soon. Use "
-        "`ui.macro.repeat_method()` to specify call options in more detail.",
-        DeprecationWarning,
-    )
-    line = ui.macro[index]
-    try:
-        line.eval({"ui": ui})
-    except Exception as e:
-        msg = e.args[0]
-        msg = f"Caused by >>> {line}. {msg}"
-        raise e
-    return None
 
 
 def update_widget_state(ui: MagicTemplate, macro: Macro | str | None = None) -> None:
