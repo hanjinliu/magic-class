@@ -182,13 +182,13 @@ def set_design(
 
 
 @overload
-def do_not_record(method: None = None, recursive: bool = True) -> Callable[[_F], _F]:
-    ...
+def do_not_record(
+    method: None = None, recursive: bool = True
+) -> Callable[[_F], _F]: ...
 
 
 @overload
-def do_not_record(method: _F, recursive: bool = True) -> _F:
-    ...
+def do_not_record(method: _F, recursive: bool = True) -> _F: ...
 
 
 def do_not_record(method=None, recursive=False):
@@ -213,7 +213,7 @@ def do_not_record(method=None, recursive=False):
     return wrapper if method is None else wrapper(method)
 
 
-def bind_key(*key) -> Callable[[_F], _F]:
+def bind_key(key: str) -> Callable[[_F], _F]:
     """
     Define a keybinding to a button or an action.
     This function accepts several styles of shortcut expression.
@@ -223,22 +223,12 @@ def bind_key(*key) -> Callable[[_F], _F]:
     >>> @bind_key("Ctrl+K, Ctrl+V") # Key combo
 
     """
-    if len(key) == 1 and isinstance(key[0], str):
-        key = key[0]
-        # check Ctrl-A style
-        lower = key.lower()
-        for k in ["ctrl", "cmd", "shift", "alt"]:
-            if f"{k}-" in lower:
-                lower = lower.replace(f"{k}-", f"{k}+")
-        key = lower
-    else:
-        warnings.warn(
-            "`bind_key` now accepts only one string argument. "
-            "Please use such as `bind_key('Ctrl+A')`.",
-            DeprecationWarning,
-        )
-        if isinstance(key[0], tuple):
-            key = key[0]
+    # check Ctrl-A style
+    lower = key.lower()
+    for k in ["ctrl", "cmd", "shift", "alt"]:
+        if f"{k}-" in lower:
+            lower = lower.replace(f"{k}-", f"{k}+")
+    key = lower
 
     def wrapper(method: _F) -> _F:
         upgrade_signature(method, additional_options={"keybinding": key})
