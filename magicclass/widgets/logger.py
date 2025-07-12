@@ -382,6 +382,8 @@ class Logger(Widget, logging.Handler):
             self, widget_type=QBaseWidget, backend_kwargs={"qwidg": QtLogger}
         )
         self.native: QtLogger
+        self._image_default_width = 360
+        self._image_default_height = 240
 
     def emit(self, record):
         """Handle the logging event."""
@@ -542,9 +544,9 @@ class Logger(Widget, logging.Handler):
         # set scale of image
         if width is None and height is None:
             if w / 3 > h / 2:
-                width = 360
+                width = self._image_default_width
             else:
-                height = 240
+                height = self._image_default_height
 
         if width is None:
             image = image.scaledToHeight(

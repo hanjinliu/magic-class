@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, Callable, Sequence, TypeVar
+from typing import Any, Callable, Iterator, Sequence, TypeVar, TYPE_CHECKING
 import warnings
 from psygnal import Signal
 from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout, QDockWidget
@@ -62,6 +62,10 @@ from magicclass.fields import MagicField
 from magicclass.signature import get_additional_option
 from magicclass._app import run_app
 from magicclass._compat import is_value_widget, has_changed_signal
+
+if TYPE_CHECKING:
+    import napari
+
 
 # For Containers that belong to these classes, menubar must be set to _qwidget.layout().
 _USE_OUTER_LAYOUT = (
@@ -369,7 +373,7 @@ class ClassGuiBase(BaseGui):
         if viewer is not None and qt_parent is not None:
             _dock_found = False
             if isinstance(qt_parent, QDockWidget):
-                for dock in viewer.window._dock_widgets.values():
+                for dock in _iter_dock_widgets(viewer):
                     if dock is qt_parent:
                         _dock_found = True
                         dock.show()
@@ -613,6 +617,14 @@ def make_gui(
         return cls
 
     return wrapper
+
+
+def _iter_dock_widgets(viewer: napari.Viewer) -> Iterator[QDockWidget]:
+    if hasattr(viewer.window, "dock_widgets"):
+        # napari >= 0.6.2
+        yield from viewer.window.dock_widgets.values()
+    else:
+        yield from viewer.window._dock_widgets.values()
 
 
 # fmt: off
