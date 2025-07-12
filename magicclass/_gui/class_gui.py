@@ -622,7 +622,11 @@ def make_gui(
 def _iter_dock_widgets(viewer: napari.Viewer) -> Iterator[QDockWidget]:
     if hasattr(viewer.window, "dock_widgets"):
         # napari >= 0.6.2
-        yield from viewer.window.dock_widgets.values()
+        for inner in viewer.window.dock_widgets.values():
+            if isinstance(inner, Widget):
+                inner = inner.native
+            if isinstance(parent := inner.parent(), QDockWidget):
+                yield parent
     else:
         yield from viewer.window._dock_widgets.values()
 
