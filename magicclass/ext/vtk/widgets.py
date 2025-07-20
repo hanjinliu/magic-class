@@ -91,8 +91,7 @@ class VedoCanvas(FreeWidget):
         color: Color = (0.7, 0.7, 0.7),
         mode: str = "iso",
     ):
-        """
-        Add a 3D volume to the canvas.
+        """Add a 3D volume to the canvas.
 
         Parameters
         ----------

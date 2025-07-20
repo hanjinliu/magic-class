@@ -42,7 +42,7 @@ class Volume(VedoComponent, base=vedo.Volume):
         super().__init__(data, _parent=_parent, _emit=False)
         self._current_obj = self._obj
         self.rendering = Rendering.composite
-        self.mode = Mode.volume
+        self.mode = Mode.iso
         self.color = np.array([0.7, 0.7, 0.7])
         self.data = data
         self.contrast_limits = self._lims
@@ -70,12 +70,13 @@ class Volume(VedoComponent, base=vedo.Volume):
         self._lims = self._data.min(), self._data.max()
         self.widgets.contrast_limits.min = self._lims[0]
         self.widgets.contrast_limits.max = self._lims[1]
+        self.widgets.contrast_limits.step = (self._lims[1] - self._lims[0]) / 500
         self.widgets.iso_threshold.min = self._lims[0]
         self.widgets.iso_threshold.max = self._lims[1]
 
     color = vfield(Color)
-    mode = vfield(Mode.volume)
-    rendering = vfield(Rendering.mip)
+    mode = vfield(Mode.iso)
+    rendering = vfield(Rendering.composite)
     iso_threshold = vfield(float, widget_type=FloatSlider)
     contrast_limits = vfield(tuple[float, float], widget_type=FloatRangeSlider)
     visible = vfield(True, name="visibility")
