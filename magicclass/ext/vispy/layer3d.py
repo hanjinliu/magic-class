@@ -154,6 +154,7 @@ class Image(LayerItem, HasFields):
         self._lims = _min, _max
         self.widgets.contrast_limits.min = _min
         self.widgets.contrast_limits.max = _max
+        self.widgets.contrast_limits.step = (_max - _min) / 500
         self.widgets.iso_threshold.min = _min
         self.widgets.iso_threshold.max = _max
 
@@ -316,6 +317,7 @@ class IsoSurface(_SurfaceBase, HasFields):
         self._lims = _min, _max
         self.widgets.contrast_limits.min = _min
         self.widgets.contrast_limits.max = _max
+        self.widgets.contrast_limits.step = (_max - _min) / 500
         self.widgets.iso_threshold.min = _min
         self.widgets.iso_threshold.max = _max
 
