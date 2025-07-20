@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Tuple, NamedTuple
+from typing import NamedTuple
 import numpy as np
 from vispy.scene import visuals, ViewBox
 from vispy.visuals import (
@@ -148,20 +148,23 @@ class Image(LayerItem, HasFields):
         self._visual.update()
 
     def _cache_lims(self):
-        self._lims = np.min(self._data), np.max(self._data)
-        self.widgets.contrast_limits.min = self._lims[0]
-        self.widgets.contrast_limits.max = self._lims[1]
-        self.widgets.iso_threshold.min = self._lims[0]
-        self.widgets.iso_threshold.max = self._lims[1]
+        _min, _max = np.min(self._data), np.max(self._data)
+        if _min == _max:
+            _max = _min + 1e-6  # Avoid division by zero in thresholding
+        self._lims = _min, _max
+        self.widgets.contrast_limits.min = _min
+        self.widgets.contrast_limits.max = _max
+        self.widgets.iso_threshold.min = _min
+        self.widgets.iso_threshold.max = _max
 
-    def _get_bbox(self) -> Tuple[np.ndarray, np.ndarray]:
+    def _get_bbox(self) -> tuple[np.ndarray, np.ndarray]:
         return np.zeros(3, dtype=np.float32), np.array(
             self._data.shape, dtype=np.float32
         )
 
     # fmt: off
     rendering = vfield(str, options={"choices": RENDERINGS, "value": "mip"})
-    contrast_limits = vfield(Tuple[float, float], widget_type=FloatRangeSlider)
+    contrast_limits = vfield(tuple[float, float], widget_type=FloatRangeSlider)
     iso_threshold = vfield(float, widget_type=FloatSlider)
     gamma = vfield(float, widget_type=FloatSlider, options={"min": 0., "max": 1.})
     attenuation = vfield(float, widget_type=FloatSlider, options={"min": 0., "max": 1.})
@@ -182,7 +185,8 @@ class Image(LayerItem, HasFields):
     @iso_threshold.connect
     def _on_iso_threshold_change(self, value):
         if hasattr(self, "_visual"):
-            self._visual.threshold = max(value, self._lims[0] + 1e-6)
+            _min, _max = self._lims
+            self._visual.threshold = (value - _min) / (_max - _min)
             self._visual.update()
 
     @gamma.connect
@@ -300,17 +304,20 @@ class IsoSurface(_SurfaceBase, HasFields):
         )
         return None
 
-    def _get_bbox(self) -> Tuple[np.ndarray, np.ndarray]:
-        data = self._data
-        mins = np.min(data[0], axis=0)
-        maxs = np.max(data[0], axis=0)
+    def _get_bbox(self) -> tuple[np.ndarray, np.ndarray]:
+        return np.zeros(3, dtype=np.float32), np.array(
+            self._data.shape, dtype=np.float32
+        )
 
     def _cache_lims(self):
-        self._lims = np.min(self._data), np.max(self._data)
-        self.widgets.contrast_limits.min = self._lims[0]
-        self.widgets.contrast_limits.max = self._lims[1]
-        self.widgets.iso_threshold.min = self._lims[0]
-        self.widgets.iso_threshold.max = self._lims[1]
+        _min, _max = np.min(self._data), np.max(self._data)
+        if _min == _max:
+            _max = _min + 1e-6  # Avoid division by zero in thresholding
+        self._lims = _min, _max
+        self.widgets.contrast_limits.min = _min
+        self.widgets.contrast_limits.max = _max
+        self.widgets.iso_threshold.min = _min
+        self.widgets.iso_threshold.max = _max
 
     @property
     def data(self) -> np.ndarray:
@@ -324,13 +331,13 @@ class IsoSurface(_SurfaceBase, HasFields):
         self._visual.update()
         self._cache_lims()
 
-    def _get_bbox(self) -> Tuple[np.ndarray, np.ndarray]:
+    def _get_bbox(self) -> tuple[np.ndarray, np.ndarray]:
         return np.zeros(3, dtype=np.float32), np.array(
             self._data.shape, dtype=np.float32
         )
 
     # fmt: off
-    contrast_limits = vfield(Tuple[float, float], widget_type=FloatRangeSlider)
+    contrast_limits = vfield(tuple[float, float], widget_type=FloatRangeSlider)
     shading = vfield(str, options={"choices": ["none", "float", "smooth"], "value": "smooth"})
     iso_threshold = vfield(float, widget_type=FloatSlider)
     face_color = vfield(Color)
@@ -345,7 +352,7 @@ class IsoSurface(_SurfaceBase, HasFields):
 
     @iso_threshold.connect
     def _on_iso_threshold_change(self, value):
-        self._visual.level = max(self.iso_threshold, self._lims[0] + 1e-6)
+        self._visual.level = (value - self._lims[0]) / (self._lims[1] - self._lims[0])
         self._visual.update()
 
     shading.connect(_SurfaceBase._on_shading_change)
@@ -404,7 +411,7 @@ class Surface(_SurfaceBase, HasFields):
         self._data = SurfaceData(verts, faces, vals)
         self._visual.update()
 
-    def _get_bbox(self) -> Tuple[np.ndarray, np.ndarray]:
+    def _get_bbox(self) -> tuple[np.ndarray, np.ndarray]:
         verts = self._data.verts
         mins = np.min(verts, axis=0)
         maxs = np.max(verts, axis=0)
@@ -453,7 +460,7 @@ class Curve3D(LayerItem, HasFields):
         self._data = value
         self._visual.update()
 
-    def _get_bbox(self) -> Tuple[np.ndarray, np.ndarray]:
+    def _get_bbox(self) -> tuple[np.ndarray, np.ndarray]:
         mins = np.min(self.data, axis=0)
         maxs = np.max(self.data, axis=0)
         return mins, maxs
@@ -585,7 +592,7 @@ class Points3D(LayerItem, HasFields):
         self._visual.update()
         return None
 
-    def _get_bbox(self) -> Tuple[np.ndarray, np.ndarray]:
+    def _get_bbox(self) -> tuple[np.ndarray, np.ndarray]:
         mins = np.min(self._data, axis=0)
         maxs = np.max(self._data, axis=0)
         return mins, maxs
@@ -675,7 +682,7 @@ class Arrows3D(LayerItem, HasFields):
         self._visual.update()
         return None
 
-    def _get_bbox(self) -> Tuple[np.ndarray, np.ndarray]:
+    def _get_bbox(self) -> tuple[np.ndarray, np.ndarray]:
         mins = np.min(self.data, axis=(0, 1))
         maxs = np.max(self.data, axis=(0, 1))
         return mins, maxs
