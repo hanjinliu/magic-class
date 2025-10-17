@@ -1,4 +1,5 @@
 from __future__ import annotations
+import sys
 import functools
 from typing import Any, TYPE_CHECKING
 import inspect
@@ -93,19 +94,38 @@ class partialmethod(functools.partialmethod):
 
     __signature__: MagicMethodSignature
 
-    def __init__(self, func, /, *args, **kwargs):
-        # prepare widget options
-        options: dict[str, Any] = {}
-        bound = inspect.signature(func).bind_partial(*args, **kwargs)
-        for name in bound.arguments.keys():
-            options[name] = _PARTIALIZE
+    if sys.version_info < (3, 14):
 
-        # construct partial object
-        super().__init__(func, *args, **kwargs)
-        self.__signature__ = get_signature(partial(func, *args, **kwargs))
-        self.__name__ = func.__name__
+        def __init__(self, func, /, *args, **kwargs):
+            # prepare widget options
+            options: dict[str, Any] = {}
+            bound = inspect.signature(func).bind_partial(*args, **kwargs)
+            for name in bound.arguments.keys():
+                options[name] = _PARTIALIZE
 
-        upgrade_signature(self, gui_options=options)
+            # construct partial object
+            super().__init__(func, *args, **kwargs)
+            self.__signature__ = get_signature(partial(func, *args, **kwargs))
+            self.__name__ = func.__name__
+
+            upgrade_signature(self, gui_options=options)
+
+    else:
+
+        def __new__(cls, func, /, *args, **kwargs):
+            # prepare widget options
+            options: dict[str, Any] = {}
+            bound = inspect.signature(func).bind_partial(*args, **kwargs)
+            for name in bound.arguments.keys():
+                options[name] = _PARTIALIZE
+
+            # construct partial object
+            self = super().__new__(cls, func, *args, **kwargs)
+            self.__signature__ = get_signature(partial(func, *args, **kwargs))
+            self.__name__ = func.__name__
+
+            upgrade_signature(self, gui_options=options)
+            return self
 
     def __call__(self, *args: Any, **kwargs: Any):
         # needed to be defined because magicclass checks callable
