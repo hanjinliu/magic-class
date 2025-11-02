@@ -75,7 +75,6 @@ def move_to_screen_center(qwidget: QWidget) -> None:
     point = screen.geometry().center() - qwidget.rect().center()
     qwidget.move(point)
     qwidget.adjustSize()
-    return None
 
 
 def screen_scale() -> float:

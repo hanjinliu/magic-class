@@ -24,6 +24,7 @@ class FunctionGuiPlus(FunctionGui[_P, _R]):
     _dialog_widget = None
     _initialized_for_magicclass = False
     calling = Signal(object)
+    activated = Signal()
 
     def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _R:
         update_widget: bool = bool(kwargs.pop("update_widget", False))

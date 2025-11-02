@@ -182,12 +182,10 @@ class _MagicTemplateMeta(ABCMeta):
     """This metaclass enables type checking of nested magicclasses."""
 
     @overload
-    def __get__(self: type[_T], obj: Any | None, objtype=None) -> _T:
-        ...
+    def __get__(self: type[_T], obj: Any | None, objtype=None) -> _T: ...
 
     @overload
-    def __get__(self, obj: Literal[None], objtype=None) -> Self:
-        ...
+    def __get__(self, obj: Literal[None], objtype=None) -> Self: ...
 
     def __get__(self, obj, objtype=None):
         return self
@@ -257,12 +255,10 @@ class MagicTemplate(
         check_override(cls)
 
     @overload
-    def __getitem__(self, key: int | str) -> Widget | AbstractAction:
-        ...
+    def __getitem__(self, key: int | str) -> Widget | AbstractAction: ...
 
     @overload
-    def __getitem__(self, key: slice) -> list[Widget | AbstractAction]:
-        ...
+    def __getitem__(self, key: slice) -> list[Widget | AbstractAction]: ...
 
     def __getitem__(self, key):
         if cls := _find_gui_class(self):
@@ -779,6 +775,7 @@ class MagicTemplate(
 
             def run_function():
                 mgui = _build_mgui(widget, func, self)
+                print("run")
                 _need_title_bar = self._popup_mode.need_title_bar()
                 if not mgui._initialized_for_magicclass:  # connect only once
                     _prep_func(mgui)
@@ -810,6 +807,7 @@ class MagicTemplate(
                     else:
                         return None
 
+                mgui.activated.emit()
                 self._popup_mode.activate_magicgui(mgui, self)
                 return None
 
@@ -1314,13 +1312,11 @@ _T0 = TypeVar("_T0", Widget, AbstractAction, BaseGui)
 
 
 @overload
-def normalize_insertion(parent: BaseGui, obj: Callable) -> FunctionGui:
-    ...
+def normalize_insertion(parent: BaseGui, obj: Callable) -> FunctionGui: ...
 
 
 @overload
-def normalize_insertion(parent: BaseGui, obj: _T0) -> _T0:
-    ...
+def normalize_insertion(parent: BaseGui, obj: _T0) -> _T0: ...
 
 
 def normalize_insertion(parent: BaseGui, obj: Callable | Widget | AbstractAction):
@@ -1507,10 +1503,13 @@ def _empty_func(name: str) -> Callable[[Any], None]:
 
 def _find_viewer_ancestor(widget: QtW.QWidget) -> napari.Viewer | None:
     """Return the closest parent napari Viewer."""
-    parent = widget.parent()
-    while parent:
-        if hasattr(parent, "_qt_viewer"):  # QMainWindow
-            return parent._qt_viewer.viewer
+    try:
+        parent = widget.parent()
+        while parent:
+            if hasattr(parent, "_qt_viewer"):  # QMainWindow
+                return parent._qt_viewer.viewer
 
-        parent = parent.parent()
-    return None
+            parent = parent.parent()
+        return None
+    except RuntimeError:
+        return None
