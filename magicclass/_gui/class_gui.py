@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import Any, Callable, Sequence, TypeVar, TYPE_CHECKING
+
+from typing import Any, Callable, Sequence, TypeVar
 import warnings
 from psygnal import Signal
 from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout, QDockWidget
@@ -63,9 +64,6 @@ from magicclass.signature import get_additional_option
 from magicclass._app import run_app
 from magicclass._compat import is_value_widget, has_changed_signal
 
-if TYPE_CHECKING:
-    import napari
-
 
 # For Containers that belong to these classes, menubar must be set to _qwidget.layout().
 _USE_OUTER_LAYOUT = (
@@ -119,9 +117,8 @@ class ClassGuiBase(BaseGui):
         return widget
 
     def _convert_attributes_into_widgets(self):
-        """
-        This function is called in dynamically created __init__. Methods, fields and
-        nested classes are converted to magicgui widgets.
+        """This function is called in dynamically created __init__.
+        Methods, fields and nested classes are converted to magicgui widgets.
         """
         cls = self.__class__
 
@@ -448,8 +445,7 @@ _C2 = TypeVar("_C2")
 def make_gui(
     container: type[_C], no_margin: bool = True
 ) -> Callable[[_C2], type[_C | _C2 | ClassGuiBase]]:
-    """
-    Make a ClassGui class from a Container widget.
+    """Make a ClassGui class from a Container widget.
 
     Because GUI class inherits Container here, functions that need overriden must be
     defined here, not in ClassGuiBase.

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, Iterable, Any, Generic, TypeVar, Union, TYPE_CHECKING
+from typing import Callable, Iterable, Any, Generic, TypeVar, Union
 from typing_extensions import TypeGuard
 from qtpy import QtWidgets as QtW, QtCore, QtGui
 from psygnal import Signal
@@ -11,10 +11,6 @@ from magicgui.backends._qtpy.widgets import QBaseButtonWidget
 from ._function_gui import FunctionGuiPlus
 from ._icon import get_icon
 
-if TYPE_CHECKING:
-    from PyQt5.QtWidgets import QAction
-else:
-    from qtpy.QtWidgets import QAction
 
 # magicgui widgets that need to be extended to fit into magicclass
 Clickable = Union["PushButtonPlus", "Action"]
@@ -180,7 +176,7 @@ class ToolButtonPlus(PushButtonPlus):
 class mguiLike:
     """Abstract class that provide magicgui.widgets like properties."""
 
-    native: QtW.QWidget | QAction
+    native: QtW.QWidget | QtW.QAction
 
     @property
     def parent(self):
@@ -252,14 +248,14 @@ class AbstractAction(mguiLike):
 
     changed = Signal(object)
     support_value: bool
-    _native: QAction | QtW.QWidgetAction
+    _native: QtW.QAction | QtW.QWidgetAction
 
     @property
     def value(self):
         raise NotImplementedError()
 
     @property
-    def native(self) -> QAction | QtW.QWidgetAction:
+    def native(self) -> QtW.QAction | QtW.QWidgetAction:
         """The native Qt object."""
         return self._native
 
@@ -273,7 +269,7 @@ class Action(AbstractAction):
     def __init__(
         self, *args, name: str = None, text: str = None, gui_only: bool = True, **kwargs
     ):
-        self._native = QAction(*args, **kwargs)
+        self._native = QtW.QAction(*args, **kwargs)
         self.mgui: FunctionGuiPlus | None = None
         self._doc = ""
         self._unwrapped = False
