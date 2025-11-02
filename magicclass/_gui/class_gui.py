@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, Callable, Iterator, Sequence, TypeVar, TYPE_CHECKING
+from typing import Any, Callable, Sequence, TypeVar, TYPE_CHECKING
 import warnings
 from psygnal import Signal
 from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout, QDockWidget
@@ -57,7 +57,7 @@ from magicclass.widgets import (
 from magicclass.widgets._box import Box
 from magicclass.box._fields import BoxMagicField
 
-from magicclass.utils import iter_members, Tooltips
+from magicclass.utils import iter_members, Tooltips, move_to_screen_center
 from magicclass.fields import MagicField
 from magicclass.signature import get_additional_option
 from magicclass._app import run_app
@@ -282,7 +282,6 @@ class ClassGuiBase(BaseGui):
                 format_error(e, _hist, name, attr)
 
         self._unify_label_widths()
-        return None
 
     def _fast_insert(
         self, key: int, obj: Widget | Callable, remove_label: bool = False
@@ -323,13 +322,11 @@ class ClassGuiBase(BaseGui):
         # See https://github.com/hanjinliu/magic-class/issues/53
         if isinstance(widget, FunctionGui):
             widget.visible = True
-        return None
 
     def insert(self, key: int, widget: Widget) -> None:
         """Insert widget at the give position."""
         self._fast_insert(key, widget)
         self._unify_label_widths()
-        return None
 
     def __setattr__(self, name: str, value: Any) -> None:
         if not isinstance(getattr(self.__class__, name, None), MagicField):
@@ -353,9 +350,10 @@ class ClassGuiBase(BaseGui):
         return None
 
     def show(self, run: bool = True) -> None:
-        """
-        Show GUI. If any of the parent GUI is a dock widget in napari, then this
-        will also show up as a dock widget (floating if in popup mode).
+        """Show this GUI.
+
+        If any of the parent GUI is a dock widget in napari, then this will also show up
+        as a dock widget (floating if in popup mode).
 
         Parameters
         ----------
@@ -369,52 +367,32 @@ class ClassGuiBase(BaseGui):
             self.native.setParent(mcls_parent.native, self.native.windowFlags())
             qt_parent = self.native.parent()
 
-        viewer = self.parent_viewer
-        if viewer is not None and qt_parent is not None:
-            _dock_found = False
-            if isinstance(qt_parent, QDockWidget):
-                for dock in _iter_dock_widgets(viewer):
-                    if dock is qt_parent:
-                        _dock_found = True
-                        dock.show()
-                        break
-            if not _dock_found:
-                _floating = self._popup_mode == PopUpMode.popup
-                _area = "left" if _floating else "right"
-                dock = viewer.window.add_dock_widget(
-                    self,
-                    name=self.name.replace("_", " ").strip(),
-                    area=_area,
-                    allowed_areas=["left", "right"],
-                )
-                dock.setFloating(_floating)
-        else:
-            Container.show(self, run=False)
-            if mcls_parent is not None:
-                topleft = mcls_parent.native.geometry().topLeft()
-                topleft.setX(topleft.x() + 20)
-                topleft.setY(topleft.y() + 20)
-                self.native.move(topleft)
-            self.native.activateWindow()
-            if run:
-                run_app()
-        return None
+        if isinstance(qt_parent, QDockWidget):
+            # if the widget is the direct parent of a dock widget in napari, show the dock
+            qt_parent.show()
+            return
+        Container.show(self, run=False)
+        if mcls_parent is not None and self.name.startswith("_") and not self.visible:
+            move_to_screen_center(self.native)
+        self.native.activateWindow()
+        if run:
+            run_app()
 
     def close(self):
         """Close GUI. if this widget is a dock widget, then also close it."""
 
         current_self = self._search_parent_magicclass()
-        viewer = current_self.parent_viewer
         qt_parent = self.native.parent()
-        if viewer is not None and isinstance(qt_parent, QDockWidget):
-            try:
-                viewer.window.remove_dock_widget(qt_parent)
-            except Exception:
-                pass
+        if isinstance(qt_parent, QDockWidget):
+            if viewer := current_self.parent_viewer:
+                try:
+                    viewer.window.remove_dock_widget(qt_parent)
+                except Exception:
+                    pass
+            else:
+                qt_parent.close()
 
-        Container.close(self)
-
-        return None
+        _close(self)
 
     def _unify_label_widths(self):
         if not self._initialized:
@@ -619,16 +597,11 @@ def make_gui(
     return wrapper
 
 
-def _iter_dock_widgets(viewer: napari.Viewer) -> Iterator[QDockWidget]:
-    if hasattr(viewer.window, "dock_widgets"):
-        # napari >= 0.6.2
-        for inner in viewer.window.dock_widgets.values():
-            if isinstance(inner, Widget):
-                inner = inner.native
-            if isinstance(parent := inner.parent(), QDockWidget):
-                yield parent
-    else:
-        yield from viewer.window._dock_widgets.values()
+def _close(self: ClassGuiBase):
+    Container.close(self)
+    for child in self.__magicclass_children__:
+        if child.name.startswith("_") and child.visible:
+            _close(child)
 
 
 # fmt: off
