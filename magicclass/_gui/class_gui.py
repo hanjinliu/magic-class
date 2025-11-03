@@ -347,10 +347,7 @@ class ClassGuiBase(BaseGui):
         return None
 
     def show(self, run: bool = True) -> None:
-        """Show this GUI.
-
-        If any of the parent GUI is a dock widget in napari, then this will also show up
-        as a dock widget (floating if in popup mode).
+        """Show this GUI, or the parent dock widget.
 
         Parameters
         ----------
@@ -365,11 +362,12 @@ class ClassGuiBase(BaseGui):
             qt_parent = self.native.parent()
 
         if isinstance(qt_parent, QDockWidget):
-            # if the widget is the direct parent of a dock widget in napari, show the dock
+            # if the widget is the direct parent of a dock widget, show the dock widget
             qt_parent.show()
             return
+        was_not_visible = not self.visible
         Container.show(self, run=False)
-        if mcls_parent is not None and self.name.startswith("_") and not self.visible:
+        if mcls_parent is not None and self.name.startswith("_") and was_not_visible:
             move_to_screen_center(self.native)
         self.native.activateWindow()
         if run:
@@ -418,8 +416,7 @@ _HIDE_LABELS = (
 
 
 def find_window_ancestor(widget: Widget) -> SubWindowsClassGui:
-    """
-    Try to find a window ancestor of the given widget.
+    """Try to find a window ancestor of the given widget.
 
     This function is used only for subwindows.
     """
