@@ -775,7 +775,6 @@ class MagicTemplate(
 
             def run_function():
                 mgui = _build_mgui(widget, func, self)
-                print("run")
                 _need_title_bar = self._popup_mode.need_title_bar()
                 if not mgui._initialized_for_magicclass:  # connect only once
                     _prep_func(mgui)
