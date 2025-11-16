@@ -169,12 +169,15 @@ class QtLogger(QtW.QTextEdit):
             linkFormat.setAnchor(True)
             linkFormat.setAnchorHref(linkedstr.link)
             linkFormat.setFontUnderline(True)
-            linkFormat.setForeground(QtGui.QBrush(QtGui.QColor("blue")))
+            bgcolor = self._get_background_color()[:3]
+            if sum(bgcolor) < 382.5:  # 255*3/2, dark background
+                linkFormat.setForeground(QtGui.QBrush(QtGui.QColor("cyan")))
+            else:
+                linkFormat.setForeground(QtGui.QBrush(QtGui.QColor("blue")))
             cursor.insertText(linkedstr.text, linkFormat)
         else:
             raise TypeError("Wrong type.")
         self._post_append()
-        return None
 
     def appendText(self, text: str):
         """Append text in the main thread."""
@@ -300,6 +303,10 @@ class QtLogger(QtW.QTextEdit):
         self.viewport().setCursor(
             Qt.CursorShape.PointingHandCursor if _anchor else Qt.CursorShape.IBeamCursor
         )
+        if _anchor:
+            self.setToolTip(f"Open in browser: {_anchor}")
+        else:
+            self.setToolTip("")
         return super().mouseMoveEvent(e)
 
     def mouseReleaseEvent(self, e: QtGui.QMouseEvent):
@@ -320,8 +327,7 @@ class QtLogger(QtW.QTextEdit):
 
 
 class Logger(Widget, logging.Handler):
-    """
-    A widget for logging.
+    """A widget for logging.
 
     Examples
     --------
@@ -389,22 +395,18 @@ class Logger(Widget, logging.Handler):
         """Handle the logging event."""
         msg = self.format(record)
         self.print(msg)
-        return None
 
     def clear(self):
         """Clear all the histories."""
         self.native.clear()
-        return None
 
     def print(self, *msg, sep=" ", end="\n"):
         """Print things in the end of the logger widget."""
         self.native.appendText(sep.join(map(str, msg)) + end)
-        return None
 
     def print_html(self, html: str, end="<br></br>"):
         """Print things in the end of the logger widget using HTML string."""
         self.native.appendHtml(html + end)
-        return None
 
     def print_rst(self, rst: str, end="\n"):
         """Print things in the end of the logger widget using rST string."""
@@ -412,7 +414,6 @@ class Logger(Widget, logging.Handler):
         if end == "\n":
             end = "<br></br>"
         self.native.appendHtml(html + end)
-        return None
 
     def print_table(
         self,
@@ -424,8 +425,7 @@ class Logger(Widget, logging.Handler):
         width: int | None = None,
         header_style: str | None = None,
     ):
-        """
-        Print object as a table in the logger widget.
+        """Print object as a table in the logger widget.
 
         Parameters
         ----------
@@ -469,7 +469,7 @@ class Logger(Widget, logging.Handler):
                 return str(val)
 
             if isinstance(table, Mapping):
-                header = list(table.keys())
+                _header = list(table.keys())
                 columns = list(table.values())
                 rows: list[list[str]] = []
                 nrows = max(len(col) for col in columns)
@@ -491,23 +491,26 @@ class Logger(Widget, logging.Handler):
                     rows.append(row)
                     ncols = max(len(row), ncols)
 
-                header = list(range(ncols))
                 # fill empty cells
                 for row in rows:
                     if len(row) < ncols:
                         row.extend([""] * (ncols - len(row)))
+                _header = list(range(ncols))
             # make HTML table
-            _head_html = (
-                '<tr style="text-align: right;">'
-                + "".join(f"<th>{h}</th>" for h in header)
-                + "</tr>"
-            )
+            if header:
+                _head_html = (
+                    '<tr style="text-align: right;">'
+                    + "".join(f"<th>{h}</th>" for h in _header)
+                    + "</tr>"
+                )
+                _head_html = f"<thead>{_head_html}</thead>"
+            else:
+                _head_html = ""
             _body_html = "".join(
                 f"<tr>{''.join(f'<td>{c}</td>' for c in row)}</tr>" for row in rows
             )
             html = (
-                f'<table width="{width}" border="1" class="dataframe">'
-                f'<thead>{_head_html}</thead>'
+                f'<table width="{width}" border="1" class="dataframe">{_head_html}'
                 f'<tbody>{_body_html}</tbody>'
                 f'</table>'
             )  # fmt: skip
@@ -558,12 +561,10 @@ class Logger(Widget, logging.Handler):
             )
 
         self.native.appendImage(image)
-        return None
 
-    def print_link(self, text: str, href: str):
+    def print_link(self, text: str, href: str, end: str = "\n"):
         """Print a link in the logger widget."""
-        self.native.appendHref(text, href)
-        return None
+        self.native.appendHref(text + end, href)
 
     def print_figure(self, fig: mpl_Figure | FigureManagerBase) -> None:
         """Print matplotlib Figure object like inline plot."""
@@ -571,13 +572,11 @@ class Logger(Widget, logging.Handler):
 
         fig.canvas.draw()
         data = np.asarray(fig.canvas.renderer.buffer_rgba(), dtype=np.uint8)
-        self.print_image(data)
-        return None
+        self.print_image(data, width=data.shape[1] // 3)
 
     def write(self, msg) -> None:
         """Handle the print event."""
         self.print(msg, end="")
-        return None
 
     def flush(self):
         """Do nothing."""
@@ -643,7 +642,7 @@ class Logger(Widget, logging.Handler):
                 style = "default"
 
         if "figure.dpi" not in rc_context:
-            rc_context["figure.dpi"] = 800
+            rc_context["figure.dpi"] = 300
         if "figure.figsize" not in rc_context:
             rc_context["figure.figsize"] = (4, 3)
         backend = mpl.get_backend()
