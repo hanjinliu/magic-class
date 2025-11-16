@@ -43,8 +43,7 @@ class MagicClassLogger(logging.Logger):
         width: int | None = None,
         header_style: str | None = None,
     ):
-        """
-        Print object as a table in the logger widget.
+        """Print object as a table in the logger widget.
 
         Parameters
         ----------
@@ -113,8 +112,7 @@ class MagicClassLogger(logging.Logger):
 
 
 def getLogger(name: str | None = None, show: bool = False) -> MagicClassLogger:
-    """
-    Get a magicclass logger.
+    """Get a magicclass logger.
 
     The returned logger has a name specific logger widget. Many method of
     `magicclass.widgets.Logger` are also available.
