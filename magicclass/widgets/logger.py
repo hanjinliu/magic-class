@@ -159,6 +159,9 @@ class QtLogger(QtW.QTextEdit):
             self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
         elif output_type == Output.IMAGE:
             cursor = self.textCursor()
+            # Scale image according to device pixel ratio
+            device_pixel_ratio = self.devicePixelRatio()
+            obj.setDevicePixelRatio(device_pixel_ratio)
             cursor.insertImage(obj)
             self.insertPlainText("\n\n")
             self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
@@ -212,7 +215,6 @@ class QtLogger(QtW.QTextEdit):
         cursor.deletePreviousChar()
         cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
         self.setTextCursor(cursor)
-        return None
 
     def _get_background_color(self) -> tuple[int, int, int, int]:
         return self.palette().color(self.backgroundRole()).getRgb()
@@ -253,7 +255,6 @@ class QtLogger(QtW.QTextEdit):
             filename = dialog.selectedFiles()[0]
             image.save(filename, format)
             self._last_save_path = Path(filename).parent
-        return None
 
     def _find_string(self):
         if self._finder_widget is None:
@@ -280,7 +281,7 @@ class QtLogger(QtW.QTextEdit):
 
         HtmlExporter(self).export()
 
-    def _get_image(self, name):
+    def _get_image(self, name) -> QtGui.QImage | None:
         """Returns the QImage stored as the ImageResource with 'name'."""
         document = self.document()
         image = document.resource(
