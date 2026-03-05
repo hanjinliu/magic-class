@@ -331,3 +331,18 @@ def test_super():
     ui[0]
     assert ui._hist == ["show", "getitem"]
     assert len(ui.macro) == 1
+
+def test_menu_and_toolbar_label():
+    @magicclass
+    class A:
+        @magicmenu
+        class Menu:
+            a = field(int, label="X")
+
+        @magictoolbar
+        class Tool:
+            a = field(int, label="X")
+
+    ui = A()
+    assert ui.Menu.a.label == "X"
+    assert ui.Tool.a.label == "X"

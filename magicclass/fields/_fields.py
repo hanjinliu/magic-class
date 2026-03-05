@@ -189,24 +189,22 @@ class MagicField(_FieldObject, Generic[_W]):
     @overload
     def with_choices(
         self, choices: Sequence[tuple[str, _U]]
-    ) -> MagicField[CategoricalWidget[_U]]:
-        ...
+    ) -> MagicField[CategoricalWidget[_U]]: ...
 
     @overload
-    def with_choices(self, choices: Sequence[_U]) -> MagicField[CategoricalWidget[_U]]:
-        ...
+    def with_choices(
+        self, choices: Sequence[_U]
+    ) -> MagicField[CategoricalWidget[_U]]: ...
 
     @overload
     def with_choices(
         self, choices: Callable[..., Sequence[tuple[str, _U]]]
-    ) -> MagicField[CategoricalWidget[_U]]:
-        ...
+    ) -> MagicField[CategoricalWidget[_U]]: ...
 
     @overload
     def with_choices(
         self, choices: Callable[..., Sequence[_U]]
-    ) -> MagicField[CategoricalWidget[_U]]:
-        ...
+    ) -> MagicField[CategoricalWidget[_U]]: ...
 
     def with_choices(self, choices):
         """Method to add choices to the field."""
@@ -304,8 +302,7 @@ class MagicField(_FieldObject, Generic[_W]):
         return widget
 
     def get_action(self, obj: Any) -> AbstractAction:
-        """
-        Get an action from `obj`.
+        """Get an action from `obj`.
 
         This function will be called every time MagicField is referred by `obj.field`.
         """
@@ -328,7 +325,7 @@ class MagicField(_FieldObject, Generic[_W]):
             else:
                 widget = self.construct(obj)
                 widget.name = self.name
-                action = WidgetAction(widget)
+                action = WidgetAction(widget, label=self.label)
 
             self._guis[obj_id] = action
 
@@ -396,12 +393,10 @@ class MagicField(_FieldObject, Generic[_W]):
         return _func
 
     @overload
-    def __get__(self, obj: Literal[None], objtype=None) -> MagicField[_W]:
-        ...
+    def __get__(self, obj: Literal[None], objtype=None) -> MagicField[_W]: ...
 
     @overload
-    def __get__(self, obj: Any, objtype=None) -> _W:
-        ...
+    def __get__(self, obj: Any, objtype=None) -> _W: ...
 
     def __get__(self, obj, objtype=None):
         """Get widget for the object."""
@@ -488,8 +483,7 @@ class MagicField(_FieldObject, Generic[_W]):
         timeout: float = 0.0,
         abort_limit: float = float("inf"),
         ignore_errors: bool = False,
-    ) -> thread_worker[_P]:
-        ...
+    ) -> thread_worker[_P]: ...
 
     @overload
     def connect_async(
@@ -499,8 +493,7 @@ class MagicField(_FieldObject, Generic[_W]):
         timeout: float = 0.0,
         abort_limit: float = float("inf"),
         ignore_errors: bool = False,
-    ) -> Callable[[Callable[_P, Any | None]], thread_worker[_P]]:
-        ...
+    ) -> Callable[[Callable[_P, Any | None]], thread_worker[_P]]: ...
 
     def connect_async(
         self,
@@ -715,12 +708,10 @@ class MagicValueField(MagicField[ValueWidget[_V]]):
     """
 
     @overload
-    def __get__(self, obj: Literal[None], objtype=None) -> MagicValueField[_V] | _V:
-        ...
+    def __get__(self, obj: Literal[None], objtype=None) -> MagicValueField[_V] | _V: ...
 
     @overload
-    def __get__(self, obj: Any, objtype=None) -> _V:
-        ...
+    def __get__(self, obj: Any, objtype=None) -> _V: ...
 
     def __get__(self, obj, objtype=None):
         if obj is None:
@@ -796,22 +787,22 @@ class MagicValueField(MagicField[ValueWidget[_V]]):
         return value
 
     @overload
-    def with_choices(self, choices: Sequence[tuple[str, _U]]) -> MagicValueField[_U]:
-        ...
+    def with_choices(
+        self, choices: Sequence[tuple[str, _U]]
+    ) -> MagicValueField[_U]: ...
 
     @overload
-    def with_choices(self, choices: Sequence[_U]) -> MagicValueField[_U]:
-        ...
+    def with_choices(self, choices: Sequence[_U]) -> MagicValueField[_U]: ...
 
     @overload
     def with_choices(
         self, choices: Callable[..., Sequence[tuple[str, _U]]]
-    ) -> MagicValueField[_U]:
-        ...
+    ) -> MagicValueField[_U]: ...
 
     @overload
-    def with_choices(self, choices: Callable[..., Sequence[_U]]) -> MagicValueField[_U]:
-        ...
+    def with_choices(
+        self, choices: Callable[..., Sequence[_U]]
+    ) -> MagicValueField[_U]: ...
 
     def with_choices(self, choices):
         """Method to add choices to the field."""
@@ -828,8 +819,7 @@ def field(
     options: dict[str, Any] = {},
     record: bool = True,
     location: type[MagicTemplate] | MagicField | None = None,
-) -> MagicField[_M]:
-    ...
+) -> MagicField[_M]: ...
 
 
 @overload
@@ -841,8 +831,7 @@ def field(
     options: dict[str, Any] = {},
     record: bool = True,
     location: type[MagicTemplate] | MagicField | None = None,
-) -> MagicField[_W]:
-    ...
+) -> MagicField[_W]: ...
 
 
 @overload
@@ -855,8 +844,7 @@ def field(
     options: dict[str, Any] = {},
     record: bool = True,
     location: type[MagicTemplate] | MagicField | None = None,
-) -> MagicField[ValueWidget[_X]]:
-    ...
+) -> MagicField[ValueWidget[_X]]: ...
 
 
 @overload
@@ -869,8 +857,7 @@ def field(
     options: dict[str, Any] = {},
     record: bool = True,
     location: type[MagicTemplate] | MagicField | None = None,
-) -> MagicField[ValueWidget[_X]]:
-    ...
+) -> MagicField[ValueWidget[_X]]: ...
 
 
 @overload
@@ -883,8 +870,7 @@ def field(
     options: dict[str, Any] = {},
     record: bool = True,
     location: type[MagicTemplate] | MagicField | None = None,
-) -> MagicField[_W]:
-    ...
+) -> MagicField[_W]: ...
 
 
 @overload
@@ -897,8 +883,7 @@ def field(
     options: dict[str, Any] = {},
     record: bool = True,
     location: type[MagicTemplate] | MagicField | None = None,
-) -> MagicField[Widget]:
-    ...
+) -> MagicField[Widget]: ...
 
 
 @overload
@@ -910,8 +895,7 @@ def field(
     options: dict[str, Any] = {},
     record: bool = True,
     location: type[MagicTemplate] | MagicField | None = None,
-) -> MagicField[Widget]:
-    ...
+) -> MagicField[Widget]: ...
 
 
 def field(
@@ -970,8 +954,7 @@ def vfield(
     options: dict[str, Any] = {},
     record: bool = True,
     location: type[MagicTemplate] | MagicField | None = None,
-) -> MagicValueField[_V]:
-    ...
+) -> MagicValueField[_V]: ...
 
 
 @overload
@@ -983,8 +966,7 @@ def vfield(
     options: dict[str, Any] = {},
     record: bool = True,
     location: type[MagicTemplate] | MagicField | None = None,
-) -> MagicValueField[Any]:
-    ...
+) -> MagicValueField[Any]: ...
 
 
 @overload
@@ -997,8 +979,7 @@ def vfield(
     options: dict[str, Any] = {},
     record: bool = True,
     location: type[MagicTemplate] | MagicField | None = None,
-) -> MagicValueField[_X]:
-    ...
+) -> MagicValueField[_X]: ...
 
 
 @overload
@@ -1011,8 +992,7 @@ def vfield(
     options: dict[str, Any] = {},
     record: bool = True,
     location: type[MagicTemplate] | MagicField | None = None,
-) -> MagicValueField[_X]:
-    ...
+) -> MagicValueField[_X]: ...
 
 
 @overload
@@ -1025,8 +1005,7 @@ def vfield(
     options: dict[str, Any] = {},
     record: bool = True,
     location: type[MagicTemplate] | MagicField | None = None,
-) -> MagicValueField[_V]:
-    ...
+) -> MagicValueField[_V]: ...
 
 
 @overload
@@ -1039,8 +1018,7 @@ def vfield(
     options: dict[str, Any] = {},
     record: bool = True,
     location: type[MagicTemplate] | MagicField | None = None,
-) -> MagicValueField[Any]:
-    ...
+) -> MagicValueField[Any]: ...
 
 
 @overload
@@ -1052,8 +1030,7 @@ def vfield(
     options: dict[str, Any] = {},
     record: bool = True,
     location: type[MagicTemplate] | MagicField | None = None,
-) -> MagicValueField[Any]:
-    ...
+) -> MagicValueField[Any]: ...
 
 
 def vfield(
