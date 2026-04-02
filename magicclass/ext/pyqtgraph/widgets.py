@@ -121,8 +121,7 @@ class HasDataItems:
         symbol: str = None,
         antialias: bool = False,
     ) -> Curve:
-        """
-        Add a line plot like `plt.plot(x, y)`.
+        """Add a line plot like `plt.plot(x, y)`.
 
         Parameters
         ----------
@@ -168,8 +167,7 @@ class HasDataItems:
         ls: str = "-",
         symbol="o",
     ) -> Scatter:
-        """
-        Add scatter plot like `plt.scatter(x, y)`.
+        """Add scatter plot like `plt.scatter(x, y)`.
 
         Parameters
         ----------
@@ -214,8 +212,7 @@ class HasDataItems:
         lw: float = 1,
         ls: str = "-",
     ) -> Histogram:
-        """
-        Add histogram like `plt.hist(data)`.
+        """Add histogram like `plt.hist(data)`.
 
         Parameters
         ----------
@@ -264,8 +261,7 @@ class HasDataItems:
         lw: float = 1,
         ls: str = "-",
     ) -> BarPlot:
-        """
-        Add a bar plot like `plt.bar(x, y)`.
+        """Add a bar plot like `plt.bar(x, y)`.
 
         Parameters
         ----------
@@ -334,8 +330,7 @@ class HasDataItems:
         name: str | None = None,
         lw: float = 1,
         ls: str = "-",
-    ) -> InfLine:
-        ...
+    ) -> InfLine: ...
 
     @overload
     def add_infline(
@@ -346,8 +341,7 @@ class HasDataItems:
         name: str | None = None,
         lw: float = 1,
         ls: str = "-",
-    ) -> InfLine:
-        ...
+    ) -> InfLine: ...
 
     def add_infline(
         self,
@@ -417,8 +411,7 @@ class HasDataItems:
         symbol: str | None = None,
         antialias: bool = False,
     ) -> Curve:
-        """
-        Add a function and plot it.
+        """Add a function and plot it.
 
         Parameters
         ----------
@@ -462,8 +455,7 @@ class HasDataItems:
         name: str | None = None,
         size: float = 9.0,
         anchor: tuple[float, float] = (0.0, 0.0),
-    ) -> TextGroup:
-        ...
+    ) -> TextGroup: ...
 
     @overload
     def add_text(
@@ -475,8 +467,7 @@ class HasDataItems:
         name: str | None = None,
         size: float = 9.0,
         anchor: tuple[float, float] = (0.0, 0.0),
-    ) -> TextGroup:
-        ...
+    ) -> TextGroup: ...
 
     def add_text(
         self,
@@ -648,9 +639,7 @@ class SimpleViewBox(HasViewBox):
 
 
 class PlotItem(HasViewBox):
-    """
-    A 1-D plot item that has similar API as napari Viewer.
-    """
+    """A 1-D plot item that has similar API as napari Viewer."""
 
     def __init__(self, viewbox: pg.ViewBox | None = None):
         if viewbox is None:
@@ -766,7 +755,7 @@ class ImageItem(HasViewBox):
         self._lock_contrast_limits = lock_contrast_limits
         self._scale = (1.0, 1.0)
         super().__init__(viewbox)
-        self._image_item = pg.ImageItem()
+        self._image_item = pg.ImageItem(levels=(0, 1), axisOrder="row-major")
         tr = self._image_item.transform().translate(-0.5, -0.5)
         self._image_item.setTransform(tr)
 
@@ -804,17 +793,19 @@ class ImageItem(HasViewBox):
             self._hist.vb.setBackgroundColor([0, 0, 0, 0.2])
             self._hist.setParentItem(self._viewbox)
             self._hist.setVisible(False)
-
-            @viewbox.button.clicked.connect
-            def _(e):
-                visible = not self._hist.isVisible()
-                self._hist.setVisible(visible)
-                if visible:
-                    self._hist._updateView()
-                    width = min(160, self._viewbox.width())
-                    self._hist.setFixedWidth(width)
+            self._hist.setImageItem(self._image_item)
+            viewbox.button.clicked.connect(self._on_viewbox_button_clicked)
 
         self._cmap = "gray"
+
+    def _on_viewbox_button_clicked(self, e):
+        visible = not self._hist.isVisible()
+        self._hist.setVisible(visible)
+        if visible:
+            self._hist.setLevels(*self._image_item.levels)
+            self._hist._updateView()
+            width = min(160, self._viewbox.width())
+            self._hist.setFixedWidth(width)
 
     def _update_scene(self):
         # Since plot item does not have graphics scene before being added to
@@ -878,41 +869,40 @@ class ImageItem(HasViewBox):
         if self._image_item.image is None:
             return None
         else:
-            return self._image_item.image.T
+            return self._image_item.image
 
     @image.setter
     def image(self, image: np.ndarray):
         no_image = self._image_item.image is None
         if no_image:
-            auto_levels = True
+            kwargs = {"autoLevels": True}
         else:
-            auto_levels = not self._lock_contrast_limits
-            clims = self.contrast_limits
+            if self._lock_contrast_limits:
+                kwargs = {"levels": self.contrast_limits}
+            else:
+                kwargs = {"autoLevels": True}
         img = np.asarray(image)
-        self._image_item.setImage(img.T, autoLevels=auto_levels)
-        self._hist.setImageItem(self._image_item)
-        self._hist._updateView()
+        self._image_item.setImage(img, **kwargs)
         if no_image:
             self._viewbox.autoRange()
-        if not auto_levels:
-            self.contrast_limits = clims
         sy, sx = img.shape[-2:]
         self._title.pos = [sx / 2, self._title.pos[1]]
-        self._title.visible = True
         self._xlabel.pos = [sx / 2, sy]
-        self._xlabel.visible = True
         self._ylabel.pos = [0, sy / 2]
-        self._ylabel.visible = True
+        self._set_text_visible(True)
 
     @image.deleter
     def image(self):
         self._image_item.clear()
-        self._title.visible = False
-        self._xlabel.visible = False
-        self._ylabel.visible = False
+        self._set_text_visible(False)
+
+    def _set_text_visible(self, visible: bool):
+        self._title.visible = visible
+        self._xlabel.visible = visible
+        self._ylabel.visible = visible
 
     @property
-    def contrast_limits(self) -> list[float, float]:
+    def contrast_limits(self) -> tuple[float, float]:
         """Contrast limits of image"""
         return self._image_item.levels
 
