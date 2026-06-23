@@ -2,7 +2,6 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from qtpy.sip import isdeleted
 from magicclass.widgets import Logger
 
 # The global logger widgets
@@ -132,7 +131,10 @@ def getLogger(name: str | None = None, show: bool = False) -> MagicClassLogger:
     if (handler := _LOGGER_WIDGETS.get(name, None)) is None:
         handler = _LOGGER_WIDGETS[name] = Logger()
         logger.addHandler(handler)
-    elif isdeleted(handler.native):
+    # check if the widget is deleted.
+    try:
+        handler.native.isVisible()
+    except RuntimeError:
         handler = _LOGGER_WIDGETS[name] = Logger()
         logger.addHandler(handler)
     if show:
