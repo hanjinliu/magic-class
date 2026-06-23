@@ -110,4 +110,5 @@ backend = ["pyqt5", "pyqt6"]
 matrix.backend.features = [
     { value = "pyqt5", if = ["pyqt5"] },
     { value = "pyqt6", if = ["pyqt6"] },
+    { value = "pyside6", if = ["pyside6"] },
 ]
