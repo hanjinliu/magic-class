@@ -104,7 +104,7 @@ features = ["testing"]
 run = "pytest -v"
 
 [[tool.hatch.envs.test.matrix]]
-backend = ["pyqt5", "pyqt6"]
+backend = ["pyqt5", "pyqt6", "pyside6"]
 
 [tool.hatch.envs.test.overrides]
 matrix.backend.features = [
