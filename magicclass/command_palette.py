@@ -5,7 +5,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, Iterable
 from typing_extensions import Literal
-from qt_command_palette import get_palette
 from magicgui.widgets import Widget
 from magicclass._gui import BaseGui
 from magicclass._gui.mgui_ext import Clickable, is_clickable
@@ -54,6 +53,8 @@ def exec_command_palette(
         arguments as `title`. If the function returns False, the command will
         not be registered.
     """
+    from qt_command_palette import get_palette
+
     _id = id(gui)
     if _id in _PALETTES:
         return _PALETTES[_id].show_widget(gui.native)

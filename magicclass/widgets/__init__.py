@@ -34,6 +34,7 @@ from .separator import Separator
 from .utils import FreeWidget
 from .logger import Logger
 from .codeedit import CodeEdit
+from .toggle_buttons import ToggleButtons
 from .toggle_switch import ToggleSwitch
 from .eval import EvalLineEdit
 from .line_runner import OneLineRunner
@@ -73,6 +74,7 @@ __all__ = [
     "StackedContainer",
     "TabbedContainer",
     "ToggleSwitch",
+    "ToggleButtons",
     "ToolBoxContainer",
     "UnionWidget",
 ]
