@@ -64,23 +64,14 @@ def exec_command_palette(
         title = _default_title
     if desc is None:
         desc = _default_desc
-    if filter is None:
-        filter = lambda mcls, btn: True
 
-    processed: set[int] = set()
-    for parent, wdt in _iter_executable(gui):
-        _id = id(wdt)
-        if _id in processed:
-            continue
-        if not filter(parent, wdt):
-            continue
+    for parent, wdt in _iter_executable_with_filter(gui, filter):
         palette.register(
             _define_command(wdt.changed.emit),
             title=title(parent, wdt),
             desc=desc(parent, wdt),
             when=_define_when(wdt, parent),
         )
-        processed.add(_id)
     palette.sort(rule=lambda cmd: str(cmd.title.count(".")) + cmd.title + cmd.desc)
     _PALETTES[_id] = palette
     palette.install(gui.native)
@@ -132,24 +123,15 @@ def register_actions_to_napari(
         title = _default_title
     if desc is None:
         desc = _default_desc
-    if filter is None:
-        filter = lambda mcls, btn: True
     if prefix is None:
         prefix = gui.name
 
-    processed: set[int] = set()
-    for parent, wdt in _iter_executable(gui):
-        _id = id(wdt)
-        if _id in processed:
-            continue
-        if not filter(parent, wdt):
-            continue
+    for parent, wdt in _iter_executable_with_filter(gui, filter):
         app.register_action(
-            f"{prefix}-{_id}",
+            f"{prefix}-{id(wdt)}",
             f"[{prefix}] {title(parent, wdt)}: {desc(parent, wdt)}",
             callback=_define_command(wdt.changed.emit),
         )
-        processed.add(_id)
 
 
 def _define_command(fn: Callable) -> Callable:
@@ -182,3 +164,20 @@ def _iter_executable(gui: BaseGui) -> Iterable[tuple[BaseGui, Clickable]]:
             yield gui, wdt
         elif isinstance(wdt, BaseGui):
             yield from _iter_executable(wdt)
+
+
+def _iter_executable_with_filter(
+    gui: BaseGui,
+    filter: Callable[[BaseGui, Clickable], str] | None = None,
+) -> Iterable[tuple[BaseGui, Clickable]]:
+    if filter is None:
+        filter = lambda mcls, btn: True
+    processed: set[int] = set()
+    for parent, wdt in _iter_executable(gui):
+        _id_wdt = id(wdt)
+        if _id_wdt in processed:
+            continue
+        if not filter(parent, wdt):
+            continue
+        yield parent, wdt
+        processed.add(_id_wdt)
