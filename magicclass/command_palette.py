@@ -23,8 +23,7 @@ def exec_command_palette(
     desc: Callable[[Widget, Clickable], str] | None = None,
     filter: Callable[[Widget, Clickable], str] | None = None,
 ):
-    """
-    Register all the methods available from GUI to the command palette.
+    """Register all the methods available from GUI to the command palette.
 
     >>> from magicclass import magicclass, bind_key
     >>> from magicclass.command_palette import exec_command_palette
@@ -86,6 +85,71 @@ def exec_command_palette(
     _PALETTES[_id] = palette
     palette.install(gui.native)
     return palette.show_widget(gui.native)
+
+
+def register_actions_to_napari(
+    gui: BaseGui,
+    title: Callable[[Widget, Clickable], str] | None = None,
+    desc: Callable[[Widget, Clickable], str] | None = None,
+    filter: Callable[[Widget, Clickable], str] | None = None,
+    prefix: str | None = None,
+):
+    """Register all the methods available from GUI to the napari command palette.
+
+    >>> from magicclass import magicclass, bind_key
+    >>> from magicclass.command_palette import register_actions_to_napari
+    >>> @magicclass
+    >>> class A:
+    ...     def __post_init__(self):
+    ...         register_actions_to_napari(self)
+    ...     def f(self, x: int): ...
+    ...     def g(self): ...
+
+    Parameters
+    ----------
+    gui : magic-class
+        Magic-class instance.
+    title : callable, optional
+        Formatter function for the title of each command. The function should
+        take two arguments. For a command corresponding to a button, the first
+        argument is the parent magic-class instance, and the second argument
+        is the button widget itself.
+    desc : callable, optional
+        Formatter function for the description of each command. The function
+        takes the same arguments as `title`.
+    filter : callable, optional
+        Filter function for the commands. The function should take the same
+        arguments as `title`. If the function returns False, the command will
+        not be registered.
+    prefix : str, optional
+        Prefix for the command name displayed in the napari command palette.
+    """
+    from napari._app_model import get_app_model
+
+    app = get_app_model()
+
+    if title is None:
+        title = _default_title
+    if desc is None:
+        desc = _default_desc
+    if filter is None:
+        filter = lambda mcls, btn: True
+    if prefix is None:
+        prefix = gui.name
+
+    processed: set[int] = set()
+    for parent, wdt in _iter_executable(gui):
+        _id = id(wdt)
+        if _id in processed:
+            continue
+        if not filter(parent, wdt):
+            continue
+        app.register_action(
+            f"{prefix}-{_id}",
+            f"[{prefix}] {title(parent, wdt)}: {desc(parent, wdt)}",
+            callback=_define_command(wdt.changed.emit),
+        )
+        processed.add(_id)
 
 
 def _define_command(fn: Callable) -> Callable:
