@@ -60,7 +60,6 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         self._n_computation += 1
         self._timer.reset()
         self._start_thread()
-        return None
 
     def _on_computed(self, result):
         s = self._state
@@ -75,7 +74,6 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
                 self._frac = 1.0
         self.pbar.value = self.max * self._frac
         self.computed.emit(result)
-        return None
 
     def _pretask(self, key, dsk, state):
         self._state = state
@@ -84,13 +82,11 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
     def _posttask(self, key, result, dsk, state, worker_id):
         self._computed_signal.emit(result)
         self._time_signal.emit()
-        return None
 
     def _finish(self, dsk=None, state=None, errored=None):
         self._frac = 1.0
         self._running = False
         self._thread_timer.join()
-        return None
 
     def set_worker(self, worker: GeneratorWorker | FunctionWorker):
         """Set currently running worker."""
@@ -99,6 +95,8 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
             # FunctionWorker does not have yielded/aborted signals.
             self.hide_footer()
             return None
+
+        self.show_footer()
         # initialize abort_button
         self.abort_button.text = "Abort"
         self.abort_button.changed.connect(self._abort_worker)
@@ -115,17 +113,14 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
             self.pause_button.enabled = True
             self._timer.stop()
 
-        return None
-
     def increment(self, yielded=None):
         # Dask progressbar is incremented by computed signal.
         # Do not increment by yielded signal.
-        return None
+        return
 
 
 class dask_thread_worker(thread_worker[_P, _R]):
-    """
-    Create a dask's worker in a superqt/napari style.
+    """Create a dask's worker in a superqt/napari style.
 
     This thread worker class can monitor the progress of dask computation.
     Callback function connected to `computed` signal will get called when any one
