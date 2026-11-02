@@ -37,8 +37,7 @@ _W = TypeVar("_W", bound=ValueWidget)
 
 @merge_super_sigs
 class OptionalWidget(Container):
-    """
-    A container that can represent optional argument.
+    """A container that can represent optional argument.
 
     Parameters
     ----------

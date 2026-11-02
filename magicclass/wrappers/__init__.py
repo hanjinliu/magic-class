@@ -10,6 +10,7 @@ from ._misc import (
     do_not_record,
     bind_key,
     nogui,
+    set_preprocessor,
 )
 
 __all__ = [
@@ -25,4 +26,5 @@ __all__ = [
     "do_not_record",
     "bind_key",
     "nogui",
+    "set_preprocessor",
 ]

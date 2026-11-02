@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from typing import Any, Callable, TypedDict, overload, Literal, TYPE_CHECKING
 from typing_extensions import Annotated, get_origin, get_args
 
@@ -40,17 +39,17 @@ class AdditionalOptions(TypedDict, total=False):
     gui: bool
     on_called: list[Callable]
     confirm: ConfirmDict
+    preprocessor: Callable[[dict[str, Any]], dict[str, Any]]
 
 
 def upgrade_signature(
     func,
     gui_options: dict | None = None,
     caller_options: dict | None = None,
-    additional_options: AdditionalOptions = None,
+    additional_options: AdditionalOptions | None = None,
 ):
-    """
-    Upgrade function signature to MagicMethodSignature. The input function may have
-    a inspect.Signature or magicgui.signature.Magicsignature.
+    """Upgrade function signature to MagicMethodSignature.
+    The input function may have a inspect.Signature or magicgui.signature.Magicsignature.
 
     Parameters
     ----------
@@ -145,9 +144,9 @@ class MagicMethodSignature(MagicSignature):
         parameters=None,
         *,
         return_annotation=inspect.Signature.empty,
-        gui_options: dict[str, dict] = None,
-        caller_options: dict[str] = None,
-        additional_options: dict[str] = None,
+        gui_options: dict[str, dict] | None = None,
+        caller_options: dict[str, Any] | None = None,
+        additional_options: dict[str, Any] | None = None,
     ):
         super().__init__(
             parameters=parameters,
@@ -226,23 +225,29 @@ class MagicMethodSignature(MagicSignature):
         )
 
 
-if sys.version_info < (3, 9):
-    dict_ = dict
-else:
-    dict_ = dict[str, Callable]
-
-
-class ValidatorDict(dict_):
+class ValidatorDict(dict[str, Callable]):
     """Dictionary of validators"""
 
     def __init__(self, sig: inspect.Signature):
         self._sig = sig
+        self._preprocessor: Callable[[dict[str, Any]], dict[str, Any]] = self._identical
+        if isinstance(sig, MagicMethodSignature):
+            self._preprocessor = sig.additional_options.get(
+                "preprocessor", self._identical
+            )
         super().__init__()
+
+    @staticmethod
+    def _identical(x):
+        return x
 
     def validate(
         self, obj: Any, *args, **kwargs
     ) -> tuple[tuple[Any, ...], dict[str, Any]]:
         """Validate arguments and return validated arguments."""
+        if self._preprocessor is not self._identical:
+            kwargs = self._preprocessor(kwargs)
+
         if self:
             bound = self._sig.bind(*args, **kwargs)
             bound.apply_defaults()

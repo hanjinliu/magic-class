@@ -9,17 +9,17 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
 ]
 dynamic = ["version"]
 description = "Generate multifunctional GUIs from classes"
 readme = "README.md"
 license = { file = "LICENSE" }
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 authors = [
     { name = "Hanjin Liu", email = "liuhanjin.sc@gmail.com" },
 ]
@@ -34,11 +34,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-pyqt5 = ["pyqt5>=5.12.0"]
 pyqt6 = ["pyqt6"]
-pyside2 = [
-    "pyside2>=5.15 ; python_version>='3.9'",
-]
 pyside6 = ["pyside6"]
 testing = [
     "pytest",
@@ -60,7 +56,7 @@ docs = [
     "mkdocstrings-python==1.10.8",
     "mkdocs-gen-files==0.5.0",
     "numpy",
-    "pyqt5>=5.12.0",
+    "pyqt6>=6.10.2",
     "docutils>=0.17.1",
     "pyqtgraph>=0.13.2",
     "vispy>=0.11.0",
@@ -104,11 +100,10 @@ features = ["testing"]
 run = "pytest -v"
 
 [[tool.hatch.envs.test.matrix]]
-backend = ["pyqt5", "pyqt6", "pyside6"]
+backend = ["pyqt6", "pyside6"]
 
 [tool.hatch.envs.test.overrides]
 matrix.backend.features = [
-    { value = "pyqt5", if = ["pyqt5"] },
     { value = "pyqt6", if = ["pyqt6"] },
     { value = "pyside6", if = ["pyside6"] },
 ]

@@ -402,7 +402,9 @@ class MagicField(_FieldObject, Generic[_W]):
         return self.get_widget(obj)
 
     def __set__(self, obj, value) -> None:
-        raise AttributeError(f"Cannot set value to {self.__class__.__name__}.")
+        raise AttributeError(
+            f"Cannot set value to {self.__class__.__name__} {self.name!r}."
+        )
 
     def ready(self) -> bool:
         """Return true if field is ready to create widgets."""

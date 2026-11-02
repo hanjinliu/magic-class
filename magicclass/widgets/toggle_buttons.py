@@ -24,6 +24,13 @@ class QCheckableButton(QtW.QPushButton):
         self.setCheckable(True)
         self.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
         self._data: Any | None = None
+        self.setStyleSheet(
+            """
+            QCheckableButton {
+                padding: 2px;
+            }
+        """
+        )
 
 
 class QToggleButtonGroup(QtW.QFrame):
