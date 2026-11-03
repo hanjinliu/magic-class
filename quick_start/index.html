@@ -1576,11 +1576,11 @@ See <a href="../basics/nest/">here</a> for more details.</p>
 
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">LineEdit</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Name:&quot;</span><span class="p">)</span>
-    <span class="n">i</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">Slider</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Age:&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">})</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">LineEdit</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Name:"</span><span class="p">)</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">Slider</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Age:"</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">"max"</span><span class="p">:</span> <span class="mi">100</span><span class="p">})</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">()</span>
 <span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -1600,7 +1600,7 @@ longer functions, but <code>FunctionGui</code> widgets.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="n">i</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">()</span>
 <span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -1616,7 +1616,7 @@ longer functions, but <code>FunctionGui</code> widgets.</p>
 </ul>
 <h3 id="parameter-options">Parameter Options</h3>
 <p>In <code>magicgui</code> you can define parameter options with keyword arguments:</p>
-<div class="highlight"><pre><span></span><code><span class="nd">@magicgui</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;widget_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Slider&quot;</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
+<div class="highlight"><pre><span></span><code><span class="nd">@magicgui</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="p">{</span><span class="s2">"widget_type"</span><span class="p">:</span> <span class="s2">"Slider"</span><span class="p">,</span> <span class="s2">"step"</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span> <span class="o">...</span>
 </code></pre></div>
 <p>However, magic classes need another way to do this because <code>magicgui</code> will never be called by users.</p>
@@ -1625,7 +1625,7 @@ longer functions, but <code>FunctionGui</code> widgets.</p>
 
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
-    <span class="nd">@set_options</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;widget_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Slider&quot;</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
+    <span class="nd">@set_options</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="p">{</span><span class="s2">"widget_type"</span><span class="p">:</span> <span class="s2">"Slider"</span><span class="p">,</span> <span class="s2">"step"</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span> <span class="o">...</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
@@ -1640,7 +1640,7 @@ to do this.</p>
 
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
-    <span class="nd">@set_design</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Click (if you want)&quot;</span><span class="p">,</span> <span class="n">min_height</span><span class="o">=</span><span class="mi">120</span><span class="p">)</span>
+    <span class="nd">@set_design</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">"Click (if you want)"</span><span class="p">,</span> <span class="n">min_height</span><span class="o">=</span><span class="mi">120</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
@@ -1656,11 +1656,11 @@ initalization procedure. It is called after widget is completely built.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># self[&quot;func&quot;] &lt;-- this is not correct. Button &quot;func&quot; is not ready!</span>
+        <span class="c1"># self["func"] &lt;-- this is not correct. Button "func" is not ready!</span>
         <span class="o">...</span>
 
 <span class="hll">    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class="hll">        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min_height</span> <span class="o">=</span> <span class="mi">100</span>
+</span><span class="hll">        <span class="bp">self</span><span class="p">[</span><span class="s2">"func"</span><span class="p">]</span><span class="o">.</span><span class="n">min_height</span> <span class="o">=</span> <span class="mi">100</span>
 </span>
     <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
 </code></pre></div>
@@ -1703,7 +1703,7 @@ You can prevent macro recording with <code>do_not_record</code> decorator for me
 <span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="nd">@do_not_record</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;this function will never be recorded&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""this function will never be recorded"""</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
 <span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -1730,7 +1730,7 @@ decorator.</p>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
 
-    <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Ctrl+Shift+P&quot;</span><span class="p">)</span>
+    <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">"Ctrl+Shift+P"</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_show_palette</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">exec_command_palette</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </code></pre></div>

@@ -1445,7 +1445,7 @@ composed of those in <code>f</code>. The <code>_f_prev</code> can be called from
         <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
     <span class="nd">@impl_preview</span><span class="p">(</span><span class="n">calc_csv</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_preview_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>  <span class="c1"># &quot;param&quot; is not needed here</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_preview_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>  <span class="c1"># "param" is not needed here</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">Table</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </code></pre></div>
@@ -1468,8 +1468,8 @@ You can also set the text of preview button using <code>text=...</code> argument
 
     <span class="nd">@impl_preview</span><span class="p">(</span><span class="n">summarize_csv</span><span class="p">)</span>
     <span class="nd">@impl_preview</span><span class="p">(</span><span class="n">calc_csv</span><span class="p">)</span>
-    <span class="nd">@impl_preview</span><span class="p">(</span><span class="n">plot_csv</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;preview CSV&quot;</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_preview_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>  <span class="c1"># &quot;param&quot; is not needed here</span>
+    <span class="nd">@impl_preview</span><span class="p">(</span><span class="n">plot_csv</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">"preview CSV"</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_preview_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>  <span class="c1"># "param" is not needed here</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">Table</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </code></pre></div>
@@ -1488,11 +1488,11 @@ Gaussian filtering.</p>
     <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># sample image</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;img&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min_width</span> <span class="o">=</span> <span class="mi">100</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;img&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min_height</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s2">"img"</span><span class="p">]</span><span class="o">.</span><span class="n">min_width</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s2">"img"</span><span class="p">]</span><span class="o">.</span><span class="n">min_height</span> <span class="o">=</span> <span class="mi">100</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">gaussian_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run Gaussian filter inplace&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Run Gaussian filter inplace"""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">img</span> <span class="o">=</span> <span class="n">ndi</span><span class="o">.</span><span class="n">gaussian_filter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
 
     <span class="nd">@impl_preview</span><span class="p">(</span><span class="n">gaussian_filter</span><span class="p">)</span>

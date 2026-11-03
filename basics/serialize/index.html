@@ -1412,18 +1412,18 @@ opposite.</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.serialize</span><span class="w"> </span><span class="kn">import</span> <span class="n">serialize</span><span class="p">,</span> <span class="n">deserialize</span>
 
 <span class="nd">@magicgui</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;X&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"X"</span><span class="p">):</span>
     <span class="k">pass</span>
 
 <span class="n">serialize</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 </code></pre></div>
-<div class="highlight"><span class="filename">Output</span><pre><span></span><code>{&#39;x&#39;: 1, &#39;y&#39;: &#39;X&#39;}
+<div class="highlight"><span class="filename">Output</span><pre><span></span><code>{'x': 1, 'y': 'X'}
 </code></pre></div>
 <p>And it can be deserialized back to the <code>FunctionGui</code> using <code>deserialize</code>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">deserialize</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="s2">&quot;Y&quot;</span><span class="p">})</span>
+<div class="highlight"><pre><span></span><code><span class="n">deserialize</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="s2">"Y"</span><span class="p">})</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 </code></pre></div>
-<div class="highlight"><span class="filename">Output</span><pre><span></span><code>&lt;FunctionGui func(x: int = 2, y: str = &#39;Y&#39;)&gt;
+<div class="highlight"><span class="filename">Output</span><pre><span></span><code>&lt;FunctionGui func(x: int = 2, y: str = 'Y')&gt;
 </code></pre></div>
 <p>Same functions can be used to serialize and deserialize magic-class widgets.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
@@ -1431,16 +1431,16 @@ opposite.</p>
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Parameters</span><span class="p">:</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="s2">"X"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print the parameters&quot;&quot;&quot;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;x =&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;, y =&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">"""Print the parameters"""</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"x ="</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s2">", y ="</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
 <span class="n">params</span> <span class="o">=</span> <span class="n">Parameters</span><span class="p">()</span>
 <span class="n">serialize</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 </code></pre></div>
-<div class="highlight"><span class="filename">Output</span><pre><span></span><code>{&#39;x&#39;: 1, &#39;y&#39;: &#39;X&#39;}
+<div class="highlight"><span class="filename">Output</span><pre><span></span><code>{'x': 1, 'y': 'X'}
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1458,13 +1458,13 @@ dictionary items.</p>
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="s2">"X"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__magicclass_serialize__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;custom_value&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">value</span><span class="p">)}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"custom_value"</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">value</span><span class="p">)}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__magicclass_deserialize__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;custom_value&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"custom_value"</span><span class="p">]</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1490,17 +1490,17 @@ callable that take a value and return <code>True</code> if the value should be s
     <span class="n">path</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">Path</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load image from path&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Load image from path"""</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">skimage.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">imread</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">img</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
-<span class="n">ui</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;path/to/image.png&quot;</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="s2">"path/to/image.png"</span>
 <span class="n">ui</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 <span class="n">serialize</span><span class="p">(</span><span class="n">ui</span><span class="p">,</span> <span class="n">skip_if</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">))</span>
 </code></pre></div>
-<div class="highlight"><span class="filename">Output</span><pre><span></span><code>{&#39;path&#39;: WindowsPath(&#39;path/to/image.png&#39;)}
+<div class="highlight"><span class="filename">Output</span><pre><span></span><code>{'path': WindowsPath('path/to/image.png')}
 </code></pre></div>
 
 

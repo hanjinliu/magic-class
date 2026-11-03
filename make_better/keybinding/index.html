@@ -1417,11 +1417,11 @@ keybindings, and like other wrappers, you don\'t have to worry about reducing co
 
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
-    <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Ctrl+A&quot;</span><span class="p">)</span> <span class="c1"># Qt-style</span>
+    <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">"Ctrl+A"</span><span class="p">)</span> <span class="c1"># Qt-style</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">function_1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Ctrl-B&quot;</span><span class="p">)</span> <span class="c1"># napari-style</span>
+    <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">"Ctrl-B"</span><span class="p">)</span> <span class="c1"># napari-style</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">function_2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 </code></pre></div>
@@ -1441,13 +1441,13 @@ you want to change widget values with shortcut.</p>
 <span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">button</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Click this button to remove focus from the spin box.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Click this button to remove focus from the spin box."""</span>
 
-    <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Up&quot;</span><span class="p">)</span>
+    <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">"Up"</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_increment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>
 
-    <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Down&quot;</span><span class="p">)</span>
+    <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">"Down"</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_decrement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
 </code></pre></div>
@@ -1459,7 +1459,7 @@ the value of <code>a</code> without clicking the spin box.</p>
 
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
-    <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Ctrl+K, Ctrl+L&quot;</span><span class="p">)</span>
+    <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">"Ctrl+K, Ctrl+L"</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">function_1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </code></pre></div>
@@ -1476,9 +1476,9 @@ the value of <code>a</code> without clicking the spin box.</p>
         <span class="k">def</span><span class="w"> </span><span class="nf">some_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
 
     <span class="nd">@Menu</span><span class="o">.</span><span class="n">wraps</span>
-    <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Ctrl+A&quot;</span><span class="p">)</span>
+    <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">"Ctrl+A"</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">some_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="c1"># should be &quot;Main&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="c1"># should be "Main"</span>
 </code></pre></div>
 <p>In this example, shortcut description appears in the menu.</p>
 <p><img alt="image" src="../../images/fig_6-1.png" /></p>
@@ -1489,8 +1489,8 @@ the value of <code>a</code> without clicking the spin box.</p>
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-    <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Ctrl-A&quot;</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">print_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">a</span><span class="p">}]):</span>
+    <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">"Ctrl-A"</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span> <span class="p">{</span><span class="s2">"bind"</span><span class="p">:</span> <span class="n">a</span><span class="p">}]):</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
 </code></pre></div>
 <p>Function calls triggered by shortcut are also recorded in macro.</p>

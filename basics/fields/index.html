@@ -1567,7 +1567,7 @@ construction.</p>
 <span class="n">c</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
 <span class="n">c</span>
 </code></pre></div>
-<div class="highlight"><span class="filename">Output</span><pre><span></span><code><span class="n">C</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<div class="highlight"><span class="filename">Output</span><pre><span></span><code><span class="n">C</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span>
 </code></pre></div>
 <p>Here, the arguments <code>default</code> and <code>default_factory</code> are reminiscent of "default value"
 and "type annotation" in <code>magicgui</code>. To apply the concept of field to widget
@@ -1575,13 +1575,13 @@ construction, <code>magic-class</code> has <code>MagicField</code>, which can st
 is ready to be converted into a widget.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">field</span>
 
-<span class="n">fld</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;initial&quot;</span><span class="p">})</span>
+<span class="n">fld</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">"value"</span><span class="p">:</span> <span class="s2">"initial"</span><span class="p">})</span>
 <span class="n">widget</span> <span class="o">=</span> <span class="n">fld</span><span class="o">.</span><span class="n">to_widget</span><span class="p">()</span>
 <span class="n">widget</span>
 </code></pre></div>
 <p><img alt="" src="../../images_autogen/fields-0.png" /></p>
 <p><code>field</code> can be used very similar to the <a href="https://pyapp-kit.github.io/magicgui/#create_widget"><code>create_widget</code> fucntion in <code>magicgui</code></a>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">widget_type</span><span class="o">=</span><span class="s2">&quot;Slider&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
+<div class="highlight"><pre><span></span><code><span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">widget_type</span><span class="o">=</span><span class="s2">"Slider"</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">"max"</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
 </code></pre></div>
 <p>The first argument of <code>field</code> can be type, value or widget type.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
@@ -1590,7 +1590,7 @@ is ready to be converted into a widget.</p>
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
     <span class="n">i</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="s2">&quot;abc&quot;</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="s2">"abc"</span><span class="p">)</span>
     <span class="n">table</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">Table</span><span class="p">)</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">()</span>
@@ -1610,7 +1610,7 @@ method.</p>
 
     <span class="nd">@a</span><span class="o">.</span><span class="n">connect</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;value changed!&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"value changed!"</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="make-fields-more-property-like">Make Fields More Property-like</h3>
 <p>In many cases, you don't need all the controls of a widget. If you only need the value
@@ -1626,10 +1626,10 @@ value itself when the field get accessed. You can create <code>MagicValueField</
 </span>
     <span class="nd">@a</span><span class="o">.</span><span class="n">connect</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;value changed!&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"value changed!"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">print_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;a = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># instead of &quot;self.a.value&quot;!</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"a = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>  <span class="c1"># instead of "self.a.value"!</span>
 </code></pre></div>
 <h3 id="even-better-widget-configuration">Even better widget configuration</h3>
 <p><code>MagicField</code> and <code>MagicValueField</code> can be configured with <code>options</code> keyword argument.
@@ -1640,11 +1640,11 @@ However, passing a <code>dict</code> is not good for code readability and typing
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
 
-    <span class="n">a</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>  <span class="c1"># instead of this</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">"min"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"max"</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>  <span class="c1"># instead of this</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">with_options</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>  <span class="c1"># use this</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">print_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;a = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"a = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
 <p>If you only want to set <code>choices</code>, <code>with_choices</code> method is provided for this purpose.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
@@ -1652,12 +1652,12 @@ However, passing a <code>dict</code> is not good for code readability and typing
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
 
-    <span class="n">a</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]})</span>  <span class="c1"># instead of this</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">"choices"</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]})</span>  <span class="c1"># instead of this</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">()</span><span class="o">.</span><span class="n">with_options</span><span class="p">(</span><span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>  <span class="c1"># or this</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">()</span><span class="o">.</span><span class="n">with_choices</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>  <span class="c1"># you can use this</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">print_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;a = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"a = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
 <p>Using <code>with_choices</code> is not just a shortcut. It also properly predicts
 the type of the output widget.</p>
@@ -1673,7 +1673,7 @@ the type of the output widget.</p>
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="c1"># FieldGroup is a direct subclass of Container</span>
-    <span class="n">points</span> <span class="o">=</span> <span class="n">Points</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">Points</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">"horizontal"</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">get_point</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
@@ -1697,7 +1697,7 @@ are some benefits to use <code>FieldGroup</code> over creating <code>magicclass<
 
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
-    <span class="n">points</span> <span class="o">=</span> <span class="n">Points</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">Points</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">"horizontal"</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
 </code></pre></div>
@@ -1713,10 +1713,10 @@ following code works.</p>
 <p>Since a <code>FieldGroup</code> can be considered as a "widget creator", you can easily define a
 widget template by subclassing it.</p>
 <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LabeledLineEdit</span><span class="p">(</span><span class="n">FieldGroup</span><span class="p">):</span>
-    <span class="n">lbl</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">widget_type</span><span class="o">=</span><span class="s2">&quot;Label&quot;</span><span class="p">)</span>
+    <span class="n">lbl</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">widget_type</span><span class="o">=</span><span class="s2">"Label"</span><span class="p">)</span>
     <span class="n">txt</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_text</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_text</span><span class="o">=</span><span class="s2">"label"</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lbl</span> <span class="o">=</span> <span class="n">label_text</span>
 
@@ -1724,8 +1724,8 @@ widget template by subclassing it.</p>
 
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
-    <span class="n">text_1</span> <span class="o">=</span> <span class="n">LabeledLineEdit</span><span class="p">(</span><span class="s2">&quot;First name&quot;</span><span class="p">)</span>
-    <span class="n">text_2</span> <span class="o">=</span> <span class="n">LabeledLineEdit</span><span class="p">(</span><span class="s2">&quot;Last name&quot;</span><span class="p">)</span>
+    <span class="n">text_1</span> <span class="o">=</span> <span class="n">LabeledLineEdit</span><span class="p">(</span><span class="s2">"First name"</span><span class="p">)</span>
+    <span class="n">text_2</span> <span class="o">=</span> <span class="n">LabeledLineEdit</span><span class="p">(</span><span class="s2">"Last name"</span><span class="p">)</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
 <span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>

@@ -1397,7 +1397,7 @@ time, random value or parameters in other widgets.</p>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_time</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
-<span class="nd">@magicgui</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">get_time</span><span class="p">})</span>
+<span class="nd">@magicgui</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="p">{</span><span class="s2">"bind"</span><span class="p">:</span> <span class="n">get_time</span><span class="p">})</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 </code></pre></div>
@@ -1421,7 +1421,7 @@ instance method every time the value is accessed. A bind option should be set us
         <span class="c1"># To avoid being added as a widget, make this method private.</span>
         <span class="k">return</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_start</span>
 
-    <span class="nd">@set_options</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">_get_time</span><span class="p">})</span>
+    <span class="nd">@set_options</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="p">{</span><span class="s2">"bind"</span><span class="p">:</span> <span class="n">_get_time</span><span class="p">})</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">print_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 </code></pre></div>
@@ -1448,11 +1448,11 @@ record the viewer's state.</p>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_last_shapes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
         <span class="n">viewer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_viewer</span>
         <span class="c1"># ndarray will not be recorded as concrete values by default, to avoid recording very</span>
-        <span class="c1"># large arrays. You have to convert it to a list, or use &quot;register_type&quot; function in</span>
-        <span class="c1"># &quot;magicclass.macro&quot;.</span>
-        <span class="k">return</span> <span class="n">viewer</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s2">&quot;Shapes&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="c1"># large arrays. You have to convert it to a list, or use "register_type" function in</span>
+        <span class="c1"># "magicclass.macro".</span>
+        <span class="k">return</span> <span class="n">viewer</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s2">"Shapes"</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
-    <span class="nd">@set_options</span><span class="p">(</span><span class="n">rectangle</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">_get_last_shapes</span><span class="p">})</span>
+    <span class="nd">@set_options</span><span class="p">(</span><span class="n">rectangle</span><span class="o">=</span><span class="p">{</span><span class="s2">"bind"</span><span class="p">:</span> <span class="n">_get_last_shapes</span><span class="p">})</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">read_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rectangle</span><span class="p">):</span>
         <span class="o">...</span>
 </code></pre></div>
@@ -1478,7 +1478,7 @@ simpler: bind field objects directly (See also <a href="../../basics/fields/">fi
     <span class="n">a</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">b</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
 
-    <span class="nd">@set_options</span><span class="p">(</span><span class="n">x0</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">a</span><span class="p">},</span> <span class="n">x1</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">b</span><span class="p">})</span>
+    <span class="nd">@set_options</span><span class="p">(</span><span class="n">x0</span><span class="o">=</span><span class="p">{</span><span class="s2">"bind"</span><span class="p">:</span> <span class="n">a</span><span class="p">},</span> <span class="n">x1</span><span class="o">=</span><span class="p">{</span><span class="s2">"bind"</span><span class="p">:</span> <span class="n">b</span><span class="p">})</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">x0</span> <span class="o">+</span> <span class="n">x1</span><span class="p">)</span>
 </code></pre></div>
@@ -1490,7 +1490,7 @@ simpler: bind field objects directly (See also <a href="../../basics/fields/">fi
 <span class="c1"># from typing_extensions import Annotated  &lt;--- for Python 3.8</span>
 
 <span class="nd">@magicgui</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">i</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">i</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="p">{</span><span class="s2">"max"</span><span class="p">:</span> <span class="mi">10</span><span class="p">}]):</span>
     <span class="o">...</span>
 </code></pre></div>
 <p>In magic-class, you can also use <code>Annotated</code> for bind options.</p>
@@ -1504,8 +1504,8 @@ simpler: bind field objects directly (See also <a href="../../basics/fields/">fi
 
     <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">x0</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">a</span><span class="p">}],</span>
-        <span class="n">x1</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">b</span><span class="p">}],</span>
+        <span class="n">x0</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="p">{</span><span class="s2">"bind"</span><span class="p">:</span> <span class="n">a</span><span class="p">}],</span>
+        <span class="n">x1</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="p">{</span><span class="s2">"bind"</span><span class="p">:</span> <span class="n">b</span><span class="p">}],</span>
     <span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">x0</span> <span class="o">+</span> <span class="n">x1</span><span class="p">)</span>
 </code></pre></div>

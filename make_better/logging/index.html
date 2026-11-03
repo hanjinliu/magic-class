@@ -1421,22 +1421,22 @@ and figures.</p>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>  <span class="c1"># create a logger widget.</span>
 
-<span class="n">log</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">)</span>  <span class="c1"># print the message.</span>
-<span class="n">log</span><span class="o">.</span><span class="n">print_html</span><span class="p">(</span><span class="s2">&quot;&lt;b&gt;bold&lt;/b&gt;&lt;i&gt;italic&lt;/i&gt; &lt;code&gt;code&lt;/code&gt;&quot;</span><span class="p">)</span>  <span class="c1"># print the message with HTML.</span>
-<span class="n">log</span><span class="o">.</span><span class="n">print_rst</span><span class="p">(</span><span class="s2">&quot;**bold** *italic* ``code``&quot;</span><span class="p">)</span>  <span class="c1"># print the message with reStructuredText.</span>
+<span class="n">log</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">"message"</span><span class="p">)</span>  <span class="c1"># print the message.</span>
+<span class="n">log</span><span class="o">.</span><span class="n">print_html</span><span class="p">(</span><span class="s2">"&lt;b&gt;bold&lt;/b&gt;&lt;i&gt;italic&lt;/i&gt; &lt;code&gt;code&lt;/code&gt;"</span><span class="p">)</span>  <span class="c1"># print the message with HTML.</span>
+<span class="n">log</span><span class="o">.</span><span class="n">print_rst</span><span class="p">(</span><span class="s2">"**bold** *italic* ``code``"</span><span class="p">)</span>  <span class="c1"># print the message with reStructuredText.</span>
 <span class="n">log</span>
 </code></pre></div>
 <p><img alt="" src="../../images_autogen/logging-0.png" /></p>
 <p>If you want to use the built-in <code>print</code> function but show the message in the logger
 widget, you can use the <code>set_stdout</code> context manager.</p>
 <div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">log</span><span class="o">.</span><span class="n">set_stdout</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">)</span>  <span class="c1"># print the message.</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"message"</span><span class="p">)</span>  <span class="c1"># print the message.</span>
 </code></pre></div>
 <p><code>set_logger</code> context manager works similarly.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
 <span class="k">with</span> <span class="n">log</span><span class="o">.</span><span class="n">set_logger</span><span class="p">():</span>
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"message"</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="print-images">Print images</h2>
 <p>You can show 2D arrays as images with <code>print_image</code> method.</p>
@@ -1445,7 +1445,7 @@ widget, you can use the <code>set_stdout</code> context manager.</p>
 <h2 id="print-tables">Print tables</h2>
 <p>Any <code>pandas.DataFrame</code>-like objects can be shown as a table with <code>print_table</code> method.</p>
 <div class="highlight"><pre><span></span><code><span class="n">log</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
-<span class="n">log</span><span class="o">.</span><span class="n">print_table</span><span class="p">({</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">]})</span>
+<span class="n">log</span><span class="o">.</span><span class="n">print_table</span><span class="p">({</span><span class="s2">"a"</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s2">"b"</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">]})</span>
 <span class="n">log</span><span class="o">.</span><span class="n">print_table</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
 <span class="n">log</span>
 </code></pre></div>
@@ -1468,10 +1468,10 @@ widget.</p>
 the methods are the same as the standard <code>logging</code> module.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">logging</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;your-app-name&quot;</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"your-app-name"</span><span class="p">)</span>
 <span class="n">logger</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>  <span class="c1"># show the logger widget.</span>
 
-<span class="n">logger</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">)</span>  <span class="c1"># print the message.</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">"message"</span><span class="p">)</span>  <span class="c1"># print the message.</span>
 <span class="k">with</span> <span class="n">logger</span><span class="o">.</span><span class="n">set_plt</span><span class="p">():</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>  <span class="c1"># plot</span>
 </code></pre></div>

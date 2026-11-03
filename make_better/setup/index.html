@@ -1322,7 +1322,7 @@
         <span class="n">gui</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="nb">print</span><span class="p">)</span>  <span class="c1"># setup the dialog for `func`</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Do something"""</span>
 </code></pre></div>
 <p>But the better solution is to use <code>@setup_function_gui</code> decorator.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">setup_function_gui</span>

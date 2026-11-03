@@ -1395,8 +1395,8 @@ naively, you will have to set <code>tooltip</code> property for every widget.</p
     <span class="o">...</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
-<span class="n">ui</span><span class="p">[</span><span class="s2">&quot;widget-1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tooltip</span> <span class="o">=</span> <span class="s2">&quot;tooltip for widget-1&quot;</span>
-<span class="n">ui</span><span class="p">[</span><span class="s2">&quot;widget-2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tooltip</span> <span class="o">=</span> <span class="s2">&quot;tooltip for widget-2&quot;</span>
+<span class="n">ui</span><span class="p">[</span><span class="s2">"widget-1"</span><span class="p">]</span><span class="o">.</span><span class="n">tooltip</span> <span class="o">=</span> <span class="s2">"tooltip for widget-1"</span>
+<span class="n">ui</span><span class="p">[</span><span class="s2">"widget-2"</span><span class="p">]</span><span class="o">.</span><span class="n">tooltip</span> <span class="o">=</span> <span class="s2">"tooltip for widget-2"</span>
 <span class="c1"># ... and so on</span>
 </code></pre></div>
 <p>However, this kind of documentation is not optimal. <code>magic-class</code> is designed to
@@ -1413,14 +1413,14 @@ GUI. In the example below:</p>
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description of the function.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        x : int</span>
 <span class="sd">            The first parameter.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 </code></pre></div>
 <p>"Description of the function." will be interpreted as a tooltip for button "f" and "The
 first parameter." will be added as a tooltip to the <code>SpinBox</code> widget that will appear
@@ -1435,11 +1435,11 @@ This time, class docstrings will be used for the purpose.</p>
 
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Description of A.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Description of A."""</span>
 
     <span class="nd">@magicclass</span>
     <span class="k">class</span><span class="w"> </span><span class="nc">B</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Description of B.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Description of B."""</span>
 </code></pre></div>
 <h2 id="add-tooltips-to-fields">Add tooltips to fields</h2>
 <p>Another important component of magic-classes are fields. In a naive way, you'll
@@ -1448,15 +1448,15 @@ have to set <code>"tooltip"</code> options for every field.</p>
 
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;tooltip&quot;</span><span class="p">:</span> <span class="s2">&quot;Description of what x is.&quot;</span><span class="p">})</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;tooltip&quot;</span><span class="p">:</span> <span class="s2">&quot;Description of what y is.&quot;</span><span class="p">})</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">"tooltip"</span><span class="p">:</span> <span class="s2">"Description of what x is."</span><span class="p">})</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">"tooltip"</span><span class="p">:</span> <span class="s2">"Description of what y is."</span><span class="p">})</span>
 </code></pre></div>
 <p>Again, this can also be substituted with docstrings of class itself.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
 
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Description of this class.</span>
 
 <span class="sd">    Attributes</span>
@@ -1465,7 +1465,7 @@ have to set <code>"tooltip"</code> options for every field.</p>
 <span class="sd">        Description of what x is.</span>
 <span class="sd">    y : int</span>
 <span class="sd">        Description of what y is.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
 </code></pre></div>

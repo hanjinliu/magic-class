@@ -1327,7 +1327,7 @@ default behavior later, recorded macro will change its behavior in the newer ver
         <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
-<span class="n">ui</span><span class="o">.</span><span class="n">f</span><span class="p">()</span>  <span class="c1"># macro is &quot;f(i=None)&quot;</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">f</span><span class="p">()</span>  <span class="c1"># macro is "f(i=None)"</span>
 </code></pre></div>
 <p><code>magic-class</code> extends the typing system of <code>magicgui</code> to support the "validator" key in
 <code>Annotated</code> types. The validator will be called on the passed argument <em>before</em> macro
@@ -1336,11 +1336,11 @@ creation.</p>
 <span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="o">...</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="p">{</span><span class="s2">&quot;validator&quot;</span><span class="p">:</span> <span class="n">_normalize_i</span><span class="p">}]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="p">{</span><span class="s2">"validator"</span><span class="p">:</span> <span class="n">_normalize_i</span><span class="p">}]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
-<span class="n">ui</span><span class="o">.</span><span class="n">f</span><span class="p">()</span>  <span class="c1"># macro is &quot;f(i=1)&quot; for v0.1 and &quot;f(i=2)&quot; for v0.2</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">f</span><span class="p">()</span>  <span class="c1"># macro is "f(i=1)" for v0.1 and "f(i=2)" for v0.2</span>
 </code></pre></div>
 <p>Validators can accept the third argument, where a dictionary of all the arguments will
 be passed. This is useful when you want to normalize the arguments based on other
@@ -1350,11 +1350,11 @@ arguments.</p>
     <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_i</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">i</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">i</span>
-        <span class="k">return</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;j&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">values</span><span class="p">[</span><span class="s2">"j"</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">i</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="p">{</span><span class="s2">&quot;validator&quot;</span><span class="p">:</span> <span class="n">_normalize_i</span><span class="p">}]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">i</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="p">{</span><span class="s2">"validator"</span><span class="p">:</span> <span class="n">_normalize_i</span><span class="p">}]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">j</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="c1"># if i is not given, use j instead</span>

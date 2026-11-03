@@ -1664,7 +1664,7 @@ error prone. There's a bug in following code.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">magicclass.undo</span><span class="w"> </span><span class="kn">import</span> <span class="n">undo_callback</span>
 
-<span class="c1"># widget that set &quot;value&quot; to &quot;inner_value&quot; when clicked.</span>
+<span class="c1"># widget that set "value" to "inner_value" when clicked.</span>
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="n">inner_value</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -1697,7 +1697,7 @@ this, you can provide the value as a parameter to the method. The best way is to
     <span class="n">inner_value</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">value</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">apply_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="p">{</span><span class="s2">"bind"</span><span class="p">:</span> <span class="n">value</span><span class="p">}]):</span>
         <span class="n">old_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inner_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
         <span class="nd">@undo_callback</span>
@@ -1722,7 +1722,7 @@ operation will fail. In following example, redo does not work.</p>
 <span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="n">array</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="nd">@set_options</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">get_array</span><span class="p">})</span>
+    <span class="nd">@set_options</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">{</span><span class="s2">"bind"</span><span class="p">:</span> <span class="n">get_array</span><span class="p">})</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">show_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">old_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">array</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -1742,7 +1742,7 @@ can pass a list to the method.</p>
 <span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
     <span class="n">array</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="nd">@set_options</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">get_array</span><span class="p">})</span>
+    <span class="nd">@set_options</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">{</span><span class="s2">"bind"</span><span class="p">:</span> <span class="n">get_array</span><span class="p">})</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">show_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">old_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">array</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>

@@ -1404,7 +1404,7 @@ in the "compile" time.</p>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">MyGui</span><span class="p">()</span>
 
-<span class="n">check_function_gui_buildable</span><span class="p">(</span><span class="n">ui</span><span class="p">)</span>  <span class="c1"># this will raise an error on &quot;f&quot;</span>
+<span class="n">check_function_gui_buildable</span><span class="p">(</span><span class="n">ui</span><span class="p">)</span>  <span class="c1"># this will raise an error on "f"</span>
 </code></pre></div>
 <p><code>check_function_gui_buildable</code> can also detect inappropriate <a href="../bind/">bind options</a> <a href="../choices/">choices</a>.</p>
 <h2 id="testing-docstrings">Testing Docstrings</h2>
@@ -1419,18 +1419,18 @@ actual variables.</p>
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">MyGui</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        ......</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        y : int         # &lt;---- this should be &quot;x&quot;</span>
+<span class="sd">        y : int         # &lt;---- this should be "x"</span>
 <span class="sd">            ......</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">MyGui</span><span class="p">()</span>
 
-<span class="n">check_tooltip</span><span class="p">(</span><span class="n">ui</span><span class="p">)</span>  <span class="c1"># wrong &quot;y&quot; will be reported</span>
+<span class="n">check_tooltip</span><span class="p">(</span><span class="n">ui</span><span class="p">)</span>  <span class="c1"># wrong "y" will be reported</span>
 </code></pre></div>
 <h2 id="testing-preview-and-confirmation">Testing Preview and Confirmation</h2>
 <p><code>magic-class</code> natively supports method <a href="../preview/">preview</a> and <a href="../confirm/">confirmation</a>. These are again a runtime feature, so they is hard to be tested.</p>
@@ -1441,12 +1441,12 @@ actual variables.</p>
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">MyGui</span><span class="p">:</span>
     <span class="c1"># confirm before run if x is too large</span>
-    <span class="nd">@confirm</span><span class="p">(</span><span class="n">condition</span><span class="o">=</span><span class="s2">&quot;x&gt;100&quot;</span><span class="p">)</span>
+    <span class="nd">@confirm</span><span class="p">(</span><span class="n">condition</span><span class="o">=</span><span class="s2">"x&gt;100"</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
-    <span class="c1"># method g has a preview function &quot;_g_preview&quot;</span>
+    <span class="c1"># method g has a preview function "_g_preview"</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">g</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
 
@@ -1457,10 +1457,10 @@ actual variables.</p>
         <span class="k">yield</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">old</span>  <span class="c1"># cleanup</span>
 
-    <span class="n">result</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>  <span class="c1"># show the result of &quot;g&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>  <span class="c1"># show the result of "g"</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">MyGui</span><span class="p">()</span>
-<span class="n">tester</span> <span class="o">=</span> <span class="n">FunctionGuiTester</span><span class="p">(</span><span class="n">ui</span><span class="o">.</span><span class="n">f</span><span class="p">)</span>  <span class="c1"># create a tester for function &quot;f&quot;</span>
+<span class="n">tester</span> <span class="o">=</span> <span class="n">FunctionGuiTester</span><span class="p">(</span><span class="n">ui</span><span class="o">.</span><span class="n">f</span><span class="p">)</span>  <span class="c1"># create a tester for function "f"</span>
 </code></pre></div>
 <p><code>FunctionGuiTester.call</code> will call the method as if it is called from GUI, but it will
 not open the default confirmation dialog (otherwise your test session will wait for your
@@ -1472,13 +1472,13 @@ can check if the confirmation is called using the <code>confirm_count</code> att
 </code></pre></div>
 <p>To test preview function, you can use <code>FunctionGuiTester.update_parameters</code> to update
 the GUI state and <code>FunctionGuiTester.click_preview</code> to trigger the preview function.</p>
-<div class="highlight"><pre><span></span><code><span class="n">tester</span> <span class="o">=</span> <span class="n">FunctionGuiTester</span><span class="p">(</span><span class="n">ui</span><span class="o">.</span><span class="n">g</span><span class="p">)</span>  <span class="c1"># create a tester for function &quot;g&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">tester</span> <span class="o">=</span> <span class="n">FunctionGuiTester</span><span class="p">(</span><span class="n">ui</span><span class="o">.</span><span class="n">g</span><span class="p">)</span>  <span class="c1"># create a tester for function "g"</span>
 
 <span class="c1"># test if the confirmation works</span>
 <span class="n">tester</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-<span class="k">assert</span> <span class="n">ui</span><span class="o">.</span><span class="n">result</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># check preview is not called yet</span>
+<span class="k">assert</span> <span class="n">ui</span><span class="o">.</span><span class="n">result</span> <span class="o">==</span> <span class="s2">""</span>  <span class="c1"># check preview is not called yet</span>
 <span class="n">tester</span><span class="o">.</span><span class="n">click_preview</span><span class="p">()</span>
-<span class="k">assert</span> <span class="n">ui</span><span class="o">.</span><span class="n">result</span> <span class="o">==</span> <span class="s2">&quot;25&quot;</span>  <span class="c1"># check preview is working</span>
+<span class="k">assert</span> <span class="n">ui</span><span class="o">.</span><span class="n">result</span> <span class="o">==</span> <span class="s2">"25"</span>  <span class="c1"># check preview is working</span>
 </code></pre></div>
 
 

@@ -1393,12 +1393,12 @@
 magic class object, the child object is appended to the parent.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">magicclass</span><span class="w"> </span><span class="kn">import</span> <span class="n">magicclass</span>
 
-<span class="nd">@magicclass</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">)</span>
+<span class="nd">@magicclass</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">"horizontal"</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Frame1</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">first_a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">first_b</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
 
-<span class="nd">@magicclass</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">)</span>
+<span class="nd">@magicclass</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">"horizontal"</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Frame2</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">second_a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">second_b</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
@@ -1417,12 +1417,12 @@ magic class object, the child object is appended to the parent.</p>
 
 <span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
-    <span class="nd">@magicclass</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">)</span>
+    <span class="nd">@magicclass</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">"horizontal"</span><span class="p">)</span>
     <span class="k">class</span><span class="w"> </span><span class="nc">Frame1</span><span class="p">:</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">first_a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">first_b</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
 
-    <span class="nd">@magicclass</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">)</span>
+    <span class="nd">@magicclass</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">"horizontal"</span><span class="p">)</span>
     <span class="k">class</span><span class="w"> </span><span class="nc">Frame2</span><span class="p">:</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">second_a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">second_b</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>

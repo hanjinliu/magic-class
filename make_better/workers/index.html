@@ -1590,8 +1590,8 @@ function.</p>
 <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">():</span>
     <span class="c1"># do something</span>
 
-<span class="n">worker</span> <span class="o">=</span> <span class="n">func</span><span class="p">()</span>  <span class="c1"># worker is ready to run the original &quot;func&quot;</span>
-<span class="n">worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>  <span class="c1"># the original &quot;func&quot; actually get called</span>
+<span class="n">worker</span> <span class="o">=</span> <span class="n">func</span><span class="p">()</span>  <span class="c1"># worker is ready to run the original "func"</span>
+<span class="n">worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>  <span class="c1"># the original "func" actually get called</span>
 </code></pre></div>
 <p>On the other hand, <code>magic-class</code>'s <code>thread_worker</code> is a class. It returns a
 <code>thread_worker</code> object instead of a new function. A <code>thread_worker</code> object will
@@ -1678,7 +1678,7 @@ following example:</p>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">yielded_value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.3</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">returned_value</span> <span class="o">=</span> <span class="s2">&quot;finished&quot;</span>  <span class="c1"># updates the widget</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">returned_value</span> <span class="o">=</span> <span class="s2">"finished"</span>  <span class="c1"># updates the widget</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
 <span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -1712,7 +1712,7 @@ widgets safely.</p>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
             <span class="k">yield</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.3</span><span class="p">)</span>
-        <span class="k">return</span> <span class="s2">&quot;finished&quot;</span>
+        <span class="k">return</span> <span class="s2">"finished"</span>
 
     <span class="nd">@func</span><span class="o">.</span><span class="n">yielded</span><span class="o">.</span><span class="n">connect</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_on_yield</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -1814,7 +1814,7 @@ progress bar to use.</p>
    progress bar widget will be created.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
-    <span class="nd">@thread_worker</span><span class="p">(</span><span class="n">progress</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
+    <span class="nd">@thread_worker</span><span class="p">(</span><span class="n">progress</span><span class="o">=</span><span class="p">{</span><span class="s2">"total"</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
@@ -1826,7 +1826,7 @@ progress bar to use.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="n">pbar</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">ProgressBar</span><span class="p">)</span>
-    <span class="nd">@thread_worker</span><span class="p">(</span><span class="n">progress</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
+    <span class="nd">@thread_worker</span><span class="p">(</span><span class="n">progress</span><span class="o">=</span><span class="p">{</span><span class="s2">"total"</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
@@ -1839,7 +1839,7 @@ progress bar to use.</p>
     <span class="n">pbar1</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">ProgressBar</span><span class="p">)</span>
     <span class="n">pbar2</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">ProgressBar</span><span class="p">)</span>
 
-    <span class="nd">@thread_worker</span><span class="p">(</span><span class="n">progress</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;pbar&quot;</span><span class="p">:</span> <span class="n">pbar1</span><span class="p">})</span>
+    <span class="nd">@thread_worker</span><span class="p">(</span><span class="n">progress</span><span class="o">=</span><span class="p">{</span><span class="s2">"total"</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">"pbar"</span><span class="p">:</span> <span class="n">pbar1</span><span class="p">})</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
@@ -1857,7 +1857,7 @@ states. In <code>magic-class</code>, you can pass a function or an evaluable lit
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="mi">10</span>
 
-    <span class="nd">@thread_worker</span><span class="p">(</span><span class="n">progress</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="n">_get_total</span><span class="p">})</span>
+    <span class="nd">@thread_worker</span><span class="p">(</span><span class="n">progress</span><span class="o">=</span><span class="p">{</span><span class="s2">"total"</span><span class="p">:</span> <span class="n">_get_total</span><span class="p">})</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">func0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">n_iter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_total</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_iter</span><span class="p">):</span>
@@ -1866,7 +1866,7 @@ states. In <code>magic-class</code>, you can pass a function or an evaluable lit
 
     <span class="c1"># Use a literal. Only the function arguments are available in the namespace.</span>
 
-    <span class="nd">@thread_worker</span><span class="p">(</span><span class="n">progress</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="s2">&quot;n_iter&quot;</span><span class="p">})</span>
+    <span class="nd">@thread_worker</span><span class="p">(</span><span class="n">progress</span><span class="o">=</span><span class="p">{</span><span class="s2">"total"</span><span class="p">:</span> <span class="s2">"n_iter"</span><span class="p">})</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">func1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_iter</span><span class="p">):</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
@@ -1874,20 +1874,20 @@ states. In <code>magic-class</code>, you can pass a function or an evaluable lit
 
     <span class="c1"># Use a literal. Any evaluable literal can be used.</span>
 
-    <span class="nd">@thread_worker</span><span class="p">(</span><span class="n">progress</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="s2">&quot;width * height&quot;</span><span class="p">})</span>
+    <span class="nd">@thread_worker</span><span class="p">(</span><span class="n">progress</span><span class="o">=</span><span class="p">{</span><span class="s2">"total"</span><span class="p">:</span> <span class="s2">"width * height"</span><span class="p">})</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">func2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">width</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">height</span><span class="p">):</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">h</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;, &quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">h</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">", "</span><span class="p">)</span>
                 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
                 <span class="k">yield</span>
             <span class="nb">print</span><span class="p">()</span>
 
-    <span class="c1"># Use a literal. Of course, &quot;self&quot; is the most powerful way.</span>
+    <span class="c1"># Use a literal. Of course, "self" is the most powerful way.</span>
 
     <span class="n">n</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
-    <span class="nd">@thread_worker</span><span class="p">(</span><span class="n">progress</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="s2">&quot;self.n.value&quot;</span><span class="p">})</span>
+    <span class="nd">@thread_worker</span><span class="p">(</span><span class="n">progress</span><span class="o">=</span><span class="p">{</span><span class="s2">"total"</span><span class="p">:</span> <span class="s2">"self.n.value"</span><span class="p">})</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">func3</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
@@ -1899,7 +1899,7 @@ many reasons such as readability and type hinting. You can use <code>with_progre
 for the progress bar configuration.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@magicclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
-    <span class="c1"># instead of `@thread_worker(progress={&quot;total&quot;: 10})`</span>
+    <span class="c1"># instead of `@thread_worker(progress={"total": 10})`</span>
     <span class="nd">@thread_worker</span><span class="o">.</span><span class="n">with_progress</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
@@ -1918,8 +1918,8 @@ for the progress bar configuration.</p>
             <span class="k">return</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
-            <span class="k">yield</span> <span class="n">callback</span><span class="o">.</span><span class="n">with_desc</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Step </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> of 10&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">callback</span><span class="o">.</span><span class="n">with_desc</span><span class="p">(</span><span class="s2">&quot;Finished!&quot;</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">callback</span><span class="o">.</span><span class="n">with_desc</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Step </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> of 10"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">callback</span><span class="o">.</span><span class="n">with_desc</span><span class="p">(</span><span class="s2">"Finished!"</span><span class="p">)</span>
 </code></pre></div>
 <p>If nothing to be done in the callback function, you can just use the <code>description</code>
 helper function.</p>
@@ -1929,8 +1929,8 @@ helper function.</p>
     <span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
-            <span class="k">yield</span> <span class="n">thread_worker</span><span class="o">.</span><span class="n">description</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Step </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> of 10&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">thread_worker</span><span class="o">.</span><span class="n">description</span><span class="p">(</span><span class="s2">&quot;Finished!&quot;</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">thread_worker</span><span class="o">.</span><span class="n">description</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Step </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> of 10"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">thread_worker</span><span class="o">.</span><span class="n">description</span><span class="p">(</span><span class="s2">"Finished!"</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="nesting-thread_worker">Nesting <code>thread_worker</code></h2>
 <p>To reuse thread worker functions, you would want to nest them. However,
@@ -1959,7 +1959,7 @@ widget, the outer thread worker crashes the GUI.</p>
 <span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">:</span>
     <span class="nd">@thread_worker</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">outside</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># self.inside() will be called as as callback so it won&#39;t crash the GUI</span>
+        <span class="c1"># self.inside() will be called as as callback so it won't crash the GUI</span>
         <span class="k">return</span> <span class="n">thread_worker</span><span class="o">.</span><span class="n">callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inside</span><span class="p">)</span>
 
     <span class="nd">@thread_worker</span>
@@ -2019,9 +2019,9 @@ with proper configurations. All the rules follows the standard <code>thread_work
     <span class="k">def</span><span class="w"> </span><span class="nf">_x_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="c1"># If you want to update the widget, you have to use yield/return</span>
         <span class="c1"># callbacks.</span>
-        <span class="k">yield</span> <span class="sa">f</span><span class="s2">&quot;updating ...&quot;</span>
+        <span class="k">yield</span> <span class="sa">f</span><span class="s2">"updating ..."</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;changed to </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"changed to </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span>
 
     <span class="nd">@_x_changed</span><span class="o">.</span><span class="n">yielded</span><span class="o">.</span><span class="n">connect</span>
     <span class="nd">@_x_changed</span><span class="o">.</span><span class="n">returned</span><span class="o">.</span><span class="n">connect</span>
