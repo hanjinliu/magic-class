@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+from pathlib import Path
 from typing import Any, Callable, TYPE_CHECKING, TypeVar, overload
 import warnings
 from magicgui.widgets import FunctionGui
@@ -92,8 +93,8 @@ def set_design(
     max_width: int | None = None,
     max_height: int | None = None,
     text: str | Callable[[str], str] | None = None,
-    icon: str | int | None = None,
-    location: type[MagicTemplate] | MagicField | None = None,
+    icon: str | int | Path | None = None,
+    location: Any | None = None,
     font_size: int | None = None,
     font_family: str | None = None,
     font_color: Color | None = None,
@@ -192,8 +193,7 @@ def do_not_record(method: _F, recursive: bool = True) -> _F: ...
 
 
 def do_not_record(method=None, recursive=False):
-    """
-    Wrapped method will not be recorded in macro.
+    """Wrapped method will not be recorded in macro.
 
     Parameters
     ----------
@@ -214,8 +214,8 @@ def do_not_record(method=None, recursive=False):
 
 
 def bind_key(key: str) -> Callable[[_F], _F]:
-    """
-    Define a keybinding to a button or an action.
+    """Define a keybinding to a button or an action.
+
     This function accepts several styles of shortcut expression.
 
     >>> @bind_key("Ctrl-A")         # napari style
@@ -244,8 +244,7 @@ def nogui(method: _F) -> _F:
 
 
 def setup_function_gui(target: Callable):
-    """
-    Mark a function as a setup function for a FunctionGui.
+    """Mark a function as a setup function for a FunctionGui.
 
     Function decorated with `setup_function_gui(func)` will be called when the
     FunctionGui widget for method `func` was built. This decorator is used to
@@ -284,6 +283,39 @@ def setup_function_gui(target: Callable):
         upgrade_signature(target, additional_options={"setup": _setup})
         upgrade_signature(setup, additional_options={"gui": False})
         return setup
+
+    return wrapper
+
+
+def set_preprocessor(f: Callable[[dict[str, Any]], dict[str, Any]]):
+    """Set a preprocessor function for the decorated function.
+
+    A preprocessor function will convert the input keyword arguments before they are
+    passed to the decorated function. Preprocessors are useful for low-level validation,
+    deprecation, or superseding arguments.
+
+    Examples
+    --------
+    >>> def _deprecate_x(kwargs):
+    ...     if "x" in kwargs:
+    ...         warnings.warn("x is deprecated, use y instead", DeprecationWarning)
+    ...     kwargs["y"] = kwargs.pop("x")
+    ...     return kwargs
+
+    >>> @magicclass
+    >>> class A:
+    ...     @set_preprocessor(_deprecate_x)
+    ...     def func(self, x: int):
+    ...         print(x)
+    """
+
+    def wrapper(func: _F) -> _F:
+        upgrade_signature(
+            func,
+            additional_options={"preprocessor": f},
+        )
+
+        return func
 
     return wrapper
 

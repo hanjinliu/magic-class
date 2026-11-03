@@ -205,8 +205,7 @@ def inject_recorder(func: Callable, is_method: bool = True) -> Callable:
 
     else:
         _func._set_recorder(_record_macro)
-        if validators:
-            _func._set_validators(validators)
+        _func._set_validators(validators)
         return _func
 
 

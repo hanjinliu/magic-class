@@ -36,7 +36,7 @@ Documentation is available [here](https://hanjinliu.github.io/magic-class/).
 
 ```
 pip install magic-class -U
-pip install magic-class[pyqt5] -U  # with pyqt5 backend
+pip install magic-class[pyqt6] -U  # with pyqt6 backend
 ```
 
 - get the latest version

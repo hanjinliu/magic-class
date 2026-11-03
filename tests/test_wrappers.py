@@ -4,10 +4,11 @@ from unittest.mock import MagicMock
 import pytest
 from magicclass import (
     magicclass, magicmenu, magictoolbar, set_options, get_function_gui, abstractapi,
-    setup_function_gui, do_not_record
+    setup_function_gui, do_not_record, set_preprocessor
 )
 from magicclass.testing import MockConfirmation
 from magicgui.widgets import PushButton
+from magicclass.utils import thread_worker
 
 
 def test_set_options():
@@ -688,8 +689,6 @@ def test_setup_function_from_parent():
     mock.assert_called_with(ui, 20)
 
 def test_do_not_record_worker():
-    from magicclass.utils import thread_worker
-
     @magicclass
     class A:
         @thread_worker
@@ -714,3 +713,26 @@ def test_do_not_record_worker():
     ui.f1()
     assert len(ui.macro) == 2
     assert str(ui.macro[-1]) == "ui.inner()"
+
+def test_preprocessor():
+    def _f_preprocessor(kwargs):
+        if "x" in kwargs:
+            kwargs["a"] = kwargs.pop("x")
+        return kwargs
+
+    @magicclass
+    class A:
+        @set_preprocessor(_f_preprocessor)
+        def f0(self, a: int):
+            pass
+
+        @thread_worker
+        @set_preprocessor(_f_preprocessor)
+        def f1(self, a: int):
+            pass
+
+    ui = A()
+    ui.f0(x=10)
+    assert str(ui.macro[-1]) == "ui.f0(a=10)"
+    ui.f1(x=20)
+    assert str(ui.macro[-1]) == "ui.f1(a=20)"
