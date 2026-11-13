@@ -16,6 +16,7 @@ from psygnal import SignalInstance
 
 from magicclass.fields._fields import MagicField, MagicValueField, _FieldObject
 from magicclass.fields._define import define_callback, define_callback_gui
+from magicclass._instance_cache import InstanceCache
 from magicclass.utils import Tooltips
 
 if TYPE_CHECKING:
@@ -131,8 +132,7 @@ def dataclass_gui(
 
 
 class HasFields(metaclass=_FieldGroupMeta):
-    """
-    A trait implemented with widgets and signals.
+    """A trait implemented with widgets and signals.
 
     Subclasses can easily handle widgets and their value-change signals using
     the same attribute names.
@@ -170,8 +170,7 @@ class HasFields(metaclass=_FieldGroupMeta):
 # also defined there. Thus, FieldGroup must inherit magicgui Container although
 # the original container will never be used.
 class FieldGroup(Container, HasFields, _FieldObject):
-    """
-    Base class of field group.
+    """Base class of field group.
 
     Subclasses can contain `field` and `vfield` as class attributes, which
     will be converted into child widgets. A field group is also a field.
@@ -195,7 +194,7 @@ class FieldGroup(Container, HasFields, _FieldObject):
         super().__init__(
             layout=layout, widgets=widgets, labels=labels, name=name, **kwargs
         )
-        self._containers: dict[int, Self] = {}
+        self._containers: InstanceCache[Self] = InstanceCache()
         self._callbacks: list[Callable] = []
 
     def __init_subclass__(cls) -> None:
@@ -205,7 +204,7 @@ class FieldGroup(Container, HasFields, _FieldObject):
         cls.__base_init__ = cls.__init__
 
         @wraps(cls.__init__)
-        def __init__(self: cls, *args, **kwargs):
+        def __init__(self, *args, **kwargs):
             self.__input_arguments = (args, kwargs)
             cls.__base_init__(self, *args, **kwargs)
 
@@ -254,12 +253,9 @@ class FieldGroup(Container, HasFields, _FieldObject):
         return tuple(self._callbacks)
 
     @overload
-    def __get__(self, obj: Literal[None], objtype: Any | None = None) -> Self:
-        ...
-
+    def __get__(self, obj: Literal[None], objtype: Any | None = None) -> Self: ...
     @overload
-    def __get__(self, obj: Any, objtype: Any | None = None) -> Self:
-        ...
+    def __get__(self, obj: Any, objtype: Any | None = None) -> Self: ...
 
     def __get__(self, obj, objtype=None):
         if obj is None:
@@ -270,13 +266,12 @@ class FieldGroup(Container, HasFields, _FieldObject):
         raise AttributeError(f"Cannot set value to {self.__class__.__name__}.")
 
     def get_widget(self, obj) -> Container:
-        _id = id(obj)
-        wdt = self._containers.get(_id, None)
+        wdt = self._containers.get(obj)
         if wdt is None:
             from magicclass._gui import MagicTemplate
 
             wdt = self.__newlike__()
-            self._containers[_id] = wdt
+            self._containers[obj] = wdt
             if isinstance(obj, MagicTemplate):
                 _def = define_callback_gui
             else:
@@ -286,8 +281,7 @@ class FieldGroup(Container, HasFields, _FieldObject):
         return wdt
 
     def connect(self, callback: Callable):
-        """
-        Connect a callback to this field.
+        """Connect a callback to this field.
 
         This function will NOT directly connect the callback to the field itself.
         The connected callback will be present when the field group is used as a

@@ -174,10 +174,9 @@ class dask_thread_worker(thread_worker[_P, _R]):
     def _create_qt_worker(
         self, gui, *args, **kwargs
     ) -> FunctionWorker | GeneratorWorker:
-        gui_id = id(gui)
         if self._progress:
             pbar = self._DEFAULT_PROGRESS_BAR(max=self._DEFAULT_TOTAL)
-            self._progressbars[gui_id] = pbar
+            self._progressbars[gui] = pbar
             for c in self.computed._iter_as_method(gui):
                 pbar.computed.connect(c)
             if descs := self._progress.get("descs"):
@@ -196,12 +195,6 @@ class dask_thread_worker(thread_worker[_P, _R]):
 
             pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
             move_to_screen_center(pbar.native)
-            if self.is_generator:
-
-                @self.yielded.connect
-                def _(*args):
-                    pbar.value = 0
-
             worker = create_worker(
                 self._define_function(pbar, gui).__get__(gui),
                 _ignore_errors=self._ignore_errors,
@@ -209,6 +202,14 @@ class dask_thread_worker(thread_worker[_P, _R]):
                 *args,
                 **kwargs,
             )
+            if self.is_generator:
+                # NOTE: Do not connect to `self.yielded`, which is shared by all
+                # the calls of all the instances.
+
+                @worker.yielded.connect
+                def _(*args):
+                    pbar.value = 0
+
         else:
             worker = super()._create_qt_worker(gui, *args, **kwargs)
         return worker

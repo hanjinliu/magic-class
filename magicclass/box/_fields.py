@@ -95,9 +95,8 @@ class BoxMagicField(MagicField["SingleWidgetBox[_W]"], Generic[_W]):
     def get_widget(self, obj: Any) -> SingleWidgetBox[_W]:
         from magicclass._gui import MagicTemplate
 
-        obj_id = id(obj)
-        if (box := self._guis.get(obj_id, None)) is None:
-            self._guis[obj_id] = box = self.construct(obj)
+        if (box := self._guis.get(obj)) is None:
+            self._guis[obj] = box = self.construct(obj)
             box.name = self.name
             inner = box.widget
             if has_changed_signal(inner):
@@ -112,15 +111,13 @@ class BoxMagicField(MagicField["SingleWidgetBox[_W]"], Generic[_W]):
 
     def as_getter(self, obj: Any) -> Callable[[Any], Any]:
         """Make a function that get the value of Widget or Action."""
-        return lambda w: self._guis[id(obj)].widget.value
+        return lambda w: self._guis[obj].widget.value
 
     @overload
-    def __get__(self, obj: Literal[None], objtype=None) -> BoxMagicField[_W]:
-        ...
+    def __get__(self, obj: Literal[None], objtype=None) -> BoxMagicField[_W]: ...
 
     @overload
-    def __get__(self, obj: Any, objtype=None) -> _W:
-        ...
+    def __get__(self, obj: Any, objtype=None) -> _W: ...
 
     def __get__(self, obj, objtype=None):
         """Get widget for the object."""
@@ -165,12 +162,10 @@ class BoxMagicField(MagicField["SingleWidgetBox[_W]"], Generic[_W]):
 
 class BoxMagicValueField(BoxMagicField[ValueWidget[_V]]):
     @overload
-    def __get__(self, obj: Literal[None], objtype=None) -> BoxMagicValueField[_V]:
-        ...
+    def __get__(self, obj: Literal[None], objtype=None) -> BoxMagicValueField[_V]: ...
 
     @overload
-    def __get__(self, obj: Any, objtype=None) -> _V:
-        ...
+    def __get__(self, obj: Any, objtype=None) -> _V: ...
 
     def __get__(self, obj, objtype=None):
         """Get widget for the object."""
@@ -196,32 +191,27 @@ class BoxProtocol(Protocol[_P]):
     @overload
     def __call__(
         self, fld: BoxMagicValueField[_V], *args: _P.args, **kwargs: _P.kwargs
-    ) -> BoxMagicValueField[_V]:
-        ...
+    ) -> BoxMagicValueField[_V]: ...
 
     @overload
     def __call__(
         self, fld: BoxMagicField[_V], *args: _P.args, **kwargs: _P.kwargs
-    ) -> BoxMagicField[_V]:
-        ...
+    ) -> BoxMagicField[_V]: ...
 
     @overload
     def __call__(
         self, fld: MagicValueField[_V], *args: _P.args, **kwargs: _P.kwargs
-    ) -> BoxMagicValueField[_V]:
-        ...
+    ) -> BoxMagicValueField[_V]: ...
 
     @overload
     def __call__(
         self, fld: MagicField[_V], *args: _P.args, **kwargs: _P.kwargs
-    ) -> BoxMagicField[_V]:
-        ...
+    ) -> BoxMagicField[_V]: ...
 
     @overload
     def __call__(
         self, widget_type: type[_V], *args: _P.args, **kwargs: _P.kwargs
-    ) -> BoxMagicField[_V]:
-        ...
+    ) -> BoxMagicField[_V]: ...
 
 
 # fmt: off

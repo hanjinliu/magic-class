@@ -26,16 +26,17 @@ from magicgui.application import use_app
 from magicclass.utils._functions import get_signature
 
 from magicclass.undo import UndoCallback
+from magicclass._instance_cache import InstanceCache
 
-from ._progressbar import (
+from magicclass.utils.qthreading._progressbar import (
     DefaultProgressBar,
     NapariProgressBar,
     _SupportProgress,
     ProgressDict,
     ProgressBarLike,
 )
-from ._callback import CallbackList, Callback, NestedCallback
-from ._worker import GeneratorWorker2
+from magicclass.utils.qthreading._callback import CallbackList, Callback, NestedCallback
+from magicclass.utils.qthreading._worker import GeneratorWorker2
 from magicclass._exceptions import Aborted
 
 if TYPE_CHECKING:
@@ -110,8 +111,8 @@ class thread_worker(Callable, Generic[_P, _R]):
 
         self._ignore_errors = ignore_errors
         self._error_filter = ()
-        self._objects: dict[int, BaseGui] = {}
-        self._progressbars: dict[int, ProgressBarLike | None] = {}
+        self._objects: InstanceCache[AsyncMethod[_P, _R]] = InstanceCache()
+        self._progressbars: InstanceCache[ProgressBarLike | None] = InstanceCache()
         # recordable -> _recorder is a recording function
         # not recordable, recursive=True -> _recorder is _silent
         # not recordable, recursive=False -> _recorder is None
@@ -360,14 +361,13 @@ class thread_worker(Callable, Generic[_P, _R]):
         if gui is None:
             return self
 
-        gui_id = id(gui)
-        if gui_id in self._objects:
-            return self._objects[gui_id]
+        if (method := self._objects.get(gui)) is not None:
+            return method
 
         _create_worker = self._create_method(gui)
         _create_worker.__signature__ = self._get_method_signature()
 
-        self._objects[gui_id] = _create_worker  # cache
+        self._objects[gui] = _create_worker  # cache
         return _create_worker
 
     def _is_running(self, gui: BaseGui) -> bool:
@@ -722,20 +722,19 @@ class thread_worker(Callable, Generic[_P, _R]):
         """Find available progressbar. Create a new one if not found."""
         from magicclass.fields import MagicField
 
-        gui_id = id(gui)
-        if gui_id in self._progressbars:
-            _pbar = self._progressbars[gui_id]
+        if gui in self._progressbars:
+            _pbar = self._progressbars[gui]
         else:
             for name, attr in gui.__class__.__dict__.items():
                 if isinstance(attr, MagicField):
                     attr = attr.get_widget(gui)
                 if isinstance(attr, ProgressBar):
-                    _pbar = self._progressbars[gui_id] = attr
+                    _pbar = self._progressbars[gui] = attr
                     if desc is None:
                         desc = name
                     break
             else:
-                _pbar = self._progressbars[gui_id] = None
+                _pbar = self._progressbars[gui] = None
                 if desc is None:
                     desc = "Progress"
 

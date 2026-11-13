@@ -315,9 +315,8 @@ class magicproperty(MagicField[_ButtonedWidget], Generic[_V]):
 
     def get_widget(self, obj: Any) -> _ButtonedWidget:
         """A light-weight version."""
-        obj_id = id(obj)
-        if (widget := self._guis.get(obj_id, None)) is None:
-            self._guis[obj_id] = widget = self.construct(obj)
+        if (widget := self._guis.get(obj)) is None:
+            self._guis[obj] = widget = self.construct(obj)
             widget.name = self.name
             for callback in self._callbacks:
                 widget.changed.connect(define_callback(obj, callback))

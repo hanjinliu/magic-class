@@ -325,35 +325,51 @@ class DefaultProgressBar(FrameContainer, _SupportProgress):
     def max(self, v):
         self.pbar.max = v
 
+    @staticmethod
+    def _get_container() -> _ProgressBarContainer:
+        """Get the shared container of progress bars.
+
+        The container is deleted together with its parent widget. In that case,
+        progress bars cannot be removed from the old container, so a new container
+        is created.
+        """
+        container = DefaultProgressBar._CONTAINER
+        try:
+            container.native.parent()
+        except RuntimeError:  # C++ object is deleted
+            if _is_main_thread():  # widgets must be created in the main thread
+                container = _ProgressBarContainer()
+                DefaultProgressBar._CONTAINER = container
+        return container
+
     def show(self):
         parent = self.native.parent()
+        container = self._get_container()
         with suppress(RuntimeError):
             if _is_main_thread():
-                self._CONTAINER.append(self)
-                if self._CONTAINER.native.parent() is not parent:
-                    self._CONTAINER.native.setParent(
+                container.append(self)
+                if container.native.parent() is not parent:
+                    container.native.setParent(
                         parent,
-                        self._CONTAINER.native.windowFlags(),
+                        container.native.windowFlags(),
                     )
-            if not self._CONTAINER.visible:
-                self._CONTAINER.show()
-                move_to_screen_center(self._CONTAINER.native)
+            if not container.visible:
+                container.show()
+                move_to_screen_center(container.native)
         return None
 
     def close(self):
-        i = -1
-        for i, wdt in enumerate(self._CONTAINER):
-            if wdt is self:
-                break
+        container = self._get_container()
+        index = next((i for i, wdt in enumerate(container) if wdt is self), -1)
         super().close()
-        if i < 0:
+        if index < 0:
             return None
         with suppress(RuntimeError):
             if _is_main_thread():
-                self._CONTAINER.pop(i)
-                self._CONTAINER.height = 1  # minimize height
-                if len(self._CONTAINER) == 0:
-                    self._CONTAINER.close()
+                container.pop(index)
+                container.height = 1  # minimize height
+                if len(container) == 0:
+                    container.close()
         return None
 
     def increment(self, yielded=None):
@@ -433,7 +449,7 @@ class DefaultProgressBar(FrameContainer, _SupportProgress):
         self._worker.quit()
         # NOTE: this is not a perfect solution, but for most of the cases it can close
         # all the nested progress bars.
-        for pbar in self._CONTAINER:
+        for pbar in list(self._get_container()):
             if not hasattr(pbar, "_worker"):
                 # nested callback does not have worker
                 pbar.close()
