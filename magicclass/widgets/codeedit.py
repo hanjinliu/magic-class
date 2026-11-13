@@ -1,7 +1,7 @@
 from __future__ import annotations
 from contextlib import contextmanager
 import inspect
-from typing import Any, Iterator, NamedTuple, TYPE_CHECKING
+from typing import Any, Generator, Iterator, NamedTuple, TYPE_CHECKING
 import weakref
 from collections import Counter
 from qtpy import QtWidgets as QtW, QtGui, QtCore
@@ -24,6 +24,10 @@ if TYPE_CHECKING:
 
 _TAB = " " * 4
 _PAIRS = {"(": ")", "[": "]", "{": "}"}
+# characters before which brackets and quotations are automatically closed
+# (empty string means the end of line)
+_CAN_CLOSE_BEFORE = ("", " ", ")", "]", "}", ",", ":")
+_STR_PREFIXES = ("r", "b", "f", "u", "rb", "br", "rf", "fr")
 
 
 class QLineNumberArea(QtW.QWidget):
@@ -141,118 +145,81 @@ class QCodeEditor(QtW.QPlainTextEdit):
                 return self._show_tooltip(ev)
             elif ev.type() == QtCore.QEvent.Type.KeyPress:
                 assert isinstance(ev, QtGui.QKeyEvent)
-                _key = ev.key()
-                _mod = ev.modifiers()
-                if _key == Qt.Key.Key_Tab and _mod == Mod.No:
-                    return self._tab_event()
-                elif _key == Qt.Key.Key_Tab and _mod & Mod.Shift:
-                    return self._back_tab_event()
-                elif _key == Qt.Key.Key_Backtab:
-                    return self._back_tab_event()
-                # comment out selected lines
-                elif _key == Qt.Key.Key_Slash and _mod & Mod.Ctrl:
-                    return self._ctrl_slash_event()
-                # move selected lines up or down
-                elif _key in (Qt.Key.Key_Up, Qt.Key.Key_Down) and _mod & Mod.Alt:
-                    cursor = self.textCursor()
-                    cursor0 = self.textCursor()
-                    start = cursor.selectionStart()
-                    end = cursor.selectionEnd()
-                    Op = QtGui.QTextCursor.MoveOperation
-                    _keep = QtGui.QTextCursor.MoveMode.KeepAnchor
-                    if _key == Qt.Key.Key_Up and min(start, end) > 0:
-                        cursor0.setPosition(start)
-                        cursor0.movePosition(Op.PreviousBlock)
-                        cursor0.movePosition(Op.StartOfLine)
-                        cursor0.movePosition(Op.EndOfLine, _keep)
-                        cursor0.movePosition(Op.NextCharacter, _keep)
-                        txt = cursor0.selectedText()
-                        cursor0.removeSelectedText()
-                        # NOTE: cursor position changed!
-                        cursor0.setPosition(cursor.selectionEnd())
-                        cursor0.movePosition(Op.EndOfLine)
-                        if cursor0.position() == self.document().characterCount() - 1:
-                            cursor0.insertText("\n")
-                            txt = txt.rstrip("\u2029")
-                        if cursor.position() == self.document().characterCount() - 1:
-                            cursor.movePosition(Op.Up)
-                        cursor0.movePosition(Op.NextCharacter)
-                        cursor0.insertText(txt)
-                        self.setTextCursor(cursor)
-                    elif (
-                        _key == Qt.Key.Key_Down
-                        and max(start, end) < self.document().characterCount() - 1
-                    ):
-                        cursor0.setPosition(end)
-                        cursor0.movePosition(Op.EndOfLine)
-                        cursor0.movePosition(Op.NextCharacter, _keep)
-                        cursor0.movePosition(Op.EndOfLine, _keep)
-                        txt = cursor0.selectedText()
-                        cursor0.removeSelectedText()
-                        # NOTE: cursor position changed!
-                        cursor0.setPosition(cursor.selectionStart())
-                        cursor0.movePosition(Op.StartOfLine)
-                        if cursor0.position() == 0:
-                            cursor0.insertText("\n")
-                            txt = txt.lstrip("\u2029")
-                        cursor0.movePosition(Op.PreviousCharacter)
-                        cursor0.insertText(txt)
-                        self.setTextCursor(cursor)
+                if self._handle_key_press(ev):
                     return True
-                elif _key in (Qt.Key.Key_Enter, Qt.Key.Key_Return):
-                    # get current line, check if it has tabs at the beginning
-                    # if yes, insert the same number of tabs at the next line
-                    self._new_line_event()
-                    return True
-                elif _key == Qt.Key.Key_Backspace and _mod == Mod.No:
-                    # delete 4 spaces
-                    _cursor = self.textCursor()
-                    _cursor.movePosition(
-                        QtGui.QTextCursor.MoveOperation.StartOfLine,
-                        QtGui.QTextCursor.MoveMode.KeepAnchor,
-                    )
-                    line = _cursor.selectedText()
-                    if line.endswith("    ") and not self.textCursor().hasSelection():
-                        for _ in range(4):
-                            self.textCursor().deletePreviousChar()
-                        return True
-                elif _key == Qt.Key.Key_D and _mod & Mod.Ctrl:
-                    return self._select_word_event()
-                elif _key == Qt.Key.Key_L and _mod & Mod.Ctrl:
-                    return self._select_line_event()
-                elif _key == Qt.Key.Key_Home and _mod == Mod.No:
-                    return self._home_event()
-                elif _key == Qt.Key.Key_V and _mod & Mod.Ctrl:
-                    clip = QtGui.QGuiApplication.clipboard()
-                    text = clip.text().replace("\t", _TAB)
-                    cursor = self.textCursor()
-                    cursor.insertText(text)
-                    return True
-                elif _key in (
-                    Qt.Key.Key_ParenLeft,
-                    Qt.Key.Key_BracketLeft,
-                    Qt.Key.Key_BraceLeft,
-                ):
-                    _char = QtGui.QKeySequence(_key).toString()
-                    return self._put_selection_in(_char, _PAIRS[_char])
-                elif _key in (
-                    Qt.Key.Key_ParenRight,
-                    Qt.Key.Key_BracketRight,
-                    Qt.Key.Key_BraceRight,
-                ):
-                    _char = QtGui.QKeySequence(_key).toString()
-                    return self._key_no_duplicate(_char)
-                elif _key in (
-                    Qt.Key.Key_QuoteDbl,
-                    Qt.Key.Key_Apostrophe,
-                    Qt.Key.Key_QuoteLeft,
-                ):
-                    _char = QtGui.QKeySequence(_key).toString()
-                    return self._quote_selection(_char)
-
         except Exception:
             pass
         return super().event(ev)
+
+    def _handle_key_press(self, ev: QtGui.QKeyEvent) -> bool:
+        """Handle key press. Return True if the event is consumed."""
+        _key = ev.key()
+        _mod = ev.modifiers()
+        _ctrl = bool(_mod & Mod.Ctrl)
+
+        # keys that do not edit the text
+        if _key == Qt.Key.Key_D and _ctrl:
+            return self._select_word_event()
+        elif _key == Qt.Key.Key_L and _ctrl:
+            return self._select_line_event()
+        elif _key == Qt.Key.Key_Home and _mod == Mod.No:
+            return self._home_event()
+
+        # NOTE: QTextCursor can edit the document even if the widget is read-only.
+        if self.isReadOnly():
+            return False
+
+        if _key == Qt.Key.Key_Tab and _mod == Mod.No:
+            return self._tab_event()
+        elif _key == Qt.Key.Key_Tab and _mod & Mod.Shift:
+            return self._back_tab_event()
+        elif _key == Qt.Key.Key_Backtab:
+            return self._back_tab_event()
+        # comment out selected lines
+        elif _key == Qt.Key.Key_Slash and _ctrl:
+            return self._ctrl_slash_event()
+        # move selected lines up or down
+        elif _key in (Qt.Key.Key_Up, Qt.Key.Key_Down) and _mod & Mod.Alt:
+            return self._move_lines_event(up=_key == Qt.Key.Key_Up)
+        elif _key in (Qt.Key.Key_Enter, Qt.Key.Key_Return):
+            # keep (or increase/decrease) the indent in the next line
+            return self._new_line_event()
+        elif _key == Qt.Key.Key_Backspace and _mod == Mod.No:
+            return self._backspace_event()
+
+        # Ctrl+Alt (AltGr) is used to type brackets in some keyboard layouts
+        if _ctrl and not _mod & Mod.Alt:
+            return False
+        if _key in (
+            Qt.Key.Key_ParenLeft,
+            Qt.Key.Key_BracketLeft,
+            Qt.Key.Key_BraceLeft,
+        ):
+            _char = QtGui.QKeySequence(_key).toString()
+            return self._put_selection_in(_char, _PAIRS[_char])
+        elif _key in (
+            Qt.Key.Key_ParenRight,
+            Qt.Key.Key_BracketRight,
+            Qt.Key.Key_BraceRight,
+        ):
+            _char = QtGui.QKeySequence(_key).toString()
+            return self._key_no_duplicate(_char)
+        elif _key in (
+            Qt.Key.Key_QuoteDbl,
+            Qt.Key.Key_Apostrophe,
+            Qt.Key.Key_QuoteLeft,
+        ):
+            _char = QtGui.QKeySequence(_key).toString()
+            return self._quote_selection(_char)
+        return False
+
+    def insertFromMimeData(self, source: QtCore.QMimeData):
+        # paste (Ctrl+V, context menu, drop ...) as a plain text without tabs
+        if source.hasText():
+            self.textCursor().insertText(source.text().replace("\t", _TAB))
+            self.ensureCursorVisible()
+        else:
+            super().insertFromMimeData(source)
 
     def _magicclass_parent(self):
         if self._magicclass_parent_ref is None:
@@ -419,21 +386,6 @@ class QCodeEditor(QtW.QPlainTextEdit):
             extraSelections.append(selection)
         self.setExtraSelections(extraSelections)
 
-    def add_at_the_start(self, text: str, cursor: QtGui.QTextCursor):
-        cursor.movePosition(QtGui.QTextCursor.MoveOperation.StartOfLine)
-        cursor.insertText(text)
-
-    def remove_at_the_start(self, text: str, cursor: QtGui.QTextCursor):
-        line = cursor.block().text()
-        if line.startswith(text):
-            cursor.movePosition(QtGui.QTextCursor.MoveOperation.StartOfLine)
-            cursor.movePosition(
-                QtGui.QTextCursor.MoveOperation.Right,
-                QtGui.QTextCursor.MoveMode.KeepAnchor,
-                len(text),
-            )
-            cursor.removeSelectedText()
-
     def syntaxHighlight(self, lang: str = "python", theme: str = "default"):
         """Highlight syntax."""
         from superqt.utils import CodeSyntaxHighlight
@@ -544,44 +496,159 @@ class QCodeEditor(QtW.QPlainTextEdit):
         QtW.QToolTip.showText(ev.globalPos(), tooltip, self)
         return True
 
+    @contextmanager
+    def _edit_block(self) -> Generator[QtGui.QTextCursor]:
+        """Group the edits into a single undo step."""
+        cursor = QtGui.QTextCursor(self.document())
+        cursor.beginEditBlock()
+        try:
+            yield cursor
+        finally:
+            cursor.endEditBlock()
+
+    def _selected_block_numbers(self) -> list[int]:
+        """Line numbers of the lines that are (partially) selected."""
+        cursor = self.textCursor()
+        doc = self.document()
+        start, end = cursor.selectionStart(), cursor.selectionEnd()
+        first = doc.findBlock(start).blockNumber()
+        last_block = doc.findBlock(end)
+        last = last_block.blockNumber()
+        if last > first and end == last_block.position():
+            # selection ends at the beginning of a line (such as Ctrl+L)
+            last -= 1
+        return list(range(first, last + 1))
+
+    def _selection_is_multiline(self) -> bool:
+        cursor = self.textCursor()
+        doc = self.document()
+        return doc.findBlock(cursor.selectionStart()) != doc.findBlock(
+            cursor.selectionEnd()
+        )
+
+    def _remove_range(self, cursor: QtGui.QTextCursor, start: int, stop: int):
+        cursor.setPosition(start)
+        cursor.setPosition(stop, QtGui.QTextCursor.MoveMode.KeepAnchor)
+        cursor.removeSelectedText()
+
     def _tab_event(self):
-        if self.textCursor().hasSelection():
-            for cursor in self.iter_selected_lines():
-                self.add_at_the_start(_TAB, cursor)
+        doc = self.document()
+        if self._selection_is_multiline():
+            # indent
+            with self._edit_block() as cursor:
+                for num in self._selected_block_numbers():
+                    block = doc.findBlockByNumber(num)
+                    if block.text().strip() == "":
+                        continue
+                    cursor.setPosition(block.position())
+                    cursor.insertText(_TAB)
         else:
-            line = _text_before_cursor(self.textCursor())
-            nspace = line.count(" ")
-            if nspace % 4 == 0:
-                self.textCursor().insertText(_TAB)
-            else:
-                self.textCursor().insertText(" " * 4 - nspace % 4)
+            # move to the next tab stop
+            cursor = self.textCursor()
+            start = cursor.selectionStart()
+            col = start - doc.findBlock(start).position()
+            cursor.insertText(" " * (4 - col % 4))
+            self.ensureCursorVisible()
         return True
 
     def _back_tab_event(self):
         # unindent
-        for cursor in self.iter_selected_lines():
-            self.remove_at_the_start(_TAB, cursor)
+        doc = self.document()
+        with self._edit_block() as cursor:
+            for num in self._selected_block_numbers():
+                block = doc.findBlockByNumber(num)
+                line = block.text()
+                if line.startswith("\t"):
+                    nchars = 1
+                else:
+                    nchars = min(len(line) - len(line.lstrip(" ")), 4)
+                if nchars > 0:
+                    pos = block.position()
+                    self._remove_range(cursor, pos, pos + nchars)
         return True
 
     def _ctrl_slash_event(self):
-        for cursor in self.iter_selected_lines():
-            line = cursor.block().text()
-            if line.startswith("#"):
-                if line.startswith("# "):
-                    self.remove_at_the_start("# ", cursor)
-                else:
-                    self.remove_at_the_start("#", cursor)
+        doc = self.document()
+        nums = self._selected_block_numbers()
+        lines = [doc.findBlockByNumber(num).text() for num in nums]
+        if len(nums) > 1:
+            # ignore empty lines
+            targets = [(n, line) for n, line in zip(nums, lines) if line.strip()]
+        else:
+            targets = list(zip(nums, lines))
+        if not targets:
+            return True
+        all_commented = all(line.lstrip().startswith("#") for _, line in targets)
+        with self._edit_block() as cursor:
+            if all_commented:
+                for num, line in targets:
+                    idx = line.index("#")
+                    nchars = 2 if line[idx + 1 : idx + 2] == " " else 1
+                    pos = doc.findBlockByNumber(num).position() + idx
+                    self._remove_range(cursor, pos, pos + nchars)
             else:
-                self.add_at_the_start("# ", cursor)
+                # comment out at the same column
+                indent = min(len(line) - len(line.lstrip()) for _, line in targets)
+                for num, line in targets:
+                    cursor.setPosition(doc.findBlockByNumber(num).position() + indent)
+                    cursor.insertText("# ")
+        return True
+
+    def _move_lines_event(self, up: bool):
+        doc = self.document()
+        nums = self._selected_block_numbers()
+        first, last = nums[0], nums[-1]
+        if (up and first == 0) or (not up and last == doc.blockCount() - 1):
+            return True
+        _cursor = self.textCursor()
+        anchor, pos = _cursor.anchor(), _cursor.position()
+        with self._edit_block() as cursor:
+            if up:
+                # move the previous line to the next of the selected lines
+                text = doc.findBlockByNumber(first - 1).text()
+                dst = doc.findBlockByNumber(last)
+                cursor.setPosition(dst.position() + dst.length() - 1)
+                cursor.insertText("\n" + text)
+                src = doc.findBlockByNumber(first - 1)
+                self._remove_range(
+                    cursor, src.position(), src.position() + src.length()
+                )
+                shift = -(len(text) + 1)
+            else:
+                # move the next line to the previous of the selected lines
+                src = doc.findBlockByNumber(last + 1)
+                text = src.text()
+                self._remove_range(
+                    cursor, src.position() - 1, src.position() + src.length() - 1
+                )
+                cursor.setPosition(doc.findBlockByNumber(first).position())
+                cursor.insertText(text + "\n")
+                shift = len(text) + 1
+        max_pos = doc.characterCount() - 1
+        _cursor.setPosition(min(anchor + shift, max_pos))
+        _cursor.setPosition(
+            min(pos + shift, max_pos), QtGui.QTextCursor.MoveMode.KeepAnchor
+        )
+        self.setTextCursor(_cursor)
+        return True
+
+    def _backspace_event(self):
+        cursor = self.textCursor()
+        if cursor.hasSelection():
+            return False
+        pos = cursor.position()
+        line = cursor.block().text()[: pos - cursor.block().position()]
+        if line == "" or line.strip(" ") != "":
+            return False
+        # in the indent. Delete spaces to the previous tab stop
+        nchars = (len(line) - 1) % 4 + 1
+        self._remove_range(cursor, pos - nchars, pos)
+        self.setTextCursor(cursor)
         return True
 
     def _select_word_event(self):
         cursor = self.textCursor()
-        cursor.movePosition(QtGui.QTextCursor.MoveOperation.NextWord)
-        cursor.movePosition(
-            QtGui.QTextCursor.MoveOperation.PreviousWord,
-            QtGui.QTextCursor.MoveMode.KeepAnchor,
-        )
+        cursor.select(QtGui.QTextCursor.SelectionType.WordUnderCursor)
         self.setTextCursor(cursor)
         return True
 
@@ -600,42 +667,34 @@ class QCodeEditor(QtW.QPlainTextEdit):
         return True
 
     def _new_line_event(self):
-        line = self._text_of_line_before_cursor()
         cursor = self.textCursor()
-        line_rstripped = line.rstrip()
+        start = cursor.selectionStart()
+        block = self.document().findBlock(start)
+        line = block.text()[: start - block.position()]
         indent = _get_indents(line)
-        if line_rstripped == "":
+        code = line.strip()
+        ndel = 0
+        if code and not code.startswith("#"):
+            _counter = Counter(code)
+            _not_closed = any(_counter[l] > _counter[r] for l, r in _PAIRS.items())
+            if _not_closed or code.endswith(":"):
+                indent += _TAB
+                ndel = len(line) - len(line.rstrip())
+            elif (
+                code.startswith(("return ", "raise "))
+                or code in ("return", "raise", "break", "continue", "pass")
+            ) and indent.endswith(_TAB):
+                indent = indent[: -len(_TAB)]
+        cursor.beginEditBlock()
+        try:
+            cursor.removeSelectedText()
+            if ndel > 0:
+                self._remove_range(cursor, start - ndel, start)
             cursor.insertText("\n" + indent)
-            self.setTextCursor(cursor)
-            return
-
-        ndel = len(line) - len(line_rstripped)
-        last_char = line_rstripped[-1]
-        _counter = Counter(line)
-        _not_closed = (
-            _counter["("] - _counter[")"] > 0
-            or _counter["["] - _counter["]"] > 0
-            or _counter["{"] - _counter["}"] > 0
-        )
-        if _not_closed or last_char in "([{:":
-            for _ in range(ndel):
-                cursor.deletePreviousChar()
-            cursor.insertText("\n" + indent + _TAB)
-            self.setTextCursor(cursor)
-        else:
-            cursor.insertText("\n" + indent)
-            self.setTextCursor(cursor)
-
-        line_lstripped = line.lstrip()
-        if (
-            line_lstripped.startswith("return ")
-            or line_lstripped.startswith("raise ")
-            or line_lstripped in ("return", "raise", "break", "continue", "pass")
-        ):
-            if line.startswith(_TAB):
-                for _ in range(4):
-                    cursor.deletePreviousChar()
+        finally:
+            cursor.endEditBlock()
         self.setTextCursor(cursor)
+        return True
 
     def _home_event(self):
         # fn + left
@@ -657,70 +716,90 @@ class QCodeEditor(QtW.QPlainTextEdit):
         self.setTextCursor(cursor)
         return True
 
-    def _put_selection_in(self, left: str, right: str) -> bool:
+    def _chars_around_cursor(self) -> tuple[str, str, str]:
+        """Return (text of the line, previous character, next character)."""
+        cursor = self.textCursor()
+        line = cursor.block().text()
+        col = cursor.position() - cursor.block().position()
+        return line, line[max(col - 1, 0) : col], line[col : col + 1]
+
+    def _wrap_selection(self, left: str, right: str) -> bool:
         cursor = self.textCursor()
         start = cursor.selectionStart()
         end = cursor.selectionEnd()
-        cursor.movePosition(QtGui.QTextCursor.MoveOperation.EndOfLine)
-        pos_line_end = cursor.position()
-        cursor.setPosition(end)
-        if start != end or pos_line_end == end:
+        cursor.beginEditBlock()
+        try:
+            cursor.setPosition(end)
             cursor.insertText(right)
-        cursor.setPosition(start)
-        cursor.insertText(left)
+            cursor.setPosition(start)
+            cursor.insertText(left)
+        finally:
+            cursor.endEditBlock()
         cursor.setPosition(start + 1)
         cursor.setPosition(end + 1, QtGui.QTextCursor.MoveMode.KeepAnchor)
         self.setTextCursor(cursor)
         return True
+
+    def _insert_pair(self, left: str, right: str) -> bool:
+        cursor = self.textCursor()
+        pos = cursor.position()
+        cursor.insertText(left + right)
+        cursor.setPosition(pos + len(left))
+        self.setTextCursor(cursor)
+        return True
+
+    def _put_selection_in(self, left: str, right: str) -> bool:
+        if self.textCursor().hasSelection():
+            return self._wrap_selection(left, right)
+        _, _, next_char = self._chars_around_cursor()
+        if next_char in _CAN_CLOSE_BEFORE:
+            return self._insert_pair(left, right)
+        return False
 
     def _quote_selection(self, quot: str) -> bool:
         cursor = self.textCursor()
-        start = cursor.selectionStart()
-        end = cursor.selectionEnd()
-        cursor.movePosition(QtGui.QTextCursor.MoveOperation.EndOfLine)
-        pos_line_end = cursor.position()
-        cursor.movePosition(
-            QtGui.QTextCursor.MoveOperation.StartOfLine,
-            QtGui.QTextCursor.MoveMode.KeepAnchor,
-        )
-        line = cursor.selectedText()
-        nquot = line.count(quot)
-        cursor.clearSelection()
-        cursor.setPosition(end)
-        if nquot % 2 == 0:
-            if start != end or pos_line_end == end:
-                cursor.insertText(quot)
-        cursor.setPosition(start)
-        cursor.insertText(quot)
-        cursor.setPosition(start + 1)
-        cursor.setPosition(end + 1, QtGui.QTextCursor.MoveMode.KeepAnchor)
-        self.setTextCursor(cursor)
-        return True
+        if cursor.hasSelection():
+            return self._wrap_selection(quot, quot)
+        line, prev_char, next_char = self._chars_around_cursor()
+        if next_char == quot:
+            # just go out of the quotation
+            cursor.movePosition(QtGui.QTextCursor.MoveOperation.Right)
+            self.setTextCursor(cursor)
+            return True
+        if line.count(quot) % 2 == 1 or next_char not in _CAN_CLOSE_BEFORE:
+            return False
+        if prev_char == quot:
+            return False
+        if prev_char.isalnum() or prev_char == "_":
+            # such as "it's". String prefixes are exceptions.
+            col = cursor.position() - cursor.block().position()
+            word = _last_word(line[:col])
+            if word.lower() not in _STR_PREFIXES:
+                return False
+        return self._insert_pair(quot, quot)
 
     def _key_no_duplicate(self, char: str) -> bool:
         cursor = self.textCursor()
-        pos = cursor.position()
-        cursor.movePosition(
-            QtGui.QTextCursor.MoveOperation.EndOfLine,
-            QtGui.QTextCursor.MoveMode.KeepAnchor,
-        )
-        line = cursor.selectedText()
-        if line.startswith(char):
-            cursor.setPosition(pos + 1)
-        else:
-            cursor.setPosition(pos)
-            cursor.insertText(char)
-        self.setTextCursor(cursor)
-        return True
+        if cursor.hasSelection():
+            return False
+        line, _, next_char = self._chars_around_cursor()
+        left = {v: k for k, v in _PAIRS.items()}[char]
+        if next_char == char and line.count(left) <= line.count(char):
+            # already closed
+            cursor.movePosition(QtGui.QTextCursor.MoveOperation.Right)
+            self.setTextCursor(cursor)
+            return True
+        return False
 
-    def _text_before_cursor(self) -> str:
-        cursor = self.textCursor()
-        cursor.movePosition(
-            QtGui.QTextCursor.MoveOperation.StartOfLine,
-            QtGui.QTextCursor.MoveMode.KeepAnchor,
-        )
-        line = cursor.selectedText()
-        return line
+
+def _last_word(text: str) -> str:
+    chars = []
+    for c in reversed(text):
+        if c.isalnum() or c == "_":
+            chars.append(c)
+        else:
+            break
+    return "".join(reversed(chars))
 
 
 def _get_indents(text: str) -> int:
@@ -859,15 +938,6 @@ def eval_under_cursor(
         return None
     info = WordInfo(widget, words, str(words).split(".")[-1], obj)
     return info
-
-
-def _text_before_cursor(cursor: QtGui.QTextCursor) -> str:
-    cursor.movePosition(
-        QtGui.QTextCursor.MoveOperation.StartOfLine,
-        QtGui.QTextCursor.MoveMode.KeepAnchor,
-    )
-    line = cursor.selectedText()
-    return line
 
 
 # ##############################################################################
