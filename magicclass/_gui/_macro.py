@@ -14,6 +14,7 @@ from magicclass.widgets import CodeEdit, TabbedContainer, ScrollableContainer, D
 from magicclass.utils import move_to_screen_center
 from magicclass.undo import ImplementsUndo, RedoAction, UndoCallback
 from magicclass._gui.runner import CommandRunnerMenu
+from magicclass._instance_cache import InstanceCache
 
 if TYPE_CHECKING:
     from ._base import BaseGui
@@ -416,7 +417,7 @@ def _action(
 
 class PropertyGroup:
     def __init__(self, parent: GuiMacro | None = None):
-        self._instances: dict[int, PropertyGroup] = {}
+        self._instances: InstanceCache[PropertyGroup] = InstanceCache()
         self._parent = parent
         self._max_lines = 10000
         self._max_undo = 100
@@ -424,7 +425,9 @@ class PropertyGroup:
     def __get__(self, instance: GuiMacro, owner) -> PropertyGroup:
         if instance is None:
             return self
-        return self._instances.setdefault(id(instance), self.__class__(parent=instance))
+        if (group := self._instances.get(instance)) is None:
+            group = self._instances[instance] = self.__class__(parent=instance)
+        return group
 
     def __repr__(self) -> str:
         c = type(self).__name__

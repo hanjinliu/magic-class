@@ -8,11 +8,12 @@ from typing_extensions import Literal
 from magicgui.widgets import Widget
 from magicclass._gui import BaseGui
 from magicclass._gui.mgui_ext import Clickable, is_clickable
+from magicclass._instance_cache import InstanceCache
 
 if TYPE_CHECKING:
     from qt_command_palette._api import CommandPalette
 
-_PALETTES: dict[int, CommandPalette] = {}
+_PALETTES: InstanceCache[CommandPalette] = InstanceCache()
 
 
 def exec_command_palette(
@@ -55,9 +56,8 @@ def exec_command_palette(
     """
     from qt_command_palette import get_palette
 
-    _id = id(gui)
-    if _id in _PALETTES:
-        return _PALETTES[_id].show_widget(gui.native)
+    if gui in _PALETTES:
+        return _PALETTES[gui].show_widget(gui.native)
     name = f"magicclass-{id(gui)}"
     palette = get_palette(name, alignment=alignment)
 
@@ -74,7 +74,7 @@ def exec_command_palette(
             when=_define_when(wdt, parent),
         )
     palette.sort(rule=lambda cmd: str(cmd.title.count(".")) + cmd.title + cmd.desc)
-    _PALETTES[_id] = palette
+    _PALETTES[gui] = palette
     palette.install(gui.native)
     return palette.show_widget(gui.native)
 

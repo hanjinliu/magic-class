@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+import weakref
 from types import GeneratorType
 from typing import (
     Any,
@@ -22,6 +23,7 @@ from magicgui.widgets.bases import ValueWidget, CategoricalWidget
 from magicgui.types import Undefined
 
 from magicclass.fields._define import define_callback, define_callback_gui
+from magicclass._instance_cache import InstanceCache
 from magicclass.utils import (
     is_instance_method,
     method_as_getter,
@@ -114,7 +116,7 @@ class MagicField(_FieldObject, Generic[_W]):
         self._widget_type = widget_type
         self._constructor = constructor
         self._callbacks: list[Callable] = []
-        self._guis: dict[int, _M] = {}
+        self._guis: InstanceCache[_M] = InstanceCache()
         self._record = record
 
         # MagicField has to remenber the first class that referred to itself so
@@ -286,9 +288,8 @@ class MagicField(_FieldObject, Generic[_W]):
         This function will be called every time MagicField is referred by
         `obj.field`.
         """
-        obj_id = id(obj)
-        if (widget := self._guis.get(obj_id, None)) is None:
-            self._guis[obj_id] = widget = self.construct(obj)
+        if (widget := self._guis.get(obj)) is None:
+            self._guis[obj] = widget = self.construct(obj)
             widget.name = self.name or ""
 
             if has_changed_signal(widget):
@@ -303,9 +304,8 @@ class MagicField(_FieldObject, Generic[_W]):
 
         This function will be called every time MagicField is referred by `obj.field`.
         """
-        obj_id = id(obj)
-        if obj_id in self._guis.keys():
-            action = self._guis[obj_id]
+        if obj in self._guis:
+            action = self._guis[obj]
         else:
             if type(self.value) is bool or self.annotation is bool:  # noqa: E721
                 # we should not use "isinstance" or "issubclass" because subclass
@@ -324,7 +324,7 @@ class MagicField(_FieldObject, Generic[_W]):
                 widget.name = self.name
                 action = WidgetAction(widget, label=self.label)
 
-            self._guis[obj_id] = action
+            self._guis[obj] = action
 
             if action.support_value:
                 _def = self._get_define_callback(obj)
@@ -348,7 +348,7 @@ class MagicField(_FieldObject, Generic[_W]):
 
     def as_getter(self, obj: Any) -> Callable[[Any], Any]:
         """Make a function that get the value of Widget or Action."""
-        return lambda w: self._guis[id(obj)].value
+        return lambda w: self._guis[obj].value
 
     def as_remote_getter(self, obj: MagicTemplate):
         """Called when a MagicField is used in "bind"."""
@@ -1158,9 +1158,15 @@ def _is_magicclass(obj: Any):
         return False
 
 
+def _no_worker() -> None:
+    return None
+
+
 class AsyncConnection:
     def __init__(self, timeout: float, abort_limit: float, ignore_errors: bool = False):
-        self.running_worker: WorkerBase | None = None  # the running worker
+        # the running worker. This connection is shared by all the instances, so
+        # the worker (which refers to the instance) must be weakly referenced.
+        self._running_worker_ref: Callable[[], WorkerBase | None] = _no_worker
         self.last_run = -1.0  # last time the worker was started
         self.last_completed_id = 0.0  # last starting time (= worker ID) that ended
         self.abort_begin = -1.0  # last time the worker started being aborted
@@ -1178,6 +1184,18 @@ class AsyncConnection:
     @property
     def lock(self):
         return self._lock
+
+    @property
+    def running_worker(self) -> WorkerBase | None:
+        """The running worker, or None if not running."""
+        return self._running_worker_ref()
+
+    @running_worker.setter
+    def running_worker(self, worker: WorkerBase | None):
+        if worker is None:
+            self._running_worker_ref = _no_worker
+        else:
+            self._running_worker_ref = weakref.ref(worker)
 
     def quit_worker(self):
         if self.running_worker is not None:
